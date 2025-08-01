@@ -4,6 +4,7 @@ import "./globals.css";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/features/app-sidebar";
 import { Header } from "@/components/features/header";
+import { Player } from "@/components/features/player";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,11 +33,12 @@ export default function RootLayout({
       >
         <SidebarProvider>
           <AppSidebar />
-          <main className="flex-grow px-16">
+          <main className="flex-grow">
             <Header />
             {children}
           </main>
         </SidebarProvider>
+        <Player />
       </body>
     </html>
   );

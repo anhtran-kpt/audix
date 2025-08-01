@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Disc3Icon, Library, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { NewPlaylistDialog } from "./new-playlist-dialog";
 
 const items = [
   {
@@ -49,7 +50,9 @@ export function AppSidebar() {
         </SidebarMenu>
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter />
+      <SidebarFooter>
+        <NewPlaylistDialog />
+      </SidebarFooter>
     </Sidebar>
   );
 }

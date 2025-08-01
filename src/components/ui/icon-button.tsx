@@ -10,6 +10,7 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconClassName?: string;
   size?: "sm" | "md" | "lg" | "xl";
   tooltipContent?: ReactNode;
+  description?: string;
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
@@ -20,6 +21,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       tooltipContent,
       className,
       iconClassName,
+      description,
       ...buttonProps
     },
     ref
@@ -42,6 +44,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
           height={iconSize}
           className={cn(iconClassName)}
         />
+        <span className="sr-only">{description}</span>
       </button>
     );
 
