@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +13,7 @@ import {
 import { Disc3Icon, Library, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { NewPlaylistDialog } from "./new-playlist-dialog";
+import { usePathname } from "next/navigation";
 
 const items = [
   {
@@ -31,6 +34,8 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const pathname = usePathname();
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader />
@@ -39,10 +44,15 @@ export function AppSidebar() {
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
+              <SidebarMenuButton
+                asChild
+                isActive={
+                  pathname === item.url || pathname === `${item.url}/[slug]`
+                }
+              >
                 <Link href={item.url}>
                   <item.icon />
-                  <span>{item.title}</span>
+                  <span className="font-medium">{item.title}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -50,7 +60,7 @@ export function AppSidebar() {
         </SidebarMenu>
         <SidebarGroup />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="border-t">
         <NewPlaylistDialog />
       </SidebarFooter>
     </Sidebar>

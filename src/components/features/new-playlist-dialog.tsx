@@ -22,7 +22,7 @@ export const NewPlaylistDialog = () => {
           New playlist
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="text-center">Create new playlist</DialogTitle>
         </DialogHeader>

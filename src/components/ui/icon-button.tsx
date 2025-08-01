@@ -4,11 +4,12 @@ import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip";
 import { forwardRef, ReactNode, ButtonHTMLAttributes } from "react";
+import { IconSize, iconSizeMap } from "@/lib/constants/size-maps";
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: LucideIcon;
   iconClassName?: string;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: IconSize;
   tooltipContent?: ReactNode;
   description?: string;
 }
@@ -26,7 +27,6 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     },
     ref
   ) => {
-    const iconSizeMap = { sm: 16, md: 20, lg: 24, xl: 28 };
     const iconSize = iconSizeMap[size];
 
     const btn = (
@@ -39,11 +39,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
           className
         )}
       >
-        <Icon
-          width={iconSize}
-          height={iconSize}
-          className={cn(iconClassName)}
-        />
+        <Icon className={cn(iconSize, iconClassName)} />
         <span className="sr-only">{description}</span>
       </button>
     );
