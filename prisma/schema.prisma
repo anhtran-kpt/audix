@@ -6,10 +6,563 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../app/generated/prisma"
+  output   = "../src/app/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ================================
+// USER MANAGEMENT & AUTHENTICATION
+// ================================
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String?   @unique
+  name          String?
+  password      String?
+  imageId       String?
+  emailVerified DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Profile
+  bio         String?
+  country     String?
+  dateOfBirth DateTime?
+  gender      Gender?
+
+  // Subscription info
+  subscription UserSubscription?
+
+  // NextAuth fields
+  accounts Account[]
+  sessions Session[]
+
+  // Music related
+  playlists      Playlist[]
+  likedSongs     UserLikedSong[]
+  likedAlbums    UserLikedAlbum[]
+  likedPlaylists UserLikedPlaylist[]
+  likedArtists   UserLikedArtist[]
+
+  // Listening history & behavior
+  playHistory   PlayHistory[]
+  searchHistory SearchHistory[]
+
+  // Social features
+  followers UserFollow[] @relation("UserFollowers")
+  following UserFollow[] @relation("UserFollowing")
+
+  @@map("users")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ================================
+// SUBSCRIPTION MANAGEMENT
+// ================================
+
+model UserSubscription {
+  id            String             @id @default(cuid())
+  userId        String             @unique
+  type          SubscriptionType   @default(FREE)
+  status        SubscriptionStatus @default(ACTIVE)
+  startDate     DateTime           @default(now())
+  endDate       DateTime?
+  autoRenew     Boolean            @default(false)
+  paymentMethod String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_subscriptions")
+}
+
+enum SubscriptionType {
+  FREE
+  PREMIUM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  SUSPENDED
+}
+
+// ================================
+// MUSIC CORE ENTITIES
+// ================================
+
+model Artist {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  bio              String?  @db.Text
+  imageId          String
+  verified         Boolean  @default(false)
+  monthlyListeners Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relationships
+  albums  Album[]
+  songs   SongArtist[]
+  genres  ArtistGenre[]
+  likedBy UserLikedArtist[]
+  credits SongCredit[]
+
+  @@map("artists")
+}
+
+model Album {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  description String?   @db.Text
+  imageId     String
+  albumType   AlbumType @default(SINGLE)
+  releaseDate DateTime  @default(now())
+  totalTracks Int       @default(0)
+  duration    Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  artistId String
+  artist   Artist           @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  songs    Song[]
+  genres   AlbumGenre[]
+  likedBy  UserLikedAlbum[]
+
+  @@map("albums")
+}
+
+enum AlbumType {
+  SINGLE
+  EP
+  ALBUM
+  COMPILATION
+}
+
+model Song {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  audioId     String
+  duration    Int
+  trackNumber Int
+  lyrics      String?  @db.Text
+  isExplicit  Boolean  @default(false)
+  playCount   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  albumId String
+  album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  artists       SongArtist[]
+  credits       SongCredit[]
+  genres        SongGenre[]
+  likedBy       UserLikedSong[]
+  playlistItems PlaylistItem[]
+  playHistory   PlayHistory[]
+
+  @@map("songs")
+}
+
+// ================================
+// GENRE SYSTEM
+// ================================
+
+model Genre {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  color       String?
+
+  songs   SongGenre[]
+  albums  AlbumGenre[]
+  artists ArtistGenre[]
+
+  @@map("genres")
+}
+
+// ================================
+// SONG-ARTIST RELATIONSHIP & CREDITS SYSTEM
+// ================================
+
+model SongArtist {
+  id       String     @id @default(uuid())
+  songId   String
+  artistId String
+  role     ArtistRole @default(MAIN_ARTIST)
+  order    Int        @default(0) // Artist order (main artist first)
+
+  song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@unique([songId, artistId, role])
+  @@index([songId, order])
+  @@map("song_artists")
+}
+
+enum ArtistRole {
+  MAIN_ARTIST
+  FEATURED_ARTIST
+  REMIX_ARTIST
+}
+
+model SongCredit {
+  id       String     @id @default(cuid())
+  songId   String
+  artistId String? // Null if it set for the person who is not artist
+  name     String // Credit name (if artistId null)
+  role     CreditRole
+  details  String?
+  order    Int        @default(0)
+
+  song   Song    @relation(fields: [songId], references: [id], onDelete: Cascade)
+  artist Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@index([songId, role])
+  @@map("song_credits")
+}
+
+enum CreditRole {
+  // Performers
+  LEAD_VOCALS
+  BACKING_VOCALS
+  RAP
+  FEATURED_ARTIST
+
+  // Songwriters & Composers
+  SONGWRITER
+  COMPOSER
+  LYRICIST
+
+  // Producers & Engineers
+  PRODUCER
+  EXECUTIVE_PRODUCER
+  CO_PRODUCER
+  VOCAL_PRODUCER
+  MIXING_ENGINEER
+  MASTERING_ENGINEER
+  RECORDING_ENGINEER
+  ASSISTANT_ENGINEER
+
+  // Musicians
+  GUITAR
+  BASS
+  DRUMS
+  PIANO
+  KEYBOARD
+  VIOLIN
+  SAXOPHONE
+  TRUMPET
+  OTHER_INSTRUMENT
+
+  // Other Roles
+  ARRANGER
+  CONDUCTOR
+  PROGRAMMER
+  ADDITIONAL_PRODUCTION
+  REMIXER
+
+  // Legal & Business
+  PUBLISHER
+  RECORD_LABEL
+  MANAGEMENT
+}
+
+model SongGenre {
+  songId  String
+  genreId String
+
+  song  Song  @relation(fields: [songId], references: [id], onDelete: Cascade)
+  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([songId, genreId])
+  @@map("song_genres")
+}
+
+model AlbumGenre {
+  albumId String
+  genreId String
+
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([albumId, genreId])
+  @@map("album_genres")
+}
+
+model ArtistGenre {
+  artistId String
+  genreId  String
+
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  genre  Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@id([artistId, genreId])
+  @@map("artist_genres")
+}
+
+// ================================
+// PLAYLIST SYSTEM
+// ================================
+
+model Playlist {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  imageId     String?
+  isPublic    Boolean  @default(true)
+  isOfficial  Boolean  @default(false) // Playlist creating by system
+  totalTracks Int      @default(0)
+  duration    Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relationships
+  userId  String?
+  user    User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items   PlaylistItem[]
+  likedBy UserLikedPlaylist[]
+
+  @@map("playlists")
+}
+
+model PlaylistItem {
+  id       String   @id @default(cuid())
+  position Int // Position in playlist
+  addedAt  DateTime @default(now())
+
+  playlistId String
+  songId     String
+
+  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+  song     Song     @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@unique([playlistId, songId])
+  @@map("playlist_items")
+}
+
+// ================================
+// USER INTERACTIONS (LIKES/FOLLOWS)
+// ================================
+
+model UserLikedSong {
+  userId  String
+  songId  String
+  likedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@id([userId, songId])
+  @@map("user_liked_songs")
+}
+
+model UserLikedAlbum {
+  userId  String
+  albumId String
+  likedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  album Album @relation(fields: [albumId], references: [id], onDelete: Cascade)
+
+  @@id([userId, albumId])
+  @@map("user_liked_albums")
+}
+
+model UserLikedArtist {
+  userId   String
+  artistId String
+  likedAt  DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  @@id([userId, artistId])
+  @@map("user_liked_artists")
+}
+
+model UserLikedPlaylist {
+  userId     String
+  playlistId String
+  likedAt    DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  @@id([userId, playlistId])
+  @@map("user_liked_playlists")
+}
+
+model UserFollow {
+  followerId  String
+  followingId String
+  followedAt  DateTime @default(now())
+
+  follower  User @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@id([followerId, followingId])
+  @@map("user_follows")
+}
+
+// ================================
+// LISTENING BEHAVIOR & ANALYTICS
+// ================================
+
+model PlayHistory {
+  id         String   @id @default(cuid())
+  playedAt   DateTime @default(now())
+  duration   Int
+  deviceType String? // web, mobile, desktop
+
+  userId String
+  songId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+
+  @@index([userId, playedAt])
+  @@index([songId, playedAt])
+  @@map("play_history")
+}
+
+model SearchHistory {
+  id         String   @id @default(cuid())
+  query      String
+  resultType String? // song, artist, album, playlist
+  resultId   String?
+  searchedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, searchedAt])
+  @@map("search_history")
+}
+
+// ================================
+// RECOMMENDATION SYSTEM
+// ================================
+
+model UserRecommendation {
+  id        String   @id @default(cuid())
+  type      String // song, artist, album, playlist
+  targetId  String // ID of recommended item
+  score     Float //  Recommendation score (0-1)
+  reason    String? // The reason to recommend
+  createdAt DateTime @default(now())
+
+  userId String
+
+  @@index([userId, type, score])
+  @@map("user_recommendations")
+}
+
+// ================================
+// SYSTEM FEATURES
+// ================================
+
+// Queue/Recently Played
+model UserQueue {
+  id        String   @id @default(cuid())
+  position  Int
+  createdAt DateTime @default(now())
+
+  userId String
+  songId String
+
+  @@unique([userId, position])
+  @@index([userId, position])
+  @@map("user_queue")
+}
+
+// Trending/Charts
+model Chart {
+  id        String    @id @default(cuid())
+  name      String
+  type      ChartType
+  period    String // daily, weekly, monthly
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime  @default(now())
+
+  items ChartItem[]
+
+  @@map("charts")
+}
+
+enum ChartType {
+  TOP_SONGS
+  TOP_ALBUMS
+  TOP_ARTISTS
+  TRENDING
+}
+
+model ChartItem {
+  chartId  String
+  position Int
+  itemType String // song, album, artist
+  itemId   String
+  plays    Int    @default(0)
+
+  chart Chart @relation(fields: [chartId], references: [id], onDelete: Cascade)
+
+  @@id([chartId, position])
+  @@map("chart_items")
 }
