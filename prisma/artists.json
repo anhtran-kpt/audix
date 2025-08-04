@@ -1,0 +1,211 @@
+{
+  "artists": [
+    {
+      "imageId": "audix/artists/image/b-ray",
+      "bannerId": "audix/artists/banner/b-ray",
+      "slug": "b-ray",
+      "name": "B Ray",
+      "isVerified": true,
+      "bio": "B Ray, whose real name is Trần Thiện Thanh Bảo, is a Vietnamese rapper and songwriter. He is one of the pioneers of the new-school Vietnamese rap scene. Starting his career in the underground, B Ray gained widespread recognition for his lyrical prowess, witty punchlines, and diverse flow. His songs often tackle relatable topics, from personal struggles and love to social commentary. He has become a prominent figure in Vietnamese hip-hop, known for his impactful presence as a judge on the TV show Rap Việt.",
+      "genreSlugs": ["hip-hop"]
+    },
+    {
+      "imageId": "audix/artists/image/bich-phuong",
+      "bannerId": "audix/artists/banner/bich-phuong",
+      "slug": "bich-phuong",
+      "name": "Bích Phương",
+      "isVerified": true,
+      "bio": "Bích Phương is a renowned Vietnamese pop singer. She first gained fame after competing on the reality show Vietnam Idol in 2010. She is widely praised for her sweet, clear voice and emotional delivery. Bích Phương has built a successful career with a string of hit songs, many of which are known for their catchy melodies and romantic, heartfelt lyrics. She is one of the most popular female artists in Vietnam, often topping music charts with her releases.",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/artists/image/bui-anh-tuan",
+      "bannerId": "audix/artists/banner/bui-anh-tuan",
+      "slug": "bui-anh-tuan",
+      "name": "Bùi Anh Tuấn",
+      "isVerified": true,
+      "bio": "Bùi Anh Tuấn, born on September 9, 1991, in Hanoi, Vietnam, is a prominent Vietnamese male singer known for his soulful voice and captivating performances. He rose to fame after winning various singing competitions, including the Coca-Cola Music Award and the Star Singing Contest on television. His significant breakthrough came in 2012 when he participated in \"The Voice Vietnam,\" where his performance of \"Nơi tình yêu bắt đầu\" gained tremendous popularity, marking him as a standout talent in the Vietnamese music scene. He is celebrated for his romantic ballads and has a dedicated fanbase that appreciates his unique musical style and artistry.",
+      "genreSlugs": ["pop", "r&b"]
+    },
+    {
+      "imageId": "audix/artists/image/den-vau",
+      "bannerId": "audix/artists/banner/den-vau",
+      "slug": "den-vau",
+      "name": "Đen Vâu",
+      "isVerified": true,
+      "bio": "Đen Vâu, born Nguyễn Đức Cường, is a Vietnamese rapper and songwriter. He is celebrated for his unique storytelling style, which combines poetic and often introspective lyrics with laid-back, melodic beats. Before his music career took off, he worked as a beach cleaner, a detail that often features in his humble and down-to-earth persona. Đen Vâu's music is deeply personal and relatable, touching on everyday life, love, and the simple joys and struggles of existence. He has become one of Vietnam's most beloved and respected artists, bridging the gap between mainstream pop and hip-hop.",
+      "genreSlugs": ["hip-hop", "pop"]
+    },
+    {
+      "imageId": "audix/artists/image/duong-hoang-yen",
+      "bannerId": "audix/artists/banner/duong-hoang-yen",
+      "slug": "duong-hoang-yen",
+      "name": "Dương Hoàng Yến",
+      "isVerified": true,
+      "bio": "Dương Hoàng Yến is a Vietnamese singer and vocal lecturer, born on June 15, 1991, in Hanoi, Vietnam. She is renowned for her soprano voice and began gaining public attention after achieving the Promising Singer Award in the Sao Mai Điểm Hẹn competition in 2008. A graduate of the Hanoi College of Arts, where she topped her class in vocal music, she later became a lecturer there.\n\nHer career highlights include participating in \"The Voice Vietnam\" in 2013 and contributing the Vietnamese rendition of \"Let It Go\" for Disney’s \"Frozen.\" Dương Hoàng Yến has won several awards, including the Champion title in the \"Perfect Couple\" show in 2014. Recently, she has delivered popular hits such as “Không Phải Em Đúng Không?” (“It’s Not Me, Right?”) and ventured into acting. Her music spans genres such as V-pop, R&B, ballads, and patriotic songs.",
+      "genreSlugs": ["pop", "r&b"]
+    },
+    {
+      "imageId": "audix/artists/image/ha-anh-tuan",
+      "bannerId": "audix/artists/banner/ha-anh-tuan",
+      "slug": "ha-anh-tuan",
+      "name": "Hà Anh Tuấn",
+      "isVerified": true,
+      "bio": "Hà Anh Tuấn is a highly respected Vietnamese pop and R&B singer. He rose to fame after participating in the reality show Sao Mai Điểm Hẹn in 2006. Known for his smooth, warm voice and sophisticated style, Hà Anh Tuấn has a reputation for delivering powerful live performances. His music often features thoughtful, poetic lyrics and a blend of contemporary pop with jazz and R&B influences. He is a versatile artist who has successfully maintained a long and distinguished career, admired for his musical talent and elegant stage presence.",
+      "genreSlugs": ["pop", "r&b", "jazz"]
+    },
+    {
+      "imageId": "audix/artists/image/hien-ho",
+      "bannerId": "audix/artists/banner/hien-ho",
+      "slug": "hien-ho",
+      "name": "Hiền Hồ",
+      "isVerified": true,
+      "bio": "Hiền Hồ, born Nguyễn Ngọc Hiền on February 26, 1997, is a celebrated Vietnamese pop singer. She gained fame through her powerful voice and emotional performances, particularly after participating in the television singing competition The Voice Vietnam in 2017, where she showcased her talent and won the hearts of many fans. Hiền Hồ is known for her hits like \"Em bỏ thuốc lào\" and \"Rồi người thương cũng sẽ hóa người dưng.\" With her unique style and stage presence, she has quickly become one of the prominent figures in the Vietnamese music industry, recognized for her contributions to V-pop.",
+      "genreSlugs": ["pop", "r&b"]
+    },
+    {
+      "imageId": "audix/artists/image/hoai-lam",
+      "bannerId": "audix/artists/banner/hoai-lam",
+      "slug": "hoai-lam",
+      "name": "Hoài Lâm",
+      "isVerified": true,
+      "bio": "Võ Nguyễn Hoài Lâm, known by his stage name Hoài Lâm, is a Vietnamese pop singer and actor born on July 1, 1995, in Vĩnh Long, Vietnam. He is known for his versatile vocal abilities, performing various genres including ballads, folk songs, and pop. Hoài Lâm gained significant recognition in 2014 after winning the first prize in the second season of the reality television show \"Gương mặt thân quen\" (Your Face Looks Familiar). During the show, he impersonated various artists such as Celine Dion, Adele, and Sơn Tùng M-TP. His victory propelled him into the spotlight, and he released popular songs like \"Như Những Phút Ban Đầu\" and \"Có Khi\". Hoài Lâm's career also includes acting roles in television dramas and films, such as \"Quý Tử Bất Đắc Dĩ\" (2015) and \"Tía Tui Là Cao Thủ\" (2016). Despite his success, he has faced challenges and in 2018, he announced a two-year hiatus from music due to stress. He has since made attempts to return to the music scene.",
+      "genreSlugs": ["pop", "folk-acoustic"]
+    },
+    {
+      "imageId": "audix/artists/image/hoang-dung",
+      "bannerId": "audix/artists/banner/hoang-dung",
+      "slug": "hoang-dung",
+      "name": "Hoàng Dũng",
+      "isVerified": true,
+      "bio": "Hoàng Dũng is a talented Vietnamese singer-songwriter known for his soulful voice and emotional ballads. Born on December 4, 1995, in Thái Nguyên, Vietnam, he gained widespread recognition in 2015 as the runner-up on the reality show The Voice Vietnam. Following his success, Hoàng Dũng established himself as an acclaimed artist in the Vietnamese music scene, releasing several hits such as \"Nàng Thơ\" and \"Yếu Đuối.\"\n\nHis music blends pop and R&B influences, characterized by heartfelt lyrics and melodies. Hoàng Dũng continues to captivate audiences with his artistry and is considered one of the rising stars in Vietnam's modern music industry.",
+      "genreSlugs": ["pop", "r&b"]
+    },
+    {
+      "imageId": "audix/artists/image/huong-tram",
+      "bannerId": "audix/artists/banner/huong-tram",
+      "slug": "huong-tram",
+      "name": "Hương Tràm",
+      "isVerified": true,
+      "bio": "Hương Tràm is a Vietnamese pop singer known for her powerful and emotional vocals. She rose to fame after winning the first season of The Voice of Vietnam in 2012 at the age of 17. Her impressive range and ability to convey deep emotion in her performances quickly made her a household name. Throughout her career, Hương Tràm has released numerous hit songs and is celebrated for her passionate, soulful delivery. She is widely regarded as one of the most vocally gifted female artists of her generation in Vietnam.",
+      "genreSlugs": ["pop", "r&b"]
+    },
+    {
+      "imageId": "audix/artists/image/jennie",
+      "bannerId": "audix/artists/banner/jennie",
+      "slug": "jennie",
+      "name": "Jennie",
+      "isVerified": true,
+      "bio": "Jennie Kim, known mononymously as Jennie, is a South Korean singer, rapper, and model. Born on January 16, 1996, in Seoul, South Korea, she spent a portion of her childhood in Auckland, New Zealand. She is best known as a member of the highly successful K-pop girl group BlackPink, which debuted in 2016 under YG Entertainment. Within the group, Jennie serves as a main rapper and vocalist. She made her solo debut in November 2018 with the single \"Solo,\" which achieved significant commercial success both domestically and internationally, topping charts in South Korea and reaching the top of the Billboard World Digital Songs chart. Jennie is also recognized for her fashion influence and collaborations with various high-profile brands.",
+      "genreSlugs": ["k-pop", "pop", "hip-hop"]
+    },
+    {
+      "imageId": "audix/artists/image/lam-bao-ngoc",
+      "bannerId": "audix/artists/banner/lam-bao-ngoc",
+      "slug": "lam-bao-ngoc",
+      "name": "Lâm Bảo Ngọc",
+      "isVerified": true,
+      "bio": "Lâm Bảo Ngọc is a Vietnamese pop and ballad singer, best known for her captivating stage presence and stunning vocal technique. She gained national attention as the runner-up of The Voice of Vietnam in 2019. Audiences and critics alike praise her for her powerful and clear voice, often compared to some of the country's top divas. Lâm Bảo Ngọc has since become a rising star in the Vietnamese music industry, admired for her exceptional live performances and elegant style.",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/artists/image/lisa",
+      "bannerId": "audix/artists/banner/lisa",
+      "slug": "lisa",
+      "name": "Lisa",
+      "isVerified": true,
+      "bio": "Lalisa Manobal, known mononymously as Lisa, is a Thai rapper, singer, and dancer based in South Korea. Born on March 27, 1997, in Buriram, Thailand, she is widely recognized as a member of the globally popular K-pop girl group BlackPink. Lisa joined YG Entertainment in 2010 and trained for five years before her debut. Within BlackPink, she is known for her powerful dance skills and rap verses. In September 2021, Lisa made her solo debut with the single album \"Lalisa,\" which broke several records, including becoming the most-viewed music video by a solo artist in 24 hours on YouTube. She is celebrated for her charismatic stage presence, multilingual abilities, and significant influence in the fashion industry.",
+      "genreSlugs": ["k-pop", "hip-hop"]
+    },
+    {
+      "imageId": "audix/artists/image/noo-phuoc-thinh",
+      "bannerId": "audix/artists/banner/noo-phuoc-thinh",
+      "slug": "noo-phuoc-thinh",
+      "name": "Noo Phước Thịnh",
+      "isVerified": true,
+      "bio": "Noo Phước Thịnh is one of Vietnam's leading male pop singers. He began his career as a model before transitioning into music in the late 2000s. Known for his charismatic stage presence, smooth vocals, and impressive dance skills, Noo Phước Thịnh has consistently topped music charts with a string of hit songs. He is a multi-talented entertainer who has also been a popular coach on reality TV shows like The Voice Kids of Vietnam. His long-standing career and consistent success have solidified his status as a major pop icon.",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/artists/image/orange",
+      "bannerId": "audix/artists/banner/orange",
+      "slug": "orange",
+      "name": "Orange",
+      "isVerified": true,
+      "bio": "Orange, real name Khương Hoàn Mỹ, is a Vietnamese singer and songwriter celebrated for her distinctive, powerful voice and unique musical style. She first gained widespread recognition with the massive hit song \"Người Lạ Ơi\" in 2018. Orange is known for blending pop with elements of soul and R&B, and her music often features sophisticated melodies and heartfelt lyrics. She has quickly become a prominent figure in the V-pop scene, admired for her strong vocals and modern musical approach.",
+      "genreSlugs": ["pop", "r&b", "soul"]
+    },
+    {
+      "imageId": "audix/artists/image/quoc-thien",
+      "bannerId": "audix/artists/banner/quoc-thien",
+      "slug": "quoc-thien",
+      "name": "Quốc Thiên",
+      "isVerified": true,
+      "bio": "Quốc Thiên is a Vietnamese pop singer, best known for his emotional and powerful ballads. He first rose to national fame after winning the reality singing competition Vietnam Idol in 2008. With a smooth and soulful voice, Quốc Thiên has built a successful career singing heartfelt love songs that resonate deeply with audiences. He is praised for his rich vocals and the sincerity he brings to his performances, solidifying his reputation as one of Vietnam's most beloved male vocalists in the ballad genre.",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/artists/image/rose",
+      "bannerId": "audix/artists/banner/rose",
+      "slug": "rose",
+      "name": "Rosé",
+      "isVerified": true,
+      "bio": "Roseanne Park (born February 11, 1997), known mononymously as Rosé, is a New Zealand and South Korean singer and songwriter. Born in Auckland, New Zealand, and raised in Melbourne, Australia, she moved to Seoul, South Korea, in 2012 after a successful audition with YG Entertainment. After four years of training, she debuted as a member of the South Korean girl group BLACKPINK in August 2016. Rosé launched her solo career in March 2021 with her single album R, which set a record for the highest first-week sales by a Korean female soloist. Its lead single, \"On the Ground,\" made her the first artist to top the Billboard Global 200 as both a soloist and a group member. She also became the first Korean female soloist to enter the UK Singles Chart. In 2024, Rosé signed with The Black Label and Atlantic Records. That same year, she collaborated with Bruno Mars on the single \"Apt.,\" which topped charts globally. Her debut studio album, Rosie, was released in December 2024. Beyond her musical achievements, Rosé is recognized for her influence in fashion and pop culture, serving as a global ambassador for brands like Yves Saint Laurent and Tiffany & Co.. She was also featured in Time's 2025 list of the 100 most influential people in the world.",
+      "genreSlugs": ["k-pop", "pop"]
+    },
+    {
+      "imageId": "audix/artists/image/son-tung-m-tp",
+      "bannerId": "audix/artists/banner/son-tung-m-tp",
+      "slug": "son-tung-m-tp",
+      "name": "Sơn Tùng M-TP",
+      "isVerified": true,
+      "bio": "Sơn Tùng M-TP, whose real name is Nguyễn Thanh Tùng, was born on July 5, 1994, in Thái Bình, Vietnam. He is a renowned Vietnamese singer-songwriter, actor, and model, and is often referred to as the \"Prince of V-Pop.\" His music career began with the release of his hit single \"Cơn Mưa Ngang Qua\" in 2012, followed by a series of successful songs like \"Lạc Trôi,\" \"Chạy Ngay Đi,\" and \"Hãy Trao Cho Anh,\" which further solidified his status in the music industry.\n\nSơn Tùng is known for his unique musical style that blends pop, R&B, and hip-hop influences. He founded his own music label, M-TP Entertainment, in 2016, allowing him to gain greater creative control over his work. Additionally, he has garnered a massive fanbase, known as \"Sky,\" and is considered a cultural icon among the youth in Vietnam.",
+      "genreSlugs": ["pop", "r&b", "hip-hop"]
+    },
+    {
+      "imageId": "audix/artists/image/soobin",
+      "bannerId": "audix/artists/banner/soobin",
+      "slug": "soobin",
+      "name": "Soobin",
+      "isVerified": true,
+      "bio": "Soobin, born Nguyễn Hoàng Sơn, is a Vietnamese singer, songwriter, and music producer. He is a versatile artist known for blending pop, R&B, and hip-hop in his music. Soobin gained fame after finishing as the runner-up on the reality show Ngôi Sao Việt in 2014. His career took off with a series of successful hit songs, which showcased his smooth vocals and modern musical style. He is admired for his ability to write catchy, emotional tracks and for his sophisticated, charismatic stage presence. Soobin is considered one of the leading male artists in the Vietnamese pop scene.",
+      "genreSlugs": ["pop", "r&b", "hip-hop"]
+    },
+    {
+      "imageId": "audix/artists/image/tlinh",
+      "bannerId": "audix/artists/banner/tlinh",
+      "slug": "tlinh",
+      "name": "Tlinh",
+      "isVerified": true,
+      "bio": "Tlinh, whose real name is Nguyễn Thảo Linh, is a Vietnamese rapper and singer. She rose to prominence as a contestant on the reality TV show Rap Việt in 2020, where her confident flow, unique style, and charismatic performances made her a fan favorite. Tlinh is celebrated for her lyrical honesty and the fearless way she expresses herself in her music. Her songs often blend rap with pop and R&B elements, and she has quickly become a prominent and influential figure in Vietnam's new-school hip-hop scene.",
+      "genreSlugs": ["hip-hop", "pop", "r&b"]
+    },
+    {
+      "imageId": "audix/artists/image/trung-quan-idol",
+      "bannerId": "audix/artists/banner/trung-quan-idol",
+      "slug": "trung-quan-idol",
+      "name": "Trung Quân Idol",
+      "isVerified": true,
+      "bio": "Trung Quân Idol, born Bùi Nguyễn Trung Quân, is a Vietnamese pop singer. He earned his stage name after competing on the reality show Vietnam Idol in 2010. Trung Quân is widely known as the \"Prince of Rain\" for his series of successful songs about rain and sad love stories. His clear, high-toned voice and emotional delivery make him a master of ballads. He is a beloved artist in Vietnam, celebrated for his soulful performances and a discography filled with some of the most iconic and melancholic pop songs in V-pop history.",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/artists/image/vu-cat-tuong",
+      "bannerId": "audix/artists/banner/vu-cat-tuong",
+      "slug": "vu-cat-tuong",
+      "name": "Vũ Cát Tường",
+      "isVerified": true,
+      "bio": "Vũ Cát Tường is a Vietnamese singer, songwriter, and music producer. She is celebrated for her distinct voice, innovative musical style, and incredible songwriting talent. Vũ Cát Tường gained attention after competing on The Voice of Vietnam in 2013. She is known for her introspective and poetic lyrics, which often touch on themes of love, life, and personal identity. Her music blends pop, R&B, funk, and soul, and she is highly respected for her artistic integrity and unique vision. Vũ Cát Tường is a multi-talented artist who is often praised for pushing creative boundaries in the Vietnamese music industry.",
+      "genreSlugs": ["pop", "r&b", "funk-disco", "soul"]
+    },
+    {
+      "imageId": "audix/artists/image/bruno-mars",
+      "bannerId": "audix/artists/banner/bruno-mars",
+      "slug": "bruno-mars",
+      "name": "Bruno Mars",
+      "isVerified": true,
+      "bio": "Bruno Mars (born Peter Gene Hernandez on October 8, 1985) is an American singer, songwriter, multi-instrumentalist, record producer, and dancer. He was born and raised in Honolulu, Hawaii, into a family of musicians and began performing at a young age, impersonating Elvis Presley and Michael Jackson. Mars first gained recognition as a songwriter and producer, co-founding the production team The Smeezingtons. He later rose to fame as a solo artist with his debut album, \"Doo-Wops & Hooligans\" (2010), which featured the hit singles \"Just the Way You Are\" and \"Grenade.\" His music is known for its catchy pop melodies, retro sound, and a blend of various genres, including R&B, funk, and soul. Throughout his career, Bruno Mars has received numerous awards, including multiple Grammy Awards. He is also known for his dynamic and energetic live performances. In 2016, he released the critically acclaimed album \"24K Magic,\" and later, he formed the duo Silk Sonic with musician Anderson .Paak, releasing the album \"An Evening with Silk Sonic\" in 2021.",
+      "genreSlugs": ["pop", "r&b", "funk-disco", "soul", "rock"]
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "albums": [
+    {
+      "imageId": "audix/albums/25",
+      "slug": "25",
+      "title": "25",
+      "description": "",
+      "releaseDate": "2020-12-12",
+      "albumType": "ALBUM",
+      "artistSlug": "hoang-dung",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/albums/yen",
+      "slug": "yen",
+      "title": "Yên",
+      "description": "",
+      "releaseDate": "2022-08-24",
+      "albumType": "EP",
+      "artistSlug": "hoang-dung",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/albums/xin-em",
+      "slug": "xin-em",
+      "title": "Xin Em",
+      "description": "",
+      "releaseDate": "2016-12-1",
+      "albumType": "ALBUM",
+      "artistSlug": "bui-anh-tuan",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/albums/xin-dung-lang-im",
+      "slug": "xin-dung-lang-im",
+      "title": "Xin Đừng Lặng Im",
+      "description": "",
+      "releaseDate": "2017-07-31",
+      "albumType": "SINGLE",
+      "artistSlug": "soobin",
+      "genreSlugs": ["pop", "r&b"]
+    },
+    {
+      "imageId": "audix/albums/thuan-theo-y-troi",
+      "slug": "thuan-theo-y-troi",
+      "title": "Thuận Theo Ý Trời",
+      "description": "",
+      "releaseDate": "2019-11-28",
+      "albumType": "SINGLE",
+      "artistSlug": "bui-anh-tuan",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/albums/rosie",
+      "slug": "rosie",
+      "title": "rosie",
+      "description": "Molded from her own experiences in her twenties, the debut studio album \"rosie\" authentically portrays the spectrum of emotions the female artist goes through in love. These can be lingering sadness (\"3am,\" \"two years,\" \"number one girl\"), or more cheerful moments (\"drinks or coffee,\" \"APT.\"), ultimately opening up a positive outlook on the future in the final track (\"dance all night\"). Musically, the album not only focuses on ROSÉ's strong suit genres like pop and ballad but also transforms with soulful R&B, soul, and a touch of edgy rock. Through this, the BLACKPINK vocalist not only draws closer to her fans but also marks the first steps on a promising solo career path.",
+      "releaseDate": "2024-12-6",
+      "albumType": "ALBUM",
+      "artistSlug": "rose",
+      "genreSlugs": ["k-pop", "pop", "r&b", "soul", "rock"]
+    },
+    {
+      "imageId": "audix/albums/phia-sau-mot-co-gai",
+      "slug": "phia-sau-mot-co-gai",
+      "title": "Phía Sau Một Cô Gái",
+      "description": "",
+      "releaseDate": "2016-06-10",
+      "albumType": "SINGLE",
+      "artistSlug": "soobin",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/albums/noi-nay-co-anh",
+      "slug": "noi-nay-co-anh",
+      "title": "Nơi Này Có Anh",
+      "description": "“Nơi này có anh” is a pop/R&B song that describes Sơn Tùng M-TP deeply missing a past lover. It was released on Valentine’s Day to show his appreciation for his fans' support.\n\nThe music video was shot in Korea under director Gin Tran, from the perspective of the female character. Tùng and his lover are shown having fun together, as he makes sweet, romantic gestures throughout. As the season changes to winter, he begins to distance himself from her, but finally, as she surprises him with a hug, he smiles and they embrace.",
+      "releaseDate": "2017-02-14",
+      "albumType": "SINGLE",
+      "artistSlug": "son-tung-m-tp",
+      "genreSlugs": ["pop", "r&b"]
+    },
+    {
+      "imageId": "audix/albums/making-my-way",
+      "slug": "making-my-way",
+      "title": "Making My Way",
+      "description": "",
+      "releaseDate": "2023-05-05",
+      "albumType": "SINGLE",
+      "artistSlug": "son-tung-m-tp",
+      "genreSlugs": ["electronic", "r&b"]
+    },
+    {
+      "imageId": "audix/albums/lac-troi",
+      "slug": "lac-troi",
+      "title": "Lạc Trôi",
+      "description": "",
+      "releaseDate": "2017-01-01",
+      "albumType": "SINGLE",
+      "artistSlug": "son-tung-m-tp",
+      "genreSlugs": ["pop", "electronic"]
+    },
+    {
+      "imageId": "audix/albums/ex-s-hate-me",
+      "slug": "ex-s-hate-me",
+      "title": "Ex's Hate Me",
+      "description": "",
+      "releaseDate": "2019-02-14",
+      "albumType": "SINGLE",
+      "artistSlug": "b-ray",
+      "genreSlugs": ["hip-hop", "electronic", "pop"]
+    },
+    {
+      "imageId": "audix/albums/co-nhu-khong-co",
+      "slug": "co-nhu-khong-co",
+      "title": "Có Như Không Có",
+      "description": "",
+      "releaseDate": "2019-11-26",
+      "albumType": "SINGLE",
+      "artistSlug": "hien-ho",
+      "genreSlugs": ["pop"]
+    },
+    {
+      "imageId": "audix/albums/chung-ta-cua-hien-tai",
+      "slug": "chung-ta-cua-hien-tai",
+      "title": "Chúng Ta Của Hiện Tại",
+      "description": "",
+      "releaseDate": "2020-12-20",
+      "albumType": "SINGLE",
+      "artistSlug": "son-tung-m-tp",
+      "genreSlugs": ["pop", "r&b"]
+    },
+    {
+      "imageId": "audix/albums/chay-ngay-di",
+      "slug": "chay-ngay-di",
+      "title": "Chạy Ngay Đi",
+      "description": "“Chạy Ngay Đi” (lit. meaning: “Run away now”) is a Trap-infused Electro-R&B song released by Vietnamese singer-songwriter Sơn Tùng M-TP on May 12 2018.\n\nThe song discusses the singer’s feelings about his toxic romantic relationship. Overall, the character feels that not only there’s no more affection between him and his lover but he also wants to “run away now” and bury the memories of the pain he felt during the relationship.",
+      "releaseDate": "2018-05-12",
+      "albumType": "SINGLE",
+      "artistSlug": "son-tung-m-tp",
+      "genreSlugs": ["r&b", "hip-hop"]
+    },
+    {
+      "imageId": "audix/albums/bat-no-len",
+      "slug": "bat-no-len",
+      "title": "bật nó lên",
+      "description": "",
+      "releaseDate": "2024-06-24",
+      "albumType": "ALBUM",
+      "artistSlug": "soobin",
+      "genreSlugs": ["pop", "r&b", "hip-hop"]
+    }
+  ]
+}

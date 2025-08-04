@@ -181,7 +181,8 @@ exports.Prisma.ArtistScalarFieldEnum = {
   slug: 'slug',
   bio: 'bio',
   imageId: 'imageId',
-  verified: 'verified',
+  bannerId: 'bannerId',
+  isVerified: 'isVerified',
   monthlyListeners: 'monthlyListeners',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

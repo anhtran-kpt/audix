@@ -9605,7 +9605,8 @@ export namespace Prisma {
     slug: string | null
     bio: string | null
     imageId: string | null
-    verified: boolean | null
+    bannerId: string | null
+    isVerified: boolean | null
     monthlyListeners: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -9617,7 +9618,8 @@ export namespace Prisma {
     slug: string | null
     bio: string | null
     imageId: string | null
-    verified: boolean | null
+    bannerId: string | null
+    isVerified: boolean | null
     monthlyListeners: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -9629,7 +9631,8 @@ export namespace Prisma {
     slug: number
     bio: number
     imageId: number
-    verified: number
+    bannerId: number
+    isVerified: number
     monthlyListeners: number
     createdAt: number
     updatedAt: number
@@ -9651,7 +9654,8 @@ export namespace Prisma {
     slug?: true
     bio?: true
     imageId?: true
-    verified?: true
+    bannerId?: true
+    isVerified?: true
     monthlyListeners?: true
     createdAt?: true
     updatedAt?: true
@@ -9663,7 +9667,8 @@ export namespace Prisma {
     slug?: true
     bio?: true
     imageId?: true
-    verified?: true
+    bannerId?: true
+    isVerified?: true
     monthlyListeners?: true
     createdAt?: true
     updatedAt?: true
@@ -9675,7 +9680,8 @@ export namespace Prisma {
     slug?: true
     bio?: true
     imageId?: true
-    verified?: true
+    bannerId?: true
+    isVerified?: true
     monthlyListeners?: true
     createdAt?: true
     updatedAt?: true
@@ -9774,7 +9780,8 @@ export namespace Prisma {
     slug: string
     bio: string | null
     imageId: string
-    verified: boolean
+    bannerId: string
+    isVerified: boolean
     monthlyListeners: number
     createdAt: Date
     updatedAt: Date
@@ -9805,7 +9812,8 @@ export namespace Prisma {
     slug?: boolean
     bio?: boolean
     imageId?: boolean
-    verified?: boolean
+    bannerId?: boolean
+    isVerified?: boolean
     monthlyListeners?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -9823,7 +9831,8 @@ export namespace Prisma {
     slug?: boolean
     bio?: boolean
     imageId?: boolean
-    verified?: boolean
+    bannerId?: boolean
+    isVerified?: boolean
     monthlyListeners?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -9835,7 +9844,8 @@ export namespace Prisma {
     slug?: boolean
     bio?: boolean
     imageId?: boolean
-    verified?: boolean
+    bannerId?: boolean
+    isVerified?: boolean
     monthlyListeners?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -9847,13 +9857,14 @@ export namespace Prisma {
     slug?: boolean
     bio?: boolean
     imageId?: boolean
-    verified?: boolean
+    bannerId?: boolean
+    isVerified?: boolean
     monthlyListeners?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ArtistOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "bio" | "imageId" | "verified" | "monthlyListeners" | "createdAt" | "updatedAt", ExtArgs["result"]["artist"]>
+  export type ArtistOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "bio" | "imageId" | "bannerId" | "isVerified" | "monthlyListeners" | "createdAt" | "updatedAt", ExtArgs["result"]["artist"]>
   export type ArtistInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     albums?: boolean | Artist$albumsArgs<ExtArgs>
     songs?: boolean | Artist$songsArgs<ExtArgs>
@@ -9880,7 +9891,8 @@ export namespace Prisma {
       slug: string
       bio: string | null
       imageId: string
-      verified: boolean
+      bannerId: string
+      isVerified: boolean
       monthlyListeners: number
       createdAt: Date
       updatedAt: Date
@@ -10317,7 +10329,8 @@ export namespace Prisma {
     readonly slug: FieldRef<"Artist", 'String'>
     readonly bio: FieldRef<"Artist", 'String'>
     readonly imageId: FieldRef<"Artist", 'String'>
-    readonly verified: FieldRef<"Artist", 'Boolean'>
+    readonly bannerId: FieldRef<"Artist", 'String'>
+    readonly isVerified: FieldRef<"Artist", 'Boolean'>
     readonly monthlyListeners: FieldRef<"Artist", 'Int'>
     readonly createdAt: FieldRef<"Artist", 'DateTime'>
     readonly updatedAt: FieldRef<"Artist", 'DateTime'>
@@ -13619,7 +13632,7 @@ export namespace Prisma {
     name: string
     slug: string
     description: string | null
-    color: string | null
+    color: string
     _count: GenreCountAggregateOutputType | null
     _min: GenreMinAggregateOutputType | null
     _max: GenreMaxAggregateOutputType | null
@@ -13697,7 +13710,7 @@ export namespace Prisma {
       name: string
       slug: string
       description: string | null
-      color: string | null
+      color: string
     }, ExtArgs["result"]["genre"]>
     composites: {}
   }
@@ -34034,7 +34047,8 @@ export namespace Prisma {
     slug: 'slug',
     bio: 'bio',
     imageId: 'imageId',
-    verified: 'verified',
+    bannerId: 'bannerId',
+    isVerified: 'isVerified',
     monthlyListeners: 'monthlyListeners',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -34869,7 +34883,8 @@ export namespace Prisma {
     slug?: StringFilter<"Artist"> | string
     bio?: StringNullableFilter<"Artist"> | string | null
     imageId?: StringFilter<"Artist"> | string
-    verified?: BoolFilter<"Artist"> | boolean
+    bannerId?: StringFilter<"Artist"> | string
+    isVerified?: BoolFilter<"Artist"> | boolean
     monthlyListeners?: IntFilter<"Artist"> | number
     createdAt?: DateTimeFilter<"Artist"> | Date | string
     updatedAt?: DateTimeFilter<"Artist"> | Date | string
@@ -34886,7 +34901,8 @@ export namespace Prisma {
     slug?: SortOrder
     bio?: SortOrderInput | SortOrder
     imageId?: SortOrder
-    verified?: SortOrder
+    bannerId?: SortOrder
+    isVerified?: SortOrder
     monthlyListeners?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -34906,7 +34922,8 @@ export namespace Prisma {
     name?: StringFilter<"Artist"> | string
     bio?: StringNullableFilter<"Artist"> | string | null
     imageId?: StringFilter<"Artist"> | string
-    verified?: BoolFilter<"Artist"> | boolean
+    bannerId?: StringFilter<"Artist"> | string
+    isVerified?: BoolFilter<"Artist"> | boolean
     monthlyListeners?: IntFilter<"Artist"> | number
     createdAt?: DateTimeFilter<"Artist"> | Date | string
     updatedAt?: DateTimeFilter<"Artist"> | Date | string
@@ -34923,7 +34940,8 @@ export namespace Prisma {
     slug?: SortOrder
     bio?: SortOrderInput | SortOrder
     imageId?: SortOrder
-    verified?: SortOrder
+    bannerId?: SortOrder
+    isVerified?: SortOrder
     monthlyListeners?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -34943,7 +34961,8 @@ export namespace Prisma {
     slug?: StringWithAggregatesFilter<"Artist"> | string
     bio?: StringNullableWithAggregatesFilter<"Artist"> | string | null
     imageId?: StringWithAggregatesFilter<"Artist"> | string
-    verified?: BoolWithAggregatesFilter<"Artist"> | boolean
+    bannerId?: StringWithAggregatesFilter<"Artist"> | string
+    isVerified?: BoolWithAggregatesFilter<"Artist"> | boolean
     monthlyListeners?: IntWithAggregatesFilter<"Artist"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Artist"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Artist"> | Date | string
@@ -35168,7 +35187,7 @@ export namespace Prisma {
     name?: StringFilter<"Genre"> | string
     slug?: StringFilter<"Genre"> | string
     description?: StringNullableFilter<"Genre"> | string | null
-    color?: StringNullableFilter<"Genre"> | string | null
+    color?: StringFilter<"Genre"> | string
     songs?: SongGenreListRelationFilter
     albums?: AlbumGenreListRelationFilter
     artists?: ArtistGenreListRelationFilter
@@ -35179,7 +35198,7 @@ export namespace Prisma {
     name?: SortOrder
     slug?: SortOrder
     description?: SortOrderInput | SortOrder
-    color?: SortOrderInput | SortOrder
+    color?: SortOrder
     songs?: SongGenreOrderByRelationAggregateInput
     albums?: AlbumGenreOrderByRelationAggregateInput
     artists?: ArtistGenreOrderByRelationAggregateInput
@@ -35193,7 +35212,7 @@ export namespace Prisma {
     OR?: GenreWhereInput[]
     NOT?: GenreWhereInput | GenreWhereInput[]
     description?: StringNullableFilter<"Genre"> | string | null
-    color?: StringNullableFilter<"Genre"> | string | null
+    color?: StringFilter<"Genre"> | string
     songs?: SongGenreListRelationFilter
     albums?: AlbumGenreListRelationFilter
     artists?: ArtistGenreListRelationFilter
@@ -35204,7 +35223,7 @@ export namespace Prisma {
     name?: SortOrder
     slug?: SortOrder
     description?: SortOrderInput | SortOrder
-    color?: SortOrderInput | SortOrder
+    color?: SortOrder
     _count?: GenreCountOrderByAggregateInput
     _max?: GenreMaxOrderByAggregateInput
     _min?: GenreMinOrderByAggregateInput
@@ -35218,7 +35237,7 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Genre"> | string
     slug?: StringWithAggregatesFilter<"Genre"> | string
     description?: StringNullableWithAggregatesFilter<"Genre"> | string | null
-    color?: StringNullableWithAggregatesFilter<"Genre"> | string | null
+    color?: StringWithAggregatesFilter<"Genre"> | string
   }
 
   export type SongArtistWhereInput = {
@@ -36686,7 +36705,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -36703,7 +36723,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -36720,7 +36741,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36737,7 +36759,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36754,7 +36777,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -36766,7 +36790,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36778,7 +36803,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37033,7 +37059,7 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    color?: string | null
+    color: string
     songs?: SongGenreCreateNestedManyWithoutGenreInput
     albums?: AlbumGenreCreateNestedManyWithoutGenreInput
     artists?: ArtistGenreCreateNestedManyWithoutGenreInput
@@ -37044,7 +37070,7 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    color?: string | null
+    color: string
     songs?: SongGenreUncheckedCreateNestedManyWithoutGenreInput
     albums?: AlbumGenreUncheckedCreateNestedManyWithoutGenreInput
     artists?: ArtistGenreUncheckedCreateNestedManyWithoutGenreInput
@@ -37055,7 +37081,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
     songs?: SongGenreUpdateManyWithoutGenreNestedInput
     albums?: AlbumGenreUpdateManyWithoutGenreNestedInput
     artists?: ArtistGenreUpdateManyWithoutGenreNestedInput
@@ -37066,7 +37092,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
     songs?: SongGenreUncheckedUpdateManyWithoutGenreNestedInput
     albums?: AlbumGenreUncheckedUpdateManyWithoutGenreNestedInput
     artists?: ArtistGenreUncheckedUpdateManyWithoutGenreNestedInput
@@ -37077,7 +37103,7 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    color?: string | null
+    color: string
   }
 
   export type GenreUpdateManyMutationInput = {
@@ -37085,7 +37111,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
   }
 
   export type GenreUncheckedUpdateManyInput = {
@@ -37093,7 +37119,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
   }
 
   export type SongArtistCreateInput = {
@@ -38619,7 +38645,8 @@ export namespace Prisma {
     slug?: SortOrder
     bio?: SortOrder
     imageId?: SortOrder
-    verified?: SortOrder
+    bannerId?: SortOrder
+    isVerified?: SortOrder
     monthlyListeners?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -38635,7 +38662,8 @@ export namespace Prisma {
     slug?: SortOrder
     bio?: SortOrder
     imageId?: SortOrder
-    verified?: SortOrder
+    bannerId?: SortOrder
+    isVerified?: SortOrder
     monthlyListeners?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -38647,7 +38675,8 @@ export namespace Prisma {
     slug?: SortOrder
     bio?: SortOrder
     imageId?: SortOrder
-    verified?: SortOrder
+    bannerId?: SortOrder
+    isVerified?: SortOrder
     monthlyListeners?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -42994,7 +43023,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43010,7 +43040,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43130,7 +43161,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43146,7 +43178,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43722,7 +43755,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43738,7 +43772,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43821,7 +43856,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43837,7 +43873,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -43898,7 +43935,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43914,7 +43952,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -43997,7 +44036,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44013,7 +44053,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44073,7 +44114,7 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    color?: string | null
+    color: string
     albums?: AlbumGenreCreateNestedManyWithoutGenreInput
     artists?: ArtistGenreCreateNestedManyWithoutGenreInput
   }
@@ -44083,7 +44124,7 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    color?: string | null
+    color: string
     albums?: AlbumGenreUncheckedCreateNestedManyWithoutGenreInput
     artists?: ArtistGenreUncheckedCreateNestedManyWithoutGenreInput
   }
@@ -44160,7 +44201,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
     albums?: AlbumGenreUpdateManyWithoutGenreNestedInput
     artists?: ArtistGenreUpdateManyWithoutGenreNestedInput
   }
@@ -44170,7 +44211,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
     albums?: AlbumGenreUncheckedUpdateManyWithoutGenreNestedInput
     artists?: ArtistGenreUncheckedUpdateManyWithoutGenreNestedInput
   }
@@ -44219,7 +44260,7 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    color?: string | null
+    color: string
     songs?: SongGenreCreateNestedManyWithoutGenreInput
     artists?: ArtistGenreCreateNestedManyWithoutGenreInput
   }
@@ -44229,7 +44270,7 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    color?: string | null
+    color: string
     songs?: SongGenreUncheckedCreateNestedManyWithoutGenreInput
     artists?: ArtistGenreUncheckedCreateNestedManyWithoutGenreInput
   }
@@ -44300,7 +44341,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
     songs?: SongGenreUpdateManyWithoutGenreNestedInput
     artists?: ArtistGenreUpdateManyWithoutGenreNestedInput
   }
@@ -44310,7 +44351,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
     songs?: SongGenreUncheckedUpdateManyWithoutGenreNestedInput
     artists?: ArtistGenreUncheckedUpdateManyWithoutGenreNestedInput
   }
@@ -44321,7 +44362,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -44337,7 +44379,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -44357,7 +44400,7 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    color?: string | null
+    color: string
     songs?: SongGenreCreateNestedManyWithoutGenreInput
     albums?: AlbumGenreCreateNestedManyWithoutGenreInput
   }
@@ -44367,7 +44410,7 @@ export namespace Prisma {
     name: string
     slug: string
     description?: string | null
-    color?: string | null
+    color: string
     songs?: SongGenreUncheckedCreateNestedManyWithoutGenreInput
     albums?: AlbumGenreUncheckedCreateNestedManyWithoutGenreInput
   }
@@ -44394,7 +44437,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44410,7 +44454,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44436,7 +44481,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
     songs?: SongGenreUpdateManyWithoutGenreNestedInput
     albums?: AlbumGenreUpdateManyWithoutGenreNestedInput
   }
@@ -44446,7 +44491,7 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: StringFieldUpdateOperationsInput | string
     songs?: SongGenreUncheckedUpdateManyWithoutGenreNestedInput
     albums?: AlbumGenreUncheckedUpdateManyWithoutGenreNestedInput
   }
@@ -45316,7 +45361,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -45332,7 +45378,8 @@ export namespace Prisma {
     slug: string
     bio?: string | null
     imageId: string
-    verified?: boolean
+    bannerId: string
+    isVerified?: boolean
     monthlyListeners?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -45429,7 +45476,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -45445,7 +45493,8 @@ export namespace Prisma {
     slug?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     imageId?: StringFieldUpdateOperationsInput | string
-    verified?: BoolFieldUpdateOperationsInput | boolean
+    bannerId?: StringFieldUpdateOperationsInput | string
+    isVerified?: BoolFieldUpdateOperationsInput | boolean
     monthlyListeners?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

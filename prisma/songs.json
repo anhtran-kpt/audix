@@ -1,0 +1,1551 @@
+{
+  "songs": [
+    {
+      "title": "Nàng Thơ",
+      "slug": "nang-tho",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "25",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/nang-tho",
+      "duration": 254
+    },
+    {
+      "title": "Thói Quen",
+      "slug": "thoi-quen",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "25",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/thoi-quen",
+      "duration": 270
+    },
+    {
+      "title": "Chia Tay",
+      "slug": "chia-tay",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "25",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/chia-tay",
+      "duration": 279
+    },
+    {
+      "title": "Vì Một Câu Nói",
+      "slug": "vi-mot-cau-noi",
+      "trackNumber": 4,
+      "isExplicit": false,
+      "albumSlug": "25",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/vi-mot-cau-noi",
+      "duration": 290
+    },
+    {
+      "title": "Ngủ Đi Để Thấy Nhau Còn Hồn Nhiên",
+      "slug": "ngu-di-de-thay-nhau-con-hon-nhien",
+      "trackNumber": 5,
+      "isExplicit": false,
+      "albumSlug": "25",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/ngu-di-de-thay-nhau-con-hon-nhien",
+      "duration": 351
+    },
+    {
+      "title": "Bụi",
+      "slug": "bui",
+      "trackNumber": 6,
+      "isExplicit": false,
+      "albumSlug": "25",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/bui",
+      "duration": 278
+    },
+    {
+      "title": "Nửa Thập Kỉ",
+      "slug": "nua-thap-ki",
+      "trackNumber": 7,
+      "isExplicit": false,
+      "albumSlug": "25",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/nua-thap-ki",
+      "duration": 320
+    },
+    {
+      "title": "Bữa Tiệc Của Giác Quan",
+      "slug": "bua-tiec-cua-giac-quan",
+      "trackNumber": 8,
+      "isExplicit": false,
+      "albumSlug": "25",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/bua-tiec-cua-giac-quan",
+      "duration": 250
+    },
+    {
+      "title": "Về Nhà",
+      "slug": "ve-nha",
+      "trackNumber": 9,
+      "isExplicit": false,
+      "albumSlug": "25",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/ve-nha",
+      "duration": 297
+    },
+    {
+      "title": "Ném Câu Yêu Vào Không Trung",
+      "slug": "nem-cau-yeu-vao-khong-trung",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "yen",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/nem-cau-yeu-vao-khong-trung",
+      "duration": 236
+    },
+    {
+      "title": "Đôi Mươi",
+      "slug": "doi-muoi",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "yen",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "relax"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/doi-muoi",
+      "duration": 260
+    },
+    {
+      "title": "Đoạn Kết Mới",
+      "slug": "doan-ket-moi",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "yen",
+      "artists": [
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/doan-ket-moi",
+      "duration": 294
+    },
+    {
+      "title": "Xin Em",
+      "slug": "xin-em",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "xin-em",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Nguyễn Hồng Thuận",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Nguyễn Hồng Thuận",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/xin-em",
+      "duration": 315
+    },
+    {
+      "title": "Hàn Gắn",
+      "slug": "han-gan",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "xin-em",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Hoàng Tôn",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Hoàng Tôn",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/han-gan",
+      "duration": 245
+    },
+    {
+      "title": "Nơi Tình Yêu Kết Thúc",
+      "slug": "noi-tinh-yeu-ket-thuc",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "xin-em",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Tiến Minh",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Tiến Minh",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/noi-tinh-yeu-ket-thuc",
+      "duration": 317
+    },
+    {
+      "title": "Chỉ Còn Lại Tình Yêu",
+      "slug": "chi-con-lai-tinh-yeu",
+      "trackNumber": 4,
+      "isExplicit": false,
+      "albumSlug": "xin-em",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Tiến Minh",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Tiến Minh",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/chi-con-lai-tinh-yeu",
+      "duration": 316
+    },
+    {
+      "title": "Buông",
+      "slug": "buong",
+      "trackNumber": 5,
+      "isExplicit": false,
+      "albumSlug": "xin-em",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Nguyễn Duy Anh",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Nguyễn Duy Anh",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/buong",
+      "duration": 229
+    },
+    {
+      "title": "Ngừng",
+      "slug": "ngung",
+      "trackNumber": 6,
+      "isExplicit": false,
+      "albumSlug": "xin-em",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Nguyễn Duy Anh",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Nguyễn Duy Anh",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/ngung",
+      "duration": 251
+    },
+    {
+      "title": "Bí Mật Không Tên",
+      "slug": "bi-mat-khong-ten",
+      "trackNumber": 7,
+      "isExplicit": false,
+      "albumSlug": "xin-em",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Aitai",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Aitai",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/bi-mat-khong-ten",
+      "duration": 325
+    },
+    {
+      "title": "Gần",
+      "slug": "gan",
+      "trackNumber": 8,
+      "isExplicit": false,
+      "albumSlug": "xin-em",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Kiên Trần",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Kiên Trần",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/gan",
+      "duration": 249
+    },
+    {
+      "title": "Mơ Hồ",
+      "slug": "mo-ho",
+      "trackNumber": 9,
+      "isExplicit": false,
+      "albumSlug": "xin-em",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "bui-anh-tuan",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        }
+      ],
+      "audioId": "audix/audios/mo-ho",
+      "duration": 255
+    },
+    {
+      "title": "Xin Đừng Lặng Im",
+      "slug": "xin-dung-lang-im",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "xin-dung-lang-im",
+      "artists": [
+        {
+          "slug": "soobin",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Dương Khắc Linh",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Dương Khắc Linh",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/xin-dung-lang-im",
+      "duration": 268
+    },
+    {
+      "title": "Thuận Theo Ý Trời",
+      "slug": "thuan-theo-y-troi",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "thuan-theo-y-troi",
+      "artists": [
+        {
+          "slug": "bui-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Vương Anh Tú",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Vương Anh Tú",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/thuan-theo-y-troi",
+      "duration": 237
+    },
+    {
+      "title": "number one girl",
+      "slug": "number-one-girl",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/number-one-girl",
+      "duration": 217
+    },
+    {
+      "title": "3am",
+      "slug": "3am",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/3am",
+      "duration": 154
+    },
+    {
+      "title": "two years",
+      "slug": "two-years",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/two-years",
+      "duration": 167
+    },
+    {
+      "title": "toxic till the end",
+      "slug": "toxic-till-the-end",
+      "trackNumber": 4,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/toxic-till-the-end",
+      "duration": 156
+    },
+    {
+      "title": "drinks or coffee",
+      "slug": "drinks-or-coffee",
+      "trackNumber": 5,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/drinks-or-coffee",
+      "duration": 133
+    },
+    {
+      "title": "APT.",
+      "slug": "apt.",
+      "trackNumber": 6,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        },
+        {
+          "slug": "bruno-mars",
+          "role": "FEATURED_ARTIST",
+          "order": 1
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "bruno-mars",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 2
+        },
+        {
+          "slug": "bruno-mars",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 3
+        }
+      ],
+      "audioId": "audix/audios/apt",
+      "duration": 173
+    },
+    {
+      "title": "gameboy",
+      "slug": "gameboy",
+      "trackNumber": 7,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/gameboy",
+      "duration": 166
+    },
+    {
+      "title": "stay a little longer",
+      "slug": "stay-a-little-longer",
+      "trackNumber": 8,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/stay-a-little-longer",
+      "duration": 246
+    },
+    {
+      "title": "not the same",
+      "slug": "not-the-same",
+      "trackNumber": 9,
+      "isExplicit": true,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/not-the-same",
+      "duration": 184
+    },
+    {
+      "title": "call it the end",
+      "slug": "call-it-the-end",
+      "trackNumber": 10,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/call-it-the-end",
+      "duration": 141
+    },
+    {
+      "title": "too bad for us",
+      "slug": "too-bad-for-us",
+      "trackNumber": 11,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/too-bad-for-us",
+      "duration": 236
+    },
+    {
+      "title": "dance all night",
+      "slug": "dance-all-night",
+      "trackNumber": 12,
+      "isExplicit": false,
+      "albumSlug": "rosie",
+      "artists": [
+        {
+          "slug": "rose",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "k-pop"],
+      "credits": [
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "rose",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/dance-all-night",
+      "duration": 215
+    },
+    {
+      "title": "Phía Sau Một Cô Gái",
+      "slug": "phia-sau-mot-co-gai",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "phia-sau-mot-co-gai",
+      "artists": [
+        {
+          "slug": "soobin",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Tiên Cookie",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Tiên Cookie",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/phia-sau-mot-co-gai",
+      "duration": 272
+    },
+    {
+      "title": "Nơi Này Có Anh",
+      "slug": "noi-nay-co-anh",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "noi-nay-co-anh",
+      "artists": [
+        {
+          "slug": "son-tung-m-tp",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/noi-nay-co-anh",
+      "duration": 278
+    },
+    {
+      "title": "Making My Way",
+      "slug": "making-my-way",
+      "trackNumber": 1,
+      "isExplicit": true,
+      "albumSlug": "making-my-way",
+      "artists": [
+        {
+          "slug": "son-tung-m-tp",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/making-my-way",
+      "duration": 258
+    },
+    {
+      "title": "Lạc Trôi",
+      "slug": "lac-troi",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "lac-troi",
+      "artists": [
+        {
+          "slug": "son-tung-m-tp",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/lac-troi",
+      "duration": 272
+    },
+    {
+      "title": "Ex's Hate Me",
+      "slug": "ex-s-hate-me",
+      "trackNumber": 1,
+      "isExplicit": true,
+      "albumSlug": "ex-s-hate-me",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "hip-hop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/ex-s-hate-me",
+      "duration": 258
+    },
+    {
+      "title": "Có Như Không Có",
+      "slug": "co-nhu-khong-co",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "co-nhu-khong-co",
+      "artists": [
+        {
+          "slug": "hien-ho",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Vương Anh Tú",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Vương Anh Tú",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/co-nhu-khong-co",
+      "duration": 273
+    },
+    {
+      "title": "Chúng Ta Của Hiện Tại",
+      "slug": "chung-ta-cua-hien-tai",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "chung-ta-cua-hien-tai",
+      "artists": [
+        {
+          "slug": "son-tung-m-tp",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/chung-ta-cua-hien-tai",
+      "duration": 302
+    },
+    {
+      "title": "Chạy Ngay Đi",
+      "slug": "chay-ngay-di",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "chay-ngay-di",
+      "artists": [
+        {
+          "slug": "son-tung-m-tp",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "son-tung-m-tp",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/chay-ngay-di",
+      "duration": 273
+    },
+    {
+      "title": "Dancing In The Dark",
+      "slug": "dancing-in-the-dark",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "bat-no-len",
+      "artists": [
+        {
+          "slug": "soobin",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/dancing-in-the-dark",
+      "duration": 279
+    },
+    {
+      "title": "Sunset In The City - Deluxe Version",
+      "slug": "sunset-in-the-city-deluxe-version",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "bat-no-len",
+      "artists": [
+        {
+          "slug": "soobin",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/sunset-in-the-city-deluxe-version",
+      "duration": 225
+    },
+    {
+      "title": "Sẽ Quên Em Nhanh Thôi",
+      "slug": "se-quen-em-nhanh-thoi",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "bat-no-len",
+      "artists": [
+        {
+          "slug": "soobin",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/se-quen-em-nhanh-thoi",
+      "duration": 175
+    },
+    {
+      "title": "giá như",
+      "slug": "gia-nhu",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "bat-no-len",
+      "artists": [
+        {
+          "slug": "soobin",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/gia-nhu",
+      "duration": 310
+    },
+    {
+      "title": "Ai Mà Biết Được",
+      "slug": "ai-ma-biet-duoc",
+      "trackNumber": 4,
+      "isExplicit": false,
+      "albumSlug": "bat-no-len",
+      "artists": [
+        {
+          "slug": "soobin",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        },
+        {
+          "slug": "tlinh",
+          "role": "FEATURED_ARTIST",
+          "order": 1
+        }
+      ],
+      "genreSlugs": ["pop", "r&b", "hip-hop"],
+      "credits": [
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "tlinh",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 2
+        },
+        {
+          "slug": "tlinh",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 3
+        }
+      ],
+      "audioId": "audix/audios/ai-ma-biet-duoc",
+      "duration": 256
+    },
+    {
+      "title": "Bật Nó Lên",
+      "slug": "bat-no-len",
+      "trackNumber": 5,
+      "isExplicit": false,
+      "albumSlug": "bat-no-len",
+      "artists": [
+        {
+          "slug": "soobin",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "r&b"],
+      "credits": [
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "soobin",
+          "name": "",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "audioId": "audix/audios/bat-no-len",
+      "duration": 2006
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "genres": [
+    {
+      "name": "Rock",
+      "slug": "rock",
+      "description": "Rock music is a genre of popular music that originated in the United States in the late 1940s and early 1950s, characterized by strong rhythms, amplified instruments (especially electric guitar), and often a rebellious spirit. It has evolved into numerous subgenres and remains a dominant force in music.",
+      "color": "#a1c4b3"
+    },
+    {
+      "name": "Pop",
+      "slug": "pop",
+      "description": "Pop music is a genre of popular music that generally aims for a wide appeal, characterized by catchy melodies, simple song structures, and often incorporating elements from various other genres. It is typically designed for mainstream success and radio play.",
+      "color": "#e0a78c"
+    },
+    {
+      "name": "Hip-Hop",
+      "slug": "hip-hop",
+      "description": "Hip-Hop is a cultural movement and music genre that originated in the Bronx, New York City, in the 1970s. It features rhythmic spoken word (rap) over musical backing, often incorporating sampling, beatboxing, and DJing. It has evolved to include various subgenres and has a significant global influence.",
+      "color": "#5f8d9b"
+    },
+    {
+      "name": "Jazz",
+      "slug": "jazz",
+      "description": "Jazz is a music genre that originated in the African-American communities of New Orleans, United States, in the late 19th and early 20th centuries. It is characterized by improvisation, syncopation, polyrhythms, and a strong emphasis on swing and blues notes. Jazz encompasses a wide range of styles, from traditional to contemporary.",
+      "color": "#7bb69d"
+    },
+    {
+      "name": "Classical",
+      "slug": "classical",
+      "description": "Classical music generally refers to art music produced or rooted in the traditions of Western culture, typically spanning from the medieval period to the present day. It is characterized by formal complexity, orchestral instrumentation, and often conveys profound emotional or intellectual depth.",
+      "color": "#c894af"
+    },
+    {
+      "name": "Electronic",
+      "slug": "electronic",
+      "description": "Electronic music is a broad genre of music that utilizes electronic musical instruments, digital instruments, or circuitry-based music technology in its creation. It encompasses a vast array of styles, from dance-oriented genres like house and techno to experimental and ambient forms.",
+      "color": "#8b7e73"
+    },
+    {
+      "name": "Country",
+      "slug": "country",
+      "description": "Country music is a genre of American popular music that originated in the Southern United States in the early 20th century. It often features narrative lyrics, acoustic instruments like guitars and banjos, and themes related to rural life, love, and hardship.",
+      "color": "#d9b382"
+    },
+    {
+      "name": "R&B",
+      "slug": "r&b",
+      "description": "R&B, or Rhythm and Blues, is a genre of popular African-American music that originated in the 1940s. It combines elements of blues, jazz, and gospel, characterized by strong rhythms, soulful vocals, and often features a prominent backbeat. Modern R&B has evolved to incorporate pop, soul, and hip-hop influences.",
+      "color": "#9d8eaf"
+    },
+    {
+      "name": "Metal",
+      "slug": "metal",
+      "description": "Metal, or heavy metal, is a genre of rock music that developed in the late 1960s and early 1970s. It is characterized by distorted guitar riffs, powerful vocals, intense drumming, and often features themes of aggression, fantasy, or social commentary. It has numerous subgenres, each with its distinct sound.",
+      "color": "#7c93a7"
+    },
+    {
+      "name": "Folk & Acoustic",
+      "slug": "folk-acoustic",
+      "description": "Folk and Acoustic music encompasses genres characterized by storytelling, traditional melodies, and often features acoustic instruments. Folk music typically originates from traditional cultures and tells tales of everyday life, while acoustic music emphasizes unamplified instrumentation across various styles.",
+      "color": "#a8d4a4"
+    },
+    {
+      "name": "Reggae",
+      "slug": "reggae",
+      "description": "Reggae is a music genre that originated in Jamaica in the late 1960s. It is characterized by a strong bass line, a distinctive off-beat rhythm, and often features lyrics with social and political commentary. Reggae has influenced many other genres worldwide.",
+      "color": "#e3b8a1"
+    },
+    {
+      "name": "Soul",
+      "slug": "soul",
+      "description": "Soul music is a genre that originated in the African-American community in the United States in the 1950s and 1960s. It combines elements of gospel music, rhythm and blues, and jazz, characterized by its emotional and heartfelt vocals, strong vocal harmonies, and emphasis on improvisation.",
+      "color": "#6e7e8c"
+    },
+    {
+      "name": "Funk & Disco",
+      "slug": "funk-disco",
+      "description": "Funk and Disco are dance-oriented music genres that emerged in the 1960s and 1970s, respectively. Funk is characterized by strong rhythmic grooves, prominent bass lines, and syncopated guitar riffs, while Disco emphasizes four-on-the-floor beats, orchestral arrangements, and a focus on danceability and glamorous aesthetics.",
+      "color": "#b59c7a"
+    },
+    {
+      "name": "Blues",
+      "slug": "blues",
+      "description": "Blues is a music genre and musical form originated by African Americans in the Southern United States. It developed from spirituals, work songs, and field hollers, characterized by its distinctive vocal and instrumental techniques, often expressing feelings of sorrow or melancholy.",
+      "color": "#d08a8a"
+    },
+    {
+      "name": "K-Pop",
+      "slug": "k-pop",
+      "description": "K-Pop, or Korean Pop, is a music genre originating in South Korea that incorporates diverse styles such as pop, rock, hip-hop, R&B, and electronic music. It is known for its catchy tunes, synchronized choreography, vibrant music videos, and extensive use of social media for global promotion.",
+      "color": "#94a2b9"
+    },
+    {
+      "name": "Chill",
+      "slug": "chill",
+      "description": "Chill refers to a broad category of music designed for relaxation and calm. It often features downtempo beats, ambient soundscapes, and mellow melodies, ideal for unwinding, studying, or creating a relaxed atmosphere.",
+      "color": "#c1e2b3"
+    },
+    {
+      "name": "Workout",
+      "slug": "workout",
+      "description": "Workout music is curated specifically to motivate and energize listeners during physical activity. It typically features upbeat tempos, strong rhythms, and driving melodies across various genres like pop, electronic, and hip-hop, designed to enhance performance and endurance.",
+      "color": "#e79f7a"
+    },
+    {
+      "name": "Study",
+      "slug": "study",
+      "description": "Study music is designed to aid concentration and focus, often featuring instrumental, ambient, or classical pieces that are non-distracting. The goal is to create a conducive auditory environment for learning and cognitive tasks.",
+      "color": "#7cb7bf"
+    },
+    {
+      "name": "Focus",
+      "slug": "focus",
+      "description": "Focus music aims to enhance concentration and productivity, often employing minimalist, instrumental, or ambient sounds to reduce distractions. It helps create a steady background environment for tasks requiring sustained mental effort.",
+      "color": "#ab8c7d"
+    },
+    {
+      "name": "Relax",
+      "slug": "relax",
+      "description": "Relax music is crafted to induce a state of tranquility and reduce stress. It typically features calming melodies, natural sounds, and slow tempos, promoting mental and physical relaxation.",
+      "color": "#6a8d79"
+    },
+    {
+      "name": "Sleep",
+      "slug": "sleep",
+      "description": "Sleep music consists of gentle, calming sounds and melodies designed to facilitate sleep. It often includes ambient textures, soft instrumental pieces, or white noise to soothe the mind and promote a restful night.",
+      "color": "#c6a3b6"
+    },
+    {
+      "name": "Mood",
+      "slug": "mood",
+      "description": "Mood-based music categories are collections of songs curated to evoke or complement specific emotions or states of mind. This can range from upbeat and happy playlists to reflective and melancholic ones, designed to match or influence the listener's feelings.",
+      "color": "#8c7a6f"
+    },
+    {
+      "name": "Party",
+      "slug": "party",
+      "description": "Party music is energetic and upbeat, designed to create a lively atmosphere for celebrations and social gatherings. It often features popular hits, danceable beats, and a mix of genres that encourage movement and excitement.",
+      "color": "#d8b2a0"
+    },
+    {
+      "name": "Latin",
+      "slug": "latin",
+      "description": "Latin music encompasses a wide variety of genres from Latin America, Spain, and Portugal, characterized by vibrant rhythms, diverse instrumentation, and often sung in Spanish or Portuguese. It includes styles like salsa, reggaeton, bachata, and merengue, reflecting the rich cultural heritage of the region.",
+      "color": "#a27f8a"
+    },
+    {
+      "name": "Indie",
+      "slug": "indie",
+      "description": "Indie music refers to music produced independently from major commercial record labels and often characterized by its distinctive artistic vision and DIY ethos. It encompasses a broad range of styles, frequently pushing creative boundaries and maintaining a unique, often lo-fi, aesthetic.",
+      "color": "#b8c9d6"
+    }
+  ]
+}
