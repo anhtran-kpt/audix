@@ -24,9 +24,9 @@ export const BannerSection = ({
 
   return (
     <section className="text-white">
-      <div className="relative h-96 -mx-12 -mt-21">
+      <div className="relative h-96 -mx-12 -mt-15">
         <div
-          className="absolute inset-0 -mx-12 -mt-24 bg-gradient-to-t from-[var(--tw-gradient-from)] via-[var(--tw-gradient-via)] to-[var(--tw-gradient-to)]"
+          className="absolute inset-0 -mx-12 -mt-15 bg-gradient-to-t from-[var(--tw-gradient-from)] via-[var(--tw-gradient-via)] to-[var(--tw-gradient-to)]"
           style={
             {
               "--tw-gradient-from": gradient?.from,

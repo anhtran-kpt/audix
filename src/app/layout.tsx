@@ -23,22 +23,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-hidden`}
-      >
+    <html
+      lang="en"
+      className="scroll-smooth overflow-x-hidden overflow-y-scroll overscroll-none"
+    >
+      <body className="antialiased min-h-screen">
         <SidebarProvider>
           <AppSidebar />
-          <main className="flex-grow">
+          <div className="flex flex-col w-full">
             <Header />
-            <div className="space-y-8 p-12">{children}</div>
-          </main>
+            <main className="flex-1 p-12 space-y-8">{children}</main>
+          </div>
         </SidebarProvider>
-        <Player />
       </body>
     </html>
   );

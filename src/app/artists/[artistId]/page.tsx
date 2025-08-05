@@ -1,9 +1,8 @@
+import { AboutSection } from "@/components/sections/artist-detail/about-section";
 import { ActionsSection } from "@/components/sections/artist-detail/actions-section";
 import { BannerSection } from "@/components/sections/artist-detail/banner-section";
-import {
-  ArtistPopularTracks,
-  PopularTracksSection,
-} from "@/components/sections/artist-detail/popular-tracks-section";
+import { DiscographySection } from "@/components/sections/artist-detail/discography-section";
+import { PopularSongsSection } from "@/components/sections/artist-detail/popular-songs-section";
 import prisma from "@/lib/prisma";
 
 export default async function ArtistDetail({
@@ -31,7 +30,55 @@ export default async function ArtistDetail({
     },
   });
 
-  console.log(artist);
+  const [popularSongs, popularReleases, albumReleases, singleAndEpReleases] =
+    await Promise.all([
+      prisma.song.findMany({
+        where: {
+          artists: {
+            some: {
+              artistId: artist.id,
+            },
+          },
+        },
+        take: 5,
+        orderBy: {
+          playCount: "desc",
+        },
+      }),
+      prisma.album.findMany({
+        where: {
+          artistId: artist.id,
+        },
+        take: 5,
+        orderBy: {
+          releaseDate: "desc",
+        },
+      }),
+      prisma.album.findMany({
+        where: {
+          artistId: artist.id,
+          albumType: "ALBUM",
+        },
+        take: 5,
+        orderBy: {
+          releaseDate: "desc",
+        },
+      }),
+      prisma.album.findMany({
+        where: {
+          artistId: artist.id,
+          albumType: {
+            in: ["EP", "SINGLE"],
+          },
+        },
+        take: 5,
+        orderBy: {
+          releaseDate: "desc",
+        },
+      }),
+    ]);
+
+  console.log(popularSongs);
 
   return (
     <>
@@ -43,7 +90,18 @@ export default async function ArtistDetail({
         genres={artist.genres}
       />
       <ActionsSection name={artist.name} />
-      <PopularTracksSection />
+      {/* <PopularSongsSection songs={popularSongs} /> */}
+      <DiscographySection
+        popularReleases={popularReleases}
+        albumReleases={albumReleases}
+        singleAndEpReleases={singleAndEpReleases}
+      />
+      <AboutSection
+        bio={artist.bio}
+        monthlyListeners={artist.monthlyListeners}
+        name={artist.name}
+        bannerId={artist.bannerId}
+      />
     </>
   );
 }
