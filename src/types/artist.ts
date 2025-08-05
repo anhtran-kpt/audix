@@ -5,5 +5,15 @@ export type TFullArtist = Prisma.ArtistGetPayload<{
   include: {
     songs: true;
     albums: true;
+    genres: {
+      select: {
+        genre: {
+          select: {
+            name: true;
+            color: true;
+          };
+        };
+      };
+    };
   };
 }>;

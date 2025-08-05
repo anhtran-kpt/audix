@@ -1,4 +1,9 @@
-import { BannerSection } from "@/components/sections/artistDetail/BannerSection";
+import { ActionsSection } from "@/components/sections/artist-detail/actions-section";
+import { BannerSection } from "@/components/sections/artist-detail/banner-section";
+import {
+  ArtistPopularTracks,
+  PopularTracksSection,
+} from "@/components/sections/artist-detail/popular-tracks-section";
 import prisma from "@/lib/prisma";
 
 export default async function ArtistDetail({
@@ -31,12 +36,14 @@ export default async function ArtistDetail({
   return (
     <>
       <BannerSection
-        imageId={artist?.imageId}
-        name={artist?.name}
-        monthlyListeners={artist?.monthlyListeners}
-        isVerified={artist?.isVerified}
+        imageId={artist.imageId}
+        name={artist.name}
+        monthlyListeners={artist.monthlyListeners}
+        isVerified={artist.isVerified}
         genres={artist.genres}
       />
+      <ActionsSection name={artist.name} />
+      <PopularTracksSection />
     </>
   );
 }

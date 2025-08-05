@@ -3,12 +3,13 @@
 import { BadgeCheckIcon } from "lucide-react";
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
-import { TArtist } from "@/types";
+import { TFullArtist } from "@/types";
 import { ArtistImage } from "@/components/ui/artist-image";
+import { Badge } from "@/components/ui/badge";
 
 type BannerSectionProps = Pick<
-  TArtist,
-  "imageId" | "isVerified" | "monthlyListeners" | "name"
+  TFullArtist,
+  "imageId" | "isVerified" | "monthlyListeners" | "name" | "genres"
 >;
 
 export const BannerSection = ({
@@ -16,6 +17,7 @@ export const BannerSection = ({
   isVerified,
   monthlyListeners,
   name,
+  genres,
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
@@ -41,15 +43,25 @@ export const BannerSection = ({
             onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
             priority
           />
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             {isVerified && (
               <div className="flex gap-2 items-center">
                 <BadgeCheckIcon className="stroke-white fill-sky-500 size-8" />
                 Verified Artist
               </div>
             )}
-            <p className="font-extrabold text-6xl mt-1 mb-4">{name}</p>
+            <p className="font-extrabold text-6xl mt-1 mb-3">{name}</p>
             <p className="font-medium">{monthlyListeners} monthly listeners</p>
+            <div className="space-x-2">
+              {genres.map(({ genre }) => (
+                <Badge
+                  key={genre.name}
+                  style={{ backgroundColor: genre.color }}
+                >
+                  {genre.name}
+                </Badge>
+              ))}
+            </div>
           </div>
         </div>
       </div>
