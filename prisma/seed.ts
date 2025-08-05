@@ -35,6 +35,16 @@ async function main() {
         allArtists.map((a) => [a.slug, a.id])
       );
 
+      await tx.artistGenre.createMany({
+        data: artistData.flatMap((artist) =>
+          artist.genreSlugs.map((gs) => ({
+            artistId: artistMap[artist.slug],
+            genreId: genreMap[gs],
+          }))
+        ),
+        skipDuplicates: true,
+      });
+
       const albumsPure = albumData.map(
         ({ genreSlugs, artistSlug, albumType, releaseDate, ...rest }) => ({
           ...rest,
@@ -54,6 +64,16 @@ async function main() {
       });
 
       const albumMap = Object.fromEntries(allAlbums.map((a) => [a.slug, a.id]));
+
+      await tx.albumGenre.createMany({
+        data: albumData.flatMap((album) =>
+          album.genreSlugs.map((gs) => ({
+            albumId: albumMap[album.slug],
+            genreId: genreMap[gs],
+          }))
+        ),
+        skipDuplicates: true,
+      });
 
       const songsPure = songData.map((s) => ({
         title: s.title,

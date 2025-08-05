@@ -35,7 +35,7 @@ export default function RootLayout({
           <AppSidebar />
           <main className="flex-grow">
             <Header />
-            {children}
+            <div className="space-y-8 p-12">{children}</div>
           </main>
         </SidebarProvider>
         <Player />

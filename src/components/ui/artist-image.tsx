@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 import { CldImage, CldImageProps } from "next-cloudinary";
 import { FC } from "react";
 
-interface CoverImageProps extends CldImageProps {
+interface ArtistImageProps extends CldImageProps {
   size?: ImageSize;
 }
 
-export const CoverImage: FC<CoverImageProps> = ({
+export const ArtistImage: FC<ArtistImageProps> = ({
   size = "md",
   className,
   ...props
@@ -19,7 +19,7 @@ export const CoverImage: FC<CoverImageProps> = ({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-md aspect-square",
+        "relative overflow-hidden rounded-full aspect-square border-2",
         sizeClasses
       )}
     >
