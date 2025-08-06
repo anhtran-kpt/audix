@@ -1,289 +1,349 @@
-import { useCallback, useEffect, useRef } from "react";
-import { useAudioStore } from "@/stores/audio-store";
-import { TFullTrack, TPlaylist } from "@/entities/shared/shared-types";
-import { useShallow } from "zustand/react/shallow";
+import { useEffect, useRef, useCallback } from "react";
+import { usePlayerStore } from "@/stores/use-player-store";
+import { getAudioUrl } from "@/lib/helpers/get-audio-url";
 
-export const useCurrentTrack = () =>
-  useAudioStore(useShallow((state) => state.currentTrack));
+export interface UseAudioPlayerOptions {
+  crossfadeEnabled?: boolean;
+  enableKeyboardControls?: boolean;
+  enableMediaSession?: boolean;
+  autoPlay?: boolean;
+}
 
-export const useIsPlaying = () =>
-  useAudioStore(useShallow((state) => state.isPlaying));
+export function useAudioPlayer(options: UseAudioPlayerOptions = {}) {
+  const {
+    crossfadeEnabled = true,
+    enableKeyboardControls = true,
+    enableMediaSession = true,
+    autoPlay = true,
+  } = options;
 
-export const useIsLoading = () =>
-  useAudioStore(useShallow((state) => state.isLoading));
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const crossfadeAudioRef = useRef<HTMLAudioElement>(null);
+  const isCrossfading = useRef(false);
 
-export const useCurrentTime = () =>
-  useAudioStore(useShallow((state) => state.currentTime));
+  const {
+    currentTrack,
+    isPlaying,
+    volume,
+    isMuted,
+    crossfadeDuration,
+    repeatMode,
+    nextTrack,
+    updateCurrentTime,
+    updateDuration,
+    setIsLoading,
+    setAudioRef,
+    pause,
+    play,
+  } = usePlayerStore();
 
-export const useDuration = () =>
-  useAudioStore(useShallow((state) => state.duration));
-
-export const useVolume = () =>
-  useAudioStore(useShallow((state) => state.volume));
-
-export const useIsMuted = () =>
-  useAudioStore(useShallow((state) => state.isMuted));
-
-export const useIsShuffled = () =>
-  useAudioStore(useShallow((state) => state.isShuffled));
-
-export const useRepeatMode = () =>
-  useAudioStore(useShallow((state) => state.repeatMode));
-
-export const useQueue = () => useAudioStore(useShallow((state) => state.queue));
-
-export const useQueueIndex = () =>
-  useAudioStore(useShallow((state) => state.queueIndex));
-
-export const usePlaylist = () =>
-  useAudioStore(useShallow((state) => state.currentPlaylist));
-
-export const usePlaylists = () =>
-  useAudioStore(useShallow((state) => state.playlists));
-
-export const useError = () => useAudioStore(useShallow((state) => state.error));
-
-export const usePlaybackState = () =>
-  useAudioStore(
-    useShallow((state) => ({
-      isPlaying: state.isPlaying,
-      isLoading: state.isLoading,
-      currentTime: state.currentTime,
-      duration: state.duration,
-    }))
-  );
-
-export const usePlayerControls = () =>
-  useAudioStore(
-    useShallow((state) => ({
-      play: state.play,
-      pause: state.pause,
-      stop: state.stop,
-      togglePlay: state.togglePlay,
-      next: state.next,
-      previous: state.previous,
-      seek: state.seek,
-      seekBy: state.seekBy,
-    }))
-  );
-
-export const useVolumeControls = () =>
-  useAudioStore(
-    useShallow((state) => ({
-      volume: state.volume,
-      isMuted: state.isMuted,
-      setVolume: state.setVolume,
-      toggleMute: state.toggleMute,
-    }))
-  );
-
-export const usePlayerModes = () =>
-  useAudioStore(
-    useShallow((state) => ({
-      isShuffled: state.isShuffled,
-      repeatMode: state.repeatMode,
-      toggleShuffle: state.toggleShuffle,
-      toggleRepeat: state.toggleRepeat,
-      setRepeatMode: state.setRepeatMode,
-    }))
-  );
-
-export const useQueueManagement = () =>
-  useAudioStore(
-    useShallow((state) => ({
-      queue: state.queue,
-      queueIndex: state.queueIndex,
-      addToQueue: state.addToQueue,
-      removeFromQueue: state.removeFromQueue,
-      clearQueue: state.clearQueue,
-      skipTo: state.skipTo,
-    }))
-  );
-
-export const useAudioPlayer = () => {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const setAudioElement = useAudioStore((state) => state.setAudioElement);
-
+  // Initialize audio element
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.preload = "metadata";
-      setAudioElement(audioRef.current);
+    if (audioRef.current) {
+      setAudioRef(audioRef.current);
+    }
+  }, [setAudioRef]);
+
+  // Load new track
+  useEffect(() => {
+    if (!audioRef.current || !currentTrack) return;
+
+    const audio = audioRef.current;
+    setIsLoading(true);
+
+    audio.src = `${getAudioUrl(currentTrack.audioId)}`;
+    audio.load();
+
+    // Auto-play if enabled and user has interacted with page
+    if (autoPlay && isPlaying) {
+      const playPromise = audio.play();
+      if (playPromise) {
+        playPromise.catch(() => {
+          // Auto-play was prevented, user will need to click play
+          pause();
+        });
+      }
+    }
+  }, [currentTrack?.id, autoPlay, isPlaying, setIsLoading, pause]);
+
+  // Handle volume changes
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume;
+      audioRef.current.muted = isMuted;
+    }
+  }, [volume, isMuted]);
+
+  // Crossfade functionality
+  const handleCrossfade = useCallback(async () => {
+    if (!crossfadeEnabled || crossfadeDuration === 0 || isCrossfading.current) {
+      await nextTrack();
+      return;
     }
 
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = "";
-        setAudioElement(null);
-        audioRef.current = null;
+    const currentAudio = audioRef.current;
+    const crossfadeAudio = crossfadeAudioRef.current;
+
+    if (!currentAudio || !crossfadeAudio) {
+      await nextTrack();
+      return;
+    }
+
+    isCrossfading.current = true;
+
+    try {
+      // Prepare next track
+      await nextTrack();
+
+      // Setup crossfade audio
+      crossfadeAudio.src = currentAudio.src;
+      crossfadeAudio.volume = 0;
+      crossfadeAudio.currentTime = 0;
+
+      const fadeOutStep = volume / (crossfadeDuration * 20); // 20 steps per second
+      const fadeInStep = volume / (crossfadeDuration * 20);
+
+      // Start crossfade
+      await crossfadeAudio.play();
+
+      const fadeInterval = setInterval(() => {
+        // Fade out current track
+        if (currentAudio.volume > 0) {
+          currentAudio.volume = Math.max(0, currentAudio.volume - fadeOutStep);
+        }
+
+        // Fade in next track
+        if (crossfadeAudio.volume < volume) {
+          crossfadeAudio.volume = Math.min(
+            volume,
+            crossfadeAudio.volume + fadeInStep
+          );
+        }
+
+        // Check if crossfade is complete
+        if (currentAudio.volume === 0 && crossfadeAudio.volume === volume) {
+          clearInterval(fadeInterval);
+
+          // Swap audio elements
+          currentAudio.pause();
+          currentAudio.src = crossfadeAudio.src;
+          currentAudio.currentTime = crossfadeAudio.currentTime;
+          currentAudio.volume = volume;
+
+          crossfadeAudio.pause();
+          crossfadeAudio.src = "";
+
+          isCrossfading.current = false;
+        }
+      }, 50); // 20fps for smooth crossfade
+    } catch (error) {
+      console.error("Crossfade error:", error);
+      isCrossfading.current = false;
+      await nextTrack();
+    }
+  }, [crossfadeEnabled, crossfadeDuration, volume, nextTrack]);
+
+  // Audio event handlers
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleLoadStart = () => setIsLoading(true);
+    const handleCanPlay = () => setIsLoading(false);
+    const handleLoadedMetadata = () => {
+      updateDuration(audio.duration);
+    };
+
+    const handleTimeUpdate = () => {
+      updateCurrentTime(audio.currentTime);
+
+      // Check for crossfade trigger (last N seconds)
+      if (crossfadeEnabled && crossfadeDuration > 0) {
+        const timeLeft = audio.duration - audio.currentTime;
+        if (timeLeft <= crossfadeDuration && !isCrossfading.current) {
+          handleCrossfade();
+        }
       }
     };
-  }, [setAudioElement]);
 
-  const currentTrack = useCurrentTrack();
-  const playbackState = usePlaybackState();
-  const playerControls = usePlayerControls();
-  const volumeControls = useVolumeControls();
-  const playerModes = usePlayerModes();
-  const queueManagement = useQueueManagement();
-  const error = useError();
+    const handleEnded = async () => {
+      if (repeatMode === "one") {
+        audio.currentTime = 0;
+        await play();
+      } else if (!crossfadeEnabled || crossfadeDuration === 0) {
+        await nextTrack();
+      }
+    };
 
-  const progress =
-    playbackState.duration > 0
-      ? (playbackState.currentTime / playbackState.duration) * 100
-      : 0;
+    const handleError = () => {
+      setIsLoading(false);
+      console.error("Audio playback error");
+    };
 
-  const hasNext = queueManagement.queueIndex < queueManagement.queue.length - 1;
-  const hasPrev = queueManagement.queueIndex > 0;
+    // Add event listeners
+    audio.addEventListener("loadstart", handleLoadStart);
+    audio.addEventListener("canplay", handleCanPlay);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("ended", handleEnded);
+    audio.addEventListener("error", handleError);
 
-  const formatTime = useCallback((seconds: number): string => {
-    if (isNaN(seconds)) return "0:00";
+    return () => {
+      audio.removeEventListener("loadstart", handleLoadStart);
+      audio.removeEventListener("canplay", handleCanPlay);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("ended", handleEnded);
+      audio.removeEventListener("error", handleError);
+    };
+  }, [
+    updateCurrentTime,
+    updateDuration,
+    setIsLoading,
+    nextTrack,
+    play,
+    repeatMode,
+    crossfadeEnabled,
+    crossfadeDuration,
+    handleCrossfade,
+  ]);
 
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  }, []);
-
-  const playTrack = useCallback(
-    async (track: TFullTrack, playlist?: TPlaylist) => {
-      const { setCurrentTrack, play } = useAudioStore.getState();
-      setCurrentTrack(track, playlist);
-
-      await play();
-    },
-    []
-  );
-
-  const playPlaylist = useCallback(
-    async (playlist: TPlaylist, startIndex = 0) => {
-      const { loadPlaylist, play } = useAudioStore.getState();
-      loadPlaylist(playlist, startIndex);
-      await play();
-    },
-    []
-  );
-
-  return {
-    currentTrack,
-    error,
-    progress,
-    hasNext,
-    hasPrev,
-
-    playback: playbackState,
-    controls: playerControls,
-    volume: volumeControls,
-    modes: playerModes,
-    queue: queueManagement,
-
-    formatTime,
-    playTrack,
-    playPlaylist,
-
-    audioElement: audioRef.current,
-  };
-};
-
-export const useAudioKeyboardShortcuts = () => {
-  const { togglePlay, next, previous, seekBy } = usePlayerControls();
-  const { volume, setVolume } = useVolumeControls();
-
+  // Keyboard controls
   useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
+    if (!enableKeyboardControls) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ignore if user is typing in an input
       if (
         event.target instanceof HTMLInputElement ||
-        event.target instanceof HTMLTextAreaElement
+        event.target instanceof HTMLTextAreaElement ||
+        event.target instanceof HTMLSelectElement ||
+        (event.target as HTMLElement)?.contentEditable === "true"
       ) {
         return;
       }
 
-      switch (event.key.toLowerCase()) {
-        case " ":
-        case "k":
+      const { togglePlay, nextTrack, previousTrack, setVolume, volume } =
+        usePlayerStore.getState();
+
+      switch (event.code) {
+        case "Space":
           event.preventDefault();
           togglePlay();
           break;
-        case "arrowright":
+        case "ArrowRight":
           if (event.shiftKey) {
-            next();
-          } else {
-            seekBy(10);
+            event.preventDefault();
+            nextTrack();
           }
           break;
-        case "arrowleft":
+        case "ArrowLeft":
           if (event.shiftKey) {
-            previous();
-          } else {
-            seekBy(-10);
+            event.preventDefault();
+            previousTrack();
           }
           break;
-        case "arrowup":
-          event.preventDefault();
-          setVolume(Math.min(1, volume + 0.1));
+        case "ArrowUp":
+          if (event.shiftKey) {
+            event.preventDefault();
+            setVolume(Math.min(1, volume + 0.1));
+          }
           break;
-        case "arrowdown":
-          event.preventDefault();
-          setVolume(Math.max(0, volume - 0.1));
-          break;
-        case "m":
-          useAudioStore.getState().toggleMute();
+        case "ArrowDown":
+          if (event.shiftKey) {
+            event.preventDefault();
+            setVolume(Math.max(0, volume - 0.1));
+          }
           break;
       }
     };
 
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [togglePlay, next, previous, setVolume, seekBy, volume]);
-};
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [enableKeyboardControls]);
 
-export const useMediaSession = () => {
-  const currentTrack = useCurrentTrack();
-  const isPlaying = useIsPlaying();
-  const { play, pause, next, previous } = usePlayerControls();
-
+  // Media Session API for system media controls
   useEffect(() => {
-    if ("mediaSession" in navigator && currentTrack) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: currentTrack.title,
-        artist: currentTrack.mainArtist.name,
-        album: currentTrack.album.title,
-      });
+    if (
+      !enableMediaSession ||
+      !("mediaSession" in navigator) ||
+      !currentTrack
+    ) {
+      return;
+    }
 
-      navigator.mediaSession.setActionHandler("play", play);
-      navigator.mediaSession.setActionHandler("pause", pause);
-      navigator.mediaSession.setActionHandler("nexttrack", next);
-      navigator.mediaSession.setActionHandler("previoustrack", previous);
+    const { togglePlay, nextTrack, previousTrack } = usePlayerStore.getState();
 
+    // Set metadata
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: currentTrack.title,
+      artist: currentTrack.artists.map((a) => a.name).join(", "),
+      album: currentTrack.album.title,
+      artwork: [
+        {
+          src: `/api/images/${currentTrack.album.imageId}?size=96`,
+          sizes: "96x96",
+          type: "image/jpeg",
+        },
+        {
+          src: `/api/images/${currentTrack.album.imageId}?size=128`,
+          sizes: "128x128",
+          type: "image/jpeg",
+        },
+        {
+          src: `/api/images/${currentTrack.album.imageId}?size=256`,
+          sizes: "256x256",
+          type: "image/jpeg",
+        },
+        {
+          src: `/api/images/${currentTrack.album.imageId}?size=512`,
+          sizes: "512x512",
+          type: "image/jpeg",
+        },
+      ],
+    });
+
+    // Set action handlers
+    navigator.mediaSession.setActionHandler("play", () => {
+      togglePlay();
+    });
+
+    navigator.mediaSession.setActionHandler("pause", () => {
+      togglePlay();
+    });
+
+    navigator.mediaSession.setActionHandler("previoustrack", () => {
+      previousTrack();
+    });
+
+    navigator.mediaSession.setActionHandler("nexttrack", () => {
+      nextTrack();
+    });
+
+    navigator.mediaSession.setActionHandler("seekto", (details) => {
+      if (details.seekTime && audioRef.current) {
+        audioRef.current.currentTime = details.seekTime;
+      }
+    });
+
+    return () => {
+      navigator.mediaSession.setActionHandler("play", null);
+      navigator.mediaSession.setActionHandler("pause", null);
+      navigator.mediaSession.setActionHandler("previoustrack", null);
+      navigator.mediaSession.setActionHandler("nexttrack", null);
+      navigator.mediaSession.setActionHandler("seekto", null);
+    };
+  }, [enableMediaSession, currentTrack]);
+
+  // Update Media Session playback state
+  useEffect(() => {
+    if ("mediaSession" in navigator) {
       navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
     }
-  }, [currentTrack, isPlaying, play, pause, next, previous]);
-};
+  }, [isPlaying]);
 
-export const usePlaybackPersistence = () => {
-  const currentTrack = useCurrentTrack();
-  const currentTime = useCurrentTime();
-  const { seek } = usePlayerControls();
-
-  useEffect(() => {
-    if (currentTrack && currentTime > 0) {
-      const key = `playback_${currentTrack.id}`;
-      localStorage.setItem(key, currentTime.toString());
-    }
-  }, [currentTrack, currentTime]);
-
-  useEffect(() => {
-    if (currentTrack) {
-      const key = `playback_${currentTrack.id}`;
-      const savedPosition = localStorage.getItem(key);
-
-      if (savedPosition) {
-        const position = parseFloat(savedPosition);
-
-        if (position < currentTrack.duration * 0.9) {
-          setTimeout(() => seek(position), 100);
-        }
-      }
-    }
-  }, [currentTrack, seek]);
-};
+  return {
+    audioRef,
+    crossfadeAudioRef,
+  };
+}

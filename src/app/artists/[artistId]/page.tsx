@@ -109,7 +109,7 @@ export default async function ArtistDetail({
         genres={artist.genres}
       />
       <ActionsSection name={artist.name} />
-      {/* <PopularSongsSection songs={popularSongs} /> */}
+      <PopularSongsSection songs={popularSongs} />
       <DiscographySection
         popularReleases={popularReleases}
         albumReleases={albumReleases}

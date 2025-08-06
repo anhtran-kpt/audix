@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { RepeatMode } from "@/stores/audio-store";
 import {
   SkipBackIcon,
   SkipForwardIcon,
@@ -13,47 +12,34 @@ import {
   RepeatIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
+import { usePlayerStore } from "@/stores/use-player-store";
 
-interface PlayerControlsProps {
-  isPlaying: boolean;
-  isLoading: boolean;
-  hasNext: boolean;
-  hasPrev: boolean;
-  repeatMode: RepeatMode;
-  isShuffled: boolean;
-  onTogglePlay: () => void;
-  onNext: () => void;
-  onPrevious: () => void;
-  onToggleRepeat: () => void;
-  onToggleShuffle: () => void;
-}
+export default function PlayerControls() {
+  const {
+    isPlaying,
+    isLoading,
+    isShuffled,
+    repeatMode,
+    togglePlay,
+    nextTrack,
+    previousTrack,
+    toggleShuffle,
+    toggleRepeat,
+  } = usePlayerStore();
 
-export default function PlayerControls({
-  isPlaying,
-  isLoading,
-  hasNext,
-  hasPrev,
-  repeatMode,
-  isShuffled,
-  onTogglePlay,
-  onNext,
-  onPrevious,
-  onToggleRepeat,
-  onToggleShuffle,
-}: PlayerControlsProps) {
   return (
     <div className="space-x-3 flex items-center">
       <Button
         variant={isShuffled ? "default" : "ghost"}
         size="sm"
-        onClick={onToggleShuffle}
+        onClick={toggleShuffle}
       >
         <ShuffleIcon className="size-4" />
       </Button>
       <IconButton
         icon={SkipBackIcon}
-        onClick={onPrevious}
-        disabled={!hasPrev}
+        onClick={previousTrack}
+        // disabled={!hasPrev}
         iconClassName="fill-current"
         tooltipContent="Previous"
       />
@@ -61,7 +47,7 @@ export default function PlayerControls({
         variant="ghost"
         size="icon"
         className=""
-        onClick={onTogglePlay}
+        onClick={togglePlay}
         disabled={isLoading}
       >
         {isLoading ? (
@@ -74,15 +60,15 @@ export default function PlayerControls({
       </Button>
       <IconButton
         icon={SkipForwardIcon}
-        onClick={onNext}
-        disabled={!hasNext}
+        onClick={nextTrack}
+        // disabled={!hasNext}
         iconClassName="fill-current"
         tooltipContent="Next"
       />
       <Button
         variant={repeatMode !== "off" ? "default" : "ghost"}
         size="sm"
-        onClick={onToggleRepeat}
+        onClick={toggleRepeat}
       >
         {repeatMode === "one" ? (
           <Repeat1Icon className="size-4" />

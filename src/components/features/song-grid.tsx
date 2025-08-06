@@ -10,13 +10,13 @@ import {
   PlusCircleIcon,
 } from "lucide-react";
 import { ItemTitle } from "../ui/item-title";
-import { useAudioPlayer, useIsPlaying } from "@/hooks/use-audio-player";
 import { Skeleton } from "../ui/skeleton";
 import { IconButton } from "../ui/icon-button";
 import { formatDuration } from "@/lib/helpers/format-duration";
 import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
+import { usePlayerStore } from "@/stores/use-player-store";
 
 interface SongGridProps {
   type: "album" | "popular" | "playlist";
@@ -26,8 +26,7 @@ export const SongGrid = ({ type, songs }: SongGridProps) => {
   const gridClass =
     "grid w-full items-center grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]";
 
-  // const { playSong, currentSong } = useAudioPlayer();
-  // const isPlaying = useIsPlaying();
+  const { isPlaying, currentTrack, playTrack } = usePlayerStore();
 
   return (
     <div className="space-y-1 w-full">
@@ -49,7 +48,7 @@ export const SongGrid = ({ type, songs }: SongGridProps) => {
         </div>
       )}
       {songs.map((song, songIndex) => {
-        const isActive = currentSong?.id === song.id;
+        const isActive = currentTrack?.id === song.id;
         const length = song.collaborators.length;
         const songTitle =
           type === "popular" && length > 0
@@ -81,7 +80,7 @@ export const SongGrid = ({ type, songs }: SongGridProps) => {
                   <IconButton
                     icon={PlayIcon}
                     size="sm"
-                    onClick={() => playSong(song)}
+                    onClick={() => playTrack(song)}
                     iconClassName="fill-foreground stroke-0"
                     className="hidden group-hover:block"
                   />
