@@ -19,7 +19,7 @@ export const CoverImage: FC<CoverImageProps> = ({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-md aspect-square",
+        "relative overflow-hidden rounded-sm aspect-square",
         sizeClasses
       )}
     >

@@ -1,27 +1,6 @@
+import { TTrack } from "@/types/track";
 import { create } from "zustand";
 import { subscribeWithSelector } from "zustand/middleware";
-
-export interface Track {
-  id: string;
-  title: string;
-  slug: string;
-  audioId: string;
-  duration: number;
-  trackNumber: number;
-  isExplicit: boolean;
-  playCount: number;
-  album: {
-    id: string;
-    title: string;
-    imageId: string;
-  };
-  artists: Array<{
-    id: string;
-    name: string;
-    slug: string;
-    role: string;
-  }>;
-}
 
 export interface PlaybackState {
   isPlaying: boolean;
@@ -32,9 +11,9 @@ export interface PlaybackState {
   volume: number;
   isMuted: boolean;
 
-  currentTrack: Track | null;
-  queue: Track[];
-  originalQueue: Track[];
+  currentTrack: TTrack | null;
+  queue: TTrack[];
+  originalQueue: TTrack[];
   currentIndex: number;
 
   isShuffled: boolean;
@@ -48,7 +27,7 @@ export interface PlaybackState {
     name: string | null;
   };
 
-  recentlyPlayed: Track[];
+  recentlyPlayed: TTrack[];
 
   audioRef: HTMLAudioElement | null;
 }
@@ -64,15 +43,15 @@ export interface PlayerActions {
   seekTo: (time: number) => void;
 
   playTrack: (
-    track: Track,
+    track: TTrack,
     context?: { type: string; id: string; name: string }
   ) => Promise<void>;
   playQueue: (
-    tracks: Track[],
+    tracks: TTrack[],
     index?: number,
     context?: { type: string; id: string; name: string }
   ) => Promise<void>;
-  addToQueue: (track: Track) => void;
+  addToQueue: (track: TTrack) => void;
   removeFromQueue: (index: number) => void;
   clearQueue: () => void;
   reorderQueue: (fromIndex: number, toIndex: number) => void;

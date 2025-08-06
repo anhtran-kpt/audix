@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { genres as genreData } from "./genres.json";
 import { artists as artistData } from "./artists.json";
 import { albums as albumData } from "./albums.json";
-import { songs as songData } from "./songs.json";
+import { tracks as trackData } from "./tracks.json";
 import { AlbumType, ArtistRole, CreditRole } from "@/app/generated/prisma";
 
 async function main() {
@@ -75,7 +75,7 @@ async function main() {
         skipDuplicates: true,
       });
 
-      const songsPure = songData.map((s) => ({
+      const tracksPure = trackData.map((s) => ({
         title: s.title,
         slug: s.slug,
         audioId: s.audioId,
@@ -85,20 +85,20 @@ async function main() {
         albumId: albumMap[s.albumSlug],
       }));
 
-      await tx.song.createMany({
-        data: songsPure,
+      await tx.track.createMany({
+        data: tracksPure,
         skipDuplicates: true,
       });
 
-      const allSongs = await tx.song.findMany({
+      const allTracks = await tx.track.findMany({
         select: { id: true, slug: true },
       });
-      const songMap = Object.fromEntries(allSongs.map((s) => [s.slug, s.id]));
+      const trackMap = Object.fromEntries(allTracks.map((s) => [s.slug, s.id]));
 
-      await tx.songArtist.createMany({
-        data: songData.flatMap((s) =>
+      await tx.trackArtist.createMany({
+        data: trackData.flatMap((s) =>
           s.artists.map((ar) => ({
-            songId: songMap[s.slug],
+            trackId: trackMap[s.slug],
             artistId: artistMap[ar.slug],
             role: ar.role as ArtistRole,
             order: ar.order,
@@ -107,20 +107,20 @@ async function main() {
         skipDuplicates: true,
       });
 
-      await tx.songGenre.createMany({
-        data: songData.flatMap((s) =>
+      await tx.trackGenre.createMany({
+        data: trackData.flatMap((s) =>
           s.genreSlugs.map((gs) => ({
-            songId: songMap[s.slug],
+            trackId: trackMap[s.slug],
             genreId: genreMap[gs],
           }))
         ),
         skipDuplicates: true,
       });
 
-      await tx.songCredit.createMany({
-        data: songData.flatMap((s) =>
+      await tx.trackCredit.createMany({
+        data: trackData.flatMap((s) =>
           s.credits.map((c) => ({
-            songId: songMap[s.slug],
+            trackId: trackMap[s.slug],
             artistId: c.slug ? artistMap[c.slug] : null,
             name: c.name || "",
             role: c.role as CreditRole,
@@ -131,9 +131,9 @@ async function main() {
       });
 
       for (const alb of albumData) {
-        const relatedSongs = songData.filter((s) => s.albumSlug === alb.slug);
-        const totalTracks = relatedSongs.length;
-        const duration = relatedSongs.reduce((sum, s) => sum + s.duration, 0);
+        const relatedTracks = trackData.filter((s) => s.albumSlug === alb.slug);
+        const totalTracks = relatedTracks.length;
+        const duration = relatedTracks.reduce((sum, s) => sum + s.duration, 0);
 
         await tx.album.update({
           where: { slug: alb.slug },

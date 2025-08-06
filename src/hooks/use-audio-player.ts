@@ -277,7 +277,7 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}) {
     // Set metadata
     navigator.mediaSession.metadata = new MediaMetadata({
       title: currentTrack.title,
-      artist: currentTrack.artists.map((a) => a.name).join(", "),
+      artist: currentTrack.artists.map(({ artist }) => artist.name).join(", "),
       album: currentTrack.album.title,
       artwork: [
         {

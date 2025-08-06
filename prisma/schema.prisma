@@ -44,7 +44,7 @@ model User {
 
   // Music related
   playlists      Playlist[]
-  likedSongs     UserLikedSong[]
+  likedTracks    UserLikedTrack[]
   likedAlbums    UserLikedAlbum[]
   likedPlaylists UserLikedPlaylist[]
   likedArtists   UserLikedArtist[]
@@ -155,10 +155,10 @@ model Artist {
 
   // Relationships
   albums  Album[]
-  songs   SongArtist[]
+  tracks  TrackArtist[]
   genres  ArtistGenre[]
   likedBy UserLikedArtist[]
-  credits SongCredit[]
+  credits TrackCredit[]
 
   @@map("artists")
 }
@@ -179,7 +179,7 @@ model Album {
   // Relationships
   artistId String
   artist   Artist           @relation(fields: [artistId], references: [id], onDelete: Cascade)
-  songs    Song[]
+  tracks   Track[]
   genres   AlbumGenre[]
   likedBy  UserLikedAlbum[]
 
@@ -193,7 +193,7 @@ enum AlbumType {
   COMPILATION
 }
 
-model Song {
+model Track {
   id          String   @id @default(cuid())
   title       String
   slug        String   @unique
@@ -210,14 +210,14 @@ model Song {
   albumId String
   album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
-  artists       SongArtist[]
-  credits       SongCredit[]
-  genres        SongGenre[]
-  likedBy       UserLikedSong[]
+  artists       TrackArtist[]
+  credits       TrackCredit[]
+  genres        TrackGenre[]
+  likedBy       UserLikedTrack[]
   playlistItems PlaylistItem[]
   playHistory   PlayHistory[]
 
-  @@map("songs")
+  @@map("tracks")
 }
 
 // ================================
@@ -231,7 +231,7 @@ model Genre {
   description String?
   color       String
 
-  songs   SongGenre[]
+  tracks  TrackGenre[]
   albums  AlbumGenre[]
   artists ArtistGenre[]
 
@@ -242,19 +242,19 @@ model Genre {
 // SONG-ARTIST RELATIONSHIP & CREDITS SYSTEM
 // ================================
 
-model SongArtist {
+model TrackArtist {
   id       String     @id @default(uuid())
-  songId   String
+  trackId  String
   artistId String
   role     ArtistRole @default(MAIN_ARTIST)
   order    Int        @default(0) // Artist order (main artist first)
 
-  song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
+  track  Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
   artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
-  @@unique([songId, artistId, role])
-  @@index([songId, order])
-  @@map("song_artists")
+  @@unique([trackId, artistId, role])
+  @@index([trackId, order])
+  @@map("track_artists")
 }
 
 enum ArtistRole {
@@ -263,20 +263,20 @@ enum ArtistRole {
   REMIX_ARTIST
 }
 
-model SongCredit {
+model TrackCredit {
   id       String     @id @default(cuid())
-  songId   String
+  trackId  String
   artistId String? // Null if it set for the person who is not artist
   name     String // Credit name (if artistId null)
   role     CreditRole
   details  String?
   order    Int        @default(0)
 
-  song   Song    @relation(fields: [songId], references: [id], onDelete: Cascade)
+  track  Track   @relation(fields: [trackId], references: [id], onDelete: Cascade)
   artist Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
-  @@index([songId, role])
-  @@map("song_credits")
+  @@index([trackId, role])
+  @@map("track_credits")
 }
 
 enum CreditRole {
@@ -286,7 +286,7 @@ enum CreditRole {
   RAP
   FEATURED_ARTIST
 
-  // Songwriters & Composers
+  // Trackwriters & Composers
   SONGWRITER
   COMPOSER
   LYRICIST
@@ -325,15 +325,15 @@ enum CreditRole {
   MANAGEMENT
 }
 
-model SongGenre {
-  songId  String
+model TrackGenre {
+  trackId String
   genreId String
 
-  song  Song  @relation(fields: [songId], references: [id], onDelete: Cascade)
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
   genre Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
 
-  @@id([songId, genreId])
-  @@map("song_genres")
+  @@id([trackId, genreId])
+  @@map("track_genres")
 }
 
 model AlbumGenre {
@@ -389,12 +389,12 @@ model PlaylistItem {
   addedAt  DateTime @default(now())
 
   playlistId String
-  songId     String
+  trackId    String
 
   playlist Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
-  song     Song     @relation(fields: [songId], references: [id], onDelete: Cascade)
+  track    Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
-  @@unique([playlistId, songId])
+  @@unique([playlistId, trackId])
   @@map("playlist_items")
 }
 
@@ -402,16 +402,16 @@ model PlaylistItem {
 // USER INTERACTIONS (LIKES/FOLLOWS)
 // ================================
 
-model UserLikedSong {
+model UserLikedTrack {
   userId  String
-  songId  String
+  trackId String
   likedAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
-  @@id([userId, songId])
-  @@map("user_liked_songs")
+  @@id([userId, trackId])
+  @@map("user_liked_tracks")
 }
 
 model UserLikedAlbum {
@@ -472,21 +472,21 @@ model PlayHistory {
   duration   Int
   deviceType String? // web, mobile, desktop
 
-  userId String
-  songId String
+  userId  String
+  trackId String
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
   @@index([userId, playedAt])
-  @@index([songId, playedAt])
+  @@index([trackId, playedAt])
   @@map("play_history")
 }
 
 model SearchHistory {
   id         String   @id @default(cuid())
   query      String
-  resultType String? // song, artist, album, playlist
+  resultType String? // track, artist, album, playlist
   resultId   String?
   searchedAt DateTime @default(now())
 
@@ -503,7 +503,7 @@ model SearchHistory {
 
 model UserRecommendation {
   id        String   @id @default(cuid())
-  type      String // song, artist, album, playlist
+  type      String // track, artist, album, playlist
   targetId  String // ID of recommended item
   score     Float //  Recommendation score (0-1)
   reason    String? // The reason to recommend
@@ -525,8 +525,8 @@ model UserQueue {
   position  Int
   createdAt DateTime @default(now())
 
-  userId String
-  songId String
+  userId  String
+  trackId String
 
   @@unique([userId, position])
   @@index([userId, position])
@@ -558,7 +558,7 @@ enum ChartType {
 model ChartItem {
   chartId  String
   position Int
-  itemType String // song, album, artist
+  itemType String // track, album, artist
   itemId   String
   plays    Int    @default(0)
 

@@ -9,8 +9,8 @@ export const iconSizeMap = {
 export type IconSize = keyof typeof iconSizeMap;
 
 export const imageSizeMap = {
-  xs: "size-24",
-  sm: "size-32",
+  xs: "size-12",
+  sm: "size-14",
   md: "size-40",
   lg: "size-48",
   xl: "size-56",

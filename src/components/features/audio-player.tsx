@@ -38,18 +38,19 @@ function AudioPlayer() {
     <div className="fixed bottom-0 left-0 right-0 bg-accent z-50 px-4 py-2">
       <div className="flex items-center justify-between gap-12">
         <div className="flex items-center">
-          <div className="flex items-center gap-3 grow min-w-0">
+          <div className="flex items-center gap-3 grow">
             <CoverImage
               src={currentTrack.album.imageId}
               alt={currentTrack.title}
+              size="sm"
             />
             <div className="flex flex-col gap-0.5 w-full overflow-hidden">
               <ItemTitle title={currentTrack.title} />
               <div className="flex items-center text-sm gap-x-1 text-muted-foreground truncate">
                 {currentTrack.isExplicit && <Explicit />}
-                {currentTrack.artists.map((artist, index, originalArr) => (
-                  <span key={artist.slug}>
-                    <NavLink href={`/artists/${artist.slug}`}>
+                {currentTrack.artists.map(({ artist }, index, originalArr) => (
+                  <span key={artist.id}>
+                    <NavLink href={`/artists/${artist.id}`}>
                       {artist.name}
                     </NavLink>
                     {index < originalArr.length - 1 && ", "}

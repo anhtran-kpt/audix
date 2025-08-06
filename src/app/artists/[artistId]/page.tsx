@@ -3,7 +3,7 @@ import { ActionsSection } from "@/components/sections/artist-detail/actions-sect
 import { BannerSection } from "@/components/sections/artist-detail/banner-section";
 import { DiscographySection } from "@/components/sections/artist-detail/discography-section";
 import { OtherArtistsSection } from "@/components/sections/artist-detail/other-artists-section";
-import { PopularSongsSection } from "@/components/sections/artist-detail/popular-songs-section";
+import { PopularTracksSection } from "@/components/sections/artist-detail/popular-tracks-section";
 import prisma from "@/lib/prisma";
 
 export default async function ArtistDetail({
@@ -32,17 +32,45 @@ export default async function ArtistDetail({
   });
 
   const [
-    popularSongs,
+    popularTracks,
     popularReleases,
     albumReleases,
     singleAndEpReleases,
     otherArtists,
   ] = await Promise.all([
-    prisma.song.findMany({
+    prisma.track.findMany({
       where: {
         artists: {
           some: {
             artistId: artist.id,
+          },
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        audioId: true,
+        duration: true,
+        trackNumber: true,
+        isExplicit: true,
+        playCount: true,
+        album: {
+          select: {
+            artistId: true,
+            id: true,
+            imageId: true,
+            title: true,
+          },
+        },
+        artists: {
+          select: {
+            artist: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
       },
@@ -97,8 +125,6 @@ export default async function ArtistDetail({
     }),
   ]);
 
-  console.log(otherArtists);
-
   return (
     <>
       <BannerSection
@@ -109,7 +135,7 @@ export default async function ArtistDetail({
         genres={artist.genres}
       />
       <ActionsSection name={artist.name} />
-      <PopularSongsSection songs={popularSongs} />
+      <PopularTracksSection tracks={popularTracks} />
       <DiscographySection
         popularReleases={popularReleases}
         albumReleases={albumReleases}

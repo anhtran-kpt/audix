@@ -10,19 +10,20 @@ import {
   PlusCircleIcon,
 } from "lucide-react";
 import { ItemTitle } from "../ui/item-title";
-import { Skeleton } from "../ui/skeleton";
 import { IconButton } from "../ui/icon-button";
 import { formatDuration } from "@/lib/helpers/format-duration";
 import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
 import { usePlayerStore } from "@/stores/use-player-store";
+import { TTrack } from "@/types/track";
 
-interface SongGridProps {
+interface TrackGridProps {
   type: "album" | "popular" | "playlist";
+  tracks: TTrack[];
 }
 
-export const SongGrid = ({ type, songs }: SongGridProps) => {
+export const TrackGrid = ({ type, tracks }: TrackGridProps) => {
   const gridClass =
     "grid w-full items-center grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]";
 
@@ -47,25 +48,28 @@ export const SongGrid = ({ type, songs }: SongGridProps) => {
           <div className=""></div>
         </div>
       )}
-      {songs.map((song, songIndex) => {
-        const isActive = currentTrack?.id === song.id;
-        const length = song.collaborators.length;
-        const songTitle =
-          type === "popular" && length > 0
-            ? `${song.title} (feat. ${song.collaborators?.reduce(
-                (acc, artist, index) => {
-                  if (index < length - 1) {
-                    return acc + artist.name + ", ";
-                  }
-                  return acc + artist.name;
-                },
-                ""
-              )})`
-            : song.title;
+      {tracks.map((track, trackIndex) => {
+        const isActive = currentTrack?.id === track.id;
+        const collaborators = track.artists.filter(
+          ({ artist }) => artist.id !== track.album.artistId
+        );
+        let trackTitle = track.title;
+
+        if (type === "popular" && collaborators.length > 0) {
+          trackTitle = `${track.title} (feat. ${collaborators?.reduce(
+            (acc, { artist }, index) => {
+              if (index < length - 1) {
+                return acc + artist.name + ", ";
+              }
+              return acc + artist.name;
+            },
+            ""
+          )})`;
+        }
 
         return (
           <div
-            key={song.slug}
+            key={track.id}
             className={cn(
               gridClass,
               "py-2 pr-6 items-center group hover:bg-muted rounded-sm text-muted-foreground hover:text-foreground"
@@ -76,11 +80,11 @@ export const SongGrid = ({ type, songs }: SongGridProps) => {
                 <WaveForm />
               ) : (
                 <>
-                  <span className="group-hover:hidden">{songIndex + 1}</span>
+                  <span className="group-hover:hidden">{trackIndex + 1}</span>
                   <IconButton
                     icon={PlayIcon}
                     size="sm"
-                    onClick={() => playTrack(song)}
+                    onClick={() => playTrack(track)}
                     iconClassName="fill-foreground stroke-0"
                     className="hidden group-hover:block"
                   />
@@ -90,29 +94,33 @@ export const SongGrid = ({ type, songs }: SongGridProps) => {
 
             <div className="flex gap-3">
               {type === "popular" && (
-                <CoverImage alt={song.title} src={song.album.coverPublicId} />
+                <CoverImage
+                  alt={track.title}
+                  src={track.album.imageId}
+                  size="xs"
+                />
               )}
               <div className="flex flex-col gap-0.5 justify-center">
-                <ItemTitle title={songTitle} isActive={isActive} />
+                <ItemTitle title={trackTitle} isActive={isActive} />
                 <div className="flex gap-1.5 items-center">
-                  {song.isExplicit && <Explicit />}
+                  {track.isExplicit && <Explicit />}
                   {type !== "popular" &&
-                    song.artists.map((artist, artistIndex) => (
-                      <span key={artist.slug}>
+                    track.artists.map(({ artist }, artistIndex) => (
+                      <span key={artist.id}>
                         <NavLink
-                          href={`/artists/${artist.slug}`}
+                          href={`/artists/${artist.id}`}
                           className="text-[calc(13rem/16)]"
                         >
                           {artist.name}
                         </NavLink>
-                        {artistIndex < song.artists.length - 1 && ", "}
+                        {artistIndex < track.artists.length - 1 && ", "}
                       </span>
                     ))}
                 </div>
               </div>
             </div>
 
-            <div className="text-right">{song.plays.toLocaleString()}</div>
+            <div className="text-right">{track.playCount.toLocaleString()}</div>
 
             <div className="invisible group-hover:visible text-right">
               <IconButton
@@ -121,13 +129,13 @@ export const SongGrid = ({ type, songs }: SongGridProps) => {
                 size="sm"
                 tooltipContent={
                   <>
-                    Add to <strong>Liked Songs</strong>
+                    Add to <strong>Liked Tracks</strong>
                   </>
                 }
               />
             </div>
 
-            <div className="text-right">{formatDuration(song.duration)}</div>
+            <div className="text-right">{formatDuration(track.duration)}</div>
 
             <div className="invisible group-hover:visible text-right">
               <IconButton
@@ -135,7 +143,7 @@ export const SongGrid = ({ type, songs }: SongGridProps) => {
                 className="text-current"
                 tooltipContent={
                   <>
-                    More options for <strong>{song.title}</strong>
+                    More options for <strong>{track.title}</strong>
                   </>
                 }
               />
@@ -147,15 +155,15 @@ export const SongGrid = ({ type, songs }: SongGridProps) => {
   );
 };
 
-// interface SongGridSkeletonProps {
+// interface TrackGridSkeletonProps {
 //   type?: "popular" | "default";
 //   count?: number;
 // }
 
-// export const SongGridSkeleton = ({
+// export const TrackGridSkeleton = ({
 //   type = "default",
 //   count = 10,
-// }: SongGridSkeletonProps) => {
+// }: TrackGridSkeletonProps) => {
 //   const gridClass =
 //     "grid w-full items-center grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]";
 
