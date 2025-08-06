@@ -51,7 +51,7 @@ export const BannerSection = ({
               </div>
             )}
             <p className="font-extrabold text-6xl mt-1 mb-3">{name}</p>
-            <p className="font-medium">{monthlyListeners} monthly listeners</p>
+            <p className="">{monthlyListeners} monthly listeners</p>
             <div className="space-x-2">
               {genres.map(({ genre }) => (
                 <Badge

@@ -17,3 +17,11 @@ export type TFullArtist = Prisma.ArtistGetPayload<{
     };
   };
 }>;
+
+export type TArtistGridItem = Prisma.ArtistGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    imageId: true;
+  };
+}>;

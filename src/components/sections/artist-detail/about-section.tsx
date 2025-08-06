@@ -27,7 +27,7 @@ export const AboutSection = ({
           className="object-cover hover:scale-105 transition-transform duration-500 brightness-65"
         />
         <div className="absolute bottom-12 left-12 space-y-3 w-2/3">
-          <p className="font-bold text-base text-white">
+          <p className="font-semibold text-base text-white">
             {monthlyListeners} monthly listeners
           </p>
           <p className="text-[calc(15rem/16)] text-white line-clamp-3">{bio}</p>
