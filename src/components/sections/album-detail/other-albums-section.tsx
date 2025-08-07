@@ -5,29 +5,34 @@ import { NavLink } from "@/components/ui/nav-link";
 import PlayButton from "@/components/ui/play-button";
 import SectionHeading from "@/components/ui/section-heading";
 import { cn } from "@/lib/utils";
-import { TArtistGridItem } from "@/types";
+import { TAlbumGridItem, TArtist } from "@/types";
+import { formatDate } from "date-fns";
 import { CldImage } from "next-cloudinary";
 
-interface OtherArtistsSectionProps {
-  artists: TArtistGridItem[];
+interface OtherAlbumsSectionProps {
+  artist: Partial<TArtist>;
+  albums: TAlbumGridItem[];
 }
 
-export const OtherArtistsSection = ({ artists }: OtherArtistsSectionProps) => {
+export const OtherAlbumsSection = ({
+  artist,
+  albums,
+}: OtherAlbumsSectionProps) => {
   return (
     <section>
       <div className="flex justify-between items-center">
-        <SectionHeading heading="Fans also like" />
-        <NavLink href={`/artists`}>Show all</NavLink>
+        <SectionHeading heading={`More by ${artist.name}`} />
+        <NavLink href={`/artists/${artist.id}/albums`}>Show all</NavLink>
       </div>
       <GridWrapper>
-        {artists.map((artist) => (
-          <div key={artist.id} className="space-y-4 group">
-            <div className="relative rounded-full aspect-square">
+        {albums.map((album) => (
+          <div key={album.id} className="space-y-4 group">
+            <div className="relative rounded-md aspect-square">
               <CldImage
-                alt={artist.name}
-                src={artist.imageId}
+                alt={album.title}
+                src={album.imageId}
                 fill
-                className="object-cover rounded-full group-hover:brightness-75"
+                className="object-cover rounded-md group-hover:brightness-75"
                 sizes="20vw"
               />
               <PlayButton
@@ -40,13 +45,13 @@ export const OtherArtistsSection = ({ artists }: OtherArtistsSectionProps) => {
               />
             </div>
             <NavLink
-              href={`/artists/${artist.id}`}
+              href={`/albums/${album.id}`}
               className="text-[calc(15rem/16)]"
             >
-              {artist.name}
+              {album.title}
             </NavLink>
             <p className="text-muted-foreground text-[calc(13rem/16)]">
-              Artist
+              {formatDate(album.releaseDate, "yyyy")}
             </p>
           </div>
         ))}
@@ -55,7 +60,7 @@ export const OtherArtistsSection = ({ artists }: OtherArtistsSectionProps) => {
   );
 };
 
-// export const ArtistOthersSkeleton = () => {
+// export const AlbumOthersSkeleton = () => {
 //   return (
 //     <section>
 //       <SectionHeading heading="Fans also like" />

@@ -110,19 +110,17 @@ export default async function ArtistDetail({
         releaseDate: "desc",
       },
     }),
-    prisma.artist.findMany({
-      where: {
-        id: {
-          not: artist.id,
-        },
-      },
-      select: {
-        id: true,
-        name: true,
-        imageId: true,
-      },
-      take: 5,
-    }),
+    prisma.$queryRaw<{
+      id: string;
+      name: string;
+      imageId: string;
+    }>`
+  SELECT "id", "name", "imageId"
+    FROM "artists"
+   WHERE "id" <> ${artist.id}
+   ORDER BY RANDOM()
+   LIMIT 5;
+`,
   ]);
 
   return (

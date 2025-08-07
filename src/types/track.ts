@@ -1,4 +1,4 @@
-import { Prisma, Track } from "@/app/generated/prisma";
+import { Prisma } from "@/app/generated/prisma";
 
 export type TTrack = Prisma.TrackGetPayload<{
   select: {

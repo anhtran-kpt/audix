@@ -43,8 +43,7 @@ export const AlbumGrid = ({ albums }: AlbumGridProps) => {
           </div>
           <div className="flex flex-col items-start w-full min-w-0">
             <NavLink
-              href=""
-              // href={`/artists/${album.artist.slug}/albums/${album.slug}`}
+              href={`/albums/${album.id}`}
               className="text-[calc(15rem/16)] truncate w-full"
             >
               {album.title}

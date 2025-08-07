@@ -1,14 +1,14 @@
 "use client";
 
 import { EllipsisIcon, ShuffleIcon } from "lucide-react";
-import { TFullArtist } from "@/types";
+import { TFullAlbum } from "@/types";
 import { IconButton } from "@/components/ui/icon-button";
 import { Button } from "@/components/ui/button";
 import PlayButton from "@/components/ui/play-button";
 
-type ActionsSectionProps = Pick<TFullArtist, "name">;
+type ActionsSectionProps = Pick<TFullAlbum, "title">;
 
-export const ActionsSection = ({ name }: ActionsSectionProps) => {
+export const ActionsSection = ({ title }: ActionsSectionProps) => {
   return (
     <section className="flex items-center gap-6">
       <PlayButton />
@@ -17,7 +17,7 @@ export const ActionsSection = ({ name }: ActionsSectionProps) => {
         size="xl"
         tooltipContent={
           <>
-            Enable shuffle for <strong>{name}</strong>
+            Enable shuffle for <strong>{title}</strong>
           </>
         }
       />
@@ -29,7 +29,7 @@ export const ActionsSection = ({ name }: ActionsSectionProps) => {
         size="xl"
         tooltipContent={
           <>
-            More options for <strong>{name}</strong>
+            More options for <strong>{title}</strong>
           </>
         }
       />

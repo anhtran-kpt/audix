@@ -122,7 +122,7 @@ export const TrackGrid = ({ type, tracks }: TrackGridProps) => {
 
             <div className="text-right">{track.playCount.toLocaleString()}</div>
 
-            <div className="invisible group-hover:visible text-right">
+            <div className="invisible group-hover:visible flex items-center justify-end">
               <IconButton
                 icon={PlusCircleIcon}
                 className="text-current"
@@ -137,7 +137,7 @@ export const TrackGrid = ({ type, tracks }: TrackGridProps) => {
 
             <div className="text-right">{formatDuration(track.duration)}</div>
 
-            <div className="invisible group-hover:visible text-right">
+            <div className="invisible group-hover:visible flex items-center justify-end">
               <IconButton
                 icon={EllipsisIcon}
                 className="text-current"
