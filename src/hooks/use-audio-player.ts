@@ -42,13 +42,14 @@ export function useAudioPlayer(options: UseAudioPlayerOptions = {}) {
     if (audioRef.current) {
       setAudioRef(audioRef.current);
     }
-  }, [setAudioRef]);
+  }, [currentTrack?.id]);
 
   // Load new track
   useEffect(() => {
     if (!audioRef.current || !currentTrack) return;
 
     const audio = audioRef.current;
+
     setIsLoading(true);
 
     audio.src = `${getAudioUrl(currentTrack.audioId)}`;

@@ -64,7 +64,7 @@ export interface PlayerActions {
 
   setCrossfadeDuration: (duration: number) => void;
 
-  setAudioRef: (audio: HTMLAudioElement) => void;
+  setAudioRef: (audio: HTMLAudioElement | null) => void;
 
   updateCurrentTime: (time: number) => void;
   updateDuration: (duration: number) => void;
@@ -133,11 +133,13 @@ export const usePlayerStore = create<PlayerStore>()(
 
     play: async () => {
       const { audioRef, currentTrack } = get();
+      console.log("Audio ref:", audioRef);
+      console.log("Current track:", currentTrack);
       if (!audioRef || !currentTrack) return;
 
       try {
         set({ isLoading: true });
-        await audioRef.play();
+        // await audioRef.play();
         set({ isPlaying: true, isPaused: false });
       } catch (error) {
         console.error("Error playing audio:", error);

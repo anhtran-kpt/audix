@@ -30,6 +30,7 @@ export default function RootLayout({
     <html
       lang="en"
       className="scroll-smooth overflow-x-hidden overflow-y-scroll overscroll-none"
+      data-scroll-behavior="smooth"
     >
       <body className="antialiased min-h-screen">
         <SidebarProvider>

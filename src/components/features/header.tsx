@@ -17,7 +17,6 @@ export const Header = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
-
       setIsAtTop(currentY < 10);
 
       if (currentY > prevScrollY.current && currentY > 50) {
@@ -29,17 +28,25 @@ export const Header = () => {
       prevScrollY.current = currentY;
     };
 
+    handleScroll();
+
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const bgClasses = isAtTop
+    ? "bg-transparent"
+    : "bg-white/80 backdrop-blur-md shadow-sm";
+
+  const transformClasses = isVisible ? "translate-y-0" : "-translate-y-full";
 
   return (
     <header
       className={cn(
         "fixed top-0 z-20 flex items-center justify-between gap-6 py-3 px-12 transform transition-transform duration-300 ease-in-out",
         open ? "left-64 w-[calc(100%-16rem)]" : "left-0 w-full",
-        isVisible ? "translate-y-0 bg-white/80" : "-translate-y-full",
-        isAtTop ? "bg-transparent" : "backdrop-blur-md shadow-sm"
+        transformClasses,
+        bgClasses
       )}
     >
       <div className="flex items-center gap-8 grow">
