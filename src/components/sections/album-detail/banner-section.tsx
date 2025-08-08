@@ -60,7 +60,7 @@ export const BannerSection = ({
           />
           <div className="flex flex-col gap-3">
             <p className="font-medium">{albumTypeMap[albumType]}</p>
-            <p className="font-extrabold text-6xl mt-1 mb-3">{title}</p>
+            <p className="font-bold text-6xl mt-1 mb-3">{title}</p>
             <div className="inline-flex items-center gap-2">
               <ArtistImage alt={artist.name} src={artist.imageId} size="xs" />
               <NavLink href={`/artists/${artist.id}`} className="text-sm">

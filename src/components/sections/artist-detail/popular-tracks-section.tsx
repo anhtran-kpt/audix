@@ -4,11 +4,17 @@ import { TrackGrid } from "@/components/features/track-grid";
 import SectionHeading from "@/components/ui/section-heading";
 import { TTrack } from "@/types/track";
 
-export const PopularTracksSection = ({ tracks }: { tracks: TTrack[] }) => {
+export const PopularTracksSection = ({
+  artistId,
+  tracks,
+}: {
+  artistId: string;
+  tracks: TTrack[];
+}) => {
   return (
     <section>
       <SectionHeading heading="Popular" />
-      <TrackGrid type="popular" tracks={tracks} />
+      <TrackGrid artistId={artistId} type="popular" tracks={tracks} />
     </section>
   );
 };

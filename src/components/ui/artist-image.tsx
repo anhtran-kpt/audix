@@ -1,12 +1,12 @@
 "use-client";
 
-import { ImageSize, imageSizeMap } from "@/lib/constants/size-maps";
+import { ArtistImageSize, artistImageSizeMap } from "@/lib/constants/size-maps";
 import { cn } from "@/lib/utils";
 import { CldImage, CldImageProps } from "next-cloudinary";
 import { FC } from "react";
 
 interface ArtistImageProps extends CldImageProps {
-  size?: ImageSize;
+  size?: ArtistImageSize;
 }
 
 export const ArtistImage: FC<ArtistImageProps> = ({
@@ -14,12 +14,12 @@ export const ArtistImage: FC<ArtistImageProps> = ({
   className,
   ...props
 }) => {
-  const sizeClasses = imageSizeMap[size];
+  const sizeClasses = artistImageSizeMap[size];
 
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-full aspect-square border-2",
+        "relative overflow-hidden rounded-full aspect-square",
         sizeClasses
       )}
     >

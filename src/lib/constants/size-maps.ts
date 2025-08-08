@@ -8,7 +8,17 @@ export const iconSizeMap = {
 
 export type IconSize = keyof typeof iconSizeMap;
 
-export const imageSizeMap = {
+export const coverImageSizeMap = {
+  xs: "size-12",
+  sm: "size-14",
+  md: "size-40",
+  lg: "size-48",
+  xl: "size-56",
+} as const;
+
+export type CoverImageSize = keyof typeof coverImageSizeMap;
+
+export const artistImageSizeMap = {
   xs: "size-7",
   sm: "size-14",
   md: "size-40",
@@ -16,4 +26,4 @@ export const imageSizeMap = {
   xl: "size-56",
 } as const;
 
-export type ImageSize = keyof typeof imageSizeMap;
+export type ArtistImageSize = keyof typeof artistImageSizeMap;

@@ -15,7 +15,6 @@ import { formatDuration } from "@/lib/helpers/format-duration";
 import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
-import { useAudioStore } from "@/stores/use-audio-store";
 import { TTrack } from "@/types/track";
 import {
   useAudioPlayer,
@@ -24,11 +23,12 @@ import {
 } from "@/hooks/use-audio-player";
 
 interface TrackGridProps {
+  artistId?: string;
   type: "album" | "popular" | "playlist";
   tracks: TTrack[];
 }
 
-export const TrackGrid = ({ type, tracks }: TrackGridProps) => {
+export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
   const gridClass =
     "grid w-full items-center grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]";
 
@@ -59,14 +59,14 @@ export const TrackGrid = ({ type, tracks }: TrackGridProps) => {
       {tracks.map((track, trackIndex) => {
         const isActive = currentTrack?.id === track.id;
         const collaborators = track.artists.filter(
-          ({ artist }) => artist.id !== track.album.artistId
+          ({ artist }) => artist.id !== artistId
         );
         let trackTitle = track.title;
 
         if (type === "popular" && collaborators.length > 0) {
           trackTitle = `${track.title} (feat. ${collaborators?.reduce(
             (acc, { artist }, index) => {
-              if (index < length - 1) {
+              if (index < collaborators.length - 1) {
                 return acc + artist.name + ", ";
               }
               return acc + artist.name;

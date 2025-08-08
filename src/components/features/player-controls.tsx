@@ -10,9 +10,12 @@ import {
   CirclePlayIcon,
   CirclePauseIcon,
   RepeatIcon,
+  PlayCircleIcon,
+  PlayIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import { RepeatMode, useAudioStore } from "@/stores/use-audio-store";
+import { RepeatMode } from "@/stores/use-audio-store";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 interface PlayerControlsProps {
   isPlaying: boolean;
@@ -42,14 +45,12 @@ export default function PlayerControls({
   onToggleShuffle,
 }: PlayerControlsProps) {
   return (
-    <div className="space-x-3 flex items-center">
-      <Button
-        variant={isShuffled ? "default" : "ghost"}
-        size="sm"
+    <div className="space-x-5 flex items-center">
+      <IconButton
+        icon={ShuffleIcon}
         onClick={onToggleShuffle}
-      >
-        <ShuffleIcon className="size-4" />
-      </Button>
+        tooltipContent="Enable shuffle"
+      />
       <IconButton
         icon={SkipBackIcon}
         onClick={onPrevious}
@@ -57,7 +58,18 @@ export default function PlayerControls({
         iconClassName="fill-current"
         tooltipContent="Previous"
       />
-      <Button
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={onTogglePlay}
+            className="p-2.5 rounded-full bg-primary cursor-pointer"
+          >
+            <PlayIcon size={20} className="fill-white stroke-0" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>Play</TooltipContent>
+      </Tooltip>
+      {/* <Button
         variant="ghost"
         size="icon"
         className=""
@@ -71,7 +83,7 @@ export default function PlayerControls({
         ) : (
           <CirclePlayIcon className="size-9 stroke-1" />
         )}
-      </Button>
+      </Button> */}
       <IconButton
         icon={SkipForwardIcon}
         onClick={onNext}

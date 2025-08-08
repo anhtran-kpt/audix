@@ -1,12 +1,12 @@
 "use-client";
 
-import { ImageSize, imageSizeMap } from "@/lib/constants/size-maps";
+import { CoverImageSize, coverImageSizeMap } from "@/lib/constants/size-maps";
 import { cn } from "@/lib/utils";
 import { CldImage, CldImageProps } from "next-cloudinary";
 import { FC } from "react";
 
 interface CoverImageProps extends CldImageProps {
-  size?: ImageSize;
+  size?: CoverImageSize;
 }
 
 export const CoverImage: FC<CoverImageProps> = ({
@@ -14,12 +14,12 @@ export const CoverImage: FC<CoverImageProps> = ({
   className,
   ...props
 }) => {
-  const sizeClasses = imageSizeMap[size];
+  const sizeClasses = coverImageSizeMap[size];
 
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-sm aspect-square",
+        "relative overflow-hidden rounded-sm aspect-square shrink-0",
         sizeClasses
       )}
     >

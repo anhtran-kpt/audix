@@ -26,7 +26,7 @@ export const OtherAlbumsSection = ({
       </div>
       <GridWrapper>
         {albums.map((album) => (
-          <div key={album.id} className="space-y-4 group">
+          <div key={album.id} className="space-y-2 group">
             <div className="relative rounded-md aspect-square">
               <CldImage
                 alt={album.title}

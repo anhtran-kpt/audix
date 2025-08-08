@@ -7,6 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
+import { ModeToggle } from "./mode-toggle";
+import { AppNavigation } from "./app-navigation";
 
 export const Header = () => {
   const [isAtTop, setIsAtTop] = useState(true);
@@ -36,7 +38,7 @@ export const Header = () => {
 
   const bgClasses = isAtTop
     ? "bg-transparent"
-    : "bg-white/80 backdrop-blur-md shadow-sm";
+    : "bg-background/70 backdrop-blur-md shadow-sm";
 
   const transformClasses = isVisible ? "translate-y-0" : "-translate-y-full";
 
@@ -50,13 +52,11 @@ export const Header = () => {
       )}
     >
       <div className="flex items-center gap-8 grow">
-        <div className="flex items-center gap-6">
-          <IconButton icon={ArrowLeftIcon} />
-          <IconButton icon={ArrowRight} />
-        </div>
+        <AppNavigation />
         <HeaderSearchBar />
       </div>
       <div className="flex gap-8 items-center">
+        <ModeToggle />
         <IconButton icon={SettingsIcon} tooltipContent="Settings" />
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" />

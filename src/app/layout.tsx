@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lexend } from "next/font/google";
 import "./globals.css";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/features/app-sidebar";
 import { Header } from "@/components/features/header";
 import AudioPlayer from "@/components/features/audio-player";
 import { LayoutWithPlayer } from "@/components/features/layout-with-player";
+import { ThemeProvider } from "@/providers/theme-provider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const lexendSans = Lexend({
+  subsets: ["vietnamese"],
 });
 
 export const metadata: Metadata = {
@@ -30,20 +25,28 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className="scroll-smooth overflow-x-hidden overflow-y-scroll overscroll-none"
+      className={`${lexendSans.className} scroll-smooth overflow-x-hidden overflow-y-scroll overscroll-none`}
       data-scroll-behavior="smooth"
+      suppressHydrationWarning
     >
       <body className="antialiased min-h-screen">
-        <SidebarProvider>
-          <AppSidebar />
-          <div className="flex flex-col w-full">
-            <Header />
-            <LayoutWithPlayer>
-              <main className="flex-1 p-12 space-y-8">{children}</main>
-            </LayoutWithPlayer>
-          </div>
-          <AudioPlayer />
-        </SidebarProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SidebarProvider>
+            <AppSidebar />
+            <div className="flex flex-col w-full">
+              <Header />
+              <LayoutWithPlayer>
+                <main className="flex-1 p-12 space-y-8">{children}</main>
+              </LayoutWithPlayer>
+            </div>
+            <AudioPlayer />
+          </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
