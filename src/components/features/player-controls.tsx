@@ -7,15 +7,13 @@ import {
   Repeat1Icon,
   ShuffleIcon,
   Loader2Icon,
-  CirclePlayIcon,
-  CirclePauseIcon,
   RepeatIcon,
-  PlayCircleIcon,
   PlayIcon,
+  PauseIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { RepeatMode } from "@/stores/use-audio-store";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface PlayerControlsProps {
   isPlaying: boolean;
@@ -45,11 +43,13 @@ export default function PlayerControls({
   onToggleShuffle,
 }: PlayerControlsProps) {
   return (
-    <div className="space-x-5 flex items-center">
+    <div className="space-x-6 flex items-center">
       <IconButton
         icon={ShuffleIcon}
         onClick={onToggleShuffle}
-        tooltipContent="Enable shuffle"
+        tooltipContent={isShuffled ? "Disable shuffle" : "Enable shuffle"}
+        description={isShuffled ? "Disable shuffle" : "Enable shuffle"}
+        iconClassName={isShuffled ? "stroke-primary" : ""}
       />
       <IconButton
         icon={SkipBackIcon}
@@ -58,32 +58,18 @@ export default function PlayerControls({
         iconClassName="fill-current"
         tooltipContent="Previous"
       />
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <button
-            onClick={onTogglePlay}
-            className="p-2.5 rounded-full bg-primary cursor-pointer"
-          >
-            <PlayIcon size={20} className="fill-white stroke-0" />
-          </button>
-        </TooltipTrigger>
-        <TooltipContent>Play</TooltipContent>
-      </Tooltip>
-      {/* <Button
-        variant="ghost"
-        size="icon"
-        className=""
-        onClick={onTogglePlay}
-        disabled={isLoading}
-      >
-        {isLoading ? (
-          <Loader2Icon className="size-9 animate-spin" />
-        ) : isPlaying ? (
-          <CirclePauseIcon className="size-9 stroke-1" />
-        ) : (
-          <CirclePlayIcon className="size-9 stroke-1" />
+      <IconButton
+        icon={isLoading ? Loader2Icon : isPlaying ? PauseIcon : PlayIcon}
+        iconClassName={cn(
+          "fill-current stroke-0 size-6",
+          isLoading && "stroke-1.5 fill-none animate-spin"
         )}
-      </Button> */}
+        className="p-2.25 rounded-full bg-muted cursor-pointer"
+        tooltipContent="Play"
+        description="Play"
+        disabled={isLoading}
+        onClick={onTogglePlay}
+      />
       <IconButton
         icon={SkipForwardIcon}
         onClick={onNext}
@@ -91,19 +77,25 @@ export default function PlayerControls({
         iconClassName="fill-current"
         tooltipContent="Next"
       />
-      <Button
-        variant={repeatMode !== "off" ? "default" : "ghost"}
-        size="sm"
+      <IconButton
+        icon={repeatMode === "one" ? Repeat1Icon : RepeatIcon}
+        iconClassName={cn(repeatMode !== "off" && "stroke-primary")}
+        tooltipContent={
+          repeatMode === "one"
+            ? "Disable repeat"
+            : repeatMode === "off"
+            ? "Enable repeat"
+            : "Enable repeat one"
+        }
+        description={
+          repeatMode === "one"
+            ? "Disable repeat"
+            : repeatMode === "off"
+            ? "Enable repeat"
+            : "Enable repeat one"
+        }
         onClick={onToggleRepeat}
-      >
-        {repeatMode === "one" ? (
-          <Repeat1Icon className="size-4" />
-        ) : repeatMode === "all" ? (
-          <RepeatIcon className="size-4" />
-        ) : (
-          <RepeatIcon className="size-4" />
-        )}
-      </Button>
+      />
     </div>
   );
 }

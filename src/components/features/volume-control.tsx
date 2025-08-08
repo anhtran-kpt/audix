@@ -3,7 +3,6 @@
 import { Slider } from "@/components/ui/slider";
 import { Volume2Icon, VolumeXIcon, Volume1Icon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import { useAudioStore } from "@/stores/use-audio-store";
 
 interface VolumeControlProps {
   volume: number;
@@ -35,7 +34,7 @@ export default function VolumeControl({
       <IconButton
         icon={VolumeIcon}
         onClick={onToggleMute}
-        tooltipContent={<>{isMuted ? "Unmute" : "Mute"}</>}
+        tooltipContent={isMuted ? "Unmute" : "Mute"}
       />
       <Slider
         value={[isMuted ? 0 : volume * 100]}

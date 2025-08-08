@@ -8,6 +8,8 @@ import {
   ListMusicIcon,
   CastIcon,
   PlusCircleIcon,
+  MonitorSpeakerIcon,
+  Minimize2Icon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { NavLink } from "../ui/nav-link";
@@ -43,7 +45,7 @@ function AudioPlayer() {
   return (
     <>
       {currentTrack && (
-        <div className="fixed bottom-0 left-0 right-0 bg-background border z-50 px-4 py-3">
+        <div className="fixed bottom-0 left-0 right-0 bg-player border z-50 px-4 py-2">
           <div className="flex items-center justify-between gap-12">
             <div className="flex items-center">
               <div className="flex items-center gap-3 grow">
@@ -79,7 +81,7 @@ function AudioPlayer() {
                 }
               />
             </div>
-            <div className="flex flex-col space-y-3 items-center grow">
+            <div className="flex flex-col space-y-2 items-center grow">
               <PlayerControls
                 isPlaying={playback.isPlaying}
                 isLoading={playback.isLoading}
@@ -102,26 +104,23 @@ function AudioPlayer() {
               />
             </div>
             <div className="flex items-center">
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="icon" className="">
-                  <SquarePlayIcon className="size-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="">
-                  <MicVocalIcon className="size-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="">
-                  <CastIcon className="size-4" />
-                </Button>
+              <div className="flex items-center space-x-5">
+                <IconButton icon={MicVocalIcon} tooltipContent="Lyrics" />
+                <IconButton
+                  icon={MonitorSpeakerIcon}
+                  tooltipContent="Connect to a device"
+                />
+                <IconButton
+                  icon={Minimize2Icon}
+                  tooltipContent="Open miniplayer"
+                />
                 <VolumeControl
                   volume={volume.volume}
                   isMuted={volume.isMuted}
                   onVolumeChange={volume.setVolume}
                   onToggleMute={volume.toggleMute}
                 />
-                <Separator orientation="vertical" className="w-1 h-full" />
-                <Button variant="ghost" size="icon" className="">
-                  <ListMusicIcon className="size-4" />
-                </Button>
+                <IconButton icon={ListMusicIcon} tooltipContent="Queue" />
               </div>
             </div>
           </div>

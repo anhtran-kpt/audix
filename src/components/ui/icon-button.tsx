@@ -31,11 +31,11 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
     const iconSize = iconSizeMap[size];
 
     const btnClasses = cn(
-      "rounded-full text-foreground transition-transform",
+      "rounded-full text-muted-foreground transition-transform",
       className,
       disabled
         ? "opacity-50 cursor-not-allowed pointer-events-none"
-        : "hover:text-primary hover:scale-105 cursor-pointer"
+        : "hover:text-foreground hover:scale-105 cursor-pointer"
     );
 
     const btn = (

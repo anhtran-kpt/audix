@@ -36,16 +36,14 @@ export const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const bgClasses = isAtTop
-    ? "bg-transparent"
-    : "bg-background/70 backdrop-blur-md shadow-sm";
+  const bgClasses = isAtTop ? "" : "backdrop-blur-md shadow-sm";
 
   const transformClasses = isVisible ? "translate-y-0" : "-translate-y-full";
 
   return (
     <header
       className={cn(
-        "fixed top-0 z-20 flex items-center justify-between gap-6 py-3 px-12 transform transition-transform duration-300 ease-in-out",
+        "fixed top-0 z-20 flex items-center justify-between gap-6 py-3 px-12 transform transition-transform duration-300 ease-in-out bg-background/90",
         open ? "left-64 w-[calc(100%-16rem)]" : "left-0 w-full",
         transformClasses,
         bgClasses

@@ -25,7 +25,7 @@ export default function ProgressBar({
   };
 
   return (
-    <div className="flex items-center gap-4 text-sm text-muted-foreground w-full max-w-lg">
+    <div className="flex items-center gap-4 text-sm text-muted-foreground w-full max-w-xl">
       <span className="text-xs">{formatTime(currentTime)}</span>
       <Slider
         value={[progress]}
