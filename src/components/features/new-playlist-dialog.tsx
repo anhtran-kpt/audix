@@ -12,6 +12,7 @@ import {
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 export const NewPlaylistDialog = () => {
   return (
@@ -34,8 +35,16 @@ export const NewPlaylistDialog = () => {
             placeholder="Ex: My favorite songs"
           />
         </div>
+        <div className="grid gap-3">
+          <Label htmlFor="playlist-description">Description</Label>
+          <Textarea
+            id="playlist-description"
+            name="playlist-description"
+            placeholder="Ex: This is my favorite songs"
+          />
+        </div>
         <DialogFooter>
-          <Button>Create</Button>
+          <Button className="w-full">Create</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -23,28 +23,37 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       className,
       iconClassName,
       description,
+      disabled,
       ...buttonProps
     },
     ref
   ) => {
     const iconSize = iconSizeMap[size];
 
+    const btnClasses = cn(
+      "rounded-full text-muted-foreground transition-transform",
+      className,
+      disabled
+        ? "opacity-50 cursor-not-allowed pointer-events-none"
+        : "hover:text-foreground hover:scale-105 cursor-pointer"
+    );
+
     const btn = (
       <button
         {...buttonProps}
         ref={ref}
         type={buttonProps.type ?? "button"}
-        className={cn(
-          "rounded-full text-muted-foreground hover:text-foreground hover:scale-105 transition-transform cursor-pointer",
-          className
-        )}
+        disabled={disabled}
+        className={btnClasses}
       >
         <Icon className={cn(iconSize, iconClassName)} />
         <span className="sr-only">{description}</span>
       </button>
     );
 
-    if (!tooltipContent) return btn;
+    if (!tooltipContent || disabled) {
+      return btn;
+    }
 
     return (
       <Tooltip>

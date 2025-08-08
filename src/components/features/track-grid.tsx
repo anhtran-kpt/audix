@@ -15,8 +15,13 @@ import { formatDuration } from "@/lib/helpers/format-duration";
 import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
-import { usePlayerStore } from "@/stores/use-player-store";
+import { useAudioStore } from "@/stores/use-audio-store";
 import { TTrack } from "@/types/track";
+import {
+  useAudioPlayer,
+  useCurrentTrack,
+  useIsPlaying,
+} from "@/hooks/use-audio-player";
 
 interface TrackGridProps {
   type: "album" | "popular" | "playlist";
@@ -27,7 +32,10 @@ export const TrackGrid = ({ type, tracks }: TrackGridProps) => {
   const gridClass =
     "grid w-full items-center grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]";
 
-  const { isPlaying, currentTrack, playTrack } = usePlayerStore();
+  const currentTrack = useCurrentTrack();
+  const isPlaying = useIsPlaying();
+
+  const { playTrack } = useAudioPlayer();
 
   return (
     <div className="space-y-1 w-full">
