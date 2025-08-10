@@ -41,7 +41,7 @@ export default function RootLayout({
             <div className="flex flex-col w-full">
               <Header />
               <LayoutWithPlayer>
-                <main className="flex-1 p-12 space-y-8">{children}</main>
+                <main className="flex-1 p-12 space-y-8 mt-15">{children}</main>
               </LayoutWithPlayer>
             </div>
             <AudioPlayer />

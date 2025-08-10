@@ -10,6 +10,7 @@ export type TTrack = Prisma.TrackGetPayload<{
     trackNumber: true;
     isExplicit: true;
     playCount: true;
+    createdAt: true;
     album: {
       select: {
         artistId: true;

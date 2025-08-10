@@ -1,16 +1,51 @@
+import { HotAlbumsSection } from "@/components/sections/discovery/hot-albums-section";
+import { NewReleasesSection } from "@/components/sections/discovery/new-releases-section";
 import prisma from "@/lib/prisma";
-import Link from "next/link";
 
 export default async function Home() {
-  const artists = await prisma.artist.findMany();
+  const [tracks, albums] = await Promise.all([
+    prisma.track.findMany({
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        audioId: true,
+        duration: true,
+        trackNumber: true,
+        isExplicit: true,
+        playCount: true,
+        createdAt: true,
+        album: {
+          select: {
+            artistId: true,
+            id: true,
+            imageId: true,
+            title: true,
+          },
+        },
+        artists: {
+          select: {
+            artist: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      take: 12,
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+    prisma.album.findMany({}),
+  ]);
 
   return (
-    <div>
-      {artists.map((artist) => (
-        <p key={artist.id}>
-          <Link href={`/artists/${artist.id}`}>{artist.name}</Link>
-        </p>
-      ))}
-    </div>
+    <>
+      <NewReleasesSection tracks={tracks} />
+      <HotAlbumsSection albums={albums} />
+    </>
   );
 }

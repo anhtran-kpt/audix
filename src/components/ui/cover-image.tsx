@@ -4,17 +4,24 @@ import { CoverImageSize, coverImageSizeMap } from "@/lib/constants/size-maps";
 import { cn } from "@/lib/utils";
 import { CldImage, CldImageProps } from "next-cloudinary";
 import { FC } from "react";
+import { IconButton } from "./icon-button";
+import { PlayIcon } from "lucide-react";
+import { TTrack } from "@/types";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
 
 interface CoverImageProps extends CldImageProps {
   size?: CoverImageSize;
+  track?: TTrack;
 }
 
 export const CoverImage: FC<CoverImageProps> = ({
   size = "md",
+  track,
   className,
   ...props
 }) => {
   const sizeClasses = coverImageSizeMap[size];
+  const { playTrack } = useAudioPlayer();
 
   return (
     <div
@@ -29,6 +36,15 @@ export const CoverImage: FC<CoverImageProps> = ({
         sizes="(max-width: 640px) 100vw, 640px"
         {...props}
       />
+      {track && (
+        <IconButton
+          icon={PlayIcon}
+          size="sm"
+          onClick={() => playTrack(track)}
+          iconClassName="fill-foreground stroke-0"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
+        />
+      )}
     </div>
   );
 };
