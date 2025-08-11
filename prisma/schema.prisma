@@ -24,8 +24,8 @@ model User {
   username      String?   @unique
   name          String?
   password      String?
-  imageId       String?
-  emailVerified DateTime?
+  image         String?
+  emailVerified DateTime? @map("email_verified")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -69,10 +69,10 @@ enum Gender {
 
 model Account {
   id                String  @id @default(cuid())
-  userId            String
+  userId            String  @map("user_id")
   type              String
   provider          String
-  providerAccountId String
+  providerAccountId String  @map("provider_account_id")
   refresh_token     String? @db.Text
   access_token      String? @db.Text
   expires_at        Int?
@@ -89,8 +89,8 @@ model Account {
 
 model Session {
   id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 

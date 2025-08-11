@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
 import { ModeToggle } from "./mode-toggle";
 import { AppNavigation } from "./app-navigation";
+import { UserProfile } from "./user-profile";
 
 export const Header = () => {
   const [isAtTop, setIsAtTop] = useState(true);
@@ -57,10 +58,7 @@ export const Header = () => {
       <div className="flex gap-8 items-center">
         <ModeToggle />
         <IconButton icon={SettingsIcon} tooltipContent="Settings" />
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
+        <UserProfile />
       </div>
     </header>
   );
