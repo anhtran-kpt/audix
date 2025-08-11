@@ -38,7 +38,7 @@ export default function RootLayout({
         >
           <SidebarProvider>
             <AppSidebar />
-            <div className="flex flex-col w-full">
+            <div className="flex flex-col min-w-0 flex-1">
               <Header />
               <LayoutWithPlayer>
                 <main className="flex-1 p-12 space-y-8 mt-15">{children}</main>

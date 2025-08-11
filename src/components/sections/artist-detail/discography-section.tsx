@@ -1,9 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
 import SectionHeading from "@/components/ui/section-heading";
-import { NavLink } from "@/components/ui/nav-link";
 import { AlbumGrid } from "@/components/features/album-grid";
 import { TFullArtist } from "@/types";
 
@@ -27,11 +25,11 @@ export const DiscographySection = ({
 
   return (
     <section>
-      <div className="flex justify-between items-center">
-        <SectionHeading heading="Discography" />
-        <NavLink href={`/artists/${artistId}/discography`}>Show all</NavLink>
-      </div>
-
+      <SectionHeading
+        title="Discography"
+        hasShowAll
+        href={`/artists/${artistId}/discography`}
+      />
       <Tabs defaultValue={defaultTab} className="w-full gap-6">
         <TabsList>
           {availableTabs.map((tab) => (

@@ -17,10 +17,7 @@ type NewReleasesSectionProps = {
 export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {
   return (
     <section>
-      <div className="flex justify-between items-center">
-        <SectionHeading heading="New Releases" />
-        <NavLink href={`/new-releases`}>Show all</NavLink>
-      </div>
+      <SectionHeading title="New Releases" hasShowAll href="/new-releases" />
       <div className="grid gap-x-4 gap-y-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {tracks.map((track) => (
           <div

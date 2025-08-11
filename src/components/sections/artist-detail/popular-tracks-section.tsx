@@ -13,7 +13,7 @@ export const PopularTracksSection = ({
 }) => {
   return (
     <section>
-      <SectionHeading heading="Popular" />
+      <SectionHeading title="Popular" />
       <TrackGrid artistId={artistId} type="popular" tracks={tracks} />
     </section>
   );

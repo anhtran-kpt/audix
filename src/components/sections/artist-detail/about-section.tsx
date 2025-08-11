@@ -17,7 +17,7 @@ export const AboutSection = ({
 }: AboutSectionProps) => {
   return (
     <section>
-      <SectionHeading heading="About" />
+      <SectionHeading title={`About ${name}`} />
       <div className="rounded-lg flex items-center justify-between gap-12 px-12 py-8 relative overflow-hidden aspect-video group">
         <CldImage
           src={bannerId}

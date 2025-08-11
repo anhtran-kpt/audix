@@ -37,7 +37,7 @@ export const Header = () => {
   }, []);
 
   const bgClasses = isAtTop ? "" : "backdrop-blur-md shadow-sm";
-
+  const isBordered = !isAtTop && isVisible && "border-b";
   const transformClasses = isVisible ? "translate-y-0" : "-translate-y-full";
 
   return (
@@ -46,7 +46,8 @@ export const Header = () => {
         "fixed top-0 z-20 flex items-center justify-between gap-6 py-3 px-12 transform transition-transform duration-300 ease-in-out bg-background/90",
         open ? "left-64 w-[calc(100%-16rem)]" : "left-0 w-full",
         transformClasses,
-        bgClasses
+        bgClasses,
+        isBordered
       )}
     >
       <div className="flex items-center gap-8 grow">

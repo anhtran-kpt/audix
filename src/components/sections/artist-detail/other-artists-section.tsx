@@ -15,10 +15,7 @@ interface OtherArtistsSectionProps {
 export const OtherArtistsSection = ({ artists }: OtherArtistsSectionProps) => {
   return (
     <section>
-      <div className="flex justify-between items-center">
-        <SectionHeading heading="Fans also like" />
-        <NavLink href={`/artists`}>Show all</NavLink>
-      </div>
+      <SectionHeading title="Fans also like" href={`/artists`} hasShowAll />
       <GridWrapper>
         {artists.map((artist) => (
           <div key={artist.id} className="space-y-4 group">

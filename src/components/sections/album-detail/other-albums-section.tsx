@@ -20,10 +20,11 @@ export const OtherAlbumsSection = ({
 }: OtherAlbumsSectionProps) => {
   return (
     <section>
-      <div className="flex justify-between items-center">
-        <SectionHeading heading={`More by ${artist.name}`} />
-        <NavLink href={`/artists/${artist.id}/albums`}>Show all</NavLink>
-      </div>
+      <SectionHeading
+        title={`More by ${artist.name}`}
+        hasShowAll
+        href={`/artists/${artist.id}/albums`}
+      />
       <GridWrapper>
         {albums.map((album) => (
           <div key={album.id} className="space-y-2 group">
