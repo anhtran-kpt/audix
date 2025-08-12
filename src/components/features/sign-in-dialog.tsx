@@ -25,6 +25,10 @@ export const SignInDialog = () => {
     return <div>Loading...</div>;
   }
 
+  if (status === "authenticated") {
+    return null;
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>

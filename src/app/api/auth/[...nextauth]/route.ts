@@ -81,7 +81,6 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    // JWT Callback - Được gọi khi JWT được tạo
     async jwt({ token, user, account, profile, trigger, session }) {
       // Khi user đăng nhập lần đầu
       if (user) {
@@ -147,17 +146,14 @@ export const authOptions: NextAuthOptions = {
   },
 
   events: {
-    // Event khi user đăng nhập
     async signIn({ user, account, profile, isNewUser }) {
       console.log(`User ${user.email} signed in with ${account?.provider}`);
     },
 
-    // Event khi user đăng xuất
     async signOut({ session, token }) {
       console.log(`User signed out`);
     },
 
-    // Event khi tạo user mới
     async createUser({ user }) {
       const username = await generateUniqueUsername(
         user.name || user.email!.split("@")[0]
