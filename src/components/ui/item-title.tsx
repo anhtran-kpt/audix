@@ -13,7 +13,7 @@ export const ItemTitle = ({
   return (
     <p
       className={cn(
-        "font-medium truncate text-foreground text-[calc(15rem/16)]",
+        "font-medium truncate text-foreground text-sm select-none",
         isActive && "text-primary"
       )}
     >

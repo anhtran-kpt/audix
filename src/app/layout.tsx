@@ -10,6 +10,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
+import prisma from "@/lib/prisma";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -26,6 +27,23 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
+  const playlists = await prisma.playlist.findMany({
+    where: {
+      userId: session?.user.id,
+    },
+    select: {
+      id: true,
+      title: true,
+      imageId: true,
+      user: {
+        select: {
+          image: true,
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
 
   return (
     <html
@@ -37,13 +55,13 @@ export default async function RootLayout({
       <body className="antialiased min-h-screen">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
           <AuthProvider session={session}>
             <SidebarProvider>
-              <AppSidebar />
+              <AppSidebar playlists={playlists} />
               <div className="flex flex-col min-w-0 flex-1">
                 <Header />
                 <LayoutWithPlayer>
