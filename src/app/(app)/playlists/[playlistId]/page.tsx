@@ -1,3 +1,4 @@
+import { ActionsSection } from "@/components/sections/playlist-detail/actions-section";
 import { BannerSection } from "@/components/sections/playlist-detail/banner-section";
 import prisma from "@/lib/prisma";
 
@@ -36,6 +37,7 @@ export default async function PlaylistDetailPage({
         user={playlist.user}
         description={playlist.description}
       />
+      <ActionsSection title={playlist.title} />
     </>
   );
 }

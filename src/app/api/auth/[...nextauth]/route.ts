@@ -1,6 +1,5 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import GitHubProvider from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/prisma";
@@ -21,10 +20,6 @@ export const authOptions: NextAuthOptions = {
           scope: "openid email profile",
         },
       },
-    }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_ID!,
-      clientSecret: process.env.GITHUB_SECRET!,
     }),
     CredentialsProvider({
       name: "credentials",
@@ -125,7 +120,7 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile, email, credentials }) {
       try {
         // Nếu đăng nhập bằng OAuth providers
-        if (account?.provider === "google" || account?.provider === "github") {
+        if (account?.provider === "google") {
           return true;
         }
 
@@ -143,6 +138,10 @@ export const authOptions: NextAuthOptions = {
       else if (new URL(url).origin === baseUrl) return url;
       return `${baseUrl}/dashboard`;
     },
+  },
+
+  pages: {
+    signIn: "/auth/sign-in",
   },
 
   events: {
@@ -168,8 +167,6 @@ export const authOptions: NextAuthOptions = {
       });
     },
   },
-
-  debug: process.env.NODE_ENV === "development",
 };
 
 const handler = NextAuth(authOptions);

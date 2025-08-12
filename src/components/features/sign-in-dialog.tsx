@@ -14,7 +14,6 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { signIn, useSession } from "next-auth/react";
 import Google from "../ui/google";
-import GitHub from "../ui/github";
 import { Separator } from "../ui/separator";
 import { NavLink } from "../ui/nav-link";
 
@@ -79,10 +78,6 @@ export const SignInDialog = () => {
         <Button onClick={() => signIn("google")} variant="outline">
           <Google />
           Continue with Google
-        </Button>
-        <Button onClick={() => signIn("github")} variant="outline">
-          <GitHub />
-          Continue with GitHub
         </Button>
       </DialogContent>
     </Dialog>
