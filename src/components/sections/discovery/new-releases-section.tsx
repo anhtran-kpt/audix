@@ -45,7 +45,7 @@ export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {
                     </span>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground first-letter:uppercase">
                   {formatDistanceToNow(track.createdAt, { addSuffix: true })}
                 </p>
               </div>

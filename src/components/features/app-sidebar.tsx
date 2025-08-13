@@ -75,7 +75,7 @@ export function AppSidebar({ playlists }: AppSidebarProps) {
           </SidebarMenu>
         </SidebarGroup>
         <Separator />
-        <SidebarGroup>
+        <SidebarGroup className="overflow-y-scroll">
           <SidebarMenu>
             {playlists.map((playlist) => (
               <SidebarMenuItem key={playlist.id}>

@@ -10,10 +10,15 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { NewPlaylistForm } from "@/features/playlist/components/new-playlist-form";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const NewPlaylistDialog = () => {
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">
           <PlusIcon />
@@ -24,7 +29,12 @@ export const NewPlaylistDialog = () => {
         <DialogHeader>
           <DialogTitle className="text-center">Create new playlist</DialogTitle>
         </DialogHeader>
-        <NewPlaylistForm />
+        <NewPlaylistForm
+          onSuccess={(redirectTo) => {
+            setOpen(false);
+            router.push(redirectTo, { scroll: false });
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

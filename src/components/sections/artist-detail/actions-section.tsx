@@ -3,8 +3,8 @@
 import { EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { TFullArtist } from "@/types";
 import { IconButton } from "@/components/ui/icon-button";
-import { Button } from "@/components/ui/button";
 import PlayButton from "@/components/ui/play-button";
+import { FollowButton } from "@/components/features/follow-button";
 
 type ActionsSectionProps = Pick<TFullArtist, "name">;
 
@@ -21,9 +21,7 @@ export const ActionsSection = ({ name }: ActionsSectionProps) => {
           </>
         }
       />
-      <Button variant="outline" className="rounded-full">
-        Follow
-      </Button>
+      <FollowButton />
       <IconButton
         icon={EllipsisIcon}
         size="xl"

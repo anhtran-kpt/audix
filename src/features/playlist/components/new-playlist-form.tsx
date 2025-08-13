@@ -7,7 +7,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
@@ -21,7 +20,11 @@ import { createPlaylistAction } from "../actions/create-playlist.action";
 import { Switch } from "@/components/ui/switch";
 import { useActionSubmit } from "@/features/_shared/hooks/use-action-submit";
 
-export const NewPlaylistForm = () => {
+export const NewPlaylistForm = ({
+  onSuccess,
+}: {
+  onSuccess: (redirectTo: string) => void;
+}) => {
   const form = useForm<PlaylistCreateInput>({
     resolver: zodResolver(playlistCreateInput),
     mode: "onChange",
@@ -32,7 +35,11 @@ export const NewPlaylistForm = () => {
     },
   });
 
-  const { submit, isPending } = useActionSubmit(form, createPlaylistAction);
+  const { submit, isPending } = useActionSubmit(form, createPlaylistAction, {
+    onSuccess: ({ redirectTo }) => {
+      if (redirectTo) onSuccess(redirectTo);
+    },
+  });
 
   const {
     handleSubmit,

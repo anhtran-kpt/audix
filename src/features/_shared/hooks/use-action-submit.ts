@@ -23,6 +23,7 @@ export function useActionSubmit<TValues extends FieldValues, TData = any>(
     onSuccess?: (ctx: {
       data?: TData;
       values: TValues;
+      redirectTo?: string;
     }) => void | Promise<void>;
     onError?: (msg?: string) => void;
     resetOnSuccess?: boolean;
@@ -40,7 +41,11 @@ export function useActionSubmit<TValues extends FieldValues, TData = any>(
         return;
       }
 
-      await opts?.onSuccess?.({ data: res.data, values });
+      await opts?.onSuccess?.({
+        data: res.data,
+        values,
+        redirectTo: res.redirectTo,
+      });
       if (opts?.resetOnSuccess ?? true) form.reset();
       if (res.redirectTo) router.push(res.redirectTo);
     });
