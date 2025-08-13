@@ -4,7 +4,6 @@ import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
 import { TFullPlaylist } from "@/types";
 import { CoverImage } from "@/components/ui/cover-image";
-import { ArtistImage } from "@/components/ui/artist-image";
 import { NavLink } from "@/components/ui/nav-link";
 import Dot from "@/components/ui/dot";
 import prettyMilliseconds from "pretty-ms";
@@ -71,14 +70,10 @@ export const BannerSection = ({
             <div className="inline-flex items-center gap-2">
               {user ? (
                 <>
-                  {user.image ? (
-                    <Avatar>
-                      <AvatarImage src={user.image} />
-                      <AvatarFallback>{user.name}</AvatarFallback>
-                    </Avatar>
-                  ) : (
-                    <ArtistImage alt={user.name} src={user.image} size="xs" />
-                  )}
+                  <Avatar>
+                    <AvatarImage src={user.image as string} />
+                    <AvatarFallback>{user.name}</AvatarFallback>
+                  </Avatar>
                   <NavLink href={`/users/${user.id}`} className="text-sm">
                     {user.name}
                   </NavLink>

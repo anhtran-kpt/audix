@@ -1,5 +1,6 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
+
+import { signIn, signOut, useSession } from "next-auth/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,11 +13,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconButton } from "../ui/icon-button";
 import { User2Icon } from "lucide-react";
-import { SignInDialog } from "./sign-in-dialog";
 import { AvatarImage, Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
+import Google from "../ui/google";
 
 export const UserProfile = () => {
   const { data: session, status } = useSession();
@@ -33,14 +34,21 @@ export const UserProfile = () => {
         <DropdownMenuContent className="w-56" align="start">
           <DropdownMenuGroup>
             <DropdownMenuItem asChild>
-              <SignInDialog />
+              <Button
+                className="w-full"
+                onClick={() => signIn("google")}
+                variant="outline"
+              >
+                <Google />
+                Sign in with Google
+              </Button>
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
     );
 
-  const { image: imageUrl, name, username, email, subscription } = session.user;
+  const { image: imageUrl, name, email, subscription } = session.user;
 
   return (
     <DropdownMenu>
@@ -63,7 +71,7 @@ export const UserProfile = () => {
                 {subscription}
               </Badge>
             </div>
-            <p className="text-xs text-muted-foreground">{username ?? email}</p>
+            {email && <p className="text-xs text-muted-foreground">{email}</p>}
             <Button className="bg-amber-500 hover:bg-amber-600 mt-3 w-full">
               Upgrade to Premium
             </Button>
@@ -80,7 +88,7 @@ export const UserProfile = () => {
           <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => signOut()}>
-          Log out
+          Sign out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
