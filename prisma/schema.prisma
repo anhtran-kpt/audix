@@ -20,20 +20,12 @@ datasource db {
 
 model User {
   id            String    @id @default(cuid())
-  email         String    @unique
-  username      String?   @unique
+  email         String?   @unique
   name          String?
-  password      String?
   image         String?
   emailVerified DateTime? @map("email_verified")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-
-  // Profile
-  bio         String?
-  country     String?
-  dateOfBirth DateTime?
-  gender      Gender?
 
   // Subscription info
   subscription UserSubscription?

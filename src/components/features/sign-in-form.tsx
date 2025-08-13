@@ -1,6 +1,5 @@
 "use client";
 
-import { useActionSubmit } from "@/features/_shared/hooks/use-action-submit";
 import {
   Form,
   FormControl,
@@ -18,8 +17,13 @@ import { Separator } from "../ui/separator";
 import Google from "../ui/google";
 import { NavLink } from "../ui/nav-link";
 import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export const SignInForm = () => {
+  const router = useRouter();
+  const sp = useSearchParams();
+  const callbackUrl = sp.get("callbackUrl") ?? "/";
+
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInInput),
     mode: "onChange",
@@ -35,9 +39,30 @@ export const SignInForm = () => {
     formState: { isValid, isSubmitting },
   } = form;
 
+  const onSubmit = handleSubmit(async (values) => {
+    const res = await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: false,
+    });
+
+    if (!res) {
+      form.setError("root", {
+        message: "An unknown error occurred. Try again later",
+      });
+      return;
+    }
+    if (res.error) {
+      form.setError("root", { message: "Incorrect email or password" });
+      return;
+    }
+
+    router.replace(callbackUrl);
+  });
+
   return (
     <Form {...form}>
-      <form className="space-y-6">
+      <form onSubmit={onSubmit} className="space-y-6">
         <FormField
           control={control}
           name="email"
@@ -69,12 +94,24 @@ export const SignInForm = () => {
           )}
         />
 
+        {form.formState.errors.root?.message && (
+          <p className="text-sm text-destructive-foreground">
+            {form.formState.errors.root.message}
+          </p>
+        )}
+
         <div className="text-end -mt-3">
           <NavLink href="/auth/forgot-password" className="underline">
             Forgot password?
           </NavLink>
         </div>
-        <Button className="w-full">Sign in</Button>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={!isValid || isSubmitting}
+        >
+          {isSubmitting ? "Signing in..." : "Sign in"}
+        </Button>
         <div className="text-center">
           <span className="text-muted-foreground text-[calc(13rem/16)]">
             Don't have an account?
@@ -90,7 +127,8 @@ export const SignInForm = () => {
           </div>
         </div>
         <Button
-          onClick={() => signIn("google")}
+          type="button"
+          onClick={() => signIn("google", { callbackUrl })}
           variant="outline"
           className="w-full"
         >

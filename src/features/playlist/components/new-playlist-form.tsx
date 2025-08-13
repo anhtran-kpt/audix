@@ -17,7 +17,7 @@ import {
   playlistCreateInput,
   PlaylistCreateInput,
 } from "../schemas/playlist.schema";
-import { createPlaylistAction } from "../actions/create-playlist";
+import { createPlaylistAction } from "../actions/create-playlist.action";
 import { Switch } from "@/components/ui/switch";
 import { useActionSubmit } from "@/features/_shared/hooks/use-action-submit";
 

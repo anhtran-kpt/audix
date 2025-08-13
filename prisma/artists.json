@@ -34,7 +34,7 @@
       "name": "Đen Vâu",
       "isVerified": true,
       "bio": "Đen Vâu, born Nguyễn Đức Cường, is a Vietnamese rapper and songwriter. He is celebrated for his unique storytelling style, which combines poetic and often introspective lyrics with laid-back, melodic beats. Before his music career took off, he worked as a beach cleaner, a detail that often features in his humble and down-to-earth persona. Đen Vâu's music is deeply personal and relatable, touching on everyday life, love, and the simple joys and struggles of existence. He has become one of Vietnam's most beloved and respected artists, bridging the gap between mainstream pop and hip-hop.",
-      "genreSlugs": ["hip-hop", "pop"]
+      "genreSlugs": ["hip-hop"]
     },
     {
       "imageId": "audix/artists/image/duong-hoang-yen",
@@ -70,7 +70,7 @@
       "name": "Hoài Lâm",
       "isVerified": true,
       "bio": "Võ Nguyễn Hoài Lâm, known by his stage name Hoài Lâm, is a Vietnamese pop singer and actor born on July 1, 1995, in Vĩnh Long, Vietnam. He is known for his versatile vocal abilities, performing various genres including ballads, folk songs, and pop. Hoài Lâm gained significant recognition in 2014 after winning the first prize in the second season of the reality television show \"Gương mặt thân quen\" (Your Face Looks Familiar). During the show, he impersonated various artists such as Celine Dion, Adele, and Sơn Tùng M-TP. His victory propelled him into the spotlight, and he released popular songs like \"Như Những Phút Ban Đầu\" and \"Có Khi\". Hoài Lâm's career also includes acting roles in television dramas and films, such as \"Quý Tử Bất Đắc Dĩ\" (2015) and \"Tía Tui Là Cao Thủ\" (2016). Despite his success, he has faced challenges and in 2018, he announced a two-year hiatus from music due to stress. He has since made attempts to return to the music scene.",
-      "genreSlugs": ["pop", "folk-acoustic"]
+      "genreSlugs": ["pop", "r&b"]
     },
     {
       "imageId": "audix/artists/image/hoang-dung",
@@ -106,7 +106,7 @@
       "name": "Lâm Bảo Ngọc",
       "isVerified": true,
       "bio": "Lâm Bảo Ngọc is a Vietnamese pop and ballad singer, best known for her captivating stage presence and stunning vocal technique. She gained national attention as the runner-up of The Voice of Vietnam in 2019. Audiences and critics alike praise her for her powerful and clear voice, often compared to some of the country's top divas. Lâm Bảo Ngọc has since become a rising star in the Vietnamese music industry, admired for her exceptional live performances and elegant style.",
-      "genreSlugs": ["pop"]
+      "genreSlugs": ["pop", "r&b"]
     },
     {
       "imageId": "audix/artists/image/lisa",

@@ -22,18 +22,12 @@ CREATE TYPE "public"."ChartType" AS ENUM ('TOP_SONGS', 'TOP_ALBUMS', 'TOP_ARTIST
 -- CreateTable
 CREATE TABLE "public"."users" (
     "id" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "username" TEXT,
+    "email" TEXT,
     "name" TEXT,
-    "password" TEXT,
-    "imageId" TEXT,
-    "emailVerified" TIMESTAMP(3),
+    "image" TEXT,
+    "email_verified" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "bio" TEXT,
-    "country" TEXT,
-    "dateOfBirth" TIMESTAMP(3),
-    "gender" "public"."Gender",
 
     CONSTRAINT "users_pkey" PRIMARY KEY ("id")
 );
@@ -41,10 +35,10 @@ CREATE TABLE "public"."users" (
 -- CreateTable
 CREATE TABLE "public"."accounts" (
     "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "provider" TEXT NOT NULL,
-    "providerAccountId" TEXT NOT NULL,
+    "provider_account_id" TEXT NOT NULL,
     "refresh_token" TEXT,
     "access_token" TEXT,
     "expires_at" INTEGER,
@@ -59,8 +53,8 @@ CREATE TABLE "public"."accounts" (
 -- CreateTable
 CREATE TABLE "public"."sessions" (
     "id" TEXT NOT NULL,
-    "sessionToken" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
+    "session_token" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "sessions_pkey" PRIMARY KEY ("id")
@@ -94,7 +88,8 @@ CREATE TABLE "public"."artists" (
     "slug" TEXT NOT NULL,
     "bio" TEXT,
     "imageId" TEXT NOT NULL,
-    "verified" BOOLEAN NOT NULL DEFAULT false,
+    "bannerId" TEXT NOT NULL,
+    "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "monthlyListeners" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -121,7 +116,7 @@ CREATE TABLE "public"."albums" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."songs" (
+CREATE TABLE "public"."tracks" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -135,7 +130,7 @@ CREATE TABLE "public"."songs" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "albumId" TEXT NOT NULL,
 
-    CONSTRAINT "songs_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "tracks_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -144,41 +139,41 @@ CREATE TABLE "public"."genres" (
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "description" TEXT,
-    "color" TEXT,
+    "color" TEXT NOT NULL,
 
     CONSTRAINT "genres_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."song_artists" (
+CREATE TABLE "public"."track_artists" (
     "id" TEXT NOT NULL,
-    "songId" TEXT NOT NULL,
+    "trackId" TEXT NOT NULL,
     "artistId" TEXT NOT NULL,
     "role" "public"."ArtistRole" NOT NULL DEFAULT 'MAIN_ARTIST',
     "order" INTEGER NOT NULL DEFAULT 0,
 
-    CONSTRAINT "song_artists_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "track_artists_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."song_credits" (
+CREATE TABLE "public"."track_credits" (
     "id" TEXT NOT NULL,
-    "songId" TEXT NOT NULL,
+    "trackId" TEXT NOT NULL,
     "artistId" TEXT,
     "name" TEXT NOT NULL,
     "role" "public"."CreditRole" NOT NULL,
     "details" TEXT,
     "order" INTEGER NOT NULL DEFAULT 0,
 
-    CONSTRAINT "song_credits_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "track_credits_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."song_genres" (
-    "songId" TEXT NOT NULL,
+CREATE TABLE "public"."track_genres" (
+    "trackId" TEXT NOT NULL,
     "genreId" TEXT NOT NULL,
 
-    CONSTRAINT "song_genres_pkey" PRIMARY KEY ("songId","genreId")
+    CONSTRAINT "track_genres_pkey" PRIMARY KEY ("trackId","genreId")
 );
 
 -- CreateTable
@@ -220,18 +215,18 @@ CREATE TABLE "public"."playlist_items" (
     "position" INTEGER NOT NULL,
     "addedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "playlistId" TEXT NOT NULL,
-    "songId" TEXT NOT NULL,
+    "trackId" TEXT NOT NULL,
 
     CONSTRAINT "playlist_items_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."user_liked_songs" (
+CREATE TABLE "public"."user_liked_tracks" (
     "userId" TEXT NOT NULL,
-    "songId" TEXT NOT NULL,
+    "trackId" TEXT NOT NULL,
     "likedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "user_liked_songs_pkey" PRIMARY KEY ("userId","songId")
+    CONSTRAINT "user_liked_tracks_pkey" PRIMARY KEY ("userId","trackId")
 );
 
 -- CreateTable
@@ -277,7 +272,7 @@ CREATE TABLE "public"."play_history" (
     "duration" INTEGER NOT NULL,
     "deviceType" TEXT,
     "userId" TEXT NOT NULL,
-    "songId" TEXT NOT NULL,
+    "trackId" TEXT NOT NULL,
 
     CONSTRAINT "play_history_pkey" PRIMARY KEY ("id")
 );
@@ -313,7 +308,7 @@ CREATE TABLE "public"."user_queue" (
     "position" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" TEXT NOT NULL,
-    "songId" TEXT NOT NULL,
+    "trackId" TEXT NOT NULL,
 
     CONSTRAINT "user_queue_pkey" PRIMARY KEY ("id")
 );
@@ -346,13 +341,10 @@ CREATE TABLE "public"."chart_items" (
 CREATE UNIQUE INDEX "users_email_key" ON "public"."users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_username_key" ON "public"."users"("username");
+CREATE UNIQUE INDEX "accounts_provider_provider_account_id_key" ON "public"."accounts"("provider", "provider_account_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "accounts_provider_providerAccountId_key" ON "public"."accounts"("provider", "providerAccountId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "sessions_sessionToken_key" ON "public"."sessions"("sessionToken");
+CREATE UNIQUE INDEX "sessions_session_token_key" ON "public"."sessions"("session_token");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "verification_tokens_token_key" ON "public"."verification_tokens"("token");
@@ -370,7 +362,7 @@ CREATE UNIQUE INDEX "artists_slug_key" ON "public"."artists"("slug");
 CREATE UNIQUE INDEX "albums_slug_key" ON "public"."albums"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "songs_slug_key" ON "public"."songs"("slug");
+CREATE UNIQUE INDEX "tracks_slug_key" ON "public"."tracks"("slug");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "genres_name_key" ON "public"."genres"("name");
@@ -379,22 +371,22 @@ CREATE UNIQUE INDEX "genres_name_key" ON "public"."genres"("name");
 CREATE UNIQUE INDEX "genres_slug_key" ON "public"."genres"("slug");
 
 -- CreateIndex
-CREATE INDEX "song_artists_songId_order_idx" ON "public"."song_artists"("songId", "order");
+CREATE INDEX "track_artists_trackId_order_idx" ON "public"."track_artists"("trackId", "order");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "song_artists_songId_artistId_role_key" ON "public"."song_artists"("songId", "artistId", "role");
+CREATE UNIQUE INDEX "track_artists_trackId_artistId_role_key" ON "public"."track_artists"("trackId", "artistId", "role");
 
 -- CreateIndex
-CREATE INDEX "song_credits_songId_role_idx" ON "public"."song_credits"("songId", "role");
+CREATE INDEX "track_credits_trackId_role_idx" ON "public"."track_credits"("trackId", "role");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "playlist_items_playlistId_songId_key" ON "public"."playlist_items"("playlistId", "songId");
+CREATE UNIQUE INDEX "playlist_items_playlistId_trackId_key" ON "public"."playlist_items"("playlistId", "trackId");
 
 -- CreateIndex
 CREATE INDEX "play_history_userId_playedAt_idx" ON "public"."play_history"("userId", "playedAt");
 
 -- CreateIndex
-CREATE INDEX "play_history_songId_playedAt_idx" ON "public"."play_history"("songId", "playedAt");
+CREATE INDEX "play_history_trackId_playedAt_idx" ON "public"."play_history"("trackId", "playedAt");
 
 -- CreateIndex
 CREATE INDEX "search_history_userId_searchedAt_idx" ON "public"."search_history"("userId", "searchedAt");
@@ -409,10 +401,10 @@ CREATE INDEX "user_queue_userId_position_idx" ON "public"."user_queue"("userId",
 CREATE UNIQUE INDEX "user_queue_userId_position_key" ON "public"."user_queue"("userId", "position");
 
 -- AddForeignKey
-ALTER TABLE "public"."accounts" ADD CONSTRAINT "accounts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."sessions" ADD CONSTRAINT "sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."sessions" ADD CONSTRAINT "sessions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."user_subscriptions" ADD CONSTRAINT "user_subscriptions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -421,25 +413,25 @@ ALTER TABLE "public"."user_subscriptions" ADD CONSTRAINT "user_subscriptions_use
 ALTER TABLE "public"."albums" ADD CONSTRAINT "albums_artistId_fkey" FOREIGN KEY ("artistId") REFERENCES "public"."artists"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."songs" ADD CONSTRAINT "songs_albumId_fkey" FOREIGN KEY ("albumId") REFERENCES "public"."albums"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."tracks" ADD CONSTRAINT "tracks_albumId_fkey" FOREIGN KEY ("albumId") REFERENCES "public"."albums"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."song_artists" ADD CONSTRAINT "song_artists_songId_fkey" FOREIGN KEY ("songId") REFERENCES "public"."songs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."track_artists" ADD CONSTRAINT "track_artists_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."song_artists" ADD CONSTRAINT "song_artists_artistId_fkey" FOREIGN KEY ("artistId") REFERENCES "public"."artists"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."track_artists" ADD CONSTRAINT "track_artists_artistId_fkey" FOREIGN KEY ("artistId") REFERENCES "public"."artists"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."song_credits" ADD CONSTRAINT "song_credits_songId_fkey" FOREIGN KEY ("songId") REFERENCES "public"."songs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."track_credits" ADD CONSTRAINT "track_credits_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."song_credits" ADD CONSTRAINT "song_credits_artistId_fkey" FOREIGN KEY ("artistId") REFERENCES "public"."artists"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."track_credits" ADD CONSTRAINT "track_credits_artistId_fkey" FOREIGN KEY ("artistId") REFERENCES "public"."artists"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."song_genres" ADD CONSTRAINT "song_genres_songId_fkey" FOREIGN KEY ("songId") REFERENCES "public"."songs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."track_genres" ADD CONSTRAINT "track_genres_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."song_genres" ADD CONSTRAINT "song_genres_genreId_fkey" FOREIGN KEY ("genreId") REFERENCES "public"."genres"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."track_genres" ADD CONSTRAINT "track_genres_genreId_fkey" FOREIGN KEY ("genreId") REFERENCES "public"."genres"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."album_genres" ADD CONSTRAINT "album_genres_albumId_fkey" FOREIGN KEY ("albumId") REFERENCES "public"."albums"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -460,13 +452,13 @@ ALTER TABLE "public"."playlists" ADD CONSTRAINT "playlists_userId_fkey" FOREIGN 
 ALTER TABLE "public"."playlist_items" ADD CONSTRAINT "playlist_items_playlistId_fkey" FOREIGN KEY ("playlistId") REFERENCES "public"."playlists"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."playlist_items" ADD CONSTRAINT "playlist_items_songId_fkey" FOREIGN KEY ("songId") REFERENCES "public"."songs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."playlist_items" ADD CONSTRAINT "playlist_items_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."user_liked_songs" ADD CONSTRAINT "user_liked_songs_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."user_liked_tracks" ADD CONSTRAINT "user_liked_tracks_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."user_liked_songs" ADD CONSTRAINT "user_liked_songs_songId_fkey" FOREIGN KEY ("songId") REFERENCES "public"."songs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."user_liked_tracks" ADD CONSTRAINT "user_liked_tracks_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."user_liked_albums" ADD CONSTRAINT "user_liked_albums_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -496,7 +488,7 @@ ALTER TABLE "public"."user_follows" ADD CONSTRAINT "user_follows_followingId_fke
 ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_songId_fkey" FOREIGN KEY ("songId") REFERENCES "public"."songs"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."search_history" ADD CONSTRAINT "search_history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
