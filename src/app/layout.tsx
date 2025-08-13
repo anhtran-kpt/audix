@@ -27,23 +27,42 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
-  const playlists = await prisma.playlist.findMany({
-    where: {
-      userId: session?.user.id,
-    },
-    select: {
-      id: true,
-      title: true,
-      imageId: true,
-      user: {
-        select: {
-          image: true,
-          id: true,
-          name: true,
+
+  const [playlists, followingArtists] = await Promise.all([
+    prisma.playlist.findMany({
+      where: {
+        userId: session?.user.id,
+      },
+      select: {
+        id: true,
+        title: true,
+        imageId: true,
+        user: {
+          select: {
+            image: true,
+            id: true,
+            name: true,
+          },
         },
       },
-    },
-  });
+    }),
+    prisma.userLikedArtist
+      .findMany({
+        where: {
+          userId: session?.user.id,
+        },
+        select: {
+          artist: {
+            select: {
+              id: true,
+              name: true,
+              imageId: true,
+            },
+          },
+        },
+      })
+      .then((data) => data.map((item) => item.artist)),
+  ]);
 
   return (
     <html
@@ -61,7 +80,10 @@ export default async function RootLayout({
         >
           <AuthProvider session={session}>
             <SidebarProvider>
-              <AppSidebar playlists={playlists} />
+              <AppSidebar
+                playlists={playlists}
+                followingArtists={followingArtists}
+              />
               <div className="flex flex-col min-w-0 flex-1">
                 <Header />
                 <LayoutWithPlayer>

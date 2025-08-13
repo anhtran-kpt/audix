@@ -20,7 +20,7 @@ export type CoverImageSize = keyof typeof coverImageSizeMap;
 
 export const artistImageSizeMap = {
   xs: "size-7",
-  sm: "size-14",
+  sm: "size-9",
   md: "size-40",
   lg: "size-48",
   xl: "size-56",

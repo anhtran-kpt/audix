@@ -19,7 +19,7 @@ export const ArtistImage: FC<ArtistImageProps> = ({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-full aspect-square",
+        "relative overflow-hidden rounded-full aspect-square shrink-0",
         sizeClasses
       )}
     >

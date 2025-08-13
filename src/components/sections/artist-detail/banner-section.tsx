@@ -1,40 +1,57 @@
 "use client";
 
-import { BadgeCheckIcon } from "lucide-react";
+import { BadgeCheckIcon, EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
 import { TFullArtist } from "@/types";
 import { ArtistImage } from "@/components/ui/artist-image";
 import { Badge } from "@/components/ui/badge";
+import tinycolor from "tinycolor2";
+import PlayButton from "@/components/ui/play-button";
+import { IconButton } from "@/components/ui/icon-button";
+import { FollowButton } from "@/components/features/follow-button";
+import pluralize from "pluralize";
+
+interface FollowButtonProps {
+  artistId: string;
+  initialFollowing: boolean;
+  initialCount: number;
+}
 
 type BannerSectionProps = Pick<
   TFullArtist,
-  "imageId" | "isVerified" | "monthlyListeners" | "name" | "genres"
->;
+  "imageId" | "isVerified" | "name" | "genres"
+> &
+  FollowButtonProps;
 
 export const BannerSection = ({
   imageId,
   isVerified,
-  monthlyListeners,
   name,
   genres,
+  artistId,
+  initialFollowing,
+  initialCount,
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
 
+  const from = gradient?.from ?? "transparent";
+  const via = gradient?.via ?? from;
+  const toT = tinycolor(gradient?.to ?? from)
+    .setAlpha(0)
+    .toRgbString();
+
   return (
-    <section className="text-white">
-      <div className="relative h-96 -mx-12 -mt-15">
-        <div
-          className="absolute inset-0 -mx-12 -mt-15 bg-gradient-to-t from-[var(--tw-gradient-from)] via-[var(--tw-gradient-via)] to-[var(--tw-gradient-to)]"
-          style={
-            {
-              "--tw-gradient-from": gradient?.from,
-              "--tw-gradient-via": gradient?.via,
-              "--tw-gradient-to": gradient?.to,
-            } as React.CSSProperties
-          }
-        />
+    <section
+      className="relative text-white -mx-12 -mt-30 space-y-8"
+      style={{
+        backgroundImage: `linear-gradient(180deg, ${from} 0%, ${via} 50%, ${toT} 100%)`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "100% 30rem",
+      }}
+    >
+      <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
           <ArtistImage
             alt={name}
@@ -51,7 +68,9 @@ export const BannerSection = ({
               </div>
             )}
             <p className="font-extrabold text-6xl mt-1 mb-3">{name}</p>
-            <p className="">{monthlyListeners} monthly listeners</p>
+            <p>
+              {initialCount} {pluralize("followers", initialCount)}
+            </p>
             <div className="space-x-2">
               {genres.map(({ genre }) => (
                 <Badge
@@ -65,26 +84,32 @@ export const BannerSection = ({
           </div>
         </div>
       </div>
+      <div className="flex items-center gap-6 px-12">
+        <PlayButton />
+        <IconButton
+          icon={ShuffleIcon}
+          size="xl"
+          tooltipContent={
+            <>
+              Enable shuffle for <strong>{name}</strong>
+            </>
+          }
+        />
+        <FollowButton
+          artistId={artistId}
+          initialFollowing={initialFollowing}
+          initialCount={initialCount}
+        />
+        <IconButton
+          icon={EllipsisIcon}
+          size="xl"
+          tooltipContent={
+            <>
+              More options for <strong>{name}</strong>
+            </>
+          }
+        />
+      </div>
     </section>
   );
 };
-
-// export const BannerSectionSkeleton = () => {
-//   return (
-//     <section>
-//       <div className="relative h-96 -mx-12 -mt-21">
-//         <Skeleton className="absolute inset-0 -mx-12 -mt-24" />
-//         <div className="absolute left-12 bottom-6 flex items-end gap-5">
-//           <div className="relative rounded-full overflow-hidden size-48">
-//             <Skeleton className="size-full rounded-full" />
-//           </div>
-//           <div className="flex flex-col gap-4">
-//             <Skeleton className="w-48 h-6" />
-//             <Skeleton className="w-36 h-15" />
-//             <Skeleton className="w-12 h-5" />
-//           </div>
-//         </div>
-//       </div>
-//     </section>
-//   );
-// };

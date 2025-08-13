@@ -1,9 +1,8 @@
 "use client";
 
-import { ArrowLeftIcon, ArrowRight, SettingsIcon } from "lucide-react";
+import { SettingsIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { HeaderSearchBar } from "./header-search-bar";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "../ui/sidebar";
@@ -20,9 +19,9 @@ export const Header = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
-      setIsAtTop(currentY < 10);
+      setIsAtTop(currentY == 0);
 
-      if (currentY > prevScrollY.current && currentY > 50) {
+      if (currentY > prevScrollY.current && currentY > 0) {
         setIsVisible(false);
       } else {
         setIsVisible(true);

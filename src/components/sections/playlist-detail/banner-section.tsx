@@ -10,6 +10,19 @@ import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
 import { FallbackCoverImage } from "@/components/features/fallback-cover-image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import PlayButton from "@/components/ui/play-button";
+import { IconButton } from "@/components/ui/icon-button";
+import {
+  DownloadIcon,
+  EditIcon,
+  EllipsisIcon,
+  ListIcon,
+  SearchIcon,
+  ShuffleIcon,
+  SortDescIcon,
+  UserPlus2Icon,
+} from "lucide-react";
+import tinycolor from "tinycolor2";
 
 type BannerSectionProps = Pick<
   TFullPlaylist,
@@ -34,19 +47,22 @@ export const BannerSection = ({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
 
+  const from = gradient?.from ?? "transparent";
+  const via = gradient?.via ?? from;
+  const toT = tinycolor(gradient?.to ?? from)
+    .setAlpha(0)
+    .toRgbString();
+
   return (
-    <section className="text-white">
-      <div className="relative h-96 -mx-12 -mt-15">
-        <div
-          className="absolute inset-0 -mx-12 -mt-15 bg-gradient-to-t from-[var(--tw-gradient-from)] via-[var(--tw-gradient-via)] to-[var(--tw-gradient-to)]"
-          style={
-            {
-              "--tw-gradient-from": gradient?.from,
-              "--tw-gradient-via": gradient?.via,
-              "--tw-gradient-to": gradient?.to,
-            } as React.CSSProperties
-          }
-        />
+    <section
+      className="relative text-white -mx-12 -mt-30 space-y-8"
+      style={{
+        backgroundImage: `linear-gradient(180deg, ${from} 0%, ${via} 50%, ${toT} 100%)`,
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "100% 30rem",
+      }}
+    >
+      <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
           {imageId ? (
             <CoverImage
@@ -98,6 +114,65 @@ export const BannerSection = ({
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div className="flex items-center justify-between gap-6 px-12">
+        <div className="flex items-center gap-6">
+          <PlayButton />
+          <IconButton
+            icon={ShuffleIcon}
+            size="xl"
+            tooltipContent={
+              <>
+                Enable shuffle for <strong>{title}</strong>
+              </>
+            }
+          />
+          <IconButton
+            icon={DownloadIcon}
+            size="xl"
+            tooltipContent={<>Download</>}
+          />
+          <IconButton
+            icon={UserPlus2Icon}
+            size="xl"
+            tooltipContent={
+              <>
+                Invite collaborators to <strong>{title}</strong>
+              </>
+            }
+          />
+          <IconButton
+            icon={EditIcon}
+            size="xl"
+            tooltipContent={<>Edit details</>}
+          />
+          <IconButton
+            icon={EllipsisIcon}
+            size="xl"
+            tooltipContent={
+              <>
+                More options for <strong>{title}</strong>
+              </>
+            }
+          />
+        </div>
+        <div className="flex items-center gap-6">
+          <IconButton
+            icon={SearchIcon}
+            size="lg"
+            tooltipContent={
+              <>
+                Search in <strong>{title}</strong>
+              </>
+            }
+          />
+          <IconButton
+            icon={SortDescIcon}
+            size="lg"
+            tooltipContent={<>Sort by</>}
+          />
+          <IconButton icon={ListIcon} size="lg" tooltipContent={<>View as</>} />
         </div>
       </div>
     </section>

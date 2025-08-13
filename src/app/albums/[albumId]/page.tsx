@@ -1,7 +1,8 @@
-import { ActionsSection } from "@/components/sections/album-detail/actions-section";
-import { BannerSection } from "@/components/sections/album-detail/banner-section";
-import { OtherAlbumsSection } from "@/components/sections/album-detail/other-albums-section";
-import { TracksSection } from "@/components/sections/album-detail/tracks-section";
+import {
+  BannerSection,
+  OtherAlbumsSection,
+  TracksSection,
+} from "@/components/sections/album-detail";
 import prisma from "@/lib/prisma";
 
 export default async function AlbumDetail({
@@ -16,6 +17,16 @@ export default async function AlbumDetail({
       id: albumId,
     },
     include: {
+      genres: {
+        select: {
+          genre: {
+            select: {
+              name: true,
+              color: true,
+            },
+          },
+        },
+      },
       tracks: {
         select: {
           id: true,
@@ -118,8 +129,8 @@ export default async function AlbumDetail({
         artist={album.artist}
         totalTracks={album.totalTracks}
         duration={album.duration}
+        genres={album.genres}
       />
-      <ActionsSection title={album.title} />
       <TracksSection tracks={album.tracks} />
       <OtherAlbumsSection artist={album.artist} albums={otherAlbums} />
     </>

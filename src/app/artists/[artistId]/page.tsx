@@ -1,9 +1,10 @@
-import { AboutSection } from "@/components/sections/artist-detail/about-section";
-import { ActionsSection } from "@/components/sections/artist-detail/actions-section";
-import { BannerSection } from "@/components/sections/artist-detail/banner-section";
-import { DiscographySection } from "@/components/sections/artist-detail/discography-section";
-import { OtherArtistsSection } from "@/components/sections/artist-detail/other-artists-section";
-import { PopularTracksSection } from "@/components/sections/artist-detail/popular-tracks-section";
+import {
+  AboutSection,
+  BannerSection,
+  DiscographySection,
+  OtherArtistsSection,
+  PopularTracksSection,
+} from "@/components/sections/artist-detail";
 import { requireAuth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
@@ -20,6 +21,11 @@ export default async function ArtistDetail({
       id: artistId,
     },
     include: {
+      _count: {
+        select: {
+          likedBy: true,
+        },
+      },
       genres: {
         select: {
           genre: {
@@ -138,14 +144,11 @@ export default async function ArtistDetail({
       <BannerSection
         imageId={artist.imageId}
         name={artist.name}
-        monthlyListeners={artist.monthlyListeners}
         isVerified={artist.isVerified}
         genres={artist.genres}
-      />
-      <ActionsSection
-        name={artist.name}
         artistId={artistId}
         initialFollowing={isFollowing}
+        initialCount={artist._count.likedBy}
       />
       <PopularTracksSection tracks={popularTracks} artistId={artistId} />
       <DiscographySection
