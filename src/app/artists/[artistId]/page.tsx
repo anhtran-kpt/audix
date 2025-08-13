@@ -4,6 +4,7 @@ import { BannerSection } from "@/components/sections/artist-detail/banner-sectio
 import { DiscographySection } from "@/components/sections/artist-detail/discography-section";
 import { OtherArtistsSection } from "@/components/sections/artist-detail/other-artists-section";
 import { PopularTracksSection } from "@/components/sections/artist-detail/popular-tracks-section";
+import { requireAuth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 export default async function ArtistDetail({
@@ -12,6 +13,7 @@ export default async function ArtistDetail({
   params: Promise<{ artistId: string }>;
 }) {
   const { artistId } = await params;
+  const user = await requireAuth();
 
   const artist = await prisma.artist.findUniqueOrThrow({
     where: {
@@ -37,6 +39,7 @@ export default async function ArtistDetail({
     albumReleases,
     singleAndEpReleases,
     otherArtists,
+    isFollowing,
   ] = await Promise.all([
     prisma.track.findMany({
       where: {
@@ -121,6 +124,13 @@ export default async function ArtistDetail({
    ORDER BY RANDOM()
    LIMIT 5;
 `,
+    user.id
+      ? prisma.userLikedArtist
+          .findUnique({
+            where: { userId_artistId: { userId: user.id, artistId } },
+          })
+          .then(Boolean)
+      : Promise.resolve(false),
   ]);
 
   return (
@@ -132,7 +142,11 @@ export default async function ArtistDetail({
         isVerified={artist.isVerified}
         genres={artist.genres}
       />
-      <ActionsSection name={artist.name} />
+      <ActionsSection
+        name={artist.name}
+        artistId={artistId}
+        initialFollowing={isFollowing}
+      />
       <PopularTracksSection tracks={popularTracks} artistId={artistId} />
       <DiscographySection
         popularReleases={popularReleases}

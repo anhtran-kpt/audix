@@ -6,9 +6,18 @@ import { IconButton } from "@/components/ui/icon-button";
 import PlayButton from "@/components/ui/play-button";
 import { FollowButton } from "@/components/features/follow-button";
 
-type ActionsSectionProps = Pick<TFullArtist, "name">;
+interface FollowButtonProps {
+  artistId: string;
+  initialFollowing: boolean;
+}
 
-export const ActionsSection = ({ name }: ActionsSectionProps) => {
+type ActionsSectionProps = Pick<TFullArtist, "name"> & FollowButtonProps;
+
+export const ActionsSection = ({
+  name,
+  artistId,
+  initialFollowing,
+}: ActionsSectionProps) => {
   return (
     <section className="flex items-center gap-6">
       <PlayButton />
@@ -21,7 +30,7 @@ export const ActionsSection = ({ name }: ActionsSectionProps) => {
           </>
         }
       />
-      <FollowButton />
+      <FollowButton artistId={artistId} initialFollowing={initialFollowing} />
       <IconButton
         icon={EllipsisIcon}
         size="xl"
