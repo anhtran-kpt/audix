@@ -2,6 +2,15 @@ import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/features/app-sidebar";
+import { Header } from "@/components/features/header";
+import AudioPlayer from "@/components/features/audio-player";
+import { LayoutWithPlayer } from "@/components/features/layout-with-player";
+import { AuthProvider } from "@/providers/auth-provider";
+import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "./api/auth/[...nextauth]/route";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -17,6 +26,25 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerSession(authOptions);
+  const playlists = await prisma.playlist.findMany({
+    where: {
+      userId: session?.user.id,
+    },
+    select: {
+      id: true,
+      title: true,
+      imageId: true,
+      user: {
+        select: {
+          image: true,
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+
   return (
     <html
       lang="en"
@@ -31,7 +59,20 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AuthProvider session={session}>
+            <SidebarProvider>
+              <AppSidebar playlists={playlists} />
+              <div className="flex flex-col min-w-0 flex-1">
+                <Header />
+                <LayoutWithPlayer>
+                  <main className="flex-1 p-12 space-y-8 mt-15">
+                    {children}
+                  </main>
+                </LayoutWithPlayer>
+              </div>
+              <AudioPlayer />
+            </SidebarProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
