@@ -38,7 +38,10 @@ export const HotAlbumsSection = ({ albums }: HotAlbumsSectionProps) => {
       >
         <CarouselContent className="-ml-6">
           {albums.map((album) => (
-            <CarouselItem className="basis-1/5 pl-6" key={album.id}>
+            <CarouselItem
+              className="basis-1/2 sm:basis-1/3 md:basis-1/4 xl:basis-1/5 pl-6"
+              key={album.id}
+            >
               <AlbumItem
                 id={album.id}
                 title={album.title}

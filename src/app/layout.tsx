@@ -84,7 +84,6 @@ export default async function RootLayout({
               className="h-full"
               style={
                 {
-                  "--sidebar-width": "calc(var(--spacing) * 62)",
                   "--header-height": "calc(var(--spacing) * 15)",
                 } as React.CSSProperties
               }
@@ -102,7 +101,7 @@ export default async function RootLayout({
               >
                 <ScrollArea viewportId="app-scroll" className="h-full">
                   <Header />
-                  <div className="flex flex-col flex-1 p-12">
+                  <div className="flex flex-col flex-1 p-6 md:p-8 lg:p-10 xl:p-12">
                     <div className="@container/main flex flex-1 flex-col gap-8">
                       <PlayerOffsetSetter />
                       {children}

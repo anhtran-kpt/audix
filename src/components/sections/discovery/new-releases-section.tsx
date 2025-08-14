@@ -18,7 +18,7 @@ export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {
   return (
     <section>
       <SectionHeading title="New Releases" hasShowAll href="/new-releases" />
-      <div className="grid gap-x-4 gap-y-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-x-4 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3">
         {tracks.map((track) => (
           <div
             key={track.id}
@@ -45,8 +45,8 @@ export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {
                     </span>
                   ))}
                 </div>
-                <p className="text-xs text-muted-foreground first-letter:uppercase">
-                  {formatDistanceToNow(track.createdAt, { addSuffix: true })}
+                <p className="text-xs text-muted-foreground first-letter:uppercase truncate">
+                  {formatDistanceToNow(track.createdAt, { addSuffix: true })}{" "}
                 </p>
               </div>
             </div>
