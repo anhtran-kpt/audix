@@ -5,7 +5,6 @@ import { IconButton } from "../ui/icon-button";
 import { HeaderSearchBar } from "./header-search-bar";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useSidebar } from "../ui/sidebar";
 import { ModeToggle } from "./mode-toggle";
 import { AppNavigation } from "./app-navigation";
 import { UserProfile } from "./user-profile";
@@ -13,41 +12,41 @@ import { UserProfile } from "./user-profile";
 export const Header = () => {
   const [isAtTop, setIsAtTop] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
-  const prevScrollY = useRef(0);
-  const { open } = useSidebar();
+  const prevY = useRef(0);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      setIsAtTop(currentY == 0);
+    const el = document.getElementById("app-scroll");
+    if (!el) return;
 
-      if (currentY > prevScrollY.current && currentY > 0) {
-        setIsVisible(false);
-      } else {
-        setIsVisible(true);
-      }
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = el.scrollTop;
+        setIsAtTop(y <= 0);
 
-      prevScrollY.current = currentY;
+        const dy = y - prevY.current;
+        if (dy > 0) setIsVisible(false);
+        else if (dy < 0) setIsVisible(true);
+
+        prevY.current = y;
+        ticking = false;
+      });
     };
 
-    handleScroll();
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: false });
+    return () => el.removeEventListener("scroll", onScroll);
   }, []);
-
-  const bgClasses = isAtTop ? "" : "backdrop-blur-md shadow-sm";
-  const isBordered = !isAtTop && isVisible && "border-b";
-  const transformClasses = isVisible ? "translate-y-0" : "-translate-y-full";
 
   return (
     <header
       className={cn(
-        "fixed top-0 z-20 flex items-center justify-between gap-6 py-3 px-12 transform transition-transform duration-300 ease-in-out bg-background/90",
-        open ? "left-64 w-[calc(100%-16rem)]" : "left-0 w-full",
-        transformClasses,
-        bgClasses,
-        isBordered
+        "sticky left-0 top-0 z-10 w-full h-(--header-height) flex items-center justify-between gap-6 py-3 px-12 group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)",
+        "transition-transform duration-300 ease-in-out bg-transparent",
+        isAtTop ? "" : "border-b backdrop-blur-md shadow-sm bg-background/90",
+        isVisible ? "translate-y-0" : "-translate-y-full pointer-events-none"
       )}
     >
       <div className="flex items-center gap-8 grow">

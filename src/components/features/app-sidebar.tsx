@@ -49,7 +49,7 @@ export function AppSidebar({ playlists, followingArtists }: AppSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" variant="inset">
       <SidebarHeader>
         <Logo />
       </SidebarHeader>

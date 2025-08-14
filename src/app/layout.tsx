@@ -2,15 +2,16 @@ import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/features/app-sidebar";
 import { Header } from "@/components/features/header";
 import AudioPlayer from "@/components/features/audio-player";
-import { LayoutWithPlayer } from "@/components/features/layout-with-player";
 import { AuthProvider } from "@/providers/auth-provider";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
+import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
+import NowPlayingView from "@/components/features/now-playing-view";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -67,11 +68,10 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${lexendSans.className} scroll-smooth overflow-x-hidden overflow-y-scroll overscroll-none`}
-      data-scroll-behavior="smooth"
+      className={`${lexendSans.className} h-dvh overflow-hidden overscroll-none`}
       suppressHydrationWarning
     >
-      <body className="antialiased min-h-screen">
+      <body className="antialiased h-full">
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -79,19 +79,35 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider session={session}>
-            <SidebarProvider>
+            <SidebarProvider
+              className="h-full"
+              style={
+                {
+                  "--sidebar-width": "calc(var(--spacing) * 60)",
+                  "--header-height": "calc(var(--spacing) * 15)",
+                } as React.CSSProperties
+              }
+            >
               <AppSidebar
                 playlists={playlists}
                 followingArtists={followingArtists}
               />
-              <div className="flex flex-col min-w-0 flex-1">
+              <SidebarInset
+                id="app-scroll"
+                style={{
+                  paddingBottom:
+                    "calc(env(safe-area-inset-bottom) + var(--player-offset, 0px))",
+                }}
+              >
                 <Header />
-                <LayoutWithPlayer>
-                  <main className="flex-1 p-12 space-y-8 mt-15">
+                <div className="flex flex-col flex-1 p-12">
+                  <div className="@container/main flex flex-1 flex-col gap-8">
+                    <PlayerOffsetSetter />
                     {children}
-                  </main>
-                </LayoutWithPlayer>
-              </div>
+                  </div>
+                </div>
+              </SidebarInset>
+              {/* <NowPlayingView /> */}
               <AudioPlayer />
             </SidebarProvider>
           </AuthProvider>
