@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   SkipBackIcon,
   SkipForwardIcon,
@@ -65,8 +64,8 @@ export default function PlayerControls({
           isLoading && "stroke-1.5 fill-none animate-spin"
         )}
         className="p-2.25 rounded-full bg-muted cursor-pointer"
-        tooltipContent="Play"
-        description="Play"
+        tooltipContent={isPlaying ? "Pause" : "Play"}
+        description="Play/pause"
         disabled={isLoading}
         onClick={onTogglePlay}
       />

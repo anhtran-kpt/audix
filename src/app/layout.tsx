@@ -12,6 +12,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
 import NowPlayingView from "@/components/features/now-playing-view";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -83,7 +84,7 @@ export default async function RootLayout({
               className="h-full"
               style={
                 {
-                  "--sidebar-width": "calc(var(--spacing) * 60)",
+                  "--sidebar-width": "calc(var(--spacing) * 62)",
                   "--header-height": "calc(var(--spacing) * 15)",
                 } as React.CSSProperties
               }
@@ -93,19 +94,21 @@ export default async function RootLayout({
                 followingArtists={followingArtists}
               />
               <SidebarInset
-                id="app-scroll"
+                className="h-full"
                 style={{
                   paddingBottom:
                     "calc(env(safe-area-inset-bottom) + var(--player-offset, 0px))",
                 }}
               >
-                <Header />
-                <div className="flex flex-col flex-1 p-12">
-                  <div className="@container/main flex flex-1 flex-col gap-8">
-                    <PlayerOffsetSetter />
-                    {children}
+                <ScrollArea viewportId="app-scroll" className="h-full">
+                  <Header />
+                  <div className="flex flex-col flex-1 p-12">
+                    <div className="@container/main flex flex-1 flex-col gap-8">
+                      <PlayerOffsetSetter />
+                      {children}
+                    </div>
                   </div>
-                </div>
+                </ScrollArea>
               </SidebarInset>
               {/* <NowPlayingView /> */}
               <AudioPlayer />

@@ -21,6 +21,7 @@ import { CoverImage } from "../ui/cover-image";
 import Dot from "../ui/dot";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { ArtistImage } from "../ui/artist-image";
+import { ScrollArea } from "../ui/scroll-area";
 
 const items = [
   {
@@ -75,70 +76,72 @@ export function AppSidebar({ playlists, followingArtists }: AppSidebarProps) {
           </SidebarMenu>
         </SidebarGroup>
         <Separator />
-        <SidebarGroup className="overflow-y-scroll">
-          <SidebarMenu>
-            {followingArtists.map((artist) => (
-              <SidebarMenuItem key={artist.id}>
-                <SidebarMenuButton
-                  size="lg"
-                  asChild
-                  isActive={pathname === `/artists/${artist.id}`}
-                >
-                  <Link href={`/artists/${artist.id}`}>
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <ArtistImage
-                        src={artist.imageId}
-                        alt={artist.name}
-                        size="sm"
-                      />
-                      <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-                        <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
-                          {artist.name}
-                        </p>
-                        <p className="text-[calc(11rem/16)] text-muted-foreground truncate font-normal">
-                          Artist
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-            {playlists.map((playlist) => (
-              <SidebarMenuItem key={playlist.id}>
-                <SidebarMenuButton
-                  size="lg"
-                  asChild
-                  isActive={pathname === `/playlists/${playlist.id}`}
-                >
-                  <Link href={`/playlists/${playlist.id}`}>
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      {playlist.imageId ? (
-                        <CoverImage
-                          src={playlist.imageId}
-                          alt={playlist.title}
-                          size="xs"
+        <ScrollArea className="h-full min-h-0" scrollBarClassName="w-2">
+          <SidebarGroup className="h-full">
+            <SidebarMenu>
+              {followingArtists.map((artist) => (
+                <SidebarMenuItem key={artist.id}>
+                  <SidebarMenuButton
+                    size="lg"
+                    asChild
+                    isActive={pathname === `/artists/${artist.id}`}
+                  >
+                    <Link href={`/artists/${artist.id}`}>
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <ArtistImage
+                          src={artist.imageId}
+                          alt={artist.name}
+                          size="sm"
                         />
-                      ) : (
-                        <FallbackCoverImage type="item" />
-                      )}
-                      <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-                        <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
-                          {playlist.title}
-                        </p>
-                        <div className="flex items-center text-[calc(11rem/16)] gap-x-1 text-muted-foreground truncate">
-                          <p>Playlist</p>
-                          <Dot />
-                          <span>{playlist.user?.name}</span>
+                        <div className="flex flex-col gap-0.5 w-full overflow-hidden">
+                          <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
+                            {artist.name}
+                          </p>
+                          <p className="text-[calc(11rem/16)] text-muted-foreground truncate font-normal">
+                            Artist
+                          </p>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+              {playlists.map((playlist) => (
+                <SidebarMenuItem key={playlist.id}>
+                  <SidebarMenuButton
+                    size="lg"
+                    asChild
+                    isActive={pathname === `/playlists/${playlist.id}`}
+                  >
+                    <Link href={`/playlists/${playlist.id}`}>
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        {playlist.imageId ? (
+                          <CoverImage
+                            src={playlist.imageId}
+                            alt={playlist.title}
+                            size="xs"
+                          />
+                        ) : (
+                          <FallbackCoverImage type="item" />
+                        )}
+                        <div className="flex flex-col gap-0.5 w-full overflow-hidden">
+                          <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
+                            {playlist.title}
+                          </p>
+                          <div className="flex items-center text-[calc(11rem/16)] gap-x-1 text-muted-foreground truncate">
+                            <p>Playlist</p>
+                            <Dot />
+                            <span>{playlist.user?.name}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroup>
+        </ScrollArea>
       </SidebarContent>
       <SidebarFooter className="border-t">
         <NewPlaylistDialog />
