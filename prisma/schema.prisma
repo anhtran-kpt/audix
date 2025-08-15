@@ -278,7 +278,6 @@ enum CreditRole {
   LEAD_VOCALS
   BACKING_VOCALS
   RAP
-  FEATURED_ARTIST
 
   // Trackwriters & Composers
   SONGWRITER
@@ -311,7 +310,6 @@ enum CreditRole {
   CONDUCTOR
   PROGRAMMER
   ADDITIONAL_PRODUCTION
-  REMIXER
 
   // Legal & Business
   PUBLISHER
