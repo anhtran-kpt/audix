@@ -21,6 +21,9 @@ export type TTrack = Prisma.TrackGetPayload<{
     };
     artists: {
       select: {
+        artistId: true;
+        role: true;
+        order: true;
         artist: {
           select: {
             id: true;
@@ -36,6 +39,12 @@ export type TTrack = Prisma.TrackGetPayload<{
         name: true;
         order: true;
         role: true;
+        details: true;
+        artist: {
+          select: {
+            name: true;
+          };
+        };
       };
     };
   };

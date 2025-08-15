@@ -74,13 +74,12 @@ export default async function ArtistDetail({
         },
         artists: {
           select: {
-            artist: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
+            artistId: true,
+            role: true,
+            order: true,
+            artist: { select: { id: true, name: true } },
           },
+          orderBy: { order: "asc" },
         },
         credits: {
           select: {
@@ -89,9 +88,15 @@ export default async function ArtistDetail({
             name: true,
             order: true,
             role: true,
+            details: true,
+            artist: {
+              select: {
+                name: true,
+              },
+            },
           },
           orderBy: {
-            order: 'asc'
+            order: "asc",
           },
         },
       },
@@ -150,11 +155,6 @@ export default async function ArtistDetail({
           .then(Boolean)
       : Promise.resolve(false),
   ]);
-
-  const groupByArtistId = popularTracks.map(track => ({
-    ...track,
-    credits: track.credits.
-  }))
 
   return (
     <>

@@ -26,7 +26,7 @@ export const AboutSection = ({
           sizes="100vw"
           className="object-cover hover:scale-105 transition-transform duration-500 brightness-65"
         />
-        <div className="absolute bottom-12 left-12 space-y-3 w-2/3">
+        <div className="absolute bottom-6 md:bottom-8 lg:bottom-10 xl:bottom-12 left-6 md:left-8 lg:left-10 xl:left-12 space-y-3 w-2/3">
           <p className="font-semibold text-base text-white">
             {monthlyListeners} monthly listeners
           </p>
@@ -36,20 +36,3 @@ export const AboutSection = ({
     </section>
   );
 };
-
-// export const ArtistAboutSkeleton = () => {
-//   return (
-//     <section>
-//       <SectionHeading heading="About" />
-//       <div className="rounded-lg bg-card flex items-center justify-between gap-12 px-12 py-8">
-//         <div className="flex flex-col items-center shrink-0 gap-4">
-//           <div className="relative size-56 rounded-full overflow-hidden">
-//             <Skeleton className="size-56" />
-//           </div>
-//           <Skeleton className="w-32 h-4" />
-//         </div>
-//         <TextSkeleton lines={5} />
-//       </div>
-//     </section>
-//   );
-// };
