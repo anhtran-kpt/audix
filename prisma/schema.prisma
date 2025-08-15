@@ -268,6 +268,8 @@ model TrackCredit {
   artist Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
   @@index([trackId, role])
+  @@index([trackId, order])
+  @@index([trackId, artistId])
   @@map("track_credits")
 }
 

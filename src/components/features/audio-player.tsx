@@ -1,12 +1,7 @@
 "use client";
 
-import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
 import {
-  SquarePlayIcon,
   MicVocalIcon,
-  ListMusicIcon,
-  CastIcon,
   PlusCircleIcon,
   MonitorSpeakerIcon,
   Minimize2Icon,
@@ -120,7 +115,6 @@ function AudioPlayer() {
                   onVolumeChange={volume.setVolume}
                   onToggleMute={volume.toggleMute}
                 />
-                <IconButton icon={ListMusicIcon} tooltipContent="Queue" />
               </div>
             </div>
           </div>

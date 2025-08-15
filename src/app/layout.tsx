@@ -11,8 +11,8 @@ import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
-import NowPlayingView from "@/components/features/now-playing-view";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import NowPlayingView from "@/components/features/now-playing-view";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -93,7 +93,7 @@ export default async function RootLayout({
                 followingArtists={followingArtists}
               />
               <SidebarInset
-                className="h-full"
+                className="h-full transition-[width]"
                 style={{
                   paddingBottom:
                     "calc(env(safe-area-inset-bottom) + var(--player-offset, 0px))",
@@ -109,7 +109,7 @@ export default async function RootLayout({
                   </div>
                 </ScrollArea>
               </SidebarInset>
-              {/* <NowPlayingView /> */}
+              <NowPlayingView />
               <AudioPlayer />
             </SidebarProvider>
           </AuthProvider>

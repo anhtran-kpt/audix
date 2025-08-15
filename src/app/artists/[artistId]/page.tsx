@@ -82,6 +82,18 @@ export default async function ArtistDetail({
             },
           },
         },
+        credits: {
+          select: {
+            id: true,
+            artistId: true,
+            name: true,
+            order: true,
+            role: true,
+          },
+          orderBy: {
+            order: 'asc'
+          },
+        },
       },
       take: 5,
       orderBy: {
@@ -138,6 +150,11 @@ export default async function ArtistDetail({
           .then(Boolean)
       : Promise.resolve(false),
   ]);
+
+  const groupByArtistId = popularTracks.map(track => ({
+    ...track,
+    credits: track.credits.
+  }))
 
   return (
     <>

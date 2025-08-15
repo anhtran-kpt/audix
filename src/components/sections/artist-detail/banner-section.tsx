@@ -44,7 +44,7 @@ export const BannerSection = ({
 
   return (
     <section
-      className="relative text-white -mx-12 -mt-30 space-y-8"
+      className="relative -mx-12 -mt-30 space-y-8"
       style={{
         backgroundImage: `linear-gradient(180deg, ${from} 0%, ${via} 50%, ${toT} 100%)`,
         backgroundRepeat: "no-repeat",

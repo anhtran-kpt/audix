@@ -6,6 +6,9 @@ import { useShallow } from "zustand/react/shallow";
 export const useCurrentTrack = () =>
   useAudioStore(useShallow((state) => state.currentTrack));
 
+export const usePlaybackContext = () =>
+  useAudioStore(useShallow((state) => state.playbackContext));
+
 export const useIsPlaying = () => useAudioStore((state) => state.isPlaying);
 
 export const usePlaybackState = () =>

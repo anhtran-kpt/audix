@@ -29,5 +29,14 @@ export type TTrack = Prisma.TrackGetPayload<{
         };
       };
     };
+    credits: {
+      select: {
+        id: true;
+        artistId: true;
+        name: true;
+        order: true;
+        role: true;
+      };
+    };
   };
 }>;

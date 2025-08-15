@@ -100,7 +100,7 @@ export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
               )}
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 min-w-0">
               {type === "popular" && (
                 <CoverImage
                   alt={track.title}
@@ -108,7 +108,7 @@ export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
                   size="xs"
                 />
               )}
-              <div className="flex flex-col gap-0.5 justify-center">
+              <div className="flex flex-col gap-0.5 justify-center w-full">
                 <ItemTitle title={trackTitle} isActive={isActive} />
                 <div className="flex gap-1.5 items-center">
                   {track.isExplicit && <Explicit />}
