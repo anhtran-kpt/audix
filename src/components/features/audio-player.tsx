@@ -5,6 +5,7 @@ import {
   PlusCircleIcon,
   MonitorSpeakerIcon,
   Minimize2Icon,
+  SquarePlayIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { NavLink } from "../ui/nav-link";
@@ -20,6 +21,7 @@ import {
   useCurrentTrack,
   useMediaSession,
 } from "@/hooks/use-audio-player";
+import { useNowPlayingPanel } from "@/stores/use-now-playing-panel";
 
 function AudioPlayer() {
   const currentTrack = useCurrentTrack();
@@ -36,11 +38,13 @@ function AudioPlayer() {
   } = useAudioPlayer();
   useMediaSession();
   useAudioKeyboardShortcuts();
+  const isOpen = useNowPlayingPanel((s) => s.isOpen);
+  const toggle = useNowPlayingPanel((s) => s.toggle);
 
   return (
     <>
       {currentTrack && (
-        <div className="fixed bottom-0 left-0 right-0 bg-player border z-50 px-4 py-2">
+        <div className="fixed bottom-0 left-0 right-0 bg-player border z-60 px-4 py-2">
           <div className="flex items-center justify-between gap-12">
             <div className="flex items-center">
               <div className="flex items-center gap-3 grow">
@@ -100,6 +104,14 @@ function AudioPlayer() {
             </div>
             <div className="flex items-center">
               <div className="flex items-center space-x-5">
+                <IconButton
+                  icon={SquarePlayIcon}
+                  tooltipContent={
+                    isOpen ? "Hide now playing view" : "Open now playing view"
+                  }
+                  onClick={toggle}
+                  iconClassName={isOpen ? "text-primary" : ""}
+                />
                 <IconButton icon={MicVocalIcon} tooltipContent="Lyrics" />
                 <IconButton
                   icon={MonitorSpeakerIcon}
