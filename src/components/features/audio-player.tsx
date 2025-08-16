@@ -6,6 +6,7 @@ import {
   MonitorSpeakerIcon,
   Minimize2Icon,
   SquarePlayIcon,
+  ListMusicIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { NavLink } from "../ui/nav-link";
@@ -21,7 +22,7 @@ import {
   useCurrentTrack,
   useMediaSession,
 } from "@/hooks/use-audio-player";
-import { useNowPlayingPanel } from "@/stores/use-now-playing-panel";
+import { useRightPanel } from "@/stores/use-right-panel";
 
 function AudioPlayer() {
   const currentTrack = useCurrentTrack();
@@ -38,8 +39,8 @@ function AudioPlayer() {
   } = useAudioPlayer();
   useMediaSession();
   useAudioKeyboardShortcuts();
-  const isOpen = useNowPlayingPanel((s) => s.isOpen);
-  const toggle = useNowPlayingPanel((s) => s.toggle);
+  const toggle = useRightPanel((s) => s.toggle);
+  const active = useRightPanel((s) => s.active);
 
   return (
     <>
@@ -107,10 +108,34 @@ function AudioPlayer() {
                 <IconButton
                   icon={SquarePlayIcon}
                   tooltipContent={
-                    isOpen ? "Hide now playing view" : "Open now playing view"
+                    active === "now-playing" ? (
+                      <>
+                        Hide <strong>Now Playing View</strong>
+                      </>
+                    ) : (
+                      <>
+                        Open <strong>Now Playing View</strong>
+                      </>
+                    )
                   }
-                  onClick={toggle}
-                  iconClassName={isOpen ? "text-primary" : ""}
+                  onClick={() => toggle("now-playing")}
+                  iconClassName={active === "now-playing" ? "text-primary" : ""}
+                />
+                <IconButton
+                  icon={ListMusicIcon}
+                  tooltipContent={
+                    active === "queue" ? (
+                      <>
+                        Hide <strong>Queue</strong>
+                      </>
+                    ) : (
+                      <>
+                        Open <strong>Queue</strong>
+                      </>
+                    )
+                  }
+                  onClick={() => toggle("queue")}
+                  iconClassName={active === "queue" ? "text-primary" : ""}
                 />
                 <IconButton icon={MicVocalIcon} tooltipContent="Lyrics" />
                 <IconButton

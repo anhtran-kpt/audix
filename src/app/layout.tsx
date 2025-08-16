@@ -12,7 +12,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import NowPlayingView from "@/components/features/now-playing-view";
+import RightPanel from "@/components/features/right-panel";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -109,7 +109,7 @@ export default async function RootLayout({
                   </div>
                 </ScrollArea>
               </SidebarInset>
-              <NowPlayingView />
+              <RightPanel />
               <AudioPlayer />
             </SidebarProvider>
           </AuthProvider>
