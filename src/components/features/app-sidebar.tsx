@@ -143,7 +143,7 @@ export function AppSidebar({ playlists, followingArtists }: AppSidebarProps) {
           </SidebarGroup>
         </ScrollArea>
       </SidebarContent>
-      <SidebarFooter className="border-t">
+      <SidebarFooter className="border-t px-4 py-2">
         <NewPlaylistDialog />
       </SidebarFooter>
     </Sidebar>

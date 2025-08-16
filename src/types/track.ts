@@ -17,6 +17,18 @@ export type TTrack = Prisma.TrackGetPayload<{
         id: true;
         imageId: true;
         title: true;
+        artist: {
+          select: {
+            name: true;
+            bannerId: true;
+            bio: true;
+          };
+        };
+        _count: {
+          select: {
+            likedBy: true;
+          };
+        };
       };
     };
     artists: {
