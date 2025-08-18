@@ -2,6 +2,7 @@ import { useCurrentTrack } from "@/hooks/use-audio-player";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
+import RecentlyTracks from "./recently-tracks";
 
 export default function QueueView() {
   const currentTrack = useCurrentTrack();
@@ -31,7 +32,7 @@ export default function QueueView() {
         </ScrollArea>
       </TabsContent>
       <TabsContent value="recently played">
-        Change your recently played here.
+        <RecentlyTracks />
       </TabsContent>
     </Tabs>
   );

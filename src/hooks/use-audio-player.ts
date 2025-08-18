@@ -2,6 +2,8 @@ import { useEffect, useRef, useCallback } from "react";
 import { PlaybackContextType, useAudioStore } from "@/stores/use-audio-store";
 import { TTrack } from "@/types";
 import { useShallow } from "zustand/react/shallow";
+import { useAudioPlayerHydrated } from "./use-audio-player-hydrated";
+import { getAudioUrl } from "@/lib/helpers/get-audio-url";
 
 export const useCurrentTrack = () =>
   useAudioStore(useShallow((state) => state.currentTrack));
@@ -73,6 +75,7 @@ export const useError = () => useAudioStore(useShallow((state) => state.error));
 export const useAudioPlayer = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const setAudioElement = useAudioStore((state) => state.setAudioElement);
+  const hasHydrated = useAudioPlayerHydrated();
 
   const currentTrack = useCurrentTrack();
   const playbackState = usePlaybackState();
@@ -83,11 +86,36 @@ export const useAudioPlayer = () => {
   const error = useError();
 
   useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.preload = "metadata";
-      setAudioElement(audioRef.current);
+    const el = audioRef.current;
+    if (!el) return;
+    el.preload = "metadata";
+    setAudioElement(el);
+  }, [setAudioElement]);
+
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el || !hasHydrated) return;
+
+    const s = useAudioStore.getState();
+
+    el.volume = s.isMuted ? 0 : typeof s.volume === "number" ? s.volume : 0.8;
+
+    if (s.currentTrack) {
+      el.src = getAudioUrl(s.currentTrack.audioId);
+      el.load();
+
+      if (s.currentTime && s.currentTime > 0) {
+        const onLoaded = () => {
+          el.currentTime = Math.min(
+            s.currentTime,
+            el.duration || s.currentTime
+          );
+          el.removeEventListener("loadedmetadata", onLoaded);
+        };
+        el.addEventListener("loadedmetadata", onLoaded);
+      }
     }
-  }, []);
+  }, [hasHydrated]);
 
   const progress =
     playbackState.duration > 0

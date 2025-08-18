@@ -1,7 +1,13 @@
+"use client";
+
 import { getAudioUrl } from "@/lib/helpers/get-audio-url";
 import { TTrack } from "@/types/track";
 import { create } from "zustand";
-import { subscribeWithSelector } from "zustand/middleware";
+import {
+  persist,
+  createJSONStorage,
+  subscribeWithSelector,
+} from "zustand/middleware";
 
 export type RepeatMode = "off" | "one" | "all";
 export type PlaybackContextType =
@@ -99,344 +105,350 @@ export interface AudioActions {
 
 type AudioStore = PlaybackState & AudioActions;
 
-const STORAGE_KEYS = {
-  VOLUME: "music-player-volume",
-  REPEAT_MODE: "music-player-repeat",
-  CROSSFADE: "music-player-crossfade",
-  SHUFFLE: "music-player-shuffle",
-};
-
 export const useAudioStore = create<AudioStore>()(
-  subscribeWithSelector((set, get) => ({
-    // Initial state
-    currentTrack: null,
-    currentTrackIndex: 0,
-    isPlaying: false,
-    isLoading: false,
-    currentTime: 0,
-    duration: 0,
-    volume:
-      typeof window !== "undefined"
-        ? Number(localStorage.getItem(STORAGE_KEYS.VOLUME)) || 0.8
-        : 0.8,
-    isMuted: false,
+  persist(
+    subscribeWithSelector((set, get) => ({
+      // Initial state
+      currentTrack: null,
+      currentTrackIndex: 0,
+      isPlaying: false,
+      isLoading: false,
+      currentTime: 0,
+      duration: 0,
+      volume: 0.8,
+      isMuted: false,
 
-    queue: [],
-    originalQueue: [],
-    queueIndex: 0,
+      queue: [],
+      originalQueue: [],
+      queueIndex: 0,
 
-    isShuffled:
-      typeof window !== "undefined"
-        ? localStorage.getItem(STORAGE_KEYS.SHUFFLE) === "true"
-        : false,
-    repeatMode:
-      typeof window !== "undefined"
-        ? (localStorage.getItem(STORAGE_KEYS.REPEAT_MODE) as
-            | "off"
-            | "all"
-            | "one") || "off"
-        : "off",
-    // crossfadeDuration:
-    //   typeof window !== "undefined"
-    //     ? Number(localStorage.getItem(STORAGE_KEYS.CROSSFADE)) || 0
-    //     : 0,
+      isShuffled: false,
+      repeatMode: "off",
 
-    playbackContext: {
-      type: null,
-      id: null,
-      name: null,
-    },
+      playbackContext: {
+        type: null,
+        id: null,
+        name: null,
+      },
 
-    recentlyPlayed: [],
-    error: null,
-    audioElement: null,
+      recentlyPlayed: [],
+      error: null,
+      audioElement: null,
 
-    setAudioElement: (audio) => set({ audioElement: audio }),
+      setAudioElement: (audio) => set({ audioElement: audio }),
 
-    play: async () => {
-      const { audioElement, currentTrack, setLoading, setError } = get();
+      play: async () => {
+        const { audioElement, currentTrack, setLoading, setError } = get();
 
-      if (!audioElement || !currentTrack) {
-        console.warn("Cannot play: missing audioElement or currentTrack");
-        return;
-      }
+        if (!audioElement || !currentTrack) {
+          console.warn("Cannot play: missing audioElement or currentTrack");
+          return;
+        }
 
-      try {
-        setLoading(true);
-        setError(null);
-        await audioElement.play();
-        set({ isPlaying: true });
-      } catch (error) {
-        console.error("Error playing audio:", error);
-        setError("Failed to play audio");
-        set({ isPlaying: false });
-      } finally {
-        setLoading(false);
-      }
-    },
+        try {
+          setLoading(true);
+          setError(null);
+          await audioElement.play();
+          set({ isPlaying: true });
+        } catch (error) {
+          console.error("Error playing audio:", error);
+          setError("Failed to play audio");
+          set({ isPlaying: false });
+        } finally {
+          setLoading(false);
+        }
+      },
 
-    pause: () => {
-      const { audioElement } = get();
-      if (audioElement) {
-        audioElement.pause();
-        set({ isPlaying: false });
-      }
-    },
+      pause: () => {
+        const { audioElement } = get();
+        if (audioElement) {
+          audioElement.pause();
+          set({ isPlaying: false });
+        }
+      },
 
-    stop: () => {
-      const { audioElement } = get();
-      if (audioElement) {
-        audioElement.pause();
-        audioElement.currentTime = 0;
-        set({ isPlaying: false, currentTime: 0 });
-      }
-    },
+      stop: () => {
+        const { audioElement } = get();
+        if (audioElement) {
+          audioElement.pause();
+          audioElement.currentTime = 0;
+          set({ isPlaying: false, currentTime: 0 });
+        }
+      },
 
-    togglePlay: async () => {
-      const { isPlaying, play, pause } = get();
-      if (isPlaying) {
-        pause();
-      } else {
-        await play();
-      }
-    },
-
-    next: async () => {
-      const { queue, queueIndex, repeatMode } = get();
-
-      if (queue.length === 0) return;
-
-      let nextIndex = queueIndex + 1;
-
-      // Handle repeat modes
-      if (nextIndex >= queue.length) {
-        if (repeatMode === "all") {
-          nextIndex = 0;
-        } else if (repeatMode === "one") {
-          nextIndex = queueIndex; // Stay on current track
+      togglePlay: async () => {
+        const { isPlaying, play, pause } = get();
+        if (isPlaying) {
+          pause();
         } else {
-          return; // End of queue
+          await play();
         }
-      }
+      },
 
-      await get().skipTo(nextIndex);
-    },
+      next: async () => {
+        const { queue, queueIndex, repeatMode } = get();
 
-    previous: async () => {
-      const { queue, queueIndex, currentTime } = get();
+        if (queue.length === 0) return;
 
-      if (queue.length === 0) return;
+        let nextIndex = queueIndex + 1;
 
-      // If more than 3 seconds played, restart current track
-      if (currentTime > 3) {
-        get().seek(0);
-        return;
-      }
-
-      let prevIndex = queueIndex - 1;
-
-      // Wrap to end if at beginning
-      if (prevIndex < 0) {
-        prevIndex = queue.length - 1;
-      }
-
-      await get().skipTo(prevIndex);
-    },
-
-    skipTo: async (index) => {
-      const { queue, setCurrentTrack } = get();
-
-      if (index < 0 || index >= queue.length) return;
-
-      const track = queue[index];
-      set({ queueIndex: index });
-      setCurrentTrack(track);
-
-      // Auto-play if currently playing
-      if (get().isPlaying) {
-        await get().play();
-      }
-    },
-
-    seek: (time) => {
-      const { audioElement, duration } = get();
-      if (audioElement && duration > 0) {
-        const clampedTime = Math.max(0, Math.min(time, duration));
-        audioElement.currentTime = clampedTime;
-        set({ currentTime: clampedTime });
-      }
-    },
-
-    seekBy: (seconds) => {
-      const { currentTime, seek } = get();
-      seek(currentTime + seconds);
-    },
-
-    // Volume controls
-    setVolume: (volume) => {
-      const { audioElement } = get();
-      const clampedVolume = Math.max(0, Math.min(1, volume));
-
-      if (audioElement) {
-        audioElement.volume = clampedVolume;
-      }
-
-      set({
-        volume: clampedVolume,
-        isMuted: clampedVolume === 0,
-      });
-    },
-
-    toggleMute: () => {
-      const { audioElement, isMuted, volume } = get();
-
-      if (audioElement) {
-        if (isMuted) {
-          audioElement.volume = volume;
-          set({ isMuted: false });
-        } else {
-          audioElement.volume = 0;
-          set({ isMuted: true });
-        }
-      }
-    },
-
-    // Mode controls
-    toggleShuffle: () => {
-      const { isShuffled, queue, originalQueue, currentTrack, queueIndex } =
-        get();
-
-      if (!isShuffled) {
-        // Enable shuffle
-        const shuffled = [...queue];
-        const currentTrackItem = shuffled[queueIndex];
-
-        // Remove current track from array before shuffling
-        shuffled.splice(queueIndex, 1);
-
-        // Shuffle remaining tracks
-        for (let i = shuffled.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        // Handle repeat modes
+        if (nextIndex >= queue.length) {
+          if (repeatMode === "all") {
+            nextIndex = 0;
+          } else if (repeatMode === "one") {
+            nextIndex = queueIndex; // Stay on current track
+          } else {
+            return; // End of queue
+          }
         }
 
-        // Put current track at the beginning
-        shuffled.unshift(currentTrackItem);
+        await get().skipTo(nextIndex);
+      },
+
+      previous: async () => {
+        const { queue, queueIndex, currentTime } = get();
+
+        if (queue.length === 0) return;
+
+        // If more than 3 seconds played, restart current track
+        if (currentTime > 3) {
+          get().seek(0);
+          return;
+        }
+
+        let prevIndex = queueIndex - 1;
+
+        // Wrap to end if at beginning
+        if (prevIndex < 0) {
+          prevIndex = queue.length - 1;
+        }
+
+        await get().skipTo(prevIndex);
+      },
+
+      skipTo: async (index) => {
+        const { queue, setCurrentTrack } = get();
+
+        if (index < 0 || index >= queue.length) return;
+
+        const track = queue[index];
+        set({ queueIndex: index });
+        setCurrentTrack(track);
+
+        // Auto-play if currently playing
+        if (get().isPlaying) {
+          await get().play();
+        }
+      },
+
+      seek: (time) => {
+        const { audioElement, duration } = get();
+        if (audioElement && duration > 0) {
+          const clampedTime = Math.max(0, Math.min(time, duration));
+          audioElement.currentTime = clampedTime;
+          set({ currentTime: clampedTime });
+        }
+      },
+
+      seekBy: (seconds) => {
+        const { currentTime, seek } = get();
+        seek(currentTime + seconds);
+      },
+
+      // Volume controls
+      setVolume: (volume) => {
+        const { audioElement } = get();
+        const clampedVolume = Math.max(0, Math.min(1, volume));
+
+        if (audioElement) {
+          audioElement.volume = clampedVolume;
+        }
 
         set({
-          isShuffled: true,
-          originalQueue: queue,
-          queue: shuffled,
-          queueIndex: 0,
+          volume: clampedVolume,
+          isMuted: clampedVolume === 0,
         });
-      } else {
-        const currentTrackId = currentTrack?.id;
-        const originalIndex = originalQueue.findIndex(
-          (track) => track.id === currentTrackId
-        );
+      },
+
+      toggleMute: () => {
+        const { audioElement, isMuted, volume } = get();
+
+        if (audioElement) {
+          if (isMuted) {
+            audioElement.volume = volume;
+            set({ isMuted: false });
+          } else {
+            audioElement.volume = 0;
+            set({ isMuted: true });
+          }
+        }
+      },
+
+      // Mode controls
+      toggleShuffle: () => {
+        const { isShuffled, queue, originalQueue, currentTrack, queueIndex } =
+          get();
+
+        if (!isShuffled) {
+          // Enable shuffle
+          const shuffled = [...queue];
+          const currentTrackItem = shuffled[queueIndex];
+
+          // Remove current track from array before shuffling
+          shuffled.splice(queueIndex, 1);
+
+          // Shuffle remaining tracks
+          for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          }
+
+          // Put current track at the beginning
+          shuffled.unshift(currentTrackItem);
+
+          set({
+            isShuffled: true,
+            originalQueue: queue,
+            queue: shuffled,
+            queueIndex: 0,
+          });
+        } else {
+          const currentTrackId = currentTrack?.id;
+          const originalIndex = originalQueue.findIndex(
+            (track) => track.id === currentTrackId
+          );
+
+          set({
+            isShuffled: false,
+            queue: originalQueue,
+            queueIndex: Math.max(0, originalIndex),
+            originalQueue: [],
+          });
+        }
+      },
+
+      setRepeatMode: (mode) => set({ repeatMode: mode }),
+
+      toggleRepeat: () => {
+        const { repeatMode } = get();
+        const modes: RepeatMode[] = ["off", "all", "one"];
+        const currentIndex = modes.indexOf(repeatMode);
+        const nextMode = modes[(currentIndex + 1) % modes.length];
+        set({ repeatMode: nextMode });
+      },
+
+      setCurrentTrack: (track, context) => {
+        const { audioElement } = get();
+
+        if (audioElement) {
+          const audioUrl = getAudioUrl(track.audioId);
+          audioElement.src = audioUrl;
+          audioElement.load();
+        }
 
         set({
-          isShuffled: false,
-          queue: originalQueue,
-          queueIndex: Math.max(0, originalIndex),
+          currentTrack: track,
+          playbackContext: context,
+          currentTime: 0,
+          duration: 0,
+          isLoading: true,
+          error: null,
+        });
+      },
+
+      addToQueue: (track) => {
+        const { queue } = get();
+        set({ queue: [...queue, track] });
+      },
+
+      removeFromQueue: (index) => {
+        const { queue, queueIndex } = get();
+        const newQueue = queue.filter((_, i) => i !== index);
+
+        let newQueueIndex = queueIndex;
+        if (index < queueIndex) {
+          newQueueIndex = queueIndex - 1;
+        } else if (index === queueIndex && index >= newQueue.length) {
+          newQueueIndex = Math.max(0, newQueue.length - 1);
+        }
+
+        set({
+          queue: newQueue,
+          queueIndex: newQueueIndex,
+        });
+      },
+
+      clearQueue: () => {
+        set({
+          queue: [],
           originalQueue: [],
+          queueIndex: 0,
+          currentTrack: null,
+          isPlaying: false,
         });
-      }
-    },
+      },
 
-    setRepeatMode: (mode) => set({ repeatMode: mode }),
+      reorderQueue: (fromIndex, toIndex) => {
+        const { queue, queueIndex } = get();
+        const newQueue = [...queue];
+        const [moved] = newQueue.splice(fromIndex, 1);
+        newQueue.splice(toIndex, 0, moved);
 
-    toggleRepeat: () => {
-      const { repeatMode } = get();
-      const modes: RepeatMode[] = ["off", "all", "one"];
-      const currentIndex = modes.indexOf(repeatMode);
-      const nextMode = modes[(currentIndex + 1) % modes.length];
-      set({ repeatMode: nextMode });
-    },
+        let newQueueIndex = queueIndex;
+        if (fromIndex === queueIndex) {
+          newQueueIndex = toIndex;
+        } else if (fromIndex < queueIndex && toIndex >= queueIndex) {
+          newQueueIndex = queueIndex - 1;
+        } else if (fromIndex > queueIndex && toIndex <= queueIndex) {
+          newQueueIndex = queueIndex + 1;
+        }
 
-    setCurrentTrack: (track, context) => {
-      const { audioElement } = get();
+        set({
+          queue: newQueue,
+          queueIndex: newQueueIndex,
+        });
+      },
 
-      if (audioElement) {
-        const audioUrl = getAudioUrl(track.audioId);
-        audioElement.src = audioUrl;
-        audioElement.load();
-      }
+      setCurrentTime: (time) => set({ currentTime: time }),
+      setDuration: (duration) => set({ duration }),
+      setLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
+    })),
+    {
+      name: "audix:player",
+      storage: createJSONStorage(() => localStorage),
+      version: 1,
 
-      set({
-        currentTrack: track,
-        playbackContext: context,
-        currentTime: 0,
-        duration: 0,
-        isLoading: true,
+      partialize: (s) => ({
+        currentTrack: s.currentTrack,
+        currentTrackIndex: s.currentTrackIndex,
+        currentTime: s.currentTime,
+
+        queue: s.queue,
+        originalQueue: s.originalQueue,
+        queueIndex: s.queueIndex,
+        isShuffled: s.isShuffled,
+        repeatMode: s.repeatMode,
+
+        playbackContext: s.playbackContext,
+
+        volume: s.volume,
+        isMuted: s.isMuted,
+
+        recentlyPlayed: s.recentlyPlayed,
+      }),
+
+      merge: (persisted: any, current) => ({
+        ...current,
+        ...persisted,
+        isLoading: false,
         error: null,
-      });
-    },
-
-    addToQueue: (track) => {
-      const { queue } = get();
-      set({ queue: [...queue, track] });
-    },
-
-    removeFromQueue: (index) => {
-      const { queue, queueIndex } = get();
-      const newQueue = queue.filter((_, i) => i !== index);
-
-      let newQueueIndex = queueIndex;
-      if (index < queueIndex) {
-        newQueueIndex = queueIndex - 1;
-      } else if (index === queueIndex && index >= newQueue.length) {
-        newQueueIndex = Math.max(0, newQueue.length - 1);
-      }
-
-      set({
-        queue: newQueue,
-        queueIndex: newQueueIndex,
-      });
-    },
-
-    clearQueue: () => {
-      set({
-        queue: [],
-        originalQueue: [],
-        queueIndex: 0,
-        currentTrack: null,
-        isPlaying: false,
-      });
-    },
-
-    reorderQueue: (fromIndex, toIndex) => {
-      const { queue, queueIndex } = get();
-      const newQueue = [...queue];
-      const [moved] = newQueue.splice(fromIndex, 1);
-      newQueue.splice(toIndex, 0, moved);
-
-      let newQueueIndex = queueIndex;
-      if (fromIndex === queueIndex) {
-        newQueueIndex = toIndex;
-      } else if (fromIndex < queueIndex && toIndex >= queueIndex) {
-        newQueueIndex = queueIndex - 1;
-      } else if (fromIndex > queueIndex && toIndex <= queueIndex) {
-        newQueueIndex = queueIndex + 1;
-      }
-
-      set({
-        queue: newQueue,
-        queueIndex: newQueueIndex,
-      });
-    },
-
-    setCurrentTime: (time) => set({ currentTime: time }),
-    setDuration: (duration) => set({ duration }),
-    setLoading: (loading) => set({ isLoading: loading }),
-    setError: (error) => set({ error }),
-
-    // setCrossfadeDuration: (duration) => {
-    //   const clampedDuration = Math.max(0, Math.min(12, duration));
-    //   set({ crossfadeDuration: clampedDuration });
-    //   localStorage.setItem(STORAGE_KEYS.CROSSFADE, clampedDuration.toString());
-    // },
-  }))
+        audioElement: null,
+        duration: 0,
+      }),
+    }
+  )
 );
 
 useAudioStore.subscribe(
