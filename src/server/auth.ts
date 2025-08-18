@@ -36,3 +36,10 @@ export async function requirePremium() {
 
   return user;
 }
+
+export async function getUserIdOrThrow() {
+  const session = await getServerSession(authOptions);
+  const id = session?.user?.id;
+  if (!id) throw new (class extends Error {})("UNAUTHORIZED");
+  return id;
+}

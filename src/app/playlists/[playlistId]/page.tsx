@@ -1,5 +1,5 @@
 import { BannerSection } from "@/components/sections/playlist-detail";
-import prisma from "@/lib/prisma";
+import db from "@/server/db";
 
 export default async function PlaylistDetailPage({
   params,
@@ -8,7 +8,7 @@ export default async function PlaylistDetailPage({
 }) {
   const { playlistId } = await params;
 
-  const playlist = await prisma.playlist.findUniqueOrThrow({
+  const playlist = await db.playlist.findUniqueOrThrow({
     where: {
       id: playlistId,
     },

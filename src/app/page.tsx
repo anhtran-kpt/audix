@@ -1,10 +1,10 @@
 import { HotAlbumsSection } from "@/components/sections/discovery/hot-albums-section";
 import { NewReleasesSection } from "@/components/sections/discovery/new-releases-section";
-import prisma from "@/lib/prisma";
+import db from "@/server/db";
 
 export default async function Home() {
   const [tracks, albums] = await Promise.all([
-    prisma.track.findMany({
+    db.track.findMany({
       select: {
         id: true,
         title: true,
@@ -39,7 +39,7 @@ export default async function Home() {
         createdAt: "desc",
       },
     }),
-    prisma.album.findMany({}),
+    db.album.findMany({}),
   ]);
 
   return (

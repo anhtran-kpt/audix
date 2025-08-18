@@ -7,7 +7,7 @@ import { AppSidebar } from "@/components/features/app-sidebar";
 import { Header } from "@/components/features/header";
 import AudioPlayer from "@/components/features/audio-player";
 import { AuthProvider } from "@/providers/auth-provider";
-import prisma from "@/lib/prisma";
+import db from "@/server/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
@@ -31,7 +31,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions);
 
   const [playlists, followingArtists] = await Promise.all([
-    prisma.playlist.findMany({
+    db.playlist.findMany({
       where: {
         userId: session?.user.id,
       },
@@ -48,7 +48,7 @@ export default async function RootLayout({
         },
       },
     }),
-    prisma.userLikedArtist
+    db.userLikedArtist
       .findMany({
         where: {
           userId: session?.user.id,

@@ -5,8 +5,8 @@ import {
   OtherArtistsSection,
   PopularTracksSection,
 } from "@/components/sections/artist-detail";
-import { requireAuth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { requireAuth } from "@/server/auth";
+import db from "@/server/db";
 
 export default async function ArtistDetail({
   params,
@@ -16,7 +16,7 @@ export default async function ArtistDetail({
   const { artistId } = await params;
   const user = await requireAuth();
 
-  const artist = await prisma.artist.findUniqueOrThrow({
+  const artist = await db.artist.findUniqueOrThrow({
     where: {
       id: artistId,
     },
@@ -47,7 +47,7 @@ export default async function ArtistDetail({
     otherArtists,
     isFollowing,
   ] = await Promise.all([
-    prisma.track.findMany({
+    db.track.findMany({
       where: {
         artists: {
           some: {
@@ -117,7 +117,7 @@ export default async function ArtistDetail({
         playCount: "desc",
       },
     }),
-    prisma.album.findMany({
+    db.album.findMany({
       where: {
         artistId: artist.id,
       },
@@ -126,7 +126,7 @@ export default async function ArtistDetail({
         releaseDate: "desc",
       },
     }),
-    prisma.album.findMany({
+    db.album.findMany({
       where: {
         artistId: artist.id,
         albumType: "ALBUM",
@@ -136,7 +136,7 @@ export default async function ArtistDetail({
         releaseDate: "desc",
       },
     }),
-    prisma.album.findMany({
+    db.album.findMany({
       where: {
         artistId: artist.id,
         albumType: {
@@ -148,7 +148,7 @@ export default async function ArtistDetail({
         releaseDate: "desc",
       },
     }),
-    prisma.$queryRaw<{
+    db.$queryRaw<{
       id: string;
       name: string;
       imageId: string;
@@ -160,7 +160,7 @@ export default async function ArtistDetail({
    LIMIT 5;
 `,
     user.id
-      ? prisma.userLikedArtist
+      ? db.userLikedArtist
           .findUnique({
             where: { userId_artistId: { userId: user.id, artistId } },
           })

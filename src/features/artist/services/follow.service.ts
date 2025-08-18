@@ -1,6 +1,6 @@
 import { followInput } from "../schemas/follow.schema";
 import { followRepo } from "../repos/follow.repo";
-import prisma from "@/lib/prisma";
+import prisma from "@/server/db";
 import { zodToFieldErrors } from "@/features/_shared/schemas/error";
 
 type FollowResult =

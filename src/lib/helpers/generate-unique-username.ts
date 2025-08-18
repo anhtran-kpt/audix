@@ -1,4 +1,4 @@
-import prisma from "../prisma";
+import prisma from "../../server/db";
 
 export const generateUniqueUsername = async (
   baseName: string

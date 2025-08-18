@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth";
+import { requireAuth } from "@/server/auth";
 import { setFollowService } from "../services/follow.service";
 import { revalidateTag } from "next/cache";
 

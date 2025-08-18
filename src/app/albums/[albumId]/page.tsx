@@ -3,7 +3,7 @@ import {
   OtherAlbumsSection,
   TracksSection,
 } from "@/components/sections/album-detail";
-import prisma from "@/lib/prisma";
+import db from "@/server/db";
 
 export default async function AlbumDetail({
   params,
@@ -12,7 +12,7 @@ export default async function AlbumDetail({
 }) {
   const { albumId } = await params;
 
-  const album = await prisma.album.findUniqueOrThrow({
+  const album = await db.album.findUniqueOrThrow({
     where: {
       id: albumId,
     },
@@ -67,7 +67,7 @@ export default async function AlbumDetail({
     },
   });
 
-  const otherAlbums = await prisma.album.findMany({
+  const otherAlbums = await db.album.findMany({
     where: {
       artistId: album.artistId,
       id: {

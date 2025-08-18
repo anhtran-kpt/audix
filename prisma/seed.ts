@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import prisma from "@/server/db";
 import { genres as genreData } from "./genres.json";
 import { artists as artistData } from "./artists.json";
 import { albums as albumData } from "./albums.json";

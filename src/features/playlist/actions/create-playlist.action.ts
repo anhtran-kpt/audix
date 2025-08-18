@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAuth } from "@/lib/auth";
+import { requireAuth } from "@/server/auth";
 import { createPlaylistService } from "../services/playlist.service";
 import { revalidateTag } from "next/cache";
 
