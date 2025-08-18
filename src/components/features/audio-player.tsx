@@ -23,6 +23,7 @@ import {
   useMediaSession,
 } from "@/hooks/use-audio-player";
 import { useRightPanel } from "@/stores/use-right-panel";
+import { useScrobble } from "@/hooks/use-scrobble";
 
 function AudioPlayer() {
   const currentTrack = useCurrentTrack();
@@ -39,6 +40,7 @@ function AudioPlayer() {
   } = useAudioPlayer();
   useMediaSession();
   useAudioKeyboardShortcuts();
+  useScrobble();
   const toggle = useRightPanel((s) => s.toggle);
   const active = useRightPanel((s) => s.active);
 

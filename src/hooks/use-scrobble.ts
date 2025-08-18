@@ -1,14 +1,17 @@
+"use client";
+
 import { useEffect, useRef } from "react";
 import { useAudioStore } from "@/stores/use-audio-store";
+import { useShallow } from "zustand/react/shallow";
 
 export function useScrobble() {
   const { nowPlaying, progressSec, durationSec, source } = useAudioStore(
-    (s) => ({
-      nowPlaying: s.currentTrack, // { id, ... }
-      progressSec: s.currentTime, // số giây đã nghe
-      durationSec: s.duration, // length của track
-      source: s.playbackContext, // { type, contextId }
-    })
+    useShallow((s) => ({
+      nowPlaying: s.currentTrack,
+      progressSec: s.currentTime,
+      durationSec: s.duration,
+      source: s.playbackContext,
+    }))
   );
 
   const scrobbledRef = useRef<string | null>(null);
@@ -21,9 +24,9 @@ export function useScrobble() {
     if (!nowPlaying?.id || !durationSec) return;
     if (scrobbledRef.current === nowPlaying.id) return;
 
-    const thresholdA = 30; // 30s
-    const thresholdB = durationSec * 0.5; // 50% (tuỳ chọn)
-    const threshold = Math.min(thresholdA, thresholdB); // chọn luật bạn muốn
+    const thresholdA = 30;
+    const thresholdB = durationSec * 0.5;
+    const threshold = Math.min(thresholdA, thresholdB);
 
     if (progressSec >= threshold) {
       scrobbledRef.current = nowPlaying.id;
@@ -34,15 +37,9 @@ export function useScrobble() {
           listenedSec: Math.floor(progressSec),
           playedAt: new Date().toISOString(),
           sourceType: source?.type, // 'playlist' | 'album' | ...
-          sourceId: source?.contextId ?? null,
+          sourceId: source?.id ?? null,
         }),
       });
     }
-  }, [
-    nowPlaying?.id,
-    progressSec,
-    durationSec,
-    source?.type,
-    source?.contextId,
-  ]);
+  }, [nowPlaying?.id, progressSec, durationSec, source?.type, source?.id]);
 }

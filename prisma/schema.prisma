@@ -459,11 +459,11 @@ model UserFollow {
 // ================================
 
 model PlayHistory {
-  id         String   @id @default(cuid())
-  playedAt   DateTime @default(now())
+  id         String     @id @default(cuid())
+  playedAt   DateTime   @default(now())
   duration   Int
   deviceType String? // web, mobile, desktop
-  sourceType String? // 'playlist' | 'album' | 'artist' | 'liked' | 'queue'
+  sourceType SourceType
   sourceId   String?
 
   userId  String
@@ -476,6 +476,14 @@ model PlayHistory {
   @@index([userId, playedAt])
   @@index([trackId, playedAt])
   @@map("play_history")
+}
+
+enum SourceType {
+  PLAYLIST
+  ALBUM
+  ARTIST
+  LIKED
+  QUEUE
 }
 
 model SearchHistory {

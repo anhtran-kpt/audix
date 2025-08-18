@@ -10,13 +10,37 @@ import {
 } from "zustand/middleware";
 
 export type RepeatMode = "off" | "one" | "all";
+
 export type PlaybackContextType =
   | "album"
   | "playlist"
   | "artist"
   | "liked"
   | "queue"
+  | "ad-hoc" // ví dụ play từ search results
   | null;
+
+export interface PlaybackContext {
+  type: PlaybackContextType;
+
+  // Định danh nguồn (tùy loại)
+  contextId?: string; // albumId/playlistId/artistId...
+  snapshotId?: string; // playlist/liked: "đóng băng" thứ tự tại thời điểm play
+  name?: string;
+
+  // Thứ tự "chuẩn" ban đầu (canonical)
+  trackIds: string[]; // snapshot track IDs tại lúc bắt đầu nghe
+
+  // Con trỏ tới bài hiện tại theo *canonical*
+  contextIndex: number;
+
+  // Nếu bật shuffle: hoán vị chỉ số của `trackIds`
+  // Quy ước: phần tử 0 *luôn* là index của bài hiện tại (pinned)
+  shuffledOrder?: number[];
+
+  // (tuỳ chọn) thông tin quản trị/analytics
+  createdAt?: string; // ISO
+}
 
 export interface PlaybackState {
   // Current playback state
@@ -30,12 +54,8 @@ export interface PlaybackState {
   duration: number;
   volume: number;
   isMuted: boolean;
-  // crossfadeDuration: number;
-  playbackContext: {
-    type: PlaybackContextType;
-    id: string | null;
-    name: string | null;
-  };
+
+  playbackContext: PlaybackContext | null;
 
   // Player modes
   isShuffled: boolean;

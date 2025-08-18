@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const RecentlyTracksInput = z.object({
-  limit: z.number().int().min(1).max(100).default(30),
+  limit: z.number().int().min(1).max(30).default(15),
 });
 
 export const ArtistMini = z.object({
