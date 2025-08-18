@@ -463,6 +463,8 @@ model PlayHistory {
   playedAt   DateTime @default(now())
   duration   Int
   deviceType String? // web, mobile, desktop
+  sourceType String? // 'playlist' | 'album' | 'artist' | 'liked' | 'queue'
+  sourceId   String?
 
   userId  String
   trackId String
@@ -470,6 +472,7 @@ model PlayHistory {
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
+  @@index([userId, sourceType, sourceId, playedAt])
   @@index([userId, playedAt])
   @@index([trackId, playedAt])
   @@map("play_history")
