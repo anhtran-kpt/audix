@@ -19,29 +19,34 @@ import ProgressBar from "./progress-bar";
 import {
   useAudioKeyboardShortcuts,
   useAudioPlayer,
-  useCurrentTrack,
-  useMediaSession,
+  useNowPlayingId,
 } from "@/hooks/use-audio-player";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { useScrobble } from "@/hooks/use-scrobble";
+import { useTrack } from "@/modules/tracks/hooks";
 
 function AudioPlayer() {
-  const currentTrack = useCurrentTrack();
   const {
     audioRef,
     playback,
     progress,
     controls,
     formatTime,
-    hasNext,
-    hasPrev,
+    queue,
     modes,
     volume,
   } = useAudioPlayer();
-  useMediaSession();
+
+  const nowPlayingId = useNowPlayingId();
+
+  const { data: currentTrack, isLoading, error } = useTrack(nowPlayingId);
+
   useAudioKeyboardShortcuts();
+
   useScrobble();
+
   const toggle = useRightPanel((s) => s.toggle);
+
   const active = useRightPanel((s) => s.active);
 
   return (
@@ -87,8 +92,8 @@ function AudioPlayer() {
               <PlayerControls
                 isPlaying={playback.isPlaying}
                 isLoading={playback.isLoading}
-                hasNext={hasNext}
-                hasPrev={hasPrev}
+                hasNext={queue.hasNext}
+                hasPrev={queue.hasPrev}
                 onTogglePlay={controls.togglePlay}
                 onNext={controls.next}
                 onPrevious={controls.previous}

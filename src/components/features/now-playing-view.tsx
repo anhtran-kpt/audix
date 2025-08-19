@@ -8,7 +8,7 @@ import {
   PlusCircleIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import { useCurrentTrack, usePlaybackContext } from "@/hooks/use-audio-player";
+import { useNowPlayingId, usePlaybackContext } from "@/hooks/use-audio-player";
 import { NavLink } from "../ui/nav-link";
 import { FollowButton } from "./follow-button";
 import { buildCreditsByPerson } from "@/lib/helpers/build-credits-by-person";
@@ -18,12 +18,14 @@ import { CldImage } from "next-cloudinary";
 import { cn } from "@/lib/utils";
 import pluralize from "pluralize";
 import { useRightPanel } from "@/stores/use-right-panel";
+import { useTrack } from "@/modules/tracks/hooks";
 
 export default function NowPlayingView() {
   const close = useRightPanel((s) => s.close);
 
   const playbackContext = usePlaybackContext();
-  const currentTrack = useCurrentTrack();
+  const nowPlayingId = useNowPlayingId();
+  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingId);
 
   if (!currentTrack) {
     return null;

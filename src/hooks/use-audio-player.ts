@@ -1,89 +1,121 @@
-import { useEffect, useRef, useCallback } from "react";
-import { PlaybackContextType, useAudioStore } from "@/stores/use-audio-store";
-import { TTrack } from "@/types";
-import { useShallow } from "zustand/react/shallow";
-import { useAudioPlayerHydrated } from "./use-audio-player-hydrated";
-import { getAudioUrl } from "@/lib/helpers/get-audio-url";
+"use client";
 
-export const useCurrentTrack = () =>
-  useAudioStore(useShallow((state) => state.currentTrack));
+import { getAudioUrl } from "@/lib/helpers/get-audio-url";
+import {
+  AudioStore,
+  buildUpNextRefs,
+  PlaybackContextType,
+  TrackRef,
+  useAudioStore,
+} from "@/stores/use-audio-store";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useShallow } from "zustand/react/shallow";
+
+export function useAudioPlayerHydrated() {
+  const api = (useAudioStore as any).persist;
+  const [ready, setReady] = useState<boolean>(
+    () => api?.hasHydrated?.() ?? false
+  );
+  useEffect(() => {
+    if (!api) return;
+    if (api.hasHydrated()) return setReady(true);
+    return api.onFinishHydration(() => setReady(true));
+  }, [api]);
+  return ready;
+}
+
+export const selectUpNextRefs = (s: AudioStore) => buildUpNextRefs(s);
+export const selectHasNext = (s: AudioStore) => buildUpNextRefs(s).length > 0;
+export const selectHasPrev = (s: AudioStore) => s.history.length > 0;
+
+export const useNowPlayingRef = () => useAudioStore((s) => s.nowPlaying);
+
+export const useNowPlayingId = () =>
+  useAudioStore(useShallow((s) => s.nowPlaying?.id));
 
 export const usePlaybackContext = () =>
-  useAudioStore(useShallow((state) => state.playbackContext));
+  useAudioStore(useShallow((s) => s.playbackContext));
 
-export const useIsPlaying = () => useAudioStore((state) => state.isPlaying);
+export const useIsPlaying = () => useAudioStore((s) => s.isPlaying);
 
 export const usePlaybackState = () =>
   useAudioStore(
-    useShallow((state) => ({
-      isPlaying: state.isPlaying,
-      isLoading: state.isLoading,
-      currentTime: state.currentTime,
-      duration: state.duration,
+    useShallow((s) => ({
+      isPlaying: s.isPlaying,
+      isLoading: s.isLoading,
+      currentTime: s.currentTime,
+      duration: s.duration,
     }))
   );
-
 export const usePlayerControls = () =>
   useAudioStore(
-    useShallow((state) => ({
-      play: state.play,
-      pause: state.pause,
-      stop: state.stop,
-      togglePlay: state.togglePlay,
-      next: state.next,
-      previous: state.previous,
-      seek: state.seek,
-      seekBy: state.seekBy,
+    useShallow((s) => ({
+      play: s.play,
+      pause: s.pause,
+      stop: s.stop,
+      togglePlay: s.togglePlay,
+      next: s.next,
+      previous: s.previous,
+      seek: s.seek,
+      seekBy: s.seekBy,
+      skipToUpNextIndex: s.skipToUpNextIndex,
+      jumpToTrackId: s.jumpToTrackId,
     }))
   );
-
 export const useVolumeControls = () =>
   useAudioStore(
-    useShallow((state) => ({
-      volume: state.volume,
-      isMuted: state.isMuted,
-      setVolume: state.setVolume,
-      toggleMute: state.toggleMute,
+    useShallow((s) => ({
+      volume: s.volume,
+      isMuted: s.isMuted,
+      setVolume: s.setVolume,
+      toggleMute: s.toggleMute,
     }))
   );
-
 export const usePlayerModes = () =>
   useAudioStore(
-    useShallow((state) => ({
-      isShuffled: state.isShuffled,
-      repeatMode: state.repeatMode,
-      toggleShuffle: state.toggleShuffle,
-      toggleRepeat: state.toggleRepeat,
-      setRepeatMode: state.setRepeatMode,
+    useShallow((s) => ({
+      isShuffled: s.isShuffled,
+      repeatMode: s.repeatMode,
+      toggleShuffle: s.toggleShuffle,
+      toggleRepeat: s.toggleRepeat,
+      setRepeatMode: s.setRepeatMode,
     }))
   );
 
-export const useQueueManagement = () =>
-  useAudioStore(
-    useShallow((state) => ({
-      queue: state.queue,
-      queueIndex: state.queueIndex,
-      addToQueue: state.addToQueue,
-      removeFromQueue: state.removeFromQueue,
-      clearQueue: state.clearQueue,
-      skipTo: state.skipTo,
-    }))
-  );
+export function useQueue() {
+  const upNext = useAudioStore(useShallow(selectUpNextRefs));
+  const { enqueueNext, addToQueue, clearExplicit, skipToUpNextIndex } =
+    useAudioStore(
+      useShallow((s) => ({
+        enqueueNext: s.enqueueNext,
+        addToQueue: s.addToQueue,
+        clearExplicit: s.clearExplicit,
+        skipToUpNextIndex: s.skipToUpNextIndex,
+      }))
+    );
+  const hasNext = useAudioStore(selectHasNext);
+  const hasPrev = useAudioStore(selectHasPrev);
+  return {
+    upNext,
+    enqueueNext,
+    addToQueue,
+    clearExplicit,
+    skipToUpNextIndex,
+    hasNext,
+    hasPrev,
+  } as const;
+}
 
-export const useError = () => useAudioStore(useShallow((state) => state.error));
-
-export const useAudioPlayer = () => {
+export function useAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const setAudioElement = useAudioStore((state) => state.setAudioElement);
   const hasHydrated = useAudioPlayerHydrated();
+  const setAudioElement = useAudioStore((s) => s.setAudioElement);
 
-  const currentTrack = useCurrentTrack();
   const playbackState = usePlaybackState();
-  const playerControls = usePlayerControls();
-  const volumeControls = useVolumeControls();
-  const playerModes = usePlayerModes();
-  const queueManagement = useQueueManagement();
-  const error = useError();
+  const controls = usePlayerControls();
+  const volume = useVolumeControls();
+  const modes = usePlayerModes();
+  const error = useAudioStore((s) => s.error);
 
   useEffect(() => {
     const el = audioRef.current;
@@ -92,23 +124,59 @@ export const useAudioPlayer = () => {
     setAudioElement(el);
   }, [setAudioElement]);
 
+  // Attach media events once
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    const onEnded = () => useAudioStore.getState().next();
+    const onTime = (e: Event) =>
+      useAudioStore.setState({
+        currentTime: (e.target as HTMLAudioElement).currentTime,
+      });
+    const onLoaded = (e: Event) =>
+      useAudioStore
+        .getState()
+        .setDuration((e.target as HTMLAudioElement).duration);
+    const onError = () =>
+      useAudioStore.getState().setError("Failed to load audio");
+    const onPlay = () => useAudioStore.setState({ isPlaying: true });
+    const onPause = () => useAudioStore.setState({ isPlaying: false });
+
+    el.addEventListener("ended", onEnded);
+    el.addEventListener("timeupdate", onTime);
+    el.addEventListener("loadedmetadata", onLoaded);
+    el.addEventListener("error", onError);
+    el.addEventListener("play", onPlay);
+    el.addEventListener("pause", onPause);
+    return () => {
+      el.removeEventListener("ended", onEnded);
+      el.removeEventListener("timeupdate", onTime);
+      el.removeEventListener("loadedmetadata", onLoaded);
+      el.removeEventListener("error", onError);
+      el.removeEventListener("play", onPlay);
+      el.removeEventListener("pause", onPause);
+    };
+  }, []);
+
+  // Re-sync after hydrate (volume, src via nowPlaying.audioId, seek)
   useEffect(() => {
     const el = audioRef.current;
     if (!el || !hasHydrated) return;
-
     const s = useAudioStore.getState();
-
     el.volume = s.isMuted ? 0 : typeof s.volume === "number" ? s.volume : 0.8;
 
-    if (s.currentTrack) {
-      el.src = getAudioUrl(s.currentTrack.audioId);
-      el.load();
-
+    const ref = s.nowPlaying;
+    if (ref) {
+      const url = getAudioUrl(ref.audioId);
+      if (!el.src || !el.src.includes(ref.audioId)) {
+        el.src = url;
+        el.load();
+      }
       if (s.currentTime && s.currentTime > 0) {
         const onLoaded = () => {
           el.currentTime = Math.min(
-            s.currentTime,
-            el.duration || s.currentTime
+            s.currentTime!,
+            el.duration || s.currentTime!
           );
           el.removeEventListener("loadedmetadata", onLoaded);
         };
@@ -117,89 +185,90 @@ export const useAudioPlayer = () => {
     }
   }, [hasHydrated]);
 
-  const progress =
-    playbackState.duration > 0
-      ? (playbackState.currentTime / playbackState.duration) * 100
-      : 0;
+  const progress = useMemo(
+    () =>
+      playbackState.duration > 0
+        ? (playbackState.currentTime / playbackState.duration) * 100
+        : 0,
+    [playbackState.currentTime, playbackState.duration]
+  );
 
-  const hasNext = queueManagement.queueIndex < queueManagement.queue.length - 1;
-  const hasPrev = queueManagement.queueIndex > 0;
-
-  const formatTime = useCallback((seconds: number): string => {
-    if (isNaN(seconds)) return "0:00";
-
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
+  const formatTime = useCallback((seconds: number) => {
+    if (!Number.isFinite(seconds)) return "0:00";
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
   }, []);
 
-  const playTrack = useCallback(
+  // Convenience helpers for your UI
+  const playTrackRef = useCallback(async (ref: TrackRef) => {
+    const { setCurrentFromRef, play } = useAudioStore.getState();
+    setCurrentFromRef(ref);
+    await play();
+  }, []);
+  const playContext = useCallback(
     async (
-      track: TTrack,
-      context?: {
+      refs: TrackRef[],
+      startIndex: number,
+      meta: {
         type: PlaybackContextType;
-        id: string | null;
-        name: string | null;
+        contextId?: string;
+        name?: string;
+        snapshotId?: string;
       }
     ) => {
-      const { setCurrentTrack, play } = useAudioStore.getState();
-      setCurrentTrack(track, context);
-      await play();
+      await useAudioStore.getState().startFromContext(refs, startIndex, meta);
     },
     []
   );
 
   return {
-    currentTrack,
+    audioRef,
     error,
     progress,
-    hasNext,
-    hasPrev,
-
     playback: playbackState,
-    controls: playerControls,
-    volume: volumeControls,
-    modes: playerModes,
-    queue: queueManagement,
-
+    controls,
+    volume,
+    modes,
+    queue: useQueue(),
     formatTime,
-    playTrack,
-    audioRef,
-  };
-};
+    playTrackRef,
+    playContext,
+  } as const;
+}
 
-export const useAudioKeyboardShortcuts = () => {
+// -----------------------
+// Keyboard shortcuts
+// -----------------------
+export function useAudioKeyboardShortcuts() {
   const { togglePlay, next, previous, seekBy } = usePlayerControls();
   const { volume, setVolume } = useVolumeControls();
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+      const target = event.target as Element | null;
       if (
-        event.target instanceof HTMLInputElement ||
-        event.target instanceof HTMLTextAreaElement
+        target &&
+        (target instanceof HTMLInputElement ||
+          target instanceof HTMLTextAreaElement ||
+          (target as any).isContentEditable)
       ) {
         return;
       }
 
       switch (event.key.toLowerCase()) {
-        case " ":
+        case " ": // space
         case "k":
           event.preventDefault();
           togglePlay();
           break;
         case "arrowright":
-          if (event.shiftKey) {
-            next();
-          } else {
-            seekBy(10);
-          }
+          if (event.shiftKey) next();
+          else seekBy(10);
           break;
         case "arrowleft":
-          if (event.shiftKey) {
-            previous();
-          } else {
-            seekBy(-10);
-          }
+          if (event.shiftKey) previous();
+          else seekBy(-10);
           break;
         case "arrowup":
           event.preventDefault();
@@ -217,30 +286,33 @@ export const useAudioKeyboardShortcuts = () => {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [togglePlay, next, previous, setVolume, seekBy, volume]);
-};
+  }, [togglePlay, next, previous, seekBy, setVolume, volume]);
+}
 
-export const useMediaSession = () => {
-  const currentTrack = useCurrentTrack();
-  const isPlaying = useIsPlaying();
-  const { play, pause, next, previous } = usePlayerControls();
+// -----------------------
+// Media Session integration
+// -----------------------
+// export function useMediaSession() {
+//   const currentTrack = useCurrentTrack();
+//   const isPlaying = useIsPlaying();
+//   const { play, pause, next, previous } = usePlayerControls();
 
-  useEffect(() => {
-    if ("mediaSession" in navigator && currentTrack) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: currentTrack.title,
-        artist: currentTrack.artists.find(
-          (artist) => artist.artist.id === currentTrack.album.artistId
-        )?.artist.name,
-        album: currentTrack.album.title,
-      });
+//   useEffect(() => {
+//     if (!("mediaSession" in navigator)) return;
+//     if (!currentTrack) return;
 
-      navigator.mediaSession.setActionHandler("play", play);
-      navigator.mediaSession.setActionHandler("pause", pause);
-      navigator.mediaSession.setActionHandler("nexttrack", next);
-      navigator.mediaSession.setActionHandler("previoustrack", previous);
+//     navigator.mediaSession.metadata = new MediaMetadata({
+//       title: currentTrack.title,
+//       artist: currentTrack.artists.find(
+//         (a) => a.artist.id === currentTrack.album.artistId
+//       )?.artist.name,
+//       album: currentTrack.album.title,
+//     });
 
-      navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
-    }
-  }, [currentTrack, isPlaying, play, pause, next, previous]);
-};
+//     navigator.mediaSession.setActionHandler("play", play);
+//     navigator.mediaSession.setActionHandler("pause", pause);
+//     navigator.mediaSession.setActionHandler("nexttrack", next);
+//     navigator.mediaSession.setActionHandler("previoustrack", previous);
+//     navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+//   }, [currentTrack, isPlaying, play, pause, next, previous]);
+// }

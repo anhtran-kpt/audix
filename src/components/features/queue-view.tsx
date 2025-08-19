@@ -1,11 +1,14 @@
-import { useCurrentTrack } from "@/hooks/use-audio-player";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
 import RecentlyTracks from "./recently-tracks";
+import { useNowPlayingId } from "@/hooks/use-audio-player";
+import { useTrack } from "@/modules/tracks/hooks";
+import { now } from "next-auth/client/_utils";
 
 export default function QueueView() {
-  const currentTrack = useCurrentTrack();
+  const nowPlayingId = useNowPlayingId();
+  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingId);
 
   if (!currentTrack) {
     return null;

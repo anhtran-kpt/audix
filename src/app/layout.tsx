@@ -13,6 +13,7 @@ import { authOptions } from "./api/auth/[...nextauth]/route";
 import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import RightPanel from "@/components/features/right-panel";
+import ReactQueryProvider from "@/providers/react-query-provider";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -79,40 +80,42 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider session={session}>
-            <SidebarProvider
-              className="h-full"
-              style={
-                {
-                  "--header-height": "calc(var(--spacing) * 15)",
-                } as React.CSSProperties
-              }
-            >
-              <AppSidebar
-                playlists={playlists}
-                followingArtists={followingArtists}
-              />
-              <SidebarInset
-                className="h-full transition-[width]"
-                style={{
-                  paddingBottom:
-                    "calc(env(safe-area-inset-bottom) + var(--player-offset, 0px))",
-                }}
+          <ReactQueryProvider>
+            <AuthProvider session={session}>
+              <SidebarProvider
+                className="h-full"
+                style={
+                  {
+                    "--header-height": "calc(var(--spacing) * 15)",
+                  } as React.CSSProperties
+                }
               >
-                <ScrollArea viewportId="app-scroll" className="h-full">
-                  <Header />
-                  <div className="flex flex-col flex-1 p-6 md:p-8 lg:p-10 xl:p-12">
-                    <div className="@container/main flex flex-1 flex-col gap-8">
-                      <PlayerOffsetSetter />
-                      {children}
+                <AppSidebar
+                  playlists={playlists}
+                  followingArtists={followingArtists}
+                />
+                <SidebarInset
+                  className="h-full transition-[width]"
+                  style={{
+                    paddingBottom:
+                      "calc(env(safe-area-inset-bottom) + var(--player-offset, 0px))",
+                  }}
+                >
+                  <ScrollArea viewportId="app-scroll" className="h-full">
+                    <Header />
+                    <div className="flex flex-col flex-1 p-6 md:p-8 lg:p-10 xl:p-12">
+                      <div className="@container/main flex flex-1 flex-col gap-8">
+                        <PlayerOffsetSetter />
+                        {children}
+                      </div>
                     </div>
-                  </div>
-                </ScrollArea>
-              </SidebarInset>
-              <RightPanel />
-              <AudioPlayer />
-            </SidebarProvider>
-          </AuthProvider>
+                  </ScrollArea>
+                </SidebarInset>
+                <RightPanel />
+                <AudioPlayer />
+              </SidebarProvider>
+            </AuthProvider>
+          </ReactQueryProvider>
         </ThemeProvider>
       </body>
     </html>

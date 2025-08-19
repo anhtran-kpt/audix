@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils";
 import Explicit from "../ui/explicit";
-
 import {
   Clock3Icon,
   EllipsisIcon,
@@ -18,9 +17,10 @@ import { CoverImage } from "../ui/cover-image";
 import { TTrack } from "@/types/track";
 import {
   useAudioPlayer,
-  useCurrentTrack,
   useIsPlaying,
+  useNowPlayingId,
 } from "@/hooks/use-audio-player";
+import { useTrack } from "@/modules/tracks/hooks";
 
 interface TrackGridProps {
   artistId?: string;
@@ -32,10 +32,11 @@ export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
   const gridClass =
     "grid w-full items-center grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]";
 
-  const currentTrack = useCurrentTrack();
+  const nowPlayingId = useNowPlayingId();
+  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingId);
   const isPlaying = useIsPlaying();
 
-  const { playTrack } = useAudioPlayer();
+  const { playContext } = useAudioPlayer();
 
   return (
     <div className="space-y-1 w-full">
@@ -92,7 +93,20 @@ export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
                   <IconButton
                     icon={PlayIcon}
                     size="sm"
-                    onClick={() => playTrack(track)}
+                    onClick={() =>
+                      playContext(
+                        tracks.map((track) => ({
+                          id: track.id,
+                          audioId: track.audioId,
+                        })),
+                        trackIndex,
+                        {
+                          type: "artist",
+                          contextId: artistId,
+                          name: track.album.artist.name,
+                        }
+                      )
+                    }
                     iconClassName="fill-foreground stroke-0"
                     className="hidden group-hover:block"
                   />

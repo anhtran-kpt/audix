@@ -1,53 +1,41 @@
-"use client";
-
-import { getAudioUrl } from "@/lib/helpers/get-audio-url";
-import { TTrack } from "@/types/track";
 import { create } from "zustand";
 import {
   persist,
   createJSONStorage,
   subscribeWithSelector,
 } from "zustand/middleware";
+import { getAudioUrl } from "@/lib/helpers/get-audio-url";
 
 export type RepeatMode = "off" | "one" | "all";
-
 export type PlaybackContextType =
   | "album"
   | "playlist"
   | "artist"
   | "liked"
   | "queue"
-  | "ad-hoc" // ví dụ play từ search results
+  | "radio"
+  | "ad-hoc"
   | null;
+
+export type TrackRef = { id: string; audioId: string };
 
 export interface PlaybackContext {
   type: PlaybackContextType;
-
-  // Định danh nguồn (tùy loại)
-  contextId?: string; // albumId/playlistId/artistId...
-  snapshotId?: string; // playlist/liked: "đóng băng" thứ tự tại thời điểm play
+  contextId?: string;
+  snapshotId?: string;
   name?: string;
 
-  // Thứ tự "chuẩn" ban đầu (canonical)
-  trackIds: string[]; // snapshot track IDs tại lúc bắt đầu nghe
-
-  // Con trỏ tới bài hiện tại theo *canonical*
-  contextIndex: number;
-
-  // Nếu bật shuffle: hoán vị chỉ số của `trackIds`
-  // Quy ước: phần tử 0 *luôn* là index của bài hiện tại (pinned)
-  shuffledOrder?: number[];
-
-  // (tuỳ chọn) thông tin quản trị/analytics
-  createdAt?: string; // ISO
+  // Canonical order snapshot at start time
+  trackRefs: TrackRef[]; // giữ cả id + audioId để phát không cần resolver
+  contextIndex: number; // pointer in canonical order
+  shuffledOrder?: number[]; // permutation of indices; 0 is pinned current
 }
 
 export interface PlaybackState {
-  // Current playback state
-  currentTrack: TTrack | null;
-  currentTrackIndex: number;
+  // Now playing (minimal info to play and identify)
+  nowPlaying: TrackRef | null;
 
-  // Playback status
+  // Status
   isPlaying: boolean;
   isLoading: boolean;
   currentTime: number;
@@ -55,82 +43,124 @@ export interface PlaybackState {
   volume: number;
   isMuted: boolean;
 
+  // Context & modes
   playbackContext: PlaybackContext | null;
-
-  // Player modes
   isShuffled: boolean;
   repeatMode: RepeatMode;
 
-  // Queue management
-  queue: TTrack[];
-  originalQueue: TTrack[];
-  queueIndex: number;
-  recentlyPlayed: TTrack[];
+  // Explicit queues (TrackRef so không cần resolver)
+  explicitNext: TrackRef[];
+  explicitLater: TrackRef[];
+  radio: TrackRef[];
+  history: TrackRef[];
 
-  // Error handling
+  // Errors & engine
   error: string | null;
-
   audioElement: HTMLAudioElement | null;
 }
 
 export interface AudioActions {
-  // Basic playback controls
+  // Engine wiring
+  setAudioElement: (audio: HTMLAudioElement | null) => void;
+
+  // Playback controls
   play: () => Promise<void>;
   pause: () => void;
   stop: () => void;
   togglePlay: () => Promise<void>;
 
-  // Track navigation
+  // Navigation
   next: () => Promise<void>;
   previous: () => Promise<void>;
-  skipTo: (index: number) => Promise<void>;
+  skipToUpNextIndex: (index: number) => Promise<void>;
+  jumpToTrackId: (id: string) => Promise<void>;
 
-  // Seek controls
+  // Seek
   seek: (time: number) => void;
   seekBy: (seconds: number) => void;
 
-  // Volume controls
+  // Volume
   setVolume: (volume: number) => void;
   toggleMute: () => void;
 
-  // Mode controls
+  // Modes
   toggleShuffle: () => void;
   setRepeatMode: (mode: RepeatMode) => void;
   toggleRepeat: () => void;
 
-  // Track/Queue management
-  setCurrentTrack: (
-    track: TTrack,
-    context?: {
+  // Context/queue
+  startFromContext: (
+    refs: TrackRef[],
+    startIndex: number,
+    meta: {
       type: PlaybackContextType;
-      id: string | null;
-      name: string | null;
+      contextId?: string;
+      name?: string;
+      snapshotId?: string;
     }
-  ) => void;
-  addToQueue: (track: TTrack) => void;
-  removeFromQueue: (index: number) => void;
-  clearQueue: () => void;
-  reorderQueue: (fromIndex: number, toIndex: number) => void;
+  ) => Promise<void>;
+  enqueueNext: (refs: TrackRef[]) => void;
+  addToQueue: (refs: TrackRef[]) => void;
+  removeFromExplicitById: (id: string) => void;
+  clearExplicit: () => void;
 
-  // Internal state management
-  setCurrentTime: (time: number) => void;
-  setDuration: (duration: number) => void;
-  // setCrossfadeDuration: (duration: number) => void;
+  // Set current track
+  setCurrentFromRef: (ref: TrackRef) => void;
+
+  // Low-level
+  setError: (err: string | null) => void;
   setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
-
-  // Audio element management
-  setAudioElement: (audio: HTMLAudioElement | null) => void;
+  setDuration: (duration: number) => void;
 }
 
-type AudioStore = PlaybackState & AudioActions;
+export type AudioStore = PlaybackState & AudioActions;
 
-export const useAudioStore = create<AudioStore>()(
+// Helpers
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function makePinnedShuffle(n: number, pin: number) {
+  if (n <= 1) return [0];
+  const arr = Array.from({ length: n }, (_, i) => i);
+  if (pin < 0 || pin >= n) pin = 0;
+  [arr[0], arr[pin]] = [arr[pin], arr[0]];
+  for (let i = n - 1; i > 1; i--) {
+    const j = 1 + Math.floor(Math.random() * i);
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function getContextOrderRefs(ctx: PlaybackContext): TrackRef[] {
+  if (!ctx.shuffledOrder) return ctx.trackRefs;
+  return ctx.shuffledOrder.map((i) => ctx.trackRefs[i]);
+}
+
+export function buildUpNextRefs(s: PlaybackState): TrackRef[] {
+  const ctx = s.playbackContext;
+  const order = ctx ? getContextOrderRefs(ctx) : [];
+  const after = (() => {
+    if (!ctx) return order;
+    if (!s.nowPlaying) return order.slice(ctx.contextIndex + 1);
+    const idx = order.findIndex((r) => r.id === s.nowPlaying!.id);
+    return idx >= 0 ? order.slice(idx + 1) : order;
+  })();
+  return [...s.explicitNext, ...after, ...s.explicitLater, ...s.radio];
+}
+
+export const selectUpNextRefs = (s: PlaybackState) => buildUpNextRefs(s);
+
+export const selectHasPrev = (s: PlaybackState) => s.history.length > 0;
+
+export const selectHasNext = (s: PlaybackState) =>
+  buildUpNextRefs(s).length > 0;
+
+const _useAudioStore = create<AudioStore>()(
   persist(
-    subscribeWithSelector((set, get) => ({
-      // Initial state
-      currentTrack: null,
-      currentTrackIndex: 0,
+    subscribeWithSelector<AudioStore>((set, get) => ({
+      // initial
+      nowPlaying: null,
       isPlaying: false,
       isLoading: false,
       currentTime: 0,
@@ -138,238 +168,307 @@ export const useAudioStore = create<AudioStore>()(
       volume: 0.8,
       isMuted: false,
 
-      queue: [],
-      originalQueue: [],
-      queueIndex: 0,
-
+      playbackContext: null,
       isShuffled: false,
       repeatMode: "off",
 
-      playbackContext: {
-        type: null,
-        id: null,
-        name: null,
-      },
+      explicitNext: [],
+      explicitLater: [],
+      radio: [],
+      history: [],
 
-      recentlyPlayed: [],
       error: null,
       audioElement: null,
 
+      // wiring
       setAudioElement: (audio) => set({ audioElement: audio }),
 
+      // controls
       play: async () => {
-        const { audioElement, currentTrack, setLoading, setError } = get();
-
-        if (!audioElement || !currentTrack) {
-          console.warn("Cannot play: missing audioElement or currentTrack");
-          return;
-        }
-
+        const a = get().audioElement;
+        if (!a) return;
         try {
-          setLoading(true);
-          setError(null);
-          await audioElement.play();
+          set({ isLoading: true, error: null });
+          await a.play();
           set({ isPlaying: true });
-        } catch (error) {
-          console.error("Error playing audio:", error);
-          setError("Failed to play audio");
-          set({ isPlaying: false });
+        } catch {
+          set({ isPlaying: false, error: "Failed to play audio" });
         } finally {
-          setLoading(false);
+          set({ isLoading: false });
         }
       },
-
       pause: () => {
-        const { audioElement } = get();
-        if (audioElement) {
-          audioElement.pause();
+        const a = get().audioElement;
+        if (a) {
+          a.pause();
           set({ isPlaying: false });
         }
       },
-
       stop: () => {
-        const { audioElement } = get();
-        if (audioElement) {
-          audioElement.pause();
-          audioElement.currentTime = 0;
+        const a = get().audioElement;
+        if (a) {
+          a.pause();
+          a.currentTime = 0;
           set({ isPlaying: false, currentTime: 0 });
         }
       },
+      togglePlay: async () => (get().isPlaying ? get().pause() : get().play()),
 
-      togglePlay: async () => {
-        const { isPlaying, play, pause } = get();
-        if (isPlaying) {
-          pause();
-        } else {
-          await play();
-        }
-      },
-
+      // navigation
       next: async () => {
-        const { queue, queueIndex, repeatMode } = get();
-
-        if (queue.length === 0) return;
-
-        let nextIndex = queueIndex + 1;
-
-        // Handle repeat modes
-        if (nextIndex >= queue.length) {
-          if (repeatMode === "all") {
-            nextIndex = 0;
-          } else if (repeatMode === "one") {
-            nextIndex = queueIndex; // Stay on current track
-          } else {
-            return; // End of queue
+        const s = get();
+        const cur = s.nowPlaying;
+        if (s.repeatMode === "one" && cur) {
+          const a = s.audioElement;
+          if (a) {
+            a.currentTime = 0;
+            await get().play();
           }
-        }
-
-        await get().skipTo(nextIndex);
-      },
-
-      previous: async () => {
-        const { queue, queueIndex, currentTime } = get();
-
-        if (queue.length === 0) return;
-
-        // If more than 3 seconds played, restart current track
-        if (currentTime > 3) {
-          get().seek(0);
           return;
         }
-
-        let prevIndex = queueIndex - 1;
-
-        // Wrap to end if at beginning
-        if (prevIndex < 0) {
-          prevIndex = queue.length - 1;
-        }
-
-        await get().skipTo(prevIndex);
-      },
-
-      skipTo: async (index) => {
-        const { queue, setCurrentTrack } = get();
-
-        if (index < 0 || index >= queue.length) return;
-
-        const track = queue[index];
-        set({ queueIndex: index });
-        setCurrentTrack(track);
-
-        // Auto-play if currently playing
-        if (get().isPlaying) {
+        if (s.explicitNext.length) {
+          const [ref, ...rest] = s.explicitNext;
+          set({
+            explicitNext: rest,
+            history: cur ? [...s.history, cur] : s.history,
+          });
+          get().setCurrentFromRef(ref);
           await get().play();
+          return;
+        }
+        const ctx = s.playbackContext;
+        if (ctx) {
+          const order = getContextOrderRefs(ctx);
+          const i = cur
+            ? order.findIndex((r) => r.id === cur.id)
+            : ctx.contextIndex;
+          if (i >= 0 && i + 1 < order.length) {
+            const nextRef = order[i + 1];
+            const canonicalIdx = ctx.trackRefs.findIndex(
+              (r) => r.id === nextRef.id
+            );
+            set({
+              playbackContext: {
+                ...ctx,
+                contextIndex: Math.max(0, canonicalIdx),
+              },
+              history: cur ? [...s.history, cur] : s.history,
+            });
+            get().setCurrentFromRef(nextRef);
+            await get().play();
+            return;
+          }
+        }
+        if (s.explicitLater.length) {
+          const [ref, ...rest] = s.explicitLater;
+          set({
+            explicitLater: rest,
+            history: cur ? [...s.history, cur] : s.history,
+          });
+          get().setCurrentFromRef(ref);
+          await get().play();
+          return;
+        }
+        if (s.radio.length) {
+          const [ref, ...rest] = s.radio;
+          set({ radio: rest, history: cur ? [...s.history, cur] : s.history });
+          get().setCurrentFromRef(ref);
+          await get().play();
+          return;
+        }
+        if (s.repeatMode === "all" && s.playbackContext) {
+          const order = getContextOrderRefs(s.playbackContext);
+          if (order.length > 0) {
+            const firstRef = order[0];
+            const canonicalIdx = s.playbackContext.trackRefs.findIndex(
+              (r) => r.id === firstRef.id
+            );
+            set({
+              playbackContext: {
+                ...s.playbackContext,
+                contextIndex: Math.max(0, canonicalIdx),
+              },
+              history: cur ? [...s.history, cur] : s.history,
+            });
+            get().setCurrentFromRef(firstRef);
+            await get().play();
+            return;
+          }
+        }
+        set({ isPlaying: false });
+      },
+      previous: async () => {
+        const s = get();
+        const a = s.audioElement;
+        if (!a) return;
+        if (s.currentTime > 3) {
+          a.currentTime = 0;
+          return;
+        }
+        const prev = s.history[s.history.length - 1];
+        if (!prev) return;
+        set({ history: s.history.slice(0, -1) });
+        get().setCurrentFromRef(prev);
+        await get().play();
+      },
+      skipToUpNextIndex: async (index) => {
+        const ids = buildUpNextRefs(get());
+        if (index < 0 || index >= ids.length) return;
+        const ref = ids[index];
+        const cur = get().nowPlaying;
+        if (cur) set({ history: [...get().history, cur] });
+        set((state) => ({
+          explicitNext: state.explicitNext.filter((x) => x.id !== ref.id),
+          explicitLater: state.explicitLater.filter((x) => x.id !== ref.id),
+        }));
+        const ctx = get().playbackContext;
+        if (ctx && ctx.trackRefs.some((r) => r.id === ref.id))
+          set({
+            playbackContext: {
+              ...ctx,
+              contextIndex: ctx.trackRefs.findIndex((r) => r.id === ref.id),
+            },
+          });
+        get().setCurrentFromRef(ref);
+        await get().play();
+      },
+      jumpToTrackId: async (id) => {
+        const s = get();
+        const cur = s.nowPlaying;
+        if (cur) set({ history: [...s.history, cur] });
+        // prefer explicit if exists
+        const exp = s.explicitNext
+          .concat(s.explicitLater)
+          .find((r) => r.id === id);
+        if (exp) {
+          set({
+            explicitNext: s.explicitNext.filter((x) => x.id !== id),
+            explicitLater: s.explicitLater.filter((x) => x.id !== id),
+          });
+          get().setCurrentFromRef(exp);
+          await get().play();
+          return;
+        }
+        // context fallback
+        const ctx = s.playbackContext;
+        if (ctx) {
+          const idx = ctx.trackRefs.findIndex((r) => r.id === id);
+          if (idx >= 0) set({ playbackContext: { ...ctx, contextIndex: idx } });
+          const ref = ctx?.trackRefs[idx];
+          if (ref) {
+            get().setCurrentFromRef(ref);
+            await get().play();
+          }
         }
       },
 
+      // seek
       seek: (time) => {
-        const { audioElement, duration } = get();
-        if (audioElement && duration > 0) {
-          const clampedTime = Math.max(0, Math.min(time, duration));
-          audioElement.currentTime = clampedTime;
-          set({ currentTime: clampedTime });
-        }
+        const a = get().audioElement;
+        const d = get().duration;
+        if (!a) return;
+        const t = clamp(time, 0, d || Number.MAX_SAFE_INTEGER);
+        a.currentTime = t;
+        set({ currentTime: t });
+      },
+      seekBy: (sec) => {
+        const t = get().currentTime;
+        get().seek(t + sec);
       },
 
-      seekBy: (seconds) => {
-        const { currentTime, seek } = get();
-        seek(currentTime + seconds);
+      // volume
+      setVolume: (v) => {
+        const a = get().audioElement;
+        const vol = clamp(v, 0, 1);
+        if (a) a.volume = vol;
+        set({ volume: vol, isMuted: vol === 0 });
       },
-
-      // Volume controls
-      setVolume: (volume) => {
-        const { audioElement } = get();
-        const clampedVolume = Math.max(0, Math.min(1, volume));
-
-        if (audioElement) {
-          audioElement.volume = clampedVolume;
-        }
-
-        set({
-          volume: clampedVolume,
-          isMuted: clampedVolume === 0,
-        });
-      },
-
       toggleMute: () => {
-        const { audioElement, isMuted, volume } = get();
-
-        if (audioElement) {
-          if (isMuted) {
-            audioElement.volume = volume;
-            set({ isMuted: false });
-          } else {
-            audioElement.volume = 0;
-            set({ isMuted: true });
-          }
+        const { isMuted, volume, audioElement } = get();
+        if (!audioElement) return set({ isMuted: !isMuted });
+        if (isMuted) {
+          audioElement.volume = volume;
+          set({ isMuted: false });
+        } else {
+          audioElement.volume = 0;
+          set({ isMuted: true });
         }
       },
 
-      // Mode controls
+      // modes
+      setRepeatMode: (m) => set({ repeatMode: m }),
+      toggleRepeat: () => {
+        const modes: RepeatMode[] = ["off", "all", "one"];
+        const i = modes.indexOf(get().repeatMode);
+        set({ repeatMode: modes[(i + 1) % modes.length] });
+      },
       toggleShuffle: () => {
-        const { isShuffled, queue, originalQueue, currentTrack, queueIndex } =
-          get();
-
-        if (!isShuffled) {
-          // Enable shuffle
-          const shuffled = [...queue];
-          const currentTrackItem = shuffled[queueIndex];
-
-          // Remove current track from array before shuffling
-          shuffled.splice(queueIndex, 1);
-
-          // Shuffle remaining tracks
-          for (let i = shuffled.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-          }
-
-          // Put current track at the beginning
-          shuffled.unshift(currentTrackItem);
-
+        const s = get();
+        const ctx = s.playbackContext;
+        if (!ctx) return set({ isShuffled: !s.isShuffled });
+        const curId = s.nowPlaying?.id ?? ctx.trackRefs[ctx.contextIndex]?.id;
+        const pin = ctx.trackRefs.findIndex((r) => r.id === curId);
+        if (!s.isShuffled)
           set({
             isShuffled: true,
-            originalQueue: queue,
-            queue: shuffled,
-            queueIndex: 0,
+            playbackContext: {
+              ...ctx,
+              shuffledOrder: makePinnedShuffle(
+                ctx.trackRefs.length,
+                Math.max(0, pin)
+              ),
+            },
           });
-        } else {
-          const currentTrackId = currentTrack?.id;
-          const originalIndex = originalQueue.findIndex(
-            (track) => track.id === currentTrackId
-          );
-
+        else
           set({
             isShuffled: false,
-            queue: originalQueue,
-            queueIndex: Math.max(0, originalIndex),
-            originalQueue: [],
+            playbackContext: { ...ctx, shuffledOrder: undefined },
           });
-        }
       },
 
-      setRepeatMode: (mode) => set({ repeatMode: mode }),
-
-      toggleRepeat: () => {
-        const { repeatMode } = get();
-        const modes: RepeatMode[] = ["off", "all", "one"];
-        const currentIndex = modes.indexOf(repeatMode);
-        const nextMode = modes[(currentIndex + 1) % modes.length];
-        set({ repeatMode: nextMode });
-      },
-
-      setCurrentTrack: (track, context) => {
-        const { audioElement } = get();
-
-        if (audioElement) {
-          const audioUrl = getAudioUrl(track.audioId);
-          audioElement.src = audioUrl;
-          audioElement.load();
-        }
-
+      // context/queue
+      startFromContext: async (refs, startIndex, meta) => {
+        const i = clamp(startIndex, 0, Math.max(0, refs.length - 1));
+        const ctx: PlaybackContext = {
+          type: meta.type,
+          contextId: meta.contextId,
+          snapshotId: meta.snapshotId,
+          name: meta.name,
+          trackRefs: refs,
+          contextIndex: i,
+          shuffledOrder: get().isShuffled
+            ? makePinnedShuffle(refs.length, i)
+            : undefined,
+        };
         set({
-          currentTrack: track,
-          playbackContext: context,
+          playbackContext: ctx,
+          nowPlaying: refs[i] ?? null,
+          isLoading: true,
+          error: null,
+        });
+        get().setCurrentFromRef(refs[i]);
+        await get().play();
+      },
+      enqueueNext: (refs) =>
+        set({ explicitNext: [...refs, ...get().explicitNext] }),
+      addToQueue: (refs) =>
+        set({ explicitLater: [...get().explicitLater, ...refs] }),
+      removeFromExplicitById: (id) =>
+        set({
+          explicitNext: get().explicitNext.filter((x) => x.id !== id),
+          explicitLater: get().explicitLater.filter((x) => x.id !== id),
+        }),
+      clearExplicit: () => set({ explicitNext: [], explicitLater: [] }),
+
+      // set current
+      setCurrentFromRef: (ref) => {
+        const a = get().audioElement;
+        if (a) {
+          a.src = getAudioUrl(ref.audioId);
+          a.load();
+        }
+        set({
+          nowPlaying: ref,
           currentTime: 0,
           duration: 0,
           isLoading: true,
@@ -377,91 +476,30 @@ export const useAudioStore = create<AudioStore>()(
         });
       },
 
-      addToQueue: (track) => {
-        const { queue } = get();
-        set({ queue: [...queue, track] });
-      },
-
-      removeFromQueue: (index) => {
-        const { queue, queueIndex } = get();
-        const newQueue = queue.filter((_, i) => i !== index);
-
-        let newQueueIndex = queueIndex;
-        if (index < queueIndex) {
-          newQueueIndex = queueIndex - 1;
-        } else if (index === queueIndex && index >= newQueue.length) {
-          newQueueIndex = Math.max(0, newQueue.length - 1);
-        }
-
-        set({
-          queue: newQueue,
-          queueIndex: newQueueIndex,
-        });
-      },
-
-      clearQueue: () => {
-        set({
-          queue: [],
-          originalQueue: [],
-          queueIndex: 0,
-          currentTrack: null,
-          isPlaying: false,
-        });
-      },
-
-      reorderQueue: (fromIndex, toIndex) => {
-        const { queue, queueIndex } = get();
-        const newQueue = [...queue];
-        const [moved] = newQueue.splice(fromIndex, 1);
-        newQueue.splice(toIndex, 0, moved);
-
-        let newQueueIndex = queueIndex;
-        if (fromIndex === queueIndex) {
-          newQueueIndex = toIndex;
-        } else if (fromIndex < queueIndex && toIndex >= queueIndex) {
-          newQueueIndex = queueIndex - 1;
-        } else if (fromIndex > queueIndex && toIndex <= queueIndex) {
-          newQueueIndex = queueIndex + 1;
-        }
-
-        set({
-          queue: newQueue,
-          queueIndex: newQueueIndex,
-        });
-      },
-
-      setCurrentTime: (time) => set({ currentTime: time }),
-      setDuration: (duration) => set({ duration }),
-      setLoading: (loading) => set({ isLoading: loading }),
-      setError: (error) => set({ error }),
+      setError: (e) => set({ error: e }),
+      setLoading: (b) => set({ isLoading: b }),
+      setDuration: (d) => set({ duration: d }),
     })),
     {
       name: "audix:player",
       storage: createJSONStorage(() => localStorage),
       version: 1,
-
       partialize: (s) => ({
-        currentTrack: s.currentTrack,
-        currentTrackIndex: s.currentTrackIndex,
-        currentTime: s.currentTime,
-
-        queue: s.queue,
-        originalQueue: s.originalQueue,
-        queueIndex: s.queueIndex,
+        nowPlaying: s.nowPlaying,
         isShuffled: s.isShuffled,
         repeatMode: s.repeatMode,
-
-        playbackContext: s.playbackContext,
-
+        currentTime: s.currentTime,
         volume: s.volume,
         isMuted: s.isMuted,
-
-        recentlyPlayed: s.recentlyPlayed,
+        playbackContext: s.playbackContext, // includes trackRefs snapshot (id + audioId)
+        explicitNext: s.explicitNext,
+        explicitLater: s.explicitLater,
+        radio: s.radio,
+        history: s.history,
       }),
-
-      merge: (persisted: any, current) => ({
-        ...current,
-        ...persisted,
+      merge: (p: any, c) => ({
+        ...c,
+        ...p,
         isLoading: false,
         error: null,
         audioElement: null,
@@ -471,48 +509,13 @@ export const useAudioStore = create<AudioStore>()(
   )
 );
 
-useAudioStore.subscribe(
-  (state) => state.audioElement,
-  (audioElement, previousAudioElement) => {
-    const handleTrackEnd = () => {
-      const { repeatMode, next, play } = useAudioStore.getState();
-      if (repeatMode === "one") {
-        play();
-      } else {
-        next();
-      }
-    };
-
-    const handleTimeUpdate = (event: Event) => {
-      const audio = event.target as HTMLAudioElement;
-      useAudioStore.getState().setCurrentTime(audio.currentTime);
-    };
-
-    const handleLoadedMetadata = (event: Event) => {
-      const audio = event.target as HTMLAudioElement;
-      useAudioStore.getState().setDuration(audio.duration);
-    };
-
-    const handleError = (event: Event) => {
-      useAudioStore.getState().setError("Failed to load audio");
-      useAudioStore.getState().setLoading(false);
-    };
-
-    if (previousAudioElement) {
-      previousAudioElement.removeEventListener("ended", handleTrackEnd);
-      previousAudioElement.removeEventListener("timeupdate", handleTimeUpdate);
-      previousAudioElement.removeEventListener(
-        "loadedmetadata",
-        handleLoadedMetadata
-      );
-      previousAudioElement.removeEventListener("error", handleError);
-    }
-
-    if (audioElement) {
-      audioElement.addEventListener("ended", handleTrackEnd);
-      audioElement.addEventListener("timeupdate", handleTimeUpdate);
-      audioElement.addEventListener("loadedmetadata", handleLoadedMetadata);
-      audioElement.addEventListener("error", handleError);
-    }
-  }
-);
+export type PersistApi = {
+  hasHydrated: () => boolean;
+  onFinishHydration: (cb: (s: AudioStore) => void) => () => void;
+  onHydrate: (cb: (s: AudioStore) => void) => () => void;
+  clearStorage: () => Promise<void>;
+  rehydrate: () => void;
+};
+export const useAudioStore = _useAudioStore as typeof _useAudioStore & {
+  persist: PersistApi;
+};
