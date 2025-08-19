@@ -3,12 +3,20 @@ import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
 import RecentlyTracks from "./recently-tracks";
 import { useNowPlayingId } from "@/hooks/use-audio-player";
-import { useTrack } from "@/modules/tracks/hooks";
-import { now } from "next-auth/client/_utils";
+import { useTrack, useTracks } from "@/modules/tracks/hooks";
+import { useAudioStore } from "@/stores/use-audio-store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function QueueView() {
   const nowPlayingId = useNowPlayingId();
-  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingId);
+  const trackRefs = useAudioStore(
+    useShallow((s) => s.playbackContext?.trackRefs)
+  );
+
+  const trackIds = trackRefs?.map((ref) => ref.id);
+
+  const { data: currentTrack } = useTrack(nowPlayingId);
+  const { data: queueTracks } = useTracks(trackIds!);
 
   if (!currentTrack) {
     return null;
@@ -28,8 +36,10 @@ export default function QueueView() {
           </div>
           <div>
             <p className="font-semibold">Next up</p>
-            <ol role="list" className="flex flex-col gap-4 px-1">
-              <TrackItem track={currentTrack} />
+            <ol role="list" className="flex flex-col gap-2 px-1">
+              {queueTracks?.map((track) => (
+                <TrackItem key={track.id} track={track} />
+              ))}
             </ol>
           </div>
         </ScrollArea>

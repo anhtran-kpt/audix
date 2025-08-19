@@ -9,3 +9,9 @@ export const findTrackById = async (id: string) =>
     },
     select: trackDetailSelect,
   });
+
+export const listTracksByIds = async (ids: string[]) =>
+  await db.track.findMany({
+    where: { id: { in: ids } },
+    select: trackDetailSelect,
+  });

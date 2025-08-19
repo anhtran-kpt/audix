@@ -32,10 +32,10 @@ export function defineRoute<
   Q extends ZodType | undefined = undefined,
   B extends ZodType | undefined = undefined
 >(opts: Opts<P, Q, B>) {
-  return async function route(req: Request, ctx: { params: unknown }) {
+  return async function route(req: Request, ctx: { params: Promise<unknown> }) {
     try {
       const params = opts.params
-        ? parseParams(ctx.params, opts.params)
+        ? parseParams(await ctx.params, opts.params)
         : (undefined as any);
       const query = opts.query
         ? parseQuery(req, opts.query)

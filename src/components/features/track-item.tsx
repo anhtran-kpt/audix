@@ -1,6 +1,6 @@
 import { TTrack } from "@/types";
 import { ItemTitle } from "../ui/item-title";
-import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { useAudioPlayer, useNowPlayingId } from "@/hooks/use-audio-player";
 import { NavLink } from "../ui/nav-link";
 import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon, PauseIcon, PlayIcon } from "lucide-react";
@@ -15,9 +15,9 @@ export default function TrackItem({
   track: TTrack;
   hasCreatedAt?: boolean;
 }) {
-  const { playTrack, currentTrack, playback, controls } = useAudioPlayer();
-  const isCurrentTrackPlaying =
-    currentTrack?.id === track.id && playback.isPlaying;
+  const nowPlayingId = useNowPlayingId();
+  const { playTrackRef, playback, controls } = useAudioPlayer();
+  const isCurrentTrackPlaying = nowPlayingId === track.id && playback.isPlaying;
 
   return (
     <li className="flex items-center justify-between gap-4 group hover:bg-muted py-2 px-3 rounded-sm">
@@ -36,17 +36,14 @@ export default function TrackItem({
             onClick={
               isCurrentTrackPlaying
                 ? () => controls.pause()
-                : () => playTrack(track)
+                : () => playTrackRef(track)
             }
             iconClassName="fill-foreground stroke-0 size-5"
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
           />
         </div>
         <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-          <ItemTitle
-            title={track.title}
-            isActive={currentTrack?.id === track.id}
-          />
+          <ItemTitle title={track.title} isActive={nowPlayingId === track.id} />
           <div className="flex items-center text-sm gap-x-1 text-muted-foreground truncate">
             {track.isExplicit && <Explicit />}
             {track.artists.map(({ artist }, index, originalArr) => (
