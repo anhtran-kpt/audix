@@ -17,3 +17,10 @@ export const useTracks = (trackIds: string[]) => {
     queryFn: () => postApi(`/api/tracks`, { trackIds }),
   });
 };
+
+export const useRecentTracks = () => {
+  return useQuery<TrackDetailDto[], ApiError>({
+    queryKey: ["tracks", "recently"],
+    queryFn: () => getApi<TrackDetailDto[]>(`/api/tracks/recently`),
+  });
+};
