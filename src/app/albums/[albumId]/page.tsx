@@ -3,7 +3,7 @@ import {
   OtherAlbumsSection,
   TracksSection,
 } from "@/components/sections/album-detail";
-import db from "@/server/db";
+import db from "@/lib/db";
 
 export default async function AlbumDetail({
   params,

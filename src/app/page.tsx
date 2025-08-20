@@ -1,6 +1,6 @@
 import { HotAlbumsSection } from "@/components/sections/discovery/hot-albums-section";
 import { NewReleasesSection } from "@/components/sections/discovery/new-releases-section";
-import db from "@/server/db";
+import db from "@/lib/db";
 
 export default async function Home() {
   const [tracks, albums] = await Promise.all([

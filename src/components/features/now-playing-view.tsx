@@ -18,7 +18,7 @@ import { CldImage } from "next-cloudinary";
 import { cn } from "@/lib/utils";
 import pluralize from "pluralize";
 import { useRightPanel } from "@/stores/use-right-panel";
-import { useTrack } from "@/modules/tracks/hooks";
+import { useTrack } from "@/hooks/api/use-tracks";
 
 export default function NowPlayingView() {
   const close = useRightPanel((s) => s.close);
@@ -133,7 +133,7 @@ export default function NowPlayingView() {
             <div className="p-4 space-y-3">
               <div>
                 <NavLink
-                  href={`/artists/${currentTrack.album.artistId}`}
+                  href={`/artists/${currentTrack.album.artist.id}`}
                   className="font-semibold text-base"
                 >
                   {currentTrack.album.artist.name}
@@ -144,7 +144,7 @@ export default function NowPlayingView() {
                   {currentTrack.album._count.likedBy}{" "}
                   {pluralize("followers", currentTrack.album._count.likedBy)}
                 </span>
-                <FollowButton artistId={currentTrack.album.artistId} />
+                <FollowButton artistId={currentTrack.album.artist.id} />
               </div>
               <p className="text-[calc(13rem/16)] text-muted-foreground line-clamp-3">
                 {currentTrack.album.artist.bio}

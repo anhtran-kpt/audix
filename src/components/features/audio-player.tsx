@@ -23,7 +23,7 @@ import {
 } from "@/hooks/use-audio-player";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { useScrobble } from "@/hooks/use-scrobble";
-import { useTrack } from "@/modules/tracks/hooks";
+import { useTrack } from "@/hooks/api/use-tracks";
 
 function AudioPlayer() {
   const {
@@ -46,7 +46,6 @@ function AudioPlayer() {
   useScrobble();
 
   const toggle = useRightPanel((s) => s.toggle);
-
   const active = useRightPanel((s) => s.active);
 
   return (

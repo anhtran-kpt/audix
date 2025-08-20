@@ -1,5 +1,5 @@
 import { BannerSection } from "@/components/sections/playlist-detail";
-import db from "@/server/db";
+import db from "@/lib/db";
 
 export default async function PlaylistDetailPage({
   params,

@@ -1,4 +1,4 @@
-import prisma from "@/server/db";
+import prisma from "@/lib/db";
 
 export const followRepo = {
   isFollowing(userId: string, artistId: string) {

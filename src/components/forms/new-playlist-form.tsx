@@ -12,13 +12,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { useActionSubmit } from "@/features/_shared/hooks/use-action-submit";
 import {
   playlistCreateInput,
   PlaylistCreateInput,
-} from "../schemas/playlist.schema";
-import { createPlaylistAction } from "../actions/create-playlist.action";
-import { Switch } from "@/components/ui/switch";
-import { useActionSubmit } from "@/features/_shared/hooks/use-action-submit";
+} from "@/features/playlist/schemas/playlist.schema";
+import { createPlaylistAction } from "@/features/playlist/actions/create-playlist.action";
 
 export const NewPlaylistForm = ({
   onSuccess,

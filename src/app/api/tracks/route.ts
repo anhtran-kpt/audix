@@ -1,12 +1,10 @@
-import { defineRoute } from "@/lib/route";
-import { ok } from "@/lib/http";
+import { makePOST } from "@/server/api/route-factory";
+import { getTrackListByIds } from "@/server/modules/track/services";
 import { cuid2, object } from "zod";
-import { listTracksByIds } from "@/modules/tracks/services";
 
-export const POST = defineRoute({
+export const POST = makePOST({
   body: object({ trackIds: cuid2().array() }),
   handler: async ({ body }) => {
-    console.log("body", body);
-    return ok(await listTracksByIds(body.trackIds));
+    return getTrackListByIds(body.trackIds);
   },
 });

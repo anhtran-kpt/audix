@@ -5,14 +5,14 @@ import {
   subscribeWithSelector,
 } from "zustand/middleware";
 import { getAudioUrl } from "@/lib/helpers/get-audio-url";
-import { SourceType } from "@/app/generated/prisma";
+import { PlaybackContextType } from "@/app/generated/prisma";
 
 export type RepeatMode = "off" | "one" | "all";
 
 export type TrackRef = { id: string; audioId: string };
 
 export interface PlaybackContext {
-  type: SourceType;
+  type: PlaybackContextType;
   contextId?: string;
   snapshotId?: string;
   name?: string;
@@ -85,7 +85,7 @@ export interface AudioActions {
     refs: TrackRef[],
     startIndex: number,
     meta: {
-      type: SourceType;
+      type: PlaybackContextType;
       contextId?: string;
       name?: string;
       snapshotId?: string;

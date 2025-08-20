@@ -1,25 +1,27 @@
-import { getApi, postApi } from "@/lib/api-client";
+import { getApi, postApi } from "@/lib/http/request";
+import { TrackDetailDto } from "@/server/modules/track/contracts";
 import { useQuery } from "@tanstack/react-query";
-import { TrackDetailDto } from "./schemas";
-import { ApiError } from "@/lib/http";
 
 export const useTrack = (trackId?: string) => {
-  return useQuery<TrackDetailDto, ApiError>({
+  return useQuery({
+    enabled: !!trackId,
     queryKey: ["tracks", trackId],
     queryFn: () => getApi<TrackDetailDto>(`/api/tracks/${trackId}`),
-    enabled: !!trackId,
+    staleTime: 60_000,
   });
 };
 
-export const useTracks = (trackIds: string[]) => {
-  return useQuery<TrackDetailDto[], ApiError>({
-    queryKey: ["tracks", ...trackIds],
+export const useTracks = (trackIds?: string[]) => {
+  return useQuery({
+    enabled: trackIds !== undefined && trackIds.length > 0,
+    queryKey: ["tracks", { ids: trackIds }],
     queryFn: () => postApi(`/api/tracks`, { trackIds }),
+    staleTime: 60_000,
   });
 };
 
 export const useRecentTracks = () => {
-  return useQuery<TrackDetailDto[], ApiError>({
+  return useQuery({
     queryKey: ["tracks", "recently"],
     queryFn: () => getApi<TrackDetailDto[]>(`/api/tracks/recently`),
   });

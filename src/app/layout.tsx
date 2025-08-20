@@ -7,13 +7,14 @@ import { AppSidebar } from "@/components/features/app-sidebar";
 import { Header } from "@/components/features/header";
 import AudioPlayer from "@/components/features/audio-player";
 import { AuthProvider } from "@/providers/auth-provider";
-import db from "@/server/db";
+import db from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import RightPanel from "@/components/features/right-panel";
 import ReactQueryProvider from "@/providers/react-query-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -113,6 +114,7 @@ export default async function RootLayout({
                 </SidebarInset>
                 <RightPanel />
                 <AudioPlayer />
+                <Toaster />
               </SidebarProvider>
             </AuthProvider>
           </ReactQueryProvider>

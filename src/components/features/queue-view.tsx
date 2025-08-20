@@ -2,9 +2,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
 import { useNowPlayingId } from "@/hooks/use-audio-player";
-import { useRecentTracks, useTrack, useTracks } from "@/modules/tracks/hooks";
 import { useAudioStore } from "@/stores/use-audio-store";
 import { useShallow } from "zustand/react/shallow";
+import { useRecentTracks, useTrack, useTracks } from "@/hooks/api/use-tracks";
 
 export default function QueueView() {
   const nowPlayingId = useNowPlayingId();
@@ -15,7 +15,7 @@ export default function QueueView() {
   const trackIds = trackRefs?.map((ref) => ref.id);
 
   const { data: currentTrack } = useTrack(nowPlayingId);
-  const { data: queueTracks } = useTracks(trackIds!);
+  const { data: queueTracks } = useTracks(trackIds);
 
   const { data: recentTracks } = useRecentTracks();
 

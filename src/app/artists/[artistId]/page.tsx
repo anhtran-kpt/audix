@@ -5,8 +5,8 @@ import {
   OtherArtistsSection,
   PopularTracksSection,
 } from "@/components/sections/artist-detail";
-import { requireAuth } from "@/server/auth";
-import db from "@/server/db";
+import { requireAuth } from "@/lib/auth";
+import db from "@/lib/db";
 
 export default async function ArtistDetail({
   params,

@@ -9,9 +9,10 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-import { NewPlaylistForm } from "@/features/playlist/components/new-playlist-form";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { NewPlaylistForm } from "../forms/new-playlist-form";
 
 export const NewPlaylistDialog = () => {
   const [open, setOpen] = useState(false);

@@ -14,18 +14,18 @@ import { formatDuration } from "@/lib/helpers/format-duration";
 import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
-import { TTrack } from "@/types/track";
 import {
   useAudioPlayer,
   useIsPlaying,
   useNowPlayingId,
 } from "@/hooks/use-audio-player";
-import { useTrack } from "@/modules/tracks/hooks";
+import { TrackDetailDto } from "@/server/modules/track/contracts";
+import { useTrack } from "@/hooks/api/use-tracks";
 
 interface TrackGridProps {
   artistId?: string;
   type: "album" | "popular" | "playlist";
-  tracks: TTrack[];
+  tracks: TrackDetailDto[];
 }
 
 export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {

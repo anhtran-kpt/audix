@@ -1,11 +1,9 @@
-import { ok } from "@/lib/http";
-import { defineRoute } from "@/lib/route";
-import { listRecentTracks } from "@/modules/tracks/services";
-import { getUserIdOrThrow } from "@/server/auth";
+import { makeGET } from "@/server/api/route-factory";
+import { getRecentTracks } from "@/server/modules/track/services";
 
-export const GET = defineRoute({
-  handler: async () => {
-    const userId = await getUserIdOrThrow();
-    return ok(await listRecentTracks(userId));
+export const GET = makeGET({
+  auth: "required",
+  handler: async ({ userId }) => {
+    return getRecentTracks(userId!);
   },
 });

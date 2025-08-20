@@ -1,18 +1,23 @@
 import "server-only";
-import db from "@/server/db";
-import { trackDetailSelect } from "./selects";
-import { RecordPlayInput } from "./schemas";
+import db from "@/lib/db";
+import { trackDetailSelect } from "./presets";
+import { RecordPlayInput, TrackDetailDto } from "./contracts";
+import { AppError } from "@/lib/errors";
 
-export const findTrackById = async (trackId: string) => {
-  return await db.track.findUnique({
+export const getTrackOrThrow = async (trackId: string) => {
+  const track = await db.track.findUnique({
     where: {
       id: trackId,
     },
     select: trackDetailSelect,
   });
+
+  if (!track) throw new AppError("NOT_FOUND", "Track not found");
+
+  return TrackDetailDto.parse(track);
 };
 
-export const listTracksByIds = async (trackIds: string[]) => {
+export const getTrackListByIds = async (trackIds: string[]) => {
   const rows = await db.track.findMany({
     where: { id: { in: trackIds } },
     select: trackDetailSelect,
@@ -25,7 +30,7 @@ export const listTracksByIds = async (trackIds: string[]) => {
     .filter((x): x is (typeof rows)[number] => !!x);
 };
 
-export const listRecentTracks = async (userId: string) => {
+export const getRecentTracks = async (userId: string) => {
   const rows = await db.playHistory.groupBy({
     by: ["trackId"],
     where: { userId },
@@ -67,19 +72,18 @@ export const recordPlay = async ({
   trackId,
   listenedSec,
   playedAt,
-  sourceType,
-  sourceId,
+  playbackContextType,
+  playbackContextId,
 }: RecordPlayInput) => {
   return db.$transaction(async (tx) => {
     const res = await tx.playHistory.create({
       data: {
         userId,
         trackId,
-        duration: Math.max(0, Math.floor(listenedSec)),
+        listenedSec: Math.max(0, Math.floor(listenedSec)),
         playedAt,
-        deviceType: "web",
-        sourceType,
-        sourceId,
+        playbackContextType,
+        playbackContextId,
       },
     });
 
