@@ -6,15 +6,13 @@ import {
   useNowPlayingId,
   usePlaybackContext,
 } from "@/hooks/use-audio-player";
-import { useAudioStore } from "@/stores/use-audio-store";
+import { TrackRef, useAudioStore } from "@/stores/use-audio-store";
 import { IconButton } from "../ui/icon-button";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 
-type TrackRef = { id: string; audioId: string };
-
 type RowPlayButtonProps = {
-  context: { type: PlaybackContextType; contextId?: string };
+  context: { type: PlaybackContextType; contextId?: string; name?: string };
   trackRefs: TrackRef[];
   trackId: string;
 };

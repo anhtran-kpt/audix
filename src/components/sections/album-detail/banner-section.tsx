@@ -109,7 +109,9 @@ export const BannerSection = ({
         </div>
       </div>
       <div className="flex items-center gap-6 px-12">
-        <ContextPlayButton context={{ type: "ALBUM", contextId: "id" }} />
+        <ContextPlayButton
+          context={{ type: "ALBUM", contextId: "id", name: artist.name }}
+        />
         <IconButton
           icon={ShuffleIcon}
           size="xl"

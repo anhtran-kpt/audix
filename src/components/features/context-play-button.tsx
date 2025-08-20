@@ -12,6 +12,7 @@ type ContextPlayButtonProps = {
   context: {
     type: PlaybackContextType;
     contextId?: string;
+    name?: string;
   };
   trackRefs: TrackRef[];
   defaultStartIndex?: number;
@@ -55,7 +56,7 @@ export function ContextPlayButton({
       size="xl"
       className={cn("bg-primary p-3", className)}
       iconClassName="stroke-0 fill-white"
-      tooltipContent="Play"
+      tooltipContent={isPlaying && isSameContext ? "Pause" : "Play"}
     />
   );
 }

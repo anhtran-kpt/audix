@@ -54,7 +54,7 @@ export default function NowPlayingView() {
             />
           </div>
           <span className="truncate duration-300 group-hover/np:ml-2 font-semibold">
-            {playbackContext?.name ?? "Rap"}
+            {playbackContext?.name}
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -86,10 +86,10 @@ export default function NowPlayingView() {
             />
           </div>
           <div className="flex items-center justify-between gap-4">
-            <div className="">
+            <div>
               <p className="font-semibold text-xl">{currentTrack.title}</p>
               {currentTrack.artists.map(({ artist }, index, originalArr) => (
-                <span key={artist.id}>
+                <span key={artist.id} className="text-muted-foreground">
                   <NavLink
                     href={`/artists/${artist.id}`}
                     className="text-muted-foreground"

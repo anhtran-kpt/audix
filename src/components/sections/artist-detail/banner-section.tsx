@@ -90,7 +90,7 @@ export const BannerSection = ({
       <div className="flex items-center gap-6 px-12">
         <ContextPlayButton
           trackRefs={trackRefs}
-          context={{ contextId: artistId, type: "ARTIST" }}
+          context={{ contextId: artistId, type: "ARTIST", name }}
         />
         <IconButton
           icon={ShuffleIcon}
