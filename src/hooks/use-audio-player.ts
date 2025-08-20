@@ -1,10 +1,10 @@
 "use client";
 
+import { SourceType } from "@/app/generated/prisma";
 import { getAudioUrl } from "@/lib/helpers/get-audio-url";
 import {
   AudioStore,
   buildUpNextRefs,
-  PlaybackContextType,
   TrackRef,
   useAudioStore,
 } from "@/stores/use-audio-store";
@@ -211,7 +211,7 @@ export function useAudioPlayer() {
       refs: TrackRef[],
       startIndex: number,
       meta: {
-        type: PlaybackContextType;
+        type: SourceType;
         contextId?: string;
         name?: string;
         snapshotId?: string;

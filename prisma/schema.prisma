@@ -484,6 +484,8 @@ enum SourceType {
   ARTIST
   LIKED
   QUEUE
+  NEW_RELEASES
+  SEARCH
 }
 
 model SearchHistory {

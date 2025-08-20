@@ -1,6 +1,6 @@
 import z from "zod";
 import { baseFields } from "../shared/schemas";
-import { ArtistRole, CreditRole } from "@/app/generated/prisma";
+import { ArtistRole, CreditRole, SourceType } from "@/app/generated/prisma";
 
 export const TrackDetailDto = z
   .object({
@@ -50,3 +50,14 @@ export const TrackDetailDto = z
   .strict();
 
 export type TrackDetailDto = z.infer<typeof TrackDetailDto>;
+
+export const RecordPlayInputSchema = z.object({
+  userId: baseFields.id,
+  trackId: baseFields.id,
+  listenedSec: z.number().int().min(30),
+  playedAt: z.date(),
+  sourceType: z.enum(SourceType),
+  sourceId: z.cuid2().nullable().optional(),
+});
+
+export type RecordPlayInput = z.infer<typeof RecordPlayInputSchema>;

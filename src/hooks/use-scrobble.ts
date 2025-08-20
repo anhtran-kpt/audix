@@ -5,14 +5,15 @@ import { useAudioStore } from "@/stores/use-audio-store";
 import { useShallow } from "zustand/react/shallow";
 
 export function useScrobble() {
-  const { nowPlaying, progressSec, durationSec, source } = useAudioStore(
-    useShallow((s) => ({
-      nowPlaying: s.currentTrack,
-      progressSec: s.currentTime,
-      durationSec: s.duration,
-      source: s.playbackContext,
-    }))
-  );
+  const { nowPlaying, progressSec, durationSec, playbackContext } =
+    useAudioStore(
+      useShallow((s) => ({
+        nowPlaying: s.nowPlaying,
+        progressSec: s.currentTime,
+        durationSec: s.duration,
+        playbackContext: s.playbackContext,
+      }))
+    );
 
   const scrobbledRef = useRef<string | null>(null);
 
@@ -35,11 +36,11 @@ export function useScrobble() {
         body: JSON.stringify({
           trackId: nowPlaying.id,
           listenedSec: Math.floor(progressSec),
-          playedAt: new Date().toISOString(),
-          sourceType: source?.type, // 'playlist' | 'album' | ...
-          sourceId: source?.id ?? null,
+          playedAt: new Date(),
+          sourceType: playbackContext?.type, // 'playlist' | 'album' | ...
+          sourceId: playbackContext?.contextId,
         }),
       });
     }
-  }, [nowPlaying?.id, progressSec, durationSec, source?.type, source?.id]);
+  }, [nowPlaying?.id, progressSec, durationSec]);
 }

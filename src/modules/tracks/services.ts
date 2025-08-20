@@ -1,6 +1,7 @@
 import "server-only";
 import db from "@/server/db";
 import { trackDetailSelect } from "./selects";
+import { RecordPlayInput } from "./schemas";
 
 export const findTrackById = async (trackId: string) => {
   return await db.track.findUnique({
@@ -59,4 +60,36 @@ export const listRecentTracks = async (userId: string) => {
       album: t.album,
       artists: t.artists.map((x) => x.artist),
     }));
+};
+
+export const recordPlay = async ({
+  userId,
+  trackId,
+  listenedSec,
+  playedAt,
+  sourceType,
+  sourceId,
+}: RecordPlayInput) => {
+  return db.$transaction(async (tx) => {
+    const res = await tx.playHistory.create({
+      data: {
+        userId,
+        trackId,
+        duration: Math.max(0, Math.floor(listenedSec)),
+        playedAt,
+        deviceType: "web",
+        sourceType,
+        sourceId,
+      },
+    });
+
+    if (listenedSec >= 30) {
+      await tx.track.update({
+        where: { id: trackId },
+        data: { playCount: { increment: 1 } },
+      });
+    }
+
+    return res;
+  });
 };
