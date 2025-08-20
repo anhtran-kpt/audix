@@ -44,27 +44,11 @@ export const getRecentTracks = async (userId: string) => {
 
   const tracks = await db.track.findMany({
     where: { id: { in: ids } },
-    include: {
-      album: { select: { id: true, title: true, imageId: true } },
-      artists: {
-        where: { role: "MAIN_ARTIST" },
-        orderBy: { order: "asc" },
-        select: { artist: { select: { id: true, name: true, imageId: true } } },
-      },
-    },
+    select: trackDetailSelect,
   });
 
   const lastMap = new Map(rows.map((r) => [r.trackId, r._max.playedAt!]));
-  return tracks
-    .sort((a, b) => +lastMap.get(b.id)! - +lastMap.get(a.id)!)
-    .map((t) => ({
-      id: t.id,
-      title: t.title,
-      duration: t.duration,
-      lastPlayedAt: lastMap.get(t.id)!.toISOString(),
-      album: t.album,
-      artists: t.artists.map((x) => x.artist),
-    }));
+  return tracks.sort((a, b) => +lastMap.get(b.id)! - +lastMap.get(a.id)!);
 };
 
 export const recordPlay = async ({

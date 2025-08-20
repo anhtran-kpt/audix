@@ -1,4 +1,3 @@
-import { TTrack } from "@/types";
 import { ItemTitle } from "../ui/item-title";
 import { useAudioPlayer, useNowPlayingId } from "@/hooks/use-audio-player";
 import { NavLink } from "../ui/nav-link";
@@ -6,15 +5,9 @@ import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon, PauseIcon, PlayIcon } from "lucide-react";
 import Explicit from "../ui/explicit";
 import { CldImage } from "next-cloudinary";
-import { formatDistanceToNow } from "date-fns/formatDistanceToNow";
+import { TrackDetailDto } from "@/server/modules/track/contracts";
 
-export default function TrackItem({
-  track,
-  hasCreatedAt = false,
-}: {
-  track: TTrack;
-  hasCreatedAt?: boolean;
-}) {
+export default function TrackItem({ track }: { track: TrackDetailDto }) {
   const nowPlayingId = useNowPlayingId();
   const { playTrackRef, playback, controls } = useAudioPlayer();
   const isCurrentTrackPlaying = nowPlayingId === track.id && playback.isPlaying;
@@ -22,13 +15,13 @@ export default function TrackItem({
   return (
     <li className="flex items-center justify-between gap-4 group hover:bg-muted py-2 px-3 rounded-sm">
       <div className="flex items-center gap-3 flex-1 min-w-0">
-        <div className="relative overflow-hidden rounded-sm aspect-square shrink-0 size-14">
+        <div className="relative overflow-hidden rounded-sm aspect-square shrink-0 size-12">
           <CldImage
             className="object-cover group-hover:brightness-65"
             alt={track.title}
             src={track.album.imageId}
             fill
-            sizes="56px"
+            sizes="48px"
           />
           <IconButton
             icon={isCurrentTrackPlaying ? PauseIcon : PlayIcon}
@@ -53,11 +46,6 @@ export default function TrackItem({
               </span>
             ))}
           </div>
-          {hasCreatedAt && (
-            <p className="text-xs text-muted-foreground first-letter:uppercase truncate">
-              {formatDistanceToNow(track.createdAt, { addSuffix: true })}
-            </p>
-          )}
         </div>
       </div>
       <IconButton

@@ -1,6 +1,6 @@
 "use client";
 
-import { SourceType } from "@/app/generated/prisma";
+import { PlaybackContextType } from "@/app/generated/prisma";
 import { getAudioUrl } from "@/lib/helpers/get-audio-url";
 import {
   AudioStore,
@@ -200,18 +200,18 @@ export function useAudioPlayer() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   }, []);
 
-  // Convenience helpers for your UI
   const playTrackRef = useCallback(async (ref: TrackRef) => {
     const { setCurrentFromRef, play } = useAudioStore.getState();
     setCurrentFromRef(ref);
     await play();
   }, []);
+
   const playContext = useCallback(
     async (
       refs: TrackRef[],
       startIndex: number,
       meta: {
-        type: SourceType;
+        type: PlaybackContextType;
         contextId?: string;
         name?: string;
         snapshotId?: string;

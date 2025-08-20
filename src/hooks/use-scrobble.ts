@@ -3,13 +3,17 @@
 import { useEffect, useRef } from "react";
 import { useAudioStore } from "@/stores/use-audio-store";
 import { useShallow } from "zustand/react/shallow";
+import { postApi } from "@/lib/http/request";
+import { useSession } from "next-auth/react";
 
 export function useScrobble() {
-  const { nowPlaying, progressSec, durationSec, playbackContext } =
+  const { data } = useSession();
+
+  const { nowPlaying, listenedSec, durationSec, playbackContext } =
     useAudioStore(
       useShallow((s) => ({
         nowPlaying: s.nowPlaying,
-        progressSec: s.currentTime,
+        listenedSec: s.currentTime,
         durationSec: s.duration,
         playbackContext: s.playbackContext,
       }))
@@ -29,18 +33,16 @@ export function useScrobble() {
     const thresholdB = durationSec * 0.5;
     const threshold = Math.min(thresholdA, thresholdB);
 
-    if (progressSec >= threshold) {
+    if (listenedSec >= threshold) {
       scrobbledRef.current = nowPlaying.id;
-      void fetch("/api/plays", {
-        method: "POST",
-        body: JSON.stringify({
-          trackId: nowPlaying.id,
-          listenedSec: Math.floor(progressSec),
-          playedAt: new Date(),
-          sourceType: playbackContext?.type, // 'playlist' | 'album' | ...
-          sourceId: playbackContext?.contextId,
-        }),
+      void postApi<void>("/api/plays", {
+        userId: data?.user.id,
+        trackId: nowPlaying.id,
+        listenedSec: Math.floor(listenedSec),
+        playedAt: new Date(),
+        playbackContextType: playbackContext?.type,
+        playbackContextId: playbackContext?.contextId,
       });
     }
-  }, [nowPlaying?.id, progressSec, durationSec]);
+  }, [nowPlaying?.id, listenedSec, durationSec]);
 }

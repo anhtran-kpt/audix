@@ -18,7 +18,7 @@ export interface PlaybackContext {
   name?: string;
 
   // Canonical order snapshot at start time
-  trackRefs: TrackRef[]; // giữ cả id + audioId để phát không cần resolver
+  trackRefs: TrackRef[];
   contextIndex: number; // pointer in canonical order
   shuffledOrder?: number[]; // permutation of indices; 0 is pinned current
 }
@@ -40,10 +40,9 @@ export interface PlaybackState {
   isShuffled: boolean;
   repeatMode: RepeatMode;
 
-  // Explicit queues (TrackRef so không cần resolver)
+  // Explicit queues
   explicitNext: TrackRef[];
   explicitLater: TrackRef[];
-  radio: TrackRef[];
   history: TrackRef[];
 
   // Errors & engine
@@ -138,7 +137,7 @@ export function buildUpNextRefs(s: PlaybackState): TrackRef[] {
     const idx = order.findIndex((r) => r.id === s.nowPlaying!.id);
     return idx >= 0 ? order.slice(idx + 1) : order;
   })();
-  return [...s.explicitNext, ...after, ...s.explicitLater, ...s.radio];
+  return [...s.explicitNext, ...after, ...s.explicitLater];
 }
 
 export const selectUpNextRefs = (s: PlaybackState) => buildUpNextRefs(s);
@@ -261,13 +260,7 @@ const _useAudioStore = create<AudioStore>()(
           await get().play();
           return;
         }
-        if (s.radio.length) {
-          const [ref, ...rest] = s.radio;
-          set({ radio: rest, history: cur ? [...s.history, cur] : s.history });
-          get().setCurrentFromRef(ref);
-          await get().play();
-          return;
-        }
+
         if (s.repeatMode === "all" && s.playbackContext) {
           const order = getContextOrderRefs(s.playbackContext);
           if (order.length > 0) {
@@ -483,10 +476,9 @@ const _useAudioStore = create<AudioStore>()(
         currentTime: s.currentTime,
         volume: s.volume,
         isMuted: s.isMuted,
-        playbackContext: s.playbackContext, // includes trackRefs snapshot (id + audioId)
+        playbackContext: s.playbackContext,
         explicitNext: s.explicitNext,
         explicitLater: s.explicitLater,
-        radio: s.radio,
         history: s.history,
       }),
       merge: (p: any, c) => ({

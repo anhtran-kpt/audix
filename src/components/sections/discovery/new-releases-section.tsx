@@ -2,10 +2,10 @@
 
 import TrackItem from "@/components/features/track-item";
 import SectionHeading from "@/components/ui/section-heading";
-import { TTrack } from "@/types";
+import { TrackDetailDto } from "@/server/modules/track/contracts";
 
 type NewReleasesSectionProps = {
-  tracks: TTrack[];
+  tracks: TrackDetailDto[];
 };
 
 export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {
@@ -17,7 +17,7 @@ export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {
         className="grid gap-x-4 gap-y-2 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3"
       >
         {tracks.map((track) => (
-          <TrackItem track={track} key={track.id} hasCreatedAt={true} />
+          <TrackItem track={track} key={track.id} />
         ))}
       </ol>
     </section>

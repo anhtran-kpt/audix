@@ -1,16 +1,11 @@
-import { ok } from "@/lib/http";
-import { defineRoute } from "@/lib/route";
+import { makePOST } from "@/server/api/route-factory";
+import { RecordPlayInputSchema } from "@/server/modules/track/contracts";
+import { recordPlay } from "@/server/modules/track/services";
 
-export const POST = defineRoute({
-  handler: async ({ userId, body }) => {
-    await recordPlay({
-      userId: userId!,
-      trackId: body.trackId,
-      listenedSec: body.listenedSec,
-      playedAt: body.playedAt ?? new Date(body.playedAt),
-      sourceType: body.sourceType,
-      sourceId: body.sourceId ?? undefined,
-    });
-    return ok();
+export const POST = makePOST({
+  auth: "required",
+  body: RecordPlayInputSchema,
+  handler: async ({ body }) => {
+    recordPlay(body);
   },
 });

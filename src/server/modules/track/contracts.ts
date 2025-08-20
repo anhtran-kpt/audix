@@ -60,7 +60,7 @@ export const RecordPlayInputSchema = z.object({
   userId: baseFields.id,
   trackId: baseFields.id,
   listenedSec: z.number().int().min(30),
-  playedAt: z.date(),
+  playedAt: z.coerce.date(),
   playbackContextType: z.enum(PlaybackContextType),
   playbackContextId: z.cuid2().nullable().optional(),
 });

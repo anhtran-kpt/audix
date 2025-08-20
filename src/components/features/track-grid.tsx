@@ -101,7 +101,7 @@ export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
                         })),
                         trackIndex,
                         {
-                          type: "artist",
+                          type: "ARTIST",
                           contextId: artistId,
                           name: track.album.artist.name,
                         }

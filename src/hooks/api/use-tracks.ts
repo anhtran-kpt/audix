@@ -15,7 +15,7 @@ export const useTracks = (trackIds?: string[]) => {
   return useQuery({
     enabled: trackIds !== undefined && trackIds.length > 0,
     queryKey: ["tracks", { ids: trackIds }],
-    queryFn: () => postApi(`/api/tracks`, { trackIds }),
+    queryFn: () => postApi<TrackDetailDto[]>(`/api/tracks`, { trackIds }),
     staleTime: 60_000,
   });
 };
