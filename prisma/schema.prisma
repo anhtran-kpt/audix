@@ -46,8 +46,13 @@ model User {
   searchHistory SearchHistory[]
 
   // Social features
-  followers UserFollow[] @relation("UserFollowers")
-  following UserFollow[] @relation("UserFollowing")
+  followers               UserFollow[]              @relation("UserFollowers")
+  following               UserFollow[]              @relation("UserFollowing")
+  PlaybackDevice          PlaybackDevice[]
+  PlaybackSession         PlaybackSession[]
+  PlaybackContextSnapshot PlaybackContextSnapshot[]
+  PlaybackQueueItem       PlaybackQueueItem[]
+  PlaybackBackstack       PlaybackBackstack[]
 
   @@map("users")
 }
@@ -202,12 +207,15 @@ model Track {
   albumId String
   album   Album  @relation(fields: [albumId], references: [id], onDelete: Cascade)
 
-  artists       TrackArtist[]
-  credits       TrackCredit[]
-  genres        TrackGenre[]
-  likedBy       UserLikedTrack[]
-  playlistItems PlaylistItem[]
-  playHistory   PlayHistory[]
+  artists             TrackArtist[]
+  credits             TrackCredit[]
+  genres              TrackGenre[]
+  likedBy             UserLikedTrack[]
+  playlistItems       PlaylistItem[]
+  playHistory         PlayHistory[]
+  PlaybackContextItem PlaybackContextItem[]
+  PlaybackQueueItem   PlaybackQueueItem[]
+  PlaybackBackstack   PlaybackBackstack[]
 
   @@map("tracks")
 }
@@ -459,12 +467,12 @@ model UserFollow {
 // ================================
 
 model PlayHistory {
-  id         String     @id @default(cuid())
-  playedAt   DateTime   @default(now())
-  duration   Int
-  deviceType String? // web, mobile, desktop
-  sourceType SourceType
-  sourceId   String?
+  id          String              @id @default(cuid())
+  playedAt    DateTime            @default(now())
+  listenedSec Int
+  deviceType  String? // web, mobile, desktop
+  sourceType  PlaybackContextType
+  sourceId    String?
 
   userId  String
   trackId String
@@ -476,16 +484,6 @@ model PlayHistory {
   @@index([userId, playedAt])
   @@index([trackId, playedAt])
   @@map("play_history")
-}
-
-enum SourceType {
-  PLAYLIST
-  ALBUM
-  ARTIST
-  LIKED
-  QUEUE
-  NEW_RELEASES
-  SEARCH
 }
 
 model SearchHistory {
@@ -524,18 +522,163 @@ model UserRecommendation {
 // SYSTEM FEATURES
 // ================================
 
-// Queue/Recently Played
-model UserQueue {
-  id        String   @id @default(cuid())
-  position  Int
+enum PlaybackContextType {
+  ALBUM
+  PLAYLIST
+  ARTIST
+  LIKED
+  QUEUE
+  NEW_RELEASES
+  SEARCHING
+}
+
+enum QueueItemKind {
+  EXPLICIT_NEXT
+  EXPLICIT_LATER
+}
+
+enum DeviceType {
+  WEB
+  MOBILE
+  DESKTOP
+}
+
+enum RepeatModeDB {
+  OFF
+  ONE
+  ALL
+}
+
+// ================================
+// DEVICES & SESSIONS
+// ================================
+
+model PlaybackDevice {
+  id         String     @id @default(cuid())
+  userId     String
+  name       String
+  type       DeviceType
+  isActive   Boolean    @default(false)
+  volume     Int? // 0..100 (client map to 0..1)
+  isMuted    Boolean    @default(false)
+  lastSeenAt DateTime?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  user     User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions PlaybackSession[]
+
+  @@index([userId, isActive])
+}
+
+model PlaybackSession {
+  id       String  @id @default(cuid())
+  userId   String
+  deviceId String?
+  isActive Boolean @default(false)
+
+  // Now playing
+  nowPlayingTrackId   String?
+  nowPlayingStartedAt DateTime?
+  progressSec         Int       @default(0)
+
+  // Modes
+  isShuffled Boolean      @default(false)
+  repeatMode RepeatModeDB @default(OFF)
+
+  // Context (snapshot at the moment user pressed Play)
+  contextSnapshotId  String?
+  contextIndex       Int     @default(0) // theo canonical
+  shufflePermutation Json? // [number, ...] pinned-permutation
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  userId  String
-  trackId String
+  user            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device          PlaybackDevice?          @relation(fields: [deviceId], references: [id], onDelete: SetNull)
+  contextSnapshot PlaybackContextSnapshot? @relation(fields: [contextSnapshotId], references: [id], onDelete: SetNull)
 
-  @@unique([userId, position])
-  @@index([userId, position])
-  @@map("user_queue")
+  queueItems PlaybackQueueItem[]
+  backstack  PlaybackBackstack[]
+
+  @@index([userId, isActive])
+  @@index([userId, updatedAt])
+}
+
+// ================================
+// CONTEXT SNAPSHOT (thứ tự gốc)
+// ================================
+
+model PlaybackContextSnapshot {
+  id         String              @id @default(cuid())
+  userId     String
+  type       PlaybackContextType
+  contextId  String?
+  name       String?
+  snapshotId String? // dùng cho playlist/liked
+  createdAt  DateTime            @default(now())
+
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items           PlaybackContextItem[]
+  PlaybackSession PlaybackSession[]
+
+  @@index([userId, type, contextId])
+}
+
+model PlaybackContextItem {
+  snapshotId String
+  position   Int
+  trackId    String
+
+  snapshot PlaybackContextSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  track    Track                   @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@id([snapshotId, position])
+  @@index([trackId])
+}
+
+// ================================
+// QUEUE EXPLICIT & RADIO
+// ================================
+
+model PlaybackQueueItem {
+  id         String               @id @default(cuid())
+  userId     String
+  sessionId  String?
+  kind       QueueItemKind
+  position   Int
+  addedAt    DateTime             @default(now())
+  addedBy    String? // userId
+  sourceType PlaybackContextType?
+  sourceId   String?
+  trackId    String
+
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session PlaybackSession? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  track   Track            @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, sessionId, kind, position])
+  @@index([userId, sessionId, kind, position])
+  @@index([userId, addedAt])
+}
+
+// ================================
+// BACKSTACK (nút Previous)
+// ================================
+model PlaybackBackstack {
+  id        String   @id @default(cuid())
+  userId    String
+  sessionId String
+  position  Int
+  trackId   String
+  pushedAt  DateTime @default(now())
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session PlaybackSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  track   Track           @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, position])
+  @@index([userId, sessionId, position])
 }
 
 // Trending/Charts
