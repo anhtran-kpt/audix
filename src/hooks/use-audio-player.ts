@@ -59,6 +59,7 @@ export const usePlayerControls = () =>
       seek: s.seek,
       seekBy: s.seekBy,
       skipToUpNextIndex: s.skipToUpNextIndex,
+      skipToContextIndex: s.skipToContextIndex,
       jumpToTrackId: s.jumpToTrackId,
     }))
   );

@@ -1,11 +1,11 @@
 import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { formatDate } from "date-fns";
 import { NavLink } from "../ui/nav-link";
-import PlayButton from "../ui/play-button";
 import { cn } from "@/lib/utils";
 import { TAlbum } from "@/types";
 import { CldImage } from "next-cloudinary";
 import Dot from "../ui/dot";
+import { ContextPlayButton } from "./context-play-button";
 
 type AlbumItemProps = Pick<
   TAlbum,
@@ -29,7 +29,11 @@ export const AlbumItem = ({
           className="object-cover group-hover:scale-105 transition-transform duration-300 group-hover:brightness-75"
           sizes="20vw"
         />
-        <PlayButton
+        <ContextPlayButton
+          context={{
+            type: "ALBUM",
+            contextId: id,
+          }}
           className={cn(
             "absolute bottom-2 right-2",
             "opacity-0 translate-y-2 scale-95",

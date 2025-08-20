@@ -23,8 +23,6 @@ export default async function PlaylistDetailPage({
     },
   });
 
-  console.log(playlist);
-
   return (
     <>
       <BannerSection

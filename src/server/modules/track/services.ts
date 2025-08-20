@@ -1,7 +1,7 @@
 import "server-only";
 import db from "@/lib/db";
 import { trackDetailSelect } from "./presets";
-import { RecordPlayInput, TrackDetailDto } from "./contracts";
+import { RecordPlayInput } from "./contracts";
 import { AppError } from "@/lib/errors";
 
 export const getTrackOrThrow = async (trackId: string) => {
@@ -14,7 +14,7 @@ export const getTrackOrThrow = async (trackId: string) => {
 
   if (!track) throw new AppError("NOT_FOUND", "Track not found");
 
-  return TrackDetailDto.parse(track);
+  return track;
 };
 
 export const getTrackListByIds = async (trackIds: string[]) => {

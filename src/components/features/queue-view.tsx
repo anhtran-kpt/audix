@@ -1,20 +1,19 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
-import { useNowPlayingId } from "@/hooks/use-audio-player";
-import { useAudioStore } from "@/stores/use-audio-store";
-import { useShallow } from "zustand/react/shallow";
+import { useNowPlayingId, useQueue } from "@/hooks/use-audio-player";
 import { useRecentTracks, useTrack, useTracks } from "@/hooks/api/use-tracks";
+import { useMemo } from "react";
 
 export default function QueueView() {
   const nowPlayingId = useNowPlayingId();
-  const trackRefs = useAudioStore(
-    useShallow((s) => s.playbackContext?.trackRefs)
-  );
-
-  const trackIds = trackRefs?.map((ref) => ref.id);
-
   const { data: currentTrack } = useTrack(nowPlayingId);
+
+  const { upNext } = useQueue();
+  const trackIds = useMemo(() => upNext.map((ref) => ref.id), [upNext]);
+
   const { data: queueTracks } = useTracks(trackIds);
 
   const { data: recentTracks } = useRecentTracks();

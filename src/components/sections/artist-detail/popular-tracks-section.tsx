@@ -2,14 +2,14 @@
 
 import { TrackGrid } from "@/components/features/track-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { TTrack } from "@/types/track";
+import { TrackDetailDto } from "@/server/modules/track/contracts";
 
 export const PopularTracksSection = ({
   artistId,
   tracks,
 }: {
   artistId: string;
-  tracks: TTrack[];
+  tracks: TrackDetailDto[];
 }) => {
   return (
     <section>

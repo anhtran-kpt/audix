@@ -2,25 +2,18 @@
 
 import { cn } from "@/lib/utils";
 import Explicit from "../ui/explicit";
-import {
-  Clock3Icon,
-  EllipsisIcon,
-  PlayIcon,
-  PlusCircleIcon,
-} from "lucide-react";
+import { Clock3Icon, EllipsisIcon, PlusCircleIcon } from "lucide-react";
 import { ItemTitle } from "../ui/item-title";
 import { IconButton } from "../ui/icon-button";
 import { formatDuration } from "@/lib/helpers/format-duration";
 import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
-import {
-  useAudioPlayer,
-  useIsPlaying,
-  useNowPlayingId,
-} from "@/hooks/use-audio-player";
+import { useIsPlaying, useNowPlayingId } from "@/hooks/use-audio-player";
 import { TrackDetailDto } from "@/server/modules/track/contracts";
 import { useTrack } from "@/hooks/api/use-tracks";
+import { useMemo } from "react";
+import { RowPlayButton } from "./row-play-button";
 
 interface TrackGridProps {
   artistId?: string;
@@ -35,8 +28,10 @@ export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
   const nowPlayingId = useNowPlayingId();
   const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingId);
   const isPlaying = useIsPlaying();
-
-  const { playContext } = useAudioPlayer();
+  const trackRefs = useMemo(
+    () => tracks.map((track) => ({ id: track.id, audioId: track.audioId })),
+    [artistId]
+  );
 
   return (
     <div className="space-y-1 w-full">
@@ -90,25 +85,10 @@ export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
               ) : (
                 <>
                   <span className="group-hover:hidden">{trackIndex + 1}</span>
-                  <IconButton
-                    icon={PlayIcon}
-                    size="sm"
-                    onClick={() =>
-                      playContext(
-                        tracks.map((track) => ({
-                          id: track.id,
-                          audioId: track.audioId,
-                        })),
-                        trackIndex,
-                        {
-                          type: "ARTIST",
-                          contextId: artistId,
-                          name: track.album.artist.name,
-                        }
-                      )
-                    }
-                    iconClassName="fill-foreground stroke-0"
-                    className="hidden group-hover:block"
+                  <RowPlayButton
+                    context={{ contextId: artistId, type: "ARTIST" }}
+                    trackRefs={trackRefs}
+                    trackId={track.id}
                   />
                 </>
               )}

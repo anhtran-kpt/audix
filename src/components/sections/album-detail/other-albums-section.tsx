@@ -1,8 +1,8 @@
 "use client";
 
+import { ContextPlayButton } from "@/components/features/context-play-button";
 import { GridWrapper } from "@/components/ui/grid-wrapper";
 import { NavLink } from "@/components/ui/nav-link";
-import PlayButton from "@/components/ui/play-button";
 import SectionHeading from "@/components/ui/section-heading";
 import { cn } from "@/lib/utils";
 import { TAlbumGridItem, TArtist } from "@/types";
@@ -36,7 +36,11 @@ export const OtherAlbumsSection = ({
                 className="object-cover rounded-md group-hover:brightness-75"
                 sizes="20vw"
               />
-              <PlayButton
+              <ContextPlayButton
+                context={{
+                  type: "ALBUM",
+                  contextId: album.id,
+                }}
                 className={cn(
                   "absolute bottom-2 right-2",
                   "opacity-0 translate-y-2 scale-95",
@@ -60,22 +64,3 @@ export const OtherAlbumsSection = ({
     </section>
   );
 };
-
-// export const AlbumOthersSkeleton = () => {
-//   return (
-//     <section>
-//       <SectionHeading heading="Fans also like" />
-//       <GridWrapper>
-//         {Array.from({ length: 5 }).map((_, i) => (
-//           <div key={i} className="">
-//             <div className="relative rounded-full overflow-hidden aspect-square mb-4">
-//               <Skeleton className="size-full" />
-//             </div>
-//             <Skeleton className="h-4 w-32" />
-//             <Skeleton className="h-3 w-12 mt-4" />
-//           </div>
-//         ))}
-//       </GridWrapper>
-//     </section>
-//   );
-// };

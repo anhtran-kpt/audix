@@ -11,6 +11,8 @@ import PlayButton from "@/components/ui/play-button";
 import { IconButton } from "@/components/ui/icon-button";
 import { FollowButton } from "@/components/features/follow-button";
 import pluralize from "pluralize";
+import { ContextPlayButton } from "@/components/features/context-play-button";
+import { TrackRef } from "@/stores/use-audio-store";
 
 interface FollowButtonProps {
   artistId: string;
@@ -32,6 +34,7 @@ export const BannerSection = ({
   artistId,
   initialFollowing,
   initialCount,
+  trackRefs,
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
@@ -85,7 +88,10 @@ export const BannerSection = ({
         </div>
       </div>
       <div className="flex items-center gap-6 px-12">
-        <PlayButton />
+        <ContextPlayButton
+          trackRefs={trackRefs}
+          context={{ contextId: artistId, type: "ARTIST" }}
+        />
         <IconButton
           icon={ShuffleIcon}
           size="xl"

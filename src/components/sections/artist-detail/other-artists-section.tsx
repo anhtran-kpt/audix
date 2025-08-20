@@ -1,8 +1,8 @@
 "use client";
 
+import { ContextPlayButton } from "@/components/features/context-play-button";
 import { GridWrapper } from "@/components/ui/grid-wrapper";
 import { NavLink } from "@/components/ui/nav-link";
-import PlayButton from "@/components/ui/play-button";
 import SectionHeading from "@/components/ui/section-heading";
 import { cn } from "@/lib/utils";
 import { TArtistGridItem } from "@/types";
@@ -27,7 +27,11 @@ export const OtherArtistsSection = ({ artists }: OtherArtistsSectionProps) => {
                 className="object-cover rounded-full group-hover:brightness-75"
                 sizes="20vw"
               />
-              <PlayButton
+              <ContextPlayButton
+                context={{
+                  type: "ARTIST",
+                  contextId: artist.id,
+                }}
                 className={cn(
                   "absolute bottom-2 right-2",
                   "opacity-0 translate-y-2 scale-95",

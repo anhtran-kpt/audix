@@ -7,6 +7,7 @@ import {
 } from "@/components/sections/artist-detail";
 import { requireAuth } from "@/lib/auth";
 import db from "@/lib/db";
+import { trackDetailSelect } from "@/server/modules/track/presets";
 
 export default async function ArtistDetail({
   params,
@@ -55,63 +56,7 @@ export default async function ArtistDetail({
           },
         },
       },
-      select: {
-        id: true,
-        title: true,
-        slug: true,
-        audioId: true,
-        duration: true,
-        trackNumber: true,
-        isExplicit: true,
-        playCount: true,
-        album: {
-          select: {
-            artistId: true,
-            id: true,
-            imageId: true,
-            title: true,
-            artist: {
-              select: {
-                name: true,
-                bannerId: true,
-                bio: true,
-              },
-            },
-            _count: {
-              select: {
-                likedBy: true,
-              },
-            },
-          },
-        },
-        artists: {
-          select: {
-            artistId: true,
-            role: true,
-            order: true,
-            artist: { select: { id: true, name: true } },
-          },
-          orderBy: { order: "asc" },
-        },
-        credits: {
-          select: {
-            id: true,
-            artistId: true,
-            name: true,
-            order: true,
-            role: true,
-            details: true,
-            artist: {
-              select: {
-                name: true,
-              },
-            },
-          },
-          orderBy: {
-            order: "asc",
-          },
-        },
-      },
+      select: trackDetailSelect,
       take: 5,
       orderBy: {
         playCount: "desc",
@@ -178,6 +123,10 @@ export default async function ArtistDetail({
         artistId={artistId}
         initialFollowing={isFollowing}
         initialCount={artist._count.likedBy}
+        trackRefs={popularTracks.map((track) => ({
+          id: track.id,
+          audioId: track.audioId,
+        }))}
       />
       <PopularTracksSection tracks={popularTracks} artistId={artistId} />
       <DiscographySection

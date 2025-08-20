@@ -6,6 +6,6 @@ export const GET = makeGET({
   auth: "public",
   params: object({ trackId: cuid2() }),
   async handler({ params }) {
-    return getTrackOrThrow(params!.trackId);
+    return getTrackOrThrow(params.trackId);
   },
 });

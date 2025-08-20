@@ -18,9 +18,9 @@ import Dot from "@/components/ui/dot";
 import { formatDate } from "date-fns/format";
 import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
-import PlayButton from "@/components/ui/play-button";
 import { IconButton } from "@/components/ui/icon-button";
 import tinycolor from "tinycolor2";
+import { ContextPlayButton } from "@/components/features/context-play-button";
 
 type BannerSectionProps = Pick<
   TFullAlbum,
@@ -109,7 +109,7 @@ export const BannerSection = ({
         </div>
       </div>
       <div className="flex items-center gap-6 px-12">
-        <PlayButton />
+        <ContextPlayButton context={{ type: "ALBUM", contextId: "id" }} />
         <IconButton
           icon={ShuffleIcon}
           size="xl"
