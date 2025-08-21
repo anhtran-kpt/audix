@@ -30,7 +30,9 @@ export const AboutSection = ({
           <p className="font-semibold text-base text-white">
             {monthlyListeners} monthly listeners
           </p>
-          <p className="text-[calc(15rem/16)] text-white line-clamp-3">{bio}</p>
+          <p className="text-[calc(15rem/16)] text-white line-clamp-2 md:line-clamp-3 lg:line-clamp-4 xl:line-clamp-5">
+            {bio}
+          </p>
         </div>
       </div>
     </section>

@@ -5,7 +5,7 @@ import {
   OtherArtistsSection,
   PopularTracksSection,
 } from "@/components/sections/artist-detail";
-import { requireAuth } from "@/lib/auth";
+import { getUserIdOrThrow } from "@/lib/auth";
 import db from "@/lib/db";
 import { trackDetailSelect } from "@/server/modules/track/presets";
 
@@ -15,7 +15,7 @@ export default async function ArtistDetail({
   params: Promise<{ artistId: string }>;
 }) {
   const { artistId } = await params;
-  const user = await requireAuth();
+  const userId = await getUserIdOrThrow();
 
   const artist = await db.artist.findUniqueOrThrow({
     where: {
@@ -104,10 +104,10 @@ export default async function ArtistDetail({
    ORDER BY RANDOM()
    LIMIT 5;
 `,
-    user.id
+    userId
       ? db.userLikedArtist
           .findUnique({
-            where: { userId_artistId: { userId: user.id, artistId } },
+            where: { userId_artistId: { userId, artistId } },
           })
           .then(Boolean)
       : Promise.resolve(false),

@@ -7,7 +7,7 @@ import {
 } from "@/app/generated/prisma";
 import { baseFields } from "../shared/contract";
 
-export const TrackDetailDto = z
+export const FullTrack = z
   .object({
     id: baseFields.id,
     title: z.string(),
@@ -54,9 +54,9 @@ export const TrackDetailDto = z
   })
   .strict();
 
-export type TrackDetailDto = z.infer<typeof TrackDetailDto>;
+export type FullTrack = z.infer<typeof FullTrack>;
 
-export const RecordPlayInputSchema = z.object({
+export const RecordPlaySchema = z.object({
   userId: baseFields.id,
   trackId: baseFields.id,
   listenedSec: z.number().int().min(30),
@@ -65,4 +65,4 @@ export const RecordPlayInputSchema = z.object({
   playbackContextId: z.cuid2().nullable().optional(),
 });
 
-export type RecordPlayInput = z.infer<typeof RecordPlayInputSchema>;
+export type RecordPlay = z.infer<typeof RecordPlaySchema>;

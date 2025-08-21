@@ -2,10 +2,10 @@
 
 import TrackItem from "@/components/features/track-item";
 import SectionHeading from "@/components/ui/section-heading";
-import { TrackDetailDto } from "@/server/modules/track/contracts";
+import { FullTrack } from "@/server/modules/track/contracts";
 
 type NewReleasesSectionProps = {
-  tracks: TrackDetailDto[];
+  tracks: FullTrack[];
 };
 
 export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {

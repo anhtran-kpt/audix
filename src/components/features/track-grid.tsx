@@ -10,7 +10,7 @@ import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
 import { useIsPlaying, useNowPlayingId } from "@/hooks/use-audio-player";
-import { TrackDetailDto } from "@/server/modules/track/contracts";
+import { FullTrack } from "@/server/modules/track/contracts";
 import { useTrack } from "@/hooks/api/use-tracks";
 import { useMemo } from "react";
 import { RowPlayButton } from "./row-play-button";
@@ -18,7 +18,7 @@ import { RowPlayButton } from "./row-play-button";
 interface TrackGridProps {
   artistId?: string;
   type: "album" | "popular" | "playlist";
-  tracks: TrackDetailDto[];
+  tracks: FullTrack[];
 }
 
 export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {

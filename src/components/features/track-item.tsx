@@ -5,9 +5,9 @@ import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon, PauseIcon, PlayIcon } from "lucide-react";
 import Explicit from "../ui/explicit";
 import { CldImage } from "next-cloudinary";
-import { TrackDetailDto } from "@/server/modules/track/contracts";
+import { FullTrack } from "@/server/modules/track/contracts";
 
-export default function TrackItem({ track }: { track: TrackDetailDto }) {
+export default function TrackItem({ track }: { track: FullTrack }) {
   const nowPlayingId = useNowPlayingId();
   const { playTrackRef, playback, controls } = useAudioPlayer();
   const isCurrentTrackPlaying = nowPlayingId === track.id && playback.isPlaying;
