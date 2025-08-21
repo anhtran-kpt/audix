@@ -7,7 +7,6 @@ import { AppSidebar } from "@/components/features/app-sidebar";
 import { Header } from "@/components/features/header";
 import AudioPlayer from "@/components/features/audio-player";
 import { AuthProvider } from "@/providers/auth-provider";
-import db from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
@@ -32,42 +31,6 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(authOptions);
 
-  const [playlists, followingArtists] = await Promise.all([
-    db.playlist.findMany({
-      where: {
-        userId: session?.user.id,
-      },
-      select: {
-        id: true,
-        title: true,
-        imageId: true,
-        user: {
-          select: {
-            image: true,
-            id: true,
-            name: true,
-          },
-        },
-      },
-    }),
-    db.userLikedArtist
-      .findMany({
-        where: {
-          userId: session?.user.id,
-        },
-        select: {
-          artist: {
-            select: {
-              id: true,
-              name: true,
-              imageId: true,
-            },
-          },
-        },
-      })
-      .then((data) => data.map((item) => item.artist)),
-  ]);
-
   return (
     <html
       lang="en"
@@ -91,10 +54,7 @@ export default async function RootLayout({
                   } as React.CSSProperties
                 }
               >
-                <AppSidebar
-                  playlists={playlists}
-                  followingArtists={followingArtists}
-                />
+                <AppSidebar />
                 <SidebarInset
                   className="h-full transition-[width]"
                   style={{

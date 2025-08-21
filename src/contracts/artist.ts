@@ -50,5 +50,12 @@ export const FullArtistSchema = ArtistBaseSchema.extend({
   ),
 });
 
+export const SidebarArtistSchema = ArtistBaseSchema.pick({
+  id: true,
+  name: true,
+  imageId: true,
+});
+
+export type SidebarArtist = z.infer<typeof SidebarArtistSchema>;
 export type ArtistBase = z.infer<typeof ArtistBaseSchema>;
 export type FullArtist = z.infer<typeof FullArtistSchema>;

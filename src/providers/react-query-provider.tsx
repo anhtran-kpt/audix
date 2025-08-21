@@ -1,31 +1,21 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactNode } from "react";
-import { toast } from "sonner";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: (count, err: any) =>
-        err?.code === "VALIDATION" ? false : count < 2,
-    },
-    mutations: {
-      onError: (err: any) => {
-        const msg = err?.isAppError ? err.message : "Something went wrong";
-        toast.error(msg);
-      },
-      retry: 0,
-    },
-  },
-});
+import { createQueryClient } from "@/react-query/queries/query-client";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactNode, useState } from "react";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export default function ReactQueryProvider({
   children,
 }: {
   children: ReactNode;
 }) {
+  const [client] = useState(() => createQueryClient());
+
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={client}>
+      {children}
+      {process.env.NODE_ENV === "development" && <ReactQueryDevtools />}
+    </QueryClientProvider>
   );
 }

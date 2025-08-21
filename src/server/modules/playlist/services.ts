@@ -2,6 +2,25 @@ import { zCuidType } from "@/contracts/common";
 import { CreatePlaylistInput } from "@/contracts/playlist";
 import db from "@/lib/db";
 
+export const getSidebarPlaylists = async (userId: zCuidType) => {
+  return await db.playlist.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      id: true,
+      title: true,
+      imageId: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+  });
+};
+
 export const createPlaylist = async (
   userId: zCuidType,
   input: CreatePlaylistInput
