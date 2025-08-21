@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Form,
   FormControl,
@@ -13,22 +15,22 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postApi } from "@/lib/http/request";
 import {
   CreatePlaylistInput,
   CreatePlaylistInputSchema,
   CreatePlaylistOutput,
+  SidebarPlaylist,
 } from "@/contracts/playlist";
-import { useRouter } from "next/navigation";
+import { sidebarKeys } from "@/react-query/keys/sidebar";
+import { toast } from "sonner";
 
 export const NewPlaylistForm = ({
   onSuccess,
 }: {
   onSuccess: (res: CreatePlaylistOutput) => void;
 }) => {
-  const router = useRouter();
-
   const form = useForm<CreatePlaylistInput>({
     resolver: zodResolver(CreatePlaylistInputSchema),
     mode: "onChange",
@@ -45,10 +47,46 @@ export const NewPlaylistForm = ({
     formState: { isValid, isSubmitting },
   } = form;
 
+  const qc = useQueryClient();
+
   const { mutate, isPending } = useMutation({
-    mutationFn: async (data: CreatePlaylistInput) =>
-      postApi<CreatePlaylistOutput>("/playlists", data),
+    mutationFn: (data) => postApi<CreatePlaylistOutput>("/playlists", data),
+    onMutate: async (vars: CreatePlaylistInput) => {
+      await qc.cancelQueries({ queryKey: sidebarKeys.playlists() });
+
+      const previousPlaylists = qc.getQueryData<SidebarPlaylist[]>(
+        sidebarKeys.playlists()
+      );
+
+      const optimistic: SidebarPlaylist = {
+        id: `optimistic-${Date.now()}`,
+        title: vars.title,
+        imageId: null,
+        user: {
+          name: null,
+          id: `optimistic-${Date.now()}`,
+        },
+      };
+
+      qc.setQueryData<SidebarPlaylist[]>(sidebarKeys.playlists(), (old) =>
+        old ? [optimistic, ...old] : [optimistic]
+      );
+
+      return { previousPlaylists };
+    },
+    onError: (err, _, ctx) => {
+      if (ctx?.previousPlaylists) {
+        qc.setQueryData(sidebarKeys.playlists(), ctx.previousPlaylists);
+      }
+
+      toast.error(err.message);
+    },
     onSuccess: (res) => {
+      qc.setQueryData<SidebarPlaylist[]>(sidebarKeys.playlists(), (old) => {
+        if (!old) return old;
+        return [res, ...old];
+      });
+
       onSuccess(res);
       form.reset();
     },

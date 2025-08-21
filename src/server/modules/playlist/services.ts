@@ -18,6 +18,9 @@ export const getSidebarPlaylists = async (userId: zCuidType) => {
         },
       },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 };
 
@@ -33,6 +36,14 @@ export const createPlaylist = async (
     },
     select: {
       id: true,
+      title: true,
+      imageId: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
     },
   });
 };

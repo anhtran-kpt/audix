@@ -34,8 +34,11 @@ export const CreatePlaylistInputSchema = PlaylistBaseSchema.pick({
   isPublic: true,
 });
 
-export const CreatePlaylistOutputSchema = PlaylistBaseSchema.pick({
+export const CreatePlaylistOutputSchema = FullPlaylistSchema.pick({
   id: true,
+  title: true,
+  imageId: true,
+  user: true,
 });
 
 export const SidebarPlaylistSchema = FullPlaylistSchema.pick({

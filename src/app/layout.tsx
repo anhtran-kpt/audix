@@ -14,6 +14,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import RightPanel from "@/components/features/right-panel";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { createQueryClient } from "@/react-query/queries/query-client";
+import { getSidebarArtists } from "@/server/modules/artist/services";
+import { getSidebarPlaylists } from "@/server/modules/playlist/services";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -30,6 +33,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
+
+  const userId = session!.user.id;
+
+  const qc = createQueryClient();
+
+  const [artists, playlists] = await Promise.all([
+    getSidebarArtists(userId!),
+    getSidebarPlaylists(userId!),
+  ]);
 
   return (
     <html
@@ -54,7 +66,10 @@ export default async function RootLayout({
                   } as React.CSSProperties
                 }
               >
-                <AppSidebar />
+                <AppSidebar
+                  initialArtists={artists}
+                  initialPlaylists={playlists}
+                />
                 <SidebarInset
                   className="h-full transition-[width]"
                   style={{
