@@ -9,10 +9,9 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Button } from "../ui/button";
-
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { NewPlaylistForm } from "../forms/new-playlist-form";
+import { useRouter } from "next/navigation";
 
 export const NewPlaylistDialog = () => {
   const [open, setOpen] = useState(false);
@@ -31,9 +30,9 @@ export const NewPlaylistDialog = () => {
           <DialogTitle className="text-center">Create new playlist</DialogTitle>
         </DialogHeader>
         <NewPlaylistForm
-          onSuccess={(redirectTo) => {
+          onSuccess={(res) => {
             setOpen(false);
-            router.push(redirectTo, { scroll: false });
+            router.push(`/playlists/${res.id}`);
           }}
         />
       </DialogContent>

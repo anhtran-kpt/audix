@@ -24,6 +24,7 @@ import {
 import { useRightPanel } from "@/stores/use-right-panel";
 import { useScrobble } from "@/hooks/use-scrobble";
 import { useTrack } from "@/hooks/api/use-tracks";
+import { useShallow } from "zustand/react/shallow";
 
 function AudioPlayer() {
   const {
@@ -45,8 +46,9 @@ function AudioPlayer() {
 
   useScrobble();
 
-  const toggle = useRightPanel((s) => s.toggle);
-  const active = useRightPanel((s) => s.active);
+  const { toggle, active } = useRightPanel(
+    useShallow((s) => ({ toggle: s.toggle, active: s.active }))
+  );
 
   return (
     <>
@@ -54,7 +56,7 @@ function AudioPlayer() {
         <div className="fixed bottom-0 left-0 right-0 bg-player border z-60 px-4 py-2">
           <div className="flex items-center justify-between gap-12">
             <div className="flex items-center">
-              <div className="flex items-center gap-3 grow">
+              <div className="flex items-center gap-3 min-w-3xs">
                 <CoverImage
                   src={currentTrack.album.imageId}
                   alt={currentTrack.title}

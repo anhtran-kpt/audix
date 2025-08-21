@@ -2,7 +2,7 @@ import axios from "axios";
 import type { ResponseEnvelope } from "@/lib/errors";
 
 export const http = axios.create({
-  baseURL: "/",
+  baseURL: "/api",
   withCredentials: true,
 });
 

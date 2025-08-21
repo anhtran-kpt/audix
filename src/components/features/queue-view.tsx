@@ -3,9 +3,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
-import { useNowPlayingId, useQueue } from "@/hooks/use-audio-player";
-import { useRecentTracks, useTrack, useTracks } from "@/hooks/api/use-tracks";
-import { useMemo } from "react";
+import { useNowPlayingId } from "@/hooks/use-audio-player";
+import { useRecentTracks, useTrack } from "@/hooks/api/use-tracks";
 import UpNextList from "./up-next-list";
 
 export default function QueueView() {

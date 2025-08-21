@@ -26,6 +26,7 @@ export default async function PlaylistDetailPage({
   return (
     <>
       <BannerSection
+        id={playlist.id}
         title={playlist.title}
         imageId={playlist.imageId}
         totalTracks={playlist.totalTracks}

@@ -35,7 +35,7 @@ export function useScrobble() {
 
     if (listenedSec >= threshold) {
       scrobbledRef.current = nowPlaying.id;
-      void postApi<void>("/api/plays", {
+      void postApi<void>("/plays", {
         userId: data?.user.id,
         trackId: nowPlaying.id,
         listenedSec: Math.floor(listenedSec),

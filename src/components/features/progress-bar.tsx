@@ -1,8 +1,6 @@
 "use client";
 
 import { Slider } from "@/components/ui/slider";
-import { useAudioStore } from "@/stores/use-audio-store";
-import { useEffect, useState } from "react";
 
 interface ProgressBarProps {
   currentTime: number;

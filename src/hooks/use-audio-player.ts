@@ -47,6 +47,7 @@ export const usePlaybackState = () =>
       duration: s.duration,
     }))
   );
+
 export const usePlayerControls = () =>
   useAudioStore(
     useShallow((s) => ({
@@ -63,6 +64,7 @@ export const usePlayerControls = () =>
       jumpToTrackId: s.jumpToTrackId,
     }))
   );
+
 export const useVolumeControls = () =>
   useAudioStore(
     useShallow((s) => ({
@@ -72,6 +74,7 @@ export const useVolumeControls = () =>
       toggleMute: s.toggleMute,
     }))
   );
+
 export const usePlayerModes = () =>
   useAudioStore(
     useShallow((s) => ({
@@ -85,6 +88,7 @@ export const usePlayerModes = () =>
 
 export function useQueue() {
   const upNext = useAudioStore(useShallow(selectUpNextRefs));
+
   const { enqueueNext, addToQueue, clearExplicit, skipToUpNextIndex } =
     useAudioStore(
       useShallow((s) => ({
@@ -94,8 +98,10 @@ export function useQueue() {
         skipToUpNextIndex: s.skipToUpNextIndex,
       }))
     );
+
   const hasNext = useAudioStore(selectHasNext);
   const hasPrev = useAudioStore(selectHasPrev);
+
   return {
     upNext,
     enqueueNext,

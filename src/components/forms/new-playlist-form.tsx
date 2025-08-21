@@ -13,31 +13,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { useActionSubmit } from "@/features/_shared/hooks/use-action-submit";
+import { useMutation } from "@tanstack/react-query";
+import { postApi } from "@/lib/http/request";
 import {
-  playlistCreateInput,
-  PlaylistCreateInput,
-} from "@/features/playlist/schemas/playlist.schema";
-import { createPlaylistAction } from "@/features/playlist/actions/create-playlist.action";
+  CreatePlaylistInput,
+  CreatePlaylistInputSchema,
+  CreatePlaylistOutput,
+} from "@/contracts/playlist";
+import { useRouter } from "next/navigation";
 
 export const NewPlaylistForm = ({
   onSuccess,
 }: {
-  onSuccess: (redirectTo: string) => void;
+  onSuccess: (res: CreatePlaylistOutput) => void;
 }) => {
-  const form = useForm<PlaylistCreateInput>({
-    resolver: zodResolver(playlistCreateInput),
+  const router = useRouter();
+
+  const form = useForm<CreatePlaylistInput>({
+    resolver: zodResolver(CreatePlaylistInputSchema),
     mode: "onChange",
     defaultValues: {
       title: "",
       description: "",
       isPublic: true,
-    },
-  });
-
-  const { submit, isPending } = useActionSubmit(form, createPlaylistAction, {
-    onSuccess: ({ redirectTo }) => {
-      if (redirectTo) onSuccess(redirectTo);
     },
   });
 
@@ -47,9 +45,21 @@ export const NewPlaylistForm = ({
     formState: { isValid, isSubmitting },
   } = form;
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (data: CreatePlaylistInput) =>
+      postApi<CreatePlaylistOutput>("/playlists", data),
+    onSuccess: (res) => {
+      onSuccess(res);
+      form.reset();
+    },
+  });
+
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(submit)} className="space-y-6">
+      <form
+        onSubmit={handleSubmit((values) => mutate(values))}
+        className="space-y-6"
+      >
         <FormField
           control={control}
           name="title"

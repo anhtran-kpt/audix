@@ -30,7 +30,9 @@ export const PaginationQuery = z.object({
   limit: zLimit,
 });
 
-export const zTimeStamps = z.object({
+export const zTimeStamps = {
   createdAt: zDate.optional(),
   updatedAt: zDate.optional(),
-});
+} as const;
+
+export type zCuidType = z.infer<typeof zCuid>;

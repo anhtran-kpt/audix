@@ -15,6 +15,7 @@ const queryClient = new QueryClient({
         const msg = err?.isAppError ? err.message : "Something went wrong";
         toast.error(msg);
       },
+      retry: 0,
     },
   },
 });

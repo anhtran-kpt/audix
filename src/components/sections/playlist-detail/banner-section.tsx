@@ -2,7 +2,6 @@
 
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
-import { TFullPlaylist } from "@/types";
 import { CoverImage } from "@/components/ui/cover-image";
 import { NavLink } from "@/components/ui/nav-link";
 import Dot from "@/components/ui/dot";
@@ -10,7 +9,6 @@ import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
 import { FallbackCoverImage } from "@/components/features/fallback-cover-image";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import PlayButton from "@/components/ui/play-button";
 import { IconButton } from "@/components/ui/icon-button";
 import {
   DownloadIcon,
@@ -23,9 +21,12 @@ import {
   UserPlus2Icon,
 } from "lucide-react";
 import tinycolor from "tinycolor2";
+import { FullPlaylist } from "@/contracts/playlist";
+import { ContextPlayButton } from "@/components/features/context-play-button";
 
 type BannerSectionProps = Pick<
-  TFullPlaylist,
+  FullPlaylist,
+  | "id"
   | "imageId"
   | "title"
   | "totalTracks"
@@ -36,6 +37,7 @@ type BannerSectionProps = Pick<
 >;
 
 export const BannerSection = ({
+  id,
   imageId,
   title,
   totalTracks,
@@ -118,7 +120,9 @@ export const BannerSection = ({
       </div>
       <div className="flex items-center justify-between gap-6 px-12">
         <div className="flex items-center gap-6">
-          <PlayButton />
+          <ContextPlayButton
+            context={{ type: "PLAYLIST", contextId: id, name: title }}
+          />
           <IconButton
             icon={ShuffleIcon}
             size="xl"

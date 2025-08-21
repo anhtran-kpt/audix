@@ -11,7 +11,7 @@ export const PlaylistItem = z.object({
 export const PlaylistBaseSchema = z.object({
   id: zCuid,
   title: z.string().min(1),
-  description: z.string().nullish(),
+  description: z.string().optional(),
   imageId: zPublicId,
   isPublic: z.boolean().optional(),
   isOfficial: z.boolean().optional(),
@@ -44,5 +44,17 @@ export const FullPlaylistSchema = PlaylistBaseSchema.extend({
   ),
 });
 
+export const CreatePlaylistInputSchema = PlaylistBaseSchema.pick({
+  title: true,
+  description: true,
+  isPublic: true,
+});
+
+export const CreatePlaylistOutputSchema = PlaylistBaseSchema.pick({
+  id: true,
+});
+
+export type CreatePlaylistInput = z.infer<typeof CreatePlaylistInputSchema>;
+export type CreatePlaylistOutput = z.infer<typeof CreatePlaylistOutputSchema>;
 export type PlaylistBase = z.infer<typeof PlaylistBaseSchema>;
 export type FullPlaylist = z.infer<typeof FullPlaylistSchema>;
