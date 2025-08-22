@@ -10,10 +10,10 @@ import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
 import { useIsPlaying, useNowPlayingId } from "@/hooks/use-audio-player";
-import { FullTrack } from "@/server/modules/track/contracts";
 import { useTrack } from "@/hooks/api/use-tracks";
 import { useMemo } from "react";
 import { RowPlayButton } from "./row-play-button";
+import { FullTrack } from "@/contracts/track";
 
 interface TrackGridProps {
   artistId?: string;
@@ -87,8 +87,8 @@ export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
                   <span className="group-hover:hidden">{trackIndex + 1}</span>
                   <RowPlayButton
                     context={{ contextId: artistId, type: "ARTIST" }}
-                    trackRefs={trackRefs}
                     trackId={track.id}
+                    buttonType="outside"
                   />
                 </>
               )}

@@ -14,7 +14,7 @@ CREATE TYPE "public"."AlbumType" AS ENUM ('SINGLE', 'EP', 'ALBUM', 'COMPILATION'
 CREATE TYPE "public"."ArtistRole" AS ENUM ('MAIN_ARTIST', 'FEATURED_ARTIST', 'REMIX_ARTIST');
 
 -- CreateEnum
-CREATE TYPE "public"."CreditRole" AS ENUM ('LEAD_VOCALS', 'BACKING_VOCALS', 'RAP', 'SONGWRITER', 'COMPOSER', 'LYRICIST', 'PRODUCER', 'EXECUTIVE_PRODUCER', 'CO_PRODUCER', 'VOCAL_PRODUCER', 'MIXING_ENGINEER', 'MASTERING_ENGINEER', 'RECORDING_ENGINEER', 'ASSISTANT_ENGINEER', 'GUITAR', 'BASS', 'DRUMS', 'PIANO', 'KEYBOARD', 'VIOLIN', 'SAXOPHONE', 'TRUMPET', 'OTHER_INSTRUMENT', 'ARRANGER', 'CONDUCTOR', 'PROGRAMMER', 'ADDITIONAL_PRODUCTION', 'PUBLISHER', 'RECORD_LABEL', 'MANAGEMENT');
+CREATE TYPE "public"."CreditRole" AS ENUM ('LEAD_VOCALS', 'BACKING_VOCALS', 'RAP', 'SONGWRITER', 'COMPOSER', 'LYRICIST', 'PRODUCER', 'EXECUTIVE_PRODUCER', 'CO_PRODUCER', 'VOCAL_PRODUCER', 'MIXING_ENGINEER', 'MASTERING_ENGINEER', 'RECORDING_ENGINEER', 'ASSISTANT_ENGINEER', 'GUITAR', 'BASS', 'DRUMS', 'PIANO', 'KEYBOARD', 'VIOLIN', 'SAXOPHONE', 'TRUMPET', 'OTHER_INSTRUMENT', 'ARRANGER', 'PROGRAMMER', 'ADDITIONAL_PRODUCTION', 'PUBLISHER', 'RECORD_LABEL', 'MANAGEMENT');
 
 -- CreateEnum
 CREATE TYPE "public"."PlaybackContextType" AS ENUM ('PLAYLIST', 'ALBUM', 'ARTIST', 'LIKED', 'QUEUE', 'NEW_RELEASES', 'SEARCH');
@@ -269,12 +269,36 @@ CREATE TABLE "public"."user_follows" (
 );
 
 -- CreateTable
+CREATE TABLE "public"."PlaybackContextSnapshot" (
+    "id" TEXT NOT NULL,
+    "type" "public"."PlaybackContextType" NOT NULL,
+    "contextId" TEXT,
+    "userId" TEXT,
+    "name" TEXT,
+    "hash" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PlaybackContextSnapshot_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."PlaybackContextSnapshotItem" (
+    "snapshotId" TEXT NOT NULL,
+    "position" INTEGER NOT NULL,
+    "trackId" TEXT NOT NULL,
+    "audioId" TEXT NOT NULL,
+
+    CONSTRAINT "PlaybackContextSnapshotItem_pkey" PRIMARY KEY ("snapshotId","position")
+);
+
+-- CreateTable
 CREATE TABLE "public"."play_history" (
     "id" TEXT NOT NULL,
     "playedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "listenedSec" INTEGER NOT NULL,
-    "playbackContextType" "public"."PlaybackContextType" NOT NULL,
-    "playbackContextId" TEXT,
+    "sourceType" "public"."PlaybackContextType" NOT NULL,
+    "sourceId" TEXT,
+    "snapshotId" TEXT,
     "userId" TEXT NOT NULL,
     "trackId" TEXT NOT NULL,
 
@@ -393,7 +417,16 @@ CREATE INDEX "track_credits_trackId_artistId_idx" ON "public"."track_credits"("t
 CREATE UNIQUE INDEX "playlist_items_playlistId_trackId_key" ON "public"."playlist_items"("playlistId", "trackId");
 
 -- CreateIndex
-CREATE INDEX "play_history_userId_playbackContextType_playbackContextId_p_idx" ON "public"."play_history"("userId", "playbackContextType", "playbackContextId", "playedAt");
+CREATE UNIQUE INDEX "PlaybackContextSnapshot_hash_key" ON "public"."PlaybackContextSnapshot"("hash");
+
+-- CreateIndex
+CREATE INDEX "PlaybackContextSnapshot_type_contextId_userId_idx" ON "public"."PlaybackContextSnapshot"("type", "contextId", "userId");
+
+-- CreateIndex
+CREATE INDEX "PlaybackContextSnapshotItem_trackId_idx" ON "public"."PlaybackContextSnapshotItem"("trackId");
+
+-- CreateIndex
+CREATE INDEX "play_history_userId_sourceType_sourceId_playedAt_idx" ON "public"."play_history"("userId", "sourceType", "sourceId", "playedAt");
 
 -- CreateIndex
 CREATE INDEX "play_history_userId_playedAt_idx" ON "public"."play_history"("userId", "playedAt");
@@ -496,6 +529,9 @@ ALTER TABLE "public"."user_follows" ADD CONSTRAINT "user_follows_followerId_fkey
 
 -- AddForeignKey
 ALTER TABLE "public"."user_follows" ADD CONSTRAINT "user_follows_followingId_fkey" FOREIGN KEY ("followingId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."PlaybackContextSnapshotItem" ADD CONSTRAINT "PlaybackContextSnapshotItem_snapshotId_fkey" FOREIGN KEY ("snapshotId") REFERENCES "public"."PlaybackContextSnapshot"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

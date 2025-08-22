@@ -1,8 +1,8 @@
 import "server-only";
 import db from "@/lib/db";
 import { trackDetailSelect } from "./presets";
-import { RecordPlay } from "./contracts";
 import { AppError } from "@/lib/errors";
+import { RecordPlayInput } from "@/contracts/track";
 
 export const getTrackOrThrow = async (trackId: string) => {
   const track = await db.track.findUnique({
@@ -56,9 +56,10 @@ export const recordPlay = async ({
   trackId,
   listenedSec,
   playedAt,
-  playbackContextType,
-  playbackContextId,
-}: RecordPlay) => {
+  sourceType,
+  sourceId,
+  snapshotId,
+}: RecordPlayInput) => {
   return db.$transaction(async (tx) => {
     const res = await tx.playHistory.create({
       data: {
@@ -66,8 +67,9 @@ export const recordPlay = async ({
         trackId,
         listenedSec: Math.max(0, Math.floor(listenedSec)),
         playedAt,
-        playbackContextType,
-        playbackContextId,
+        sourceType,
+        sourceId,
+        snapshotId,
       },
     });
 

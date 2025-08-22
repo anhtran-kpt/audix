@@ -6,10 +6,9 @@ import {
 } from "zustand/middleware";
 import { getAudioUrl } from "@/lib/helpers/get-audio-url";
 import { PlaybackContextType } from "@/app/generated/prisma";
+import { TrackRef } from "@/contracts/playback";
 
 export type RepeatMode = "off" | "one" | "all";
-
-export type TrackRef = { id: string; audioId: string };
 
 export interface PlaybackContext {
   type: PlaybackContextType;

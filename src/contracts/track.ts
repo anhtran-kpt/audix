@@ -5,6 +5,7 @@ import {
   CreditRoleSchema,
   PlaybackContextTypeSchema,
 } from "./enums";
+import { snapshot } from "@/server/modules/playback/services";
 
 export const TrackBaseSchema = z.object({
   id: zCuid,
@@ -57,13 +58,14 @@ export const FullTrackSchema = TrackBaseSchema.extend({
 
 export type FullTrack = z.infer<typeof FullTrackSchema>;
 
-export const RecordPlaySchema = z.object({
+export const RecordPlayInputSchema = z.object({
   userId: zCuid,
   trackId: zCuid,
   listenedSec: z.number().int().min(30),
   playedAt: zDate,
-  playbackContextType: PlaybackContextTypeSchema,
-  playbackContextId: zCuid.nullish(),
+  sourceType: PlaybackContextTypeSchema,
+  sourceId: zCuid.nullish(),
+  snapshotId: z.string().optional(),
 });
 
-export type RecordPlay = z.infer<typeof RecordPlaySchema>;
+export type RecordPlayInput = z.infer<typeof RecordPlayInputSchema>;

@@ -36,8 +36,6 @@ export default function NowPlayingView() {
     credits: currentTrack.credits,
   });
 
-  console.log(creditByPerson);
-
   return (
     <>
       <header

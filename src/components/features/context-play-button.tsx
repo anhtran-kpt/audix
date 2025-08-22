@@ -1,52 +1,67 @@
 "use client";
 
 import { PlaybackContextType } from "@/app/generated/prisma";
-import { TrackRef, useAudioStore } from "@/stores/use-audio-store";
-import { useIsPlaying, usePlaybackContext } from "@/hooks/use-audio-player"; // file use-audio-player.ts
-import { useShallow } from "zustand/react/shallow";
-import { IconButton } from "../ui/icon-button";
+import { useAudioStore } from "@/stores/use-audio-store";
+import { usePlaybackContext, useIsPlaying } from "@/hooks/use-audio-player";
+import { useMemo } from "react";
+import { postApi } from "@/lib/http/request";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { IconButton } from "../ui/icon-button";
+import { SnapshotOutput } from "@/contracts/playback";
+import { useShallow } from "zustand/react/shallow";
 
-type ContextPlayButtonProps = {
-  context: {
-    type: PlaybackContextType;
-    contextId?: string;
-    name?: string;
-  };
-  trackRefs: TrackRef[];
-  defaultStartIndex?: number;
-  className?: string;
+type ContextMeta = {
+  type: PlaybackContextType;
+  contextId?: string;
+  name?: string;
 };
 
 export function ContextPlayButton({
   context,
-  trackRefs,
   defaultStartIndex = 0,
   className,
-}: ContextPlayButtonProps) {
+}: {
+  context: ContextMeta;
+  defaultStartIndex?: number;
+  className?: string;
+}) {
   const isPlaying = useIsPlaying();
-  const currentCtx = usePlaybackContext();
+  const current = usePlaybackContext();
+  const isSameContext = useMemo(
+    () =>
+      current?.type === context.type &&
+      current?.contextId === context.contextId,
+    [current?.type, current?.contextId, context.type, context.contextId]
+  );
 
-  const { startFromContext, togglePlay } = useAudioStore(
+  const { togglePlay, startFromContext, clearExplicit } = useAudioStore(
     useShallow((s) => ({
-      startFromContext: s.startFromContext,
       togglePlay: s.togglePlay,
+      startFromContext: s.startFromContext,
+      clearExplicit: s.clearExplicit,
     }))
   );
 
-  const isSameContext =
-    currentCtx?.type === context.type &&
-    currentCtx?.contextId === context.contextId;
-
   const onClick = async () => {
-    if (!trackRefs.length) return;
-
     if (isSameContext) {
       await togglePlay();
-    } else {
-      await startFromContext(trackRefs, defaultStartIndex, context);
     }
+
+    const data = await postApi<SnapshotOutput>("/playback/snapshot", {
+      type: context.type,
+      contextId: context.contextId,
+    });
+
+    if (!data?.refs?.length) return;
+
+    clearExplicit();
+    await startFromContext(data.refs, defaultStartIndex, {
+      type: context.type,
+      contextId: context.contextId,
+      name: data.name ?? context.name,
+      snapshotId: data.snapshotId,
+    });
   };
 
   return (

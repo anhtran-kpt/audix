@@ -5,12 +5,16 @@ import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon, PauseIcon, PlayIcon } from "lucide-react";
 import Explicit from "../ui/explicit";
 import { CldImage } from "next-cloudinary";
-import { FullTrack } from "@/server/modules/track/contracts";
+import { FullTrack } from "@/contracts/track";
+import { ReactNode } from "react";
 
-export default function TrackItem({ track }: { track: FullTrack }) {
+type TrackItemProps = {
+  track: FullTrack;
+  playButton: ReactNode;
+};
+
+export default function TrackItem({ track, playButton }: TrackItemProps) {
   const nowPlayingId = useNowPlayingId();
-  const { playTrackRef, playback, controls } = useAudioPlayer();
-  const isCurrentTrackPlaying = nowPlayingId === track.id && playback.isPlaying;
 
   return (
     <li className="flex items-center justify-between gap-4 group hover:bg-muted py-2 px-3 rounded-sm">
@@ -23,7 +27,8 @@ export default function TrackItem({ track }: { track: FullTrack }) {
             fill
             sizes="48px"
           />
-          <IconButton
+          {playButton}
+          {/* <IconButton
             icon={isCurrentTrackPlaying ? PauseIcon : PlayIcon}
             size="sm"
             onClick={
@@ -33,7 +38,7 @@ export default function TrackItem({ track }: { track: FullTrack }) {
             }
             iconClassName="fill-foreground stroke-0 size-5"
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
-          />
+          /> */}
         </div>
         <div className="flex flex-col gap-0.5 w-full overflow-hidden">
           <ItemTitle title={track.title} isActive={nowPlayingId === track.id} />

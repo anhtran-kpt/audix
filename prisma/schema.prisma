@@ -457,12 +457,40 @@ model UserFollow {
 // LISTENING BEHAVIOR & ANALYTICS
 // ================================
 
+model PlaybackContextSnapshot {
+  id        String              @id @default(cuid())
+  type      PlaybackContextType
+  contextId String?
+  userId    String?
+  name      String?
+
+  hash      String   @unique
+  createdAt DateTime @default(now())
+
+  items PlaybackContextSnapshotItem[]
+
+  @@index([type, contextId, userId])
+}
+
+model PlaybackContextSnapshotItem {
+  snapshotId String
+  position   Int
+  trackId    String
+  audioId    String
+
+  snapshot PlaybackContextSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+
+  @@id([snapshotId, position])
+  @@index([trackId])
+}
+
 model PlayHistory {
-  id                  String              @id @default(cuid())
-  playedAt            DateTime            @default(now())
-  listenedSec         Int
-  playbackContextType PlaybackContextType
-  playbackContextId   String?
+  id          String              @id @default(cuid())
+  playedAt    DateTime            @default(now())
+  listenedSec Int
+  sourceType  PlaybackContextType
+  sourceId    String?
+  snapshotId  String?
 
   userId  String
   trackId String
@@ -470,7 +498,7 @@ model PlayHistory {
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
-  @@index([userId, playbackContextType, playbackContextId, playedAt])
+  @@index([userId, sourceType, sourceId, playedAt])
   @@index([userId, playedAt])
   @@index([trackId, playedAt])
   @@map("play_history")

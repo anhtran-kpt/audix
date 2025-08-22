@@ -5,6 +5,7 @@ import { useAudioStore } from "@/stores/use-audio-store";
 import { useShallow } from "zustand/react/shallow";
 import { postApi } from "@/lib/http/request";
 import { useSession } from "next-auth/react";
+import { RecordPlayInput } from "@/contracts/track";
 
 export function useScrobble() {
   const { data } = useSession();
@@ -35,13 +36,14 @@ export function useScrobble() {
 
     if (listenedSec >= threshold) {
       scrobbledRef.current = nowPlaying.id;
-      void postApi<void>("/plays", {
-        userId: data?.user.id,
+      void postApi<void, RecordPlayInput>("/plays", {
+        userId: data!.user.id,
         trackId: nowPlaying.id,
         listenedSec: Math.floor(listenedSec),
         playedAt: new Date(),
-        playbackContextType: playbackContext?.type,
-        playbackContextId: playbackContext?.contextId,
+        sourceType: playbackContext!.type,
+        sourceId: playbackContext?.contextId ?? null,
+        snapshotId: playbackContext?.snapshotId,
       });
     }
   }, [nowPlaying?.id, listenedSec, durationSec]);

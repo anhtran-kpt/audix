@@ -3,15 +3,21 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
-import { useNowPlayingId } from "@/hooks/use-audio-player";
+import { useIsPlaying, useNowPlayingId } from "@/hooks/use-audio-player";
 import { useRecentTracks, useTrack } from "@/hooks/api/use-tracks";
 import UpNextList from "./up-next-list";
+import { PauseIcon, PlayIcon } from "lucide-react";
+import { IconButton } from "../ui/icon-button";
+import { useAudioStore } from "@/stores/use-audio-store";
+import { useShallow } from "zustand/react/shallow";
 
 export default function QueueView() {
   const nowPlayingId = useNowPlayingId();
-  const { data: currentTrack } = useTrack(nowPlayingId);
+  const isPlaying = useIsPlaying();
 
+  const { data: currentTrack } = useTrack(nowPlayingId);
   const { data: recentTracks } = useRecentTracks();
+  const togglePlay = useAudioStore(useShallow((state) => state.togglePlay));
 
   if (!currentTrack) {
     return null;
@@ -27,7 +33,19 @@ export default function QueueView() {
         <ScrollArea className="min-h-0 size-full">
           <div className="flex flex-col gap-2">
             <p className="font-semibold">Now Playing</p>
-            <TrackItem track={currentTrack} />
+            <TrackItem
+              track={currentTrack}
+              playButton={
+                <IconButton
+                  aria-pressed={isPlaying}
+                  icon={isPlaying ? PauseIcon : PlayIcon}
+                  size="sm"
+                  onClick={togglePlay}
+                  iconClassName="fill-foreground stroke-0"
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
+                />
+              }
+            />
           </div>
           <div>
             <p className="font-semibold">Next up</p>
