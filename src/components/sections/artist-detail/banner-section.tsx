@@ -3,38 +3,29 @@
 import { BadgeCheckIcon, EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
-import { TFullArtist } from "@/types";
 import { ArtistImage } from "@/components/ui/artist-image";
 import { Badge } from "@/components/ui/badge";
 import tinycolor from "tinycolor2";
-import PlayButton from "@/components/ui/play-button";
 import { IconButton } from "@/components/ui/icon-button";
 import { FollowButton } from "@/components/features/follow-button";
-import pluralize from "pluralize";
 import { ContextPlayButton } from "@/components/features/context-play-button";
 import { TrackRef } from "@/stores/use-audio-store";
-
-interface FollowButtonProps {
-  artistId: string;
-  initialFollowing: boolean;
-  initialCount: number;
-}
+import { FollowersBadge } from "@/components/features/follow-badge";
+import { FullArtist } from "@/contracts/artist";
+import { zCuidType } from "@/contracts/common";
 
 type BannerSectionProps = Pick<
-  TFullArtist,
-  "imageId" | "isVerified" | "name" | "genres"
-> &
-  FollowButtonProps;
+  FullArtist,
+  "name" | "imageId" | "genres" | "isVerified"
+> & { trackRefs: TrackRef[] } & { artistId: zCuidType };
 
 export const BannerSection = ({
   imageId,
   isVerified,
   name,
   genres,
-  artistId,
-  initialFollowing,
-  initialCount,
   trackRefs,
+  artistId,
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
@@ -71,11 +62,9 @@ export const BannerSection = ({
               </div>
             )}
             <p className="font-extrabold text-6xl mt-1 mb-3">{name}</p>
-            <p>
-              {initialCount} {pluralize("followers", initialCount)}
-            </p>
+            <FollowersBadge artistId={artistId} />
             <div className="space-x-2">
-              {genres.map(({ genre }) => (
+              {genres.map((genre) => (
                 <Badge
                   key={genre.name}
                   style={{ backgroundColor: genre.color }}
@@ -101,11 +90,7 @@ export const BannerSection = ({
             </>
           }
         />
-        <FollowButton
-          artistId={artistId}
-          initialFollowing={initialFollowing}
-          initialCount={initialCount}
-        />
+        <FollowButton artistId={artistId} />
         <IconButton
           icon={EllipsisIcon}
           size="xl"

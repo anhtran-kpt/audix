@@ -46,7 +46,7 @@ export const FullTrackSchema = TrackBaseSchema.extend({
       name: z.string().min(1),
       order: z.number().int().nonnegative(),
       role: CreditRoleSchema,
-      details: z.string().nullish(),
+      details: z.string().nullable(),
       artist: z.object({
         id: zCuid,
         name: z.string().min(1),

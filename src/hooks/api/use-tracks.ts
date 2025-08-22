@@ -1,5 +1,5 @@
+import { FullTrack } from "@/contracts/track";
 import { getApi, postApi } from "@/lib/http/request";
-import { FullTrack } from "@/server/modules/track/contracts";
 import { useQuery } from "@tanstack/react-query";
 
 export const useTrack = (trackId?: string) => {

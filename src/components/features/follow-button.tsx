@@ -1,57 +1,31 @@
 "use client";
 
 import { Button } from "../ui/button";
-import { useState, useTransition } from "react";
-import { useSession } from "next-auth/react";
-import { setFollowAction } from "@/features/artist/actions/set-follow.action";
 import { Loader2Icon } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { zCuidType } from "@/contracts/common";
+import { followStatusOptions } from "@/react-query/query-options/follow";
+import { useToggleFollow } from "@/hooks/use-toggle-follow";
 
-interface FollowButtonProps {
-  artistId: string;
-  initialFollowing: boolean;
-  initialCount: number;
-}
+export const FollowButton = ({ artistId }: { artistId: zCuidType }) => {
+  const { data: followStatus } = useQuery(followStatusOptions(artistId));
+  const toggle = useToggleFollow(artistId);
 
-export const FollowButton = ({
-  artistId,
-  initialFollowing,
-  initialCount,
-}: FollowButtonProps) => {
-  const { data: session } = useSession();
-  const [isPending, startTransition] = useTransition();
-  const [following, setFollowing] = useState(initialFollowing);
-  const [_, setCount] = useState(initialCount);
-
-  const toggle = () => {
-    const next = !following;
-    setCount((c) => c + (next ? 1 : -1));
-
-    setFollowing(next);
-
-    startTransition(async () => {
-      const res = await setFollowAction({ artistId, follow: next });
-      if (!res.ok) {
-        setFollowing(!next);
-        setCount((c) => c + (next ? -1 : 1));
-      }
-    });
-  };
-
-  if (!session?.user.id) {
-    return null;
-  }
+  if (!followStatus) return null;
 
   return (
     <Button
       className="rounded-full"
-      aria-pressed={following}
+      aria-pressed={followStatus.isFollowing}
       variant="outline"
-      onClick={toggle}
-      disabled={isPending}
+      onClick={() =>
+        toggle.mutate({ nextIsFollowing: !followStatus.isFollowing })
+      }
+      disabled={toggle.isPending}
     >
-      {isPending ? (
+      {toggle.isPending ? (
         <Loader2Icon className="animate-spin" />
-      ) : following ? (
+      ) : followStatus.isFollowing ? (
         "Following"
       ) : (
         "Follow"

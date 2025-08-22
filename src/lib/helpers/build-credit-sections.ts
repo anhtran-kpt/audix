@@ -3,7 +3,7 @@ import {
   ROLE_META,
   type CreditGroupId,
 } from "@/lib/constants/credit-role-meta";
-import { TCredit, type TA } from "@/types";
+import { Credit, type TA } from "@/types/credit";
 import { norm } from "./norm";
 
 export type CreditSection = {
@@ -40,7 +40,7 @@ const MAIN_BADGE_WEIGHT = 0,
 
 export function buildCreditSections(input: {
   artists: TA[];
-  credits: TCredit[];
+  credits: Credit[];
 }): CreditSection[] {
   const sections: Record<CreditGroupId, CreditSection> = Object.fromEntries(
     SECTION_ORDER.map((id) => [
@@ -51,7 +51,7 @@ export function buildCreditSections(input: {
 
   // Headline "Performed by" from TrackArtist (badges + order/weight)
   for (const a of input.artists) {
-    const key = `a:${a.artistId}`;
+    const key = `a:${a.artist.id}`;
     const badge =
       a.role === "MAIN_ARTIST"
         ? "Primary"
@@ -67,7 +67,7 @@ export function buildCreditSections(input: {
 
     pushPerson(sections.PERFORMERS, {
       key,
-      artistId: a.artistId,
+      artistId: a.artist.id,
       displayName: a.artist.name,
       artist: a.artist,
       badges: [badge],
@@ -86,11 +86,11 @@ export function buildCreditSections(input: {
     };
     const sec = sections[meta.group];
 
-    const key = c.artistId ? `a:${c.artistId}` : `n:${norm(c.name)}`;
+    const key = c.artist?.id ? `a:${c.artist.id}` : `n:${norm(c.name)}`;
     const displayName = c.artist?.name ?? c.name;
     const person = getOrCreatePerson(sec, {
       key,
-      artistId: c.artistId ?? null,
+      artistId: c.artist?.id ?? null,
       displayName,
       artist: c.artist ?? null,
     });

@@ -16,9 +16,9 @@ import { ScrollArea } from "../ui/scroll-area";
 import CreditDialog from "./credit-dialog";
 import { CldImage } from "next-cloudinary";
 import { cn } from "@/lib/utils";
-import pluralize from "pluralize";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { useTrack } from "@/hooks/api/use-tracks";
+import { FollowersBadge } from "./follow-badge";
 
 export default function NowPlayingView() {
   const close = useRightPanel((s) => s.close);
@@ -35,6 +35,8 @@ export default function NowPlayingView() {
     artists: currentTrack.artists,
     credits: currentTrack.credits,
   });
+
+  console.log(creditByPerson);
 
   return (
     <>
@@ -140,10 +142,7 @@ export default function NowPlayingView() {
                 </NavLink>
               </div>
               <div className="flex items-center gap-4 justify-between">
-                <span className="text-muted-foreground">
-                  {currentTrack.album._count.likedBy}{" "}
-                  {pluralize("followers", currentTrack.album._count.likedBy)}
-                </span>
+                <FollowersBadge artistId={currentTrack.album.artist.id} />
                 <FollowButton artistId={currentTrack.album.artist.id} />
               </div>
               <p className="text-[calc(13rem/16)] text-muted-foreground line-clamp-3">

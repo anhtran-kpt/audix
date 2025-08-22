@@ -1,5 +1,5 @@
 import { ROLE_META } from "../constants/credit-role-meta";
-import { TCredit, type TA } from "@/types";
+import { Credit, type TA } from "@/types/credit";
 import { norm } from "./norm";
 
 type HeadlineRole = "MAIN_ARTIST" | "FEATURED_ARTIST" | "REMIX_ARTIST";
@@ -26,7 +26,7 @@ const ARTIST_ROLE_META: Record<
 
 export function buildCreditsByPerson(input: {
   artists: TA[];
-  credits: TCredit[];
+  credits: Credit[];
 }): PersonCredits[] {
   const people = new Map<string, PersonCredits>();
 
@@ -53,7 +53,7 @@ export function buildCreditsByPerson(input: {
   // 1) Nạp từ TrackArtist → thêm badge/label headline vào roles
   for (const a of input.artists) {
     const meta = ARTIST_ROLE_META[a.role];
-    const key = `a:${a.artistId}`;
+    const key = `a:${a.artist.id}`;
     const person = getOrCreate(key, a.artist.name, a.artist);
     person.roles.push({ label: meta.label });
     person._minOrder = Math.min(person._minOrder, a.order);
@@ -68,7 +68,7 @@ export function buildCreditsByPerson(input: {
     const m = ROLE_META[c.role] ?? { label: c.role, weight: 999 };
     let label = m.label ?? c.role;
 
-    const key = c.artistId ? `a:${c.artistId}` : `n:${norm(c.name)}`;
+    const key = c.artist?.id ? `a:${c.artist.id}` : `n:${norm(c.name)}`;
     const displayName = c.artist?.name ?? c.name;
     const person = getOrCreate(key, displayName, c.artist ?? null);
 

@@ -14,7 +14,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import RightPanel from "@/components/features/right-panel";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { createQueryClient } from "@/react-query/queries/query-client";
 import { getSidebarArtists } from "@/server/modules/artist/services";
 import { getSidebarPlaylists } from "@/server/modules/playlist/services";
 
@@ -34,9 +33,7 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(authOptions);
 
-  const userId = session!.user.id;
-
-  const qc = createQueryClient();
+  const userId = session?.user.id;
 
   const [artists, playlists] = await Promise.all([
     getSidebarArtists(userId!),

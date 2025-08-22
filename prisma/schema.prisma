@@ -39,7 +39,7 @@ model User {
   likedTracks    UserLikedTrack[]
   likedAlbums    UserLikedAlbum[]
   likedPlaylists UserLikedPlaylist[]
-  likedArtists   UserLikedArtist[]
+  likedArtists   UserFollowedArtist[]
 
   // Listening history & behavior
   playHistory   PlayHistory[]
@@ -134,23 +134,23 @@ enum SubscriptionStatus {
 // ================================
 
 model Artist {
-  id               String   @id @default(cuid())
-  name             String
-  slug             String   @unique
-  bio              String?  @db.Text
-  imageId          String
-  bannerId         String
-  isVerified       Boolean  @default(false)
-  monthlyListeners Int      @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id             String   @id @default(cuid())
+  name           String
+  slug           String   @unique
+  bio            String?  @db.Text
+  imageId        String
+  bannerId       String
+  isVerified     Boolean  @default(false)
+  followersCount Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // Relationships
-  albums  Album[]
-  tracks  TrackArtist[]
-  genres  ArtistGenre[]
-  likedBy UserLikedArtist[]
-  credits TrackCredit[]
+  albums     Album[]
+  tracks     TrackArtist[]
+  genres     ArtistGenre[]
+  followedBy UserFollowedArtist[]
+  credits    TrackCredit[]
 
   @@map("artists")
 }
@@ -307,7 +307,6 @@ enum CreditRole {
 
   // Other Roles
   ARRANGER
-  CONDUCTOR
   PROGRAMMER
   ADDITIONAL_PRODUCTION
 
@@ -418,7 +417,7 @@ model UserLikedAlbum {
   @@map("user_liked_albums")
 }
 
-model UserLikedArtist {
+model UserFollowedArtist {
   userId   String
   artistId String
   likedAt  DateTime @default(now())

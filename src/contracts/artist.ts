@@ -9,7 +9,7 @@ export const ArtistBaseSchema = z.object({
   imageId: zPublicId,
   bannerId: zPublicId,
   isVerified: z.boolean().optional(),
-  monthlyListeners: z.number().int().nonnegative(),
+  followersCount: z.number().int().nonnegative(),
   ...zTimeStamps,
 });
 
@@ -28,13 +28,13 @@ export const FullArtistSchema = ArtistBaseSchema.extend({
       likedBy: z.number().int().nonnegative(),
     }),
   }),
-  artists: z.array(
-    z.object({
-      role: ArtistRoleSchema,
-      order: z.number().int().nonnegative(),
-      artist: z.object({ id: zCuid, name: z.string().min(1) }),
+  genres: z
+    .object({
+      id: zCuid,
+      name: z.string().min(1),
+      color: z.string().min(1),
     })
-  ),
+    .array(),
   credits: z.array(
     z.object({
       id: zCuid,
@@ -56,6 +56,13 @@ export const SidebarArtistSchema = ArtistBaseSchema.pick({
   imageId: true,
 });
 
+export const FollowStatusSchema = ArtistBaseSchema.pick({
+  followersCount: true,
+}).extend({
+  isFollowing: z.boolean(),
+});
+
 export type SidebarArtist = z.infer<typeof SidebarArtistSchema>;
 export type ArtistBase = z.infer<typeof ArtistBaseSchema>;
 export type FullArtist = z.infer<typeof FullArtistSchema>;
+export type FollowStatus = z.infer<typeof FollowStatusSchema>;

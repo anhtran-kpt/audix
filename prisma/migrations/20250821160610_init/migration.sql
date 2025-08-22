@@ -93,7 +93,7 @@ CREATE TABLE "public"."artists" (
     "imageId" TEXT NOT NULL,
     "bannerId" TEXT NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
-    "monthlyListeners" INTEGER NOT NULL DEFAULT 0,
+    "followersCount" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
