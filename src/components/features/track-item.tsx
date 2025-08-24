@@ -1,5 +1,5 @@
 import { ItemTitle } from "../ui/item-title";
-import { useAudioPlayer, useNowPlayingId } from "@/hooks/use-audio-player";
+import { useAudioPlayer, usenowPlayingRefId } from "@/hooks/use-audio-player";
 import { NavLink } from "../ui/nav-link";
 import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon, PauseIcon, PlayIcon } from "lucide-react";
@@ -14,7 +14,7 @@ type TrackItemProps = {
 };
 
 export default function TrackItem({ track, playButton }: TrackItemProps) {
-  const nowPlayingId = useNowPlayingId();
+  const nowPlayingRefId = usenowPlayingRefId();
 
   return (
     <li className="flex items-center justify-between gap-4 group hover:bg-muted py-2 px-3 rounded-sm">
@@ -41,7 +41,10 @@ export default function TrackItem({ track, playButton }: TrackItemProps) {
           /> */}
         </div>
         <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-          <ItemTitle title={track.title} isActive={nowPlayingId === track.id} />
+          <ItemTitle
+            title={track.title}
+            isActive={nowPlayingRefId === track.id}
+          />
           <div className="flex items-center text-sm gap-x-1 text-muted-foreground truncate">
             {track.isExplicit && <Explicit />}
             {track.artists.map(({ artist }, index, originalArr) => (

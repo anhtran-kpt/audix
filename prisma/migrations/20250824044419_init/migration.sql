@@ -1,7 +1,4 @@
 -- CreateEnum
-CREATE TYPE "public"."Gender" AS ENUM ('MALE', 'FEMALE', 'OTHER', 'PREFER_NOT_TO_SAY');
-
--- CreateEnum
 CREATE TYPE "public"."SubscriptionType" AS ENUM ('FREE', 'PREMIUM');
 
 -- CreateEnum
@@ -15,6 +12,12 @@ CREATE TYPE "public"."ArtistRole" AS ENUM ('MAIN_ARTIST', 'FEATURED_ARTIST', 'RE
 
 -- CreateEnum
 CREATE TYPE "public"."CreditRole" AS ENUM ('LEAD_VOCALS', 'BACKING_VOCALS', 'RAP', 'SONGWRITER', 'COMPOSER', 'LYRICIST', 'PRODUCER', 'EXECUTIVE_PRODUCER', 'CO_PRODUCER', 'VOCAL_PRODUCER', 'MIXING_ENGINEER', 'MASTERING_ENGINEER', 'RECORDING_ENGINEER', 'ASSISTANT_ENGINEER', 'GUITAR', 'BASS', 'DRUMS', 'PIANO', 'KEYBOARD', 'VIOLIN', 'SAXOPHONE', 'TRUMPET', 'OTHER_INSTRUMENT', 'ARRANGER', 'PROGRAMMER', 'ADDITIONAL_PRODUCTION', 'PUBLISHER', 'RECORD_LABEL', 'MANAGEMENT');
+
+-- CreateEnum
+CREATE TYPE "public"."RepeatMode" AS ENUM ('OFF', 'ONE', 'ALL');
+
+-- CreateEnum
+CREATE TYPE "public"."QueueItemKind" AS ENUM ('NEXT', 'LATER');
 
 -- CreateEnum
 CREATE TYPE "public"."PlaybackContextType" AS ENUM ('PLAYLIST', 'ALBUM', 'ARTIST', 'LIKED', 'QUEUE', 'NEW_RELEASES', 'SEARCH');
@@ -269,26 +272,54 @@ CREATE TABLE "public"."user_follows" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."PlaybackContextSnapshot" (
+CREATE TABLE "public"."devices" (
     "id" TEXT NOT NULL,
+    "userAgent" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "lastSeenAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "devices_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."playback_sessions" (
+    "id" TEXT NOT NULL,
+    "deviceId" TEXT NOT NULL,
+    "userId" TEXT,
+    "isShuffled" BOOLEAN NOT NULL DEFAULT false,
+    "repeatMode" "public"."RepeatMode" NOT NULL DEFAULT 'OFF',
+    "volume" INTEGER NOT NULL DEFAULT 80,
+    "isMuted" BOOLEAN NOT NULL DEFAULT false,
+    "snapshotId" TEXT,
+    "contextIndex" INTEGER NOT NULL DEFAULT 0,
+    "version" BIGINT NOT NULL DEFAULT 0,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "playback_sessions_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."playback_snapshots" (
+    "id" TEXT NOT NULL,
+    "deviceId" TEXT NOT NULL,
+    "userId" TEXT,
     "type" "public"."PlaybackContextType" NOT NULL,
     "contextId" TEXT,
-    "userId" TEXT,
     "name" TEXT,
     "hash" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "PlaybackContextSnapshot_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "playback_snapshots_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."PlaybackContextSnapshotItem" (
+CREATE TABLE "public"."playback_snapshot_tracks" (
     "snapshotId" TEXT NOT NULL,
-    "position" INTEGER NOT NULL,
+    "index" INTEGER NOT NULL,
     "trackId" TEXT NOT NULL,
-    "audioId" TEXT NOT NULL,
 
-    CONSTRAINT "PlaybackContextSnapshotItem_pkey" PRIMARY KEY ("snapshotId","position")
+    CONSTRAINT "playback_snapshot_tracks_pkey" PRIMARY KEY ("snapshotId","index")
 );
 
 -- CreateTable
@@ -296,13 +327,26 @@ CREATE TABLE "public"."play_history" (
     "id" TEXT NOT NULL,
     "playedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "listenedSec" INTEGER NOT NULL,
-    "sourceType" "public"."PlaybackContextType" NOT NULL,
-    "sourceId" TEXT,
-    "snapshotId" TEXT,
-    "userId" TEXT NOT NULL,
+    "playbackContextType" "public"."PlaybackContextType" NOT NULL,
+    "playbackContextId" TEXT,
+    "userId" TEXT,
+    "deviceId" TEXT NOT NULL,
     "trackId" TEXT NOT NULL,
 
     CONSTRAINT "play_history_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."playback_queue_items" (
+    "id" TEXT NOT NULL,
+    "deviceId" TEXT NOT NULL,
+    "userId" TEXT,
+    "kind" "public"."QueueItemKind" NOT NULL,
+    "position" INTEGER NOT NULL,
+    "trackId" TEXT NOT NULL,
+    "addedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "playback_queue_items_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -328,17 +372,6 @@ CREATE TABLE "public"."user_recommendations" (
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "user_recommendations_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "public"."user_queue" (
-    "id" TEXT NOT NULL,
-    "position" INTEGER NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userId" TEXT NOT NULL,
-    "trackId" TEXT NOT NULL,
-
-    CONSTRAINT "user_queue_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -417,34 +450,52 @@ CREATE INDEX "track_credits_trackId_artistId_idx" ON "public"."track_credits"("t
 CREATE UNIQUE INDEX "playlist_items_playlistId_trackId_key" ON "public"."playlist_items"("playlistId", "trackId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "PlaybackContextSnapshot_hash_key" ON "public"."PlaybackContextSnapshot"("hash");
+CREATE UNIQUE INDEX "playback_sessions_snapshotId_key" ON "public"."playback_sessions"("snapshotId");
 
 -- CreateIndex
-CREATE INDEX "PlaybackContextSnapshot_type_contextId_userId_idx" ON "public"."PlaybackContextSnapshot"("type", "contextId", "userId");
+CREATE INDEX "playback_sessions_userId_updatedAt_idx" ON "public"."playback_sessions"("userId", "updatedAt");
 
 -- CreateIndex
-CREATE INDEX "PlaybackContextSnapshotItem_trackId_idx" ON "public"."PlaybackContextSnapshotItem"("trackId");
+CREATE UNIQUE INDEX "playback_sessions_deviceId_key" ON "public"."playback_sessions"("deviceId");
 
 -- CreateIndex
-CREATE INDEX "play_history_userId_sourceType_sourceId_playedAt_idx" ON "public"."play_history"("userId", "sourceType", "sourceId", "playedAt");
+CREATE INDEX "playback_snapshots_deviceId_createdAt_idx" ON "public"."playback_snapshots"("deviceId", "createdAt");
+
+-- CreateIndex
+CREATE INDEX "playback_snapshots_userId_createdAt_idx" ON "public"."playback_snapshots"("userId", "createdAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "playback_snapshots_deviceId_hash_key" ON "public"."playback_snapshots"("deviceId", "hash");
+
+-- CreateIndex
+CREATE INDEX "playback_snapshot_tracks_snapshotId_trackId_idx" ON "public"."playback_snapshot_tracks"("snapshotId", "trackId");
+
+-- CreateIndex
+CREATE INDEX "play_history_userId_playbackContextType_playbackContextId_p_idx" ON "public"."play_history"("userId", "playbackContextType", "playbackContextId", "playedAt");
 
 -- CreateIndex
 CREATE INDEX "play_history_userId_playedAt_idx" ON "public"."play_history"("userId", "playedAt");
 
 -- CreateIndex
+CREATE INDEX "play_history_deviceId_playedAt_idx" ON "public"."play_history"("deviceId", "playedAt");
+
+-- CreateIndex
 CREATE INDEX "play_history_trackId_playedAt_idx" ON "public"."play_history"("trackId", "playedAt");
+
+-- CreateIndex
+CREATE INDEX "playback_queue_items_deviceId_kind_addedAt_idx" ON "public"."playback_queue_items"("deviceId", "kind", "addedAt");
+
+-- CreateIndex
+CREATE INDEX "playback_queue_items_userId_addedAt_idx" ON "public"."playback_queue_items"("userId", "addedAt");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "playback_queue_items_deviceId_kind_position_key" ON "public"."playback_queue_items"("deviceId", "kind", "position");
 
 -- CreateIndex
 CREATE INDEX "search_history_userId_searchedAt_idx" ON "public"."search_history"("userId", "searchedAt");
 
 -- CreateIndex
 CREATE INDEX "user_recommendations_userId_type_score_idx" ON "public"."user_recommendations"("userId", "type", "score");
-
--- CreateIndex
-CREATE INDEX "user_queue_userId_position_idx" ON "public"."user_queue"("userId", "position");
-
--- CreateIndex
-CREATE UNIQUE INDEX "user_queue_userId_position_key" ON "public"."user_queue"("userId", "position");
 
 -- AddForeignKey
 ALTER TABLE "public"."accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -531,13 +582,43 @@ ALTER TABLE "public"."user_follows" ADD CONSTRAINT "user_follows_followerId_fkey
 ALTER TABLE "public"."user_follows" ADD CONSTRAINT "user_follows_followingId_fkey" FOREIGN KEY ("followingId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."PlaybackContextSnapshotItem" ADD CONSTRAINT "PlaybackContextSnapshotItem_snapshotId_fkey" FOREIGN KEY ("snapshotId") REFERENCES "public"."PlaybackContextSnapshot"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."playback_sessions" ADD CONSTRAINT "playback_sessions_deviceId_fkey" FOREIGN KEY ("deviceId") REFERENCES "public"."devices"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."playback_sessions" ADD CONSTRAINT "playback_sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."playback_sessions" ADD CONSTRAINT "playback_sessions_snapshotId_fkey" FOREIGN KEY ("snapshotId") REFERENCES "public"."playback_snapshots"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."playback_snapshots" ADD CONSTRAINT "playback_snapshots_deviceId_fkey" FOREIGN KEY ("deviceId") REFERENCES "public"."devices"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."playback_snapshots" ADD CONSTRAINT "playback_snapshots_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."playback_snapshot_tracks" ADD CONSTRAINT "playback_snapshot_tracks_snapshotId_fkey" FOREIGN KEY ("snapshotId") REFERENCES "public"."playback_snapshots"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."playback_snapshot_tracks" ADD CONSTRAINT "playback_snapshot_tracks_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_deviceId_fkey" FOREIGN KEY ("deviceId") REFERENCES "public"."devices"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."playback_queue_items" ADD CONSTRAINT "playback_queue_items_deviceId_fkey" FOREIGN KEY ("deviceId") REFERENCES "public"."devices"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."playback_queue_items" ADD CONSTRAINT "playback_queue_items_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."playback_queue_items" ADD CONSTRAINT "playback_queue_items_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."search_history" ADD CONSTRAINT "search_history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

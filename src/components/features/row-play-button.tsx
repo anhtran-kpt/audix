@@ -3,7 +3,7 @@
 import { PlaybackContextType } from "@/app/generated/prisma";
 import {
   useIsPlaying,
-  useNowPlayingId,
+  usenowPlayingRefId,
   usePlaybackContext,
 } from "@/hooks/use-audio-player";
 import { useAudioStore } from "@/stores/use-audio-store";
@@ -26,12 +26,12 @@ export function RowPlayButton({
   buttonType = "inside",
 }: RowPlayButtonProps) {
   const isPlaying = useIsPlaying();
-  const nowPlayingId = useNowPlayingId();
+  const nowPlayingRefId = usenowPlayingRefId();
   const currentCtx = usePlaybackContext();
   const isSameContext =
     currentCtx?.type === context.type &&
     currentCtx?.contextId === context.contextId;
-  const isThisTrack = isSameContext && nowPlayingId === trackId;
+  const isThisTrack = isSameContext && nowPlayingRefId === trackId;
 
   const { startFromContext, clearExplicit, play, pause } = useAudioStore(
     useShallow((s) => ({

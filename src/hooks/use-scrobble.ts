@@ -10,10 +10,10 @@ import { RecordPlayInput } from "@/contracts/track";
 export function useScrobble() {
   const { data } = useSession();
 
-  const { nowPlaying, listenedSec, durationSec, playbackContext } =
+  const { nowPlayingRef, listenedSec, durationSec, playbackContext } =
     useAudioStore(
       useShallow((s) => ({
-        nowPlaying: s.nowPlaying,
+        nowPlayingRef: s.nowPlayingRef,
         listenedSec: s.currentTime,
         durationSec: s.duration,
         playbackContext: s.playbackContext,
@@ -24,21 +24,21 @@ export function useScrobble() {
 
   useEffect(() => {
     scrobbledRef.current = null;
-  }, [nowPlaying?.id]);
+  }, [nowPlayingRef?.id]);
 
   useEffect(() => {
-    if (!nowPlaying?.id || !durationSec) return;
-    if (scrobbledRef.current === nowPlaying.id) return;
+    if (!nowPlayingRef?.id || !durationSec) return;
+    if (scrobbledRef.current === nowPlayingRef.id) return;
 
     const thresholdA = 30;
     const thresholdB = durationSec * 0.5;
     const threshold = Math.min(thresholdA, thresholdB);
 
     if (listenedSec >= threshold) {
-      scrobbledRef.current = nowPlaying.id;
+      scrobbledRef.current = nowPlayingRef.id;
       void postApi<void, RecordPlayInput>("/plays", {
         userId: data!.user.id,
-        trackId: nowPlaying.id,
+        trackId: nowPlayingRef.id,
         listenedSec: Math.floor(listenedSec),
         playedAt: new Date(),
         sourceType: playbackContext!.type,
@@ -46,5 +46,5 @@ export function useScrobble() {
         snapshotId: playbackContext?.snapshotId,
       });
     }
-  }, [nowPlaying?.id, listenedSec, durationSec]);
+  }, [nowPlayingRef?.id, listenedSec, durationSec]);
 }

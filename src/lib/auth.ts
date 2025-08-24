@@ -45,3 +45,8 @@ export async function getUserIdOrThrow() {
   if (!id) throw new (class extends Error {})("UNAUTHORIZED");
   return id;
 }
+
+export async function getUserIdOrNull() {
+  const s = await getServerSession(authOptions);
+  return s?.user?.id ?? null;
+}

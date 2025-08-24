@@ -1,140 +1,205 @@
 import { zCuidType } from "@/contracts/common";
-import {
-  ResolveHistoryInput,
-  SnapshotInput,
-  TrackRef,
-} from "@/contracts/playback";
-import { getUserIdOrThrow } from "@/lib/auth";
+import { PlaybackSessionInput, SnapshotInput } from "@/contracts/playback";
+import { getUserIdOrNull } from "@/lib/auth";
 import db from "@/lib/db";
-import { createHash } from "crypto";
+import { AppError } from "@/lib/errors";
+import { ensureDevice } from "@/server/ensure-device";
+import {
+  buildTrackIdsForContext,
+  createOrReuseSnapshot,
+  getHydratePayloadForDevice,
+} from "@/server/playback-helpers";
+import { resolveTrackRefsOrdered } from "@/server/track-refs";
 
-export const snapshot = async (userId: zCuidType, input: SnapshotInput) => {
-  const { type, contextId } = input;
+export const snapshot = async (input: SnapshotInput) => {
+  const userId = await getUserIdOrNull();
+  const deviceId = await ensureDevice();
 
-  let name: string | undefined;
-  let refs: TrackRef[] = [];
+  const contextId =
+    input.type === "TRACK"
+      ? input.contextId ?? input.clickedTrackId
+      : input.contextId;
 
-  if (type === "ALBUM") {
-    const album = await db.album.findUniqueOrThrow({
-      where: { id: contextId! },
-      select: {
-        title: true,
-        tracks: {
-          orderBy: { trackNumber: "asc" },
-          select: { id: true, audioId: true },
-        },
-      },
-    });
-
-    name = album.title;
-    refs = album.tracks.map((t) => ({ id: t.id, audioId: t.audioId }));
-  } else if (type === "PLAYLIST") {
-    const playlist = await db.playlist.findUniqueOrThrow({
-      where: { id: contextId! },
-      select: {
-        title: true,
-        items: {
-          orderBy: { position: "asc" },
-          select: { track: { select: { id: true, audioId: true } } },
-        },
-      },
-    });
-    name = playlist.title;
-    refs = playlist.items.map((item) => ({
-      id: item.track.id,
-      audioId: item.track.audioId,
-    }));
-  } else if (type === "LIKED") {
-    const liked = await db.userLikedTrack.findMany({
-      where: { userId },
-      orderBy: { likedAt: "desc" },
-      select: { track: { select: { id: true, audioId: true } } },
-      take: 1000,
-    });
-    name = "Liked Songs";
-    refs = liked.map((i) => ({ id: i.track.id, audioId: i.track.audioId }));
-  } else if (type === "ARTIST") {
-    const rows = await db.track.findMany({
-      where: {
-        artists: {
-          some: {
-            artistId: contextId!,
-          },
-        },
-      },
-      orderBy: { playCount: "desc" },
-      select: { id: true, audioId: true },
-      take: 10,
-    });
-    const artist = await db.artist.findUnique({
-      where: { id: contextId! },
-      select: { name: true },
-    });
-    name = artist?.name;
-    refs = rows;
-  } else {
-    return { snapshotId: null, refs: [] };
+  if (!contextId) {
+    throw new AppError("NOT_FOUND", "contextId missing");
   }
 
-  const trackIds = refs.map((r) => r.id);
-  const raw = JSON.stringify({
-    type,
-    contextId: contextId ?? null,
-    userId: type === "LIKED" ? userId : null,
+  const trackIds = await buildTrackIdsForContext(input.type, contextId);
+
+  if (trackIds.length === 0) {
+    throw new AppError("NOT_FOUND", "No tracks in context");
+  }
+
+  const { snapshotId } = await createOrReuseSnapshot({
+    deviceId,
+    userId,
+    type: input.type,
+    contextId,
+    name: input.name ?? null,
     trackIds,
   });
-  const hash = createHash("sha256").update(raw).digest("hex");
 
-  let snap = await db.playbackContextSnapshot.findUnique({ where: { hash } });
+  const trackRefs = await resolveTrackRefsOrdered(trackIds);
+  const startIndex = input.clickedTrackId
+    ? Math.max(0, trackIds.indexOf(input.clickedTrackId))
+    : 0;
 
-  if (snap) {
-    return { snapshotId: snap.id, name, refs };
-  }
-
-  return await db.playbackContextSnapshot.create({
-    data: {
-      type,
-      contextId,
-      userId: type === "LIKED" ? userId : null,
-      name,
-      hash,
-      items: {
-        create: refs.map((r, i) => ({
-          position: i,
-          trackId: r.id,
-          audioId: r.audioId,
-        })),
-      },
+  const s = await db.playbackSession.upsert({
+    where: { deviceId },
+    update: {
+      userId,
+      snapshotId,
+      contextIndex: startIndex,
+      version: { increment: 1 },
     },
-    select: { id: true },
+    create: {
+      deviceId,
+      userId,
+      snapshotId,
+      contextIndex: startIndex,
+    },
+    select: { version: true },
   });
+
+  return {
+    type: input.type,
+    contextId,
+    name: input.name ?? null,
+    snapshotId,
+    trackRefs,
+    startIndex,
+    version: Number(s.version ?? BigInt(0)),
+  };
 };
 
-export const resolveHistory = async (input: ResolveHistoryInput) => {
-  const userId = await getUserIdOrThrow();
-  const { snapshotId, trackId, sourceType, sourceId } = input;
+export const getContextFromHistory = async (trackId: zCuidType) => {
+  const userId = await getUserIdOrNull();
+  const deviceId = await ensureDevice();
 
-  if (snapshotId) {
-    const snap = await db.playbackContextSnapshot.findUniqueOrThrow({
-      where: { id: snapshotId },
-      include: { items: { orderBy: { position: "asc" } } },
-    });
-    const refs = snap.items.map((i) => ({ id: i.trackId, audioId: i.audioId }));
-    const index = Math.max(
-      0,
-      refs.findIndex((r) => r.id === trackId)
-    );
+  const history = await db.playHistory.findFirst({
+    where: userId ? { userId, trackId } : { deviceId, trackId },
+    orderBy: { playedAt: "desc" },
+    select: {
+      playbackContextType: true,
+      playbackContextId: true,
+    },
+  });
 
-    return {
-      refs,
-      index,
-      meta: {
-        type: snap.type,
-        contextId: snap.contextId ?? undefined,
-        name: snap.name ?? undefined,
-        snapshotId: snap.id,
-      },
-    };
+  if (!history || !history.playbackContextType) {
+    return { found: false };
   }
-  return await snapshot(userId, { type: sourceType, contextId: sourceId });
+
+  const type = history.playbackContextType;
+  const contextId = history.playbackContextId ?? undefined;
+
+  if (!contextId) return { found: false };
+
+  const trackIds = await buildTrackIdsForContext(type, contextId);
+
+  if (trackIds.length === 0) return { found: false };
+
+  const { snapshotId } = await createOrReuseSnapshot({
+    deviceId,
+    userId,
+    type,
+    contextId,
+    name: null,
+    trackIds,
+  });
+
+  const trackRefs = await resolveTrackRefsOrdered(trackIds);
+  const startIndex = Math.max(0, trackIds.indexOf(trackId));
+
+  await db.playbackSession.upsert({
+    where: { deviceId },
+    update: {
+      userId,
+      snapshotId,
+      contextIndex: startIndex,
+      version: { increment: 1 },
+    },
+    create: {
+      deviceId,
+      userId,
+      snapshotId,
+      contextIndex: startIndex,
+    },
+  });
+
+  return {
+    found: true,
+    type,
+    contextId,
+    snapshotId,
+    trackRefs,
+    startIndex,
+  };
+};
+
+export const updateSession = async (input: PlaybackSessionInput) => {
+  const userId = await getUserIdOrNull();
+  const deviceId = await ensureDevice();
+
+  if (input.version != null) {
+    const current = await db.playbackSession.findUnique({
+      where: { deviceId },
+      select: { version: true },
+    });
+    const serverVer = Number(current?.version ?? BigInt(0));
+
+    if (serverVer !== input.version) {
+      throw new AppError("CONFLICT", "Version conflict");
+    }
+  }
+
+  const updated = await db.playbackSession.upsert({
+    where: { deviceId },
+    update: {
+      userId,
+      snapshotId: input.snapshotId ?? undefined,
+      contextIndex: input.contextIndex,
+      isShuffled: input.isShuffled,
+      repeatMode: input.repeatMode as any,
+      version: { increment: 1 as any },
+    },
+    create: {
+      deviceId,
+      userId,
+      snapshotId: input.snapshotId ?? null,
+      contextIndex: input.contextIndex,
+      isShuffled: input.isShuffled,
+      repeatMode: input.repeatMode as any,
+    },
+    select: { version: true },
+  });
+
+  return { version: Number(updated.version ?? BigInt(0)) };
+};
+
+export const mergeGuestSession = async (userId: zCuidType) => {
+  const deviceId = await ensureDevice();
+
+  await db.$transaction([
+    db.playbackSession.updateMany({
+      where: { deviceId, userId: null },
+      data: { userId },
+    }),
+    db.playbackQueueItem.updateMany({
+      where: { deviceId, userId: null },
+      data: { userId },
+    }),
+    db.playbackContextSnapshot.updateMany({
+      where: { deviceId, userId: null },
+      data: { userId },
+    }),
+    db.playHistory.updateMany({
+      where: { deviceId, userId: null },
+      data: { userId },
+    }),
+  ]);
+
+  // (Optional) If user had another session on another device, consider merge/replace session.
+
+  const payload = await getHydratePayloadForDevice(deviceId);
+  return payload ?? { empty: true };
 };

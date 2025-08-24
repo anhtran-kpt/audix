@@ -19,7 +19,7 @@ import ProgressBar from "./progress-bar";
 import {
   useAudioKeyboardShortcuts,
   useAudioPlayer,
-  useNowPlayingId,
+  usenowPlayingRefId,
 } from "@/hooks/use-audio-player";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { useScrobble } from "@/hooks/use-scrobble";
@@ -38,9 +38,9 @@ function AudioPlayer() {
     volume,
   } = useAudioPlayer();
 
-  const nowPlayingId = useNowPlayingId();
+  const nowPlayingRefId = usenowPlayingRefId();
 
-  const { data: currentTrack, isLoading, error } = useTrack(nowPlayingId);
+  const { data: currentTrack, isLoading, error } = useTrack(nowPlayingRefId);
 
   useAudioKeyboardShortcuts();
 

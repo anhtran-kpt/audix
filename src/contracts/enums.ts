@@ -1,18 +1,23 @@
 import { z } from "zod";
 import {
   AlbumType,
-  PlaybackContextType,
+  PlaybackContextType as PlaybackContextTypeEnum,
   ArtistRole,
   CreditRole,
   ChartType,
   SubscriptionType,
   SubscriptionStatus,
+  RepeatMode as RepeatModeEnum,
 } from "@/app/generated/prisma";
 
 export const AlbumTypeSchema = z.enum(AlbumType);
-export const PlaybackContextTypeSchema = z.enum(PlaybackContextType);
+export const PlaybackContextTypeSchema = z.enum(PlaybackContextTypeEnum);
 export const ArtistRoleSchema = z.enum(ArtistRole);
 export const CreditRoleSchema = z.enum(CreditRole);
 export const ChartTypeSchema = z.enum(ChartType);
 export const SubscriptionTypeSchema = z.enum(SubscriptionType);
 export const SubscriptionStatusSchema = z.enum(SubscriptionStatus);
+export const RepeatModeSchema = z.enum(RepeatModeEnum);
+
+export type PlaybackContextType = z.infer<typeof PlaybackContextTypeSchema>;
+export type RepeatMode = z.infer<typeof RepeatModeSchema>;

@@ -1,11 +1,11 @@
 "use client";
 
 import { PlaybackContextType } from "@/app/generated/prisma";
+import { TrackRef } from "@/contracts/playback";
 import { getAudioUrl } from "@/lib/helpers/get-audio-url";
 import {
   AudioStore,
   buildUpNextRefs,
-  TrackRef,
   useAudioStore,
 } from "@/stores/use-audio-store";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -28,10 +28,10 @@ export const selectUpNextRefs = (s: AudioStore) => buildUpNextRefs(s);
 export const selectHasNext = (s: AudioStore) => buildUpNextRefs(s).length > 0;
 export const selectHasPrev = (s: AudioStore) => s.history.length > 0;
 
-export const useNowPlayingRef = () => useAudioStore((s) => s.nowPlaying);
+export const usenowPlayingRefRef = () => useAudioStore((s) => s.nowPlayingRef);
 
-export const useNowPlayingId = () =>
-  useAudioStore(useShallow((s) => s.nowPlaying?.id));
+export const usenowPlayingRefId = () =>
+  useAudioStore(useShallow((s) => s.nowPlayingRef?.id));
 
 export const usePlaybackContext = () =>
   useAudioStore(useShallow((s) => s.playbackContext));
@@ -165,14 +165,14 @@ export function useAudioPlayer() {
     };
   }, []);
 
-  // Re-sync after hydrate (volume, src via nowPlaying.audioId, seek)
+  // Re-sync after hydrate (volume, src via nowPlayingRef.audioId, seek)
   useEffect(() => {
     const el = audioRef.current;
     if (!el || !hasHydrated) return;
     const s = useAudioStore.getState();
     el.volume = s.isMuted ? 0 : typeof s.volume === "number" ? s.volume : 0.8;
 
-    const ref = s.nowPlaying;
+    const ref = s.nowPlayingRef;
     if (ref) {
       const url = getAudioUrl(ref.audioId);
       if (!el.src || !el.src.includes(ref.audioId)) {

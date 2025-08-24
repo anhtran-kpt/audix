@@ -1,5 +1,5 @@
 import z from "zod";
-import { PlaybackContextTypeSchema } from "./enums";
+import { PlaybackContextTypeSchema, RepeatModeSchema } from "./enums";
 import { zCuid } from "./common";
 
 export const TrackRefSchema = z.object({
@@ -12,6 +12,8 @@ export type TrackRef = z.infer<typeof TrackRefSchema>;
 export const SnapshotInputSchema = z.object({
   type: PlaybackContextTypeSchema,
   contextId: z.string().optional(),
+  clickedTrackId: z.string().optional(),
+  name: z.string().optional(),
 });
 
 export const SnapshotOutputSchema = z.object({
@@ -20,25 +22,14 @@ export const SnapshotOutputSchema = z.object({
   refs: TrackRefSchema.array(),
 });
 
-export const ResolveHistoryInputSchema = z.object({
-  trackId: zCuid,
-  sourceType: PlaybackContextTypeSchema,
-  sourceId: zCuid.optional(),
+export const PlaybackSessionInputSchema = z.object({
+  version: z.number().int().nonnegative().optional(),
   snapshotId: z.string().optional(),
+  contextIndex: z.number().int().nonnegative(),
+  isShuffled: z.boolean(),
+  repeatMode: RepeatModeSchema,
 });
 
-export const ResolveHistoryOutputSchema = z.object({
-  refs: TrackRefSchema.array(),
-  index: z.number().int().nonnegative(),
-  meta: z.object({
-    type: PlaybackContextTypeSchema,
-    contextId: zCuid.optional(),
-    name: z.string().optional(),
-    snapshotId: z.string().optional(),
-  }),
-});
-
-export type ResolveHistoryInput = z.infer<typeof ResolveHistoryInputSchema>;
-export type ResolveHistoryOutput = z.infer<typeof ResolveHistoryOutputSchema>;
+export type PlaybackSessionInput = z.infer<typeof PlaybackSessionInputSchema>;
 export type SnapshotInput = z.infer<typeof SnapshotInputSchema>;
 export type SnapshotOutput = z.infer<typeof SnapshotOutputSchema>;

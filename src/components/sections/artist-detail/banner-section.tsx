@@ -9,10 +9,10 @@ import tinycolor from "tinycolor2";
 import { IconButton } from "@/components/ui/icon-button";
 import { FollowButton } from "@/components/features/follow-button";
 import { ContextPlayButton } from "@/components/features/context-play-button";
-import { TrackRef } from "@/stores/use-audio-store";
 import { FollowersBadge } from "@/components/features/follow-badge";
 import { FullArtist } from "@/contracts/artist";
 import { zCuidType } from "@/contracts/common";
+import { TrackRef } from "@/contracts/playback";
 
 type BannerSectionProps = Pick<
   FullArtist,

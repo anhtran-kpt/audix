@@ -3,9 +3,9 @@ import { makePOST } from "@/server/api/route-factory";
 import { snapshot } from "@/server/modules/playback/services";
 
 export const POST = makePOST({
-  auth: "required",
+  auth: "public",
   body: SnapshotInputSchema,
-  handler: async ({ userId, body }) => {
-    return await snapshot(userId!, body);
+  handler: async ({ body }) => {
+    return await snapshot(body);
   },
 });

@@ -9,7 +9,7 @@ import { formatDuration } from "@/lib/helpers/format-duration";
 import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
-import { useIsPlaying, useNowPlayingId } from "@/hooks/use-audio-player";
+import { useIsPlaying, usenowPlayingRefId } from "@/hooks/use-audio-player";
 import { useTrack } from "@/hooks/api/use-tracks";
 import { useMemo } from "react";
 import { RowPlayButton } from "./row-play-button";
@@ -25,8 +25,8 @@ export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {
   const gridClass =
     "grid w-full items-center grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]";
 
-  const nowPlayingId = useNowPlayingId();
-  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingId);
+  const nowPlayingRefId = usenowPlayingRefId();
+  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingRefId);
   const isPlaying = useIsPlaying();
   const trackRefs = useMemo(
     () => tracks.map((track) => ({ id: track.id, audioId: track.audioId })),

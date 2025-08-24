@@ -8,7 +8,10 @@ import {
   PlusCircleIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import { useNowPlayingId, usePlaybackContext } from "@/hooks/use-audio-player";
+import {
+  usenowPlayingRefId,
+  usePlaybackContext,
+} from "@/hooks/use-audio-player";
 import { NavLink } from "../ui/nav-link";
 import { FollowButton } from "./follow-button";
 import { buildCreditsByPerson } from "@/lib/helpers/build-credits-by-person";
@@ -20,12 +23,12 @@ import { useRightPanel } from "@/stores/use-right-panel";
 import { useTrack } from "@/hooks/api/use-tracks";
 import { FollowersBadge } from "./follow-badge";
 
-export default function NowPlayingView() {
+export default function nowPlayingRefView() {
   const close = useRightPanel((s) => s.close);
 
   const playbackContext = usePlaybackContext();
-  const nowPlayingId = useNowPlayingId();
-  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingId);
+  const nowPlayingRefId = usenowPlayingRefId();
+  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingRefId);
 
   if (!currentTrack) {
     return null;
