@@ -47,7 +47,7 @@ export function buildCreditSections(input: {
       id,
       { id, title: CREDIT_GROUP_TITLE[id], people: [] },
     ])
-  ) as any;
+  );
 
   // Headline "Performed by" from TrackArtist (badges + order/weight)
   for (const a of input.artists) {

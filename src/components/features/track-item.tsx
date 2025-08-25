@@ -1,8 +1,8 @@
 import { ItemTitle } from "../ui/item-title";
-import { useAudioPlayer, usenowPlayingRefId } from "@/hooks/use-audio-player";
+import { useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { NavLink } from "../ui/nav-link";
 import { IconButton } from "../ui/icon-button";
-import { EllipsisIcon, PauseIcon, PlayIcon } from "lucide-react";
+import { EllipsisIcon } from "lucide-react";
 import Explicit from "../ui/explicit";
 import { CldImage } from "next-cloudinary";
 import { FullTrack } from "@/contracts/track";
@@ -14,7 +14,7 @@ type TrackItemProps = {
 };
 
 export default function TrackItem({ track, playButton }: TrackItemProps) {
-  const nowPlayingRefId = usenowPlayingRefId();
+  const nowPlayingRefId = useNowPlayingRefId();
 
   return (
     <li className="flex items-center justify-between gap-4 group hover:bg-muted py-2 px-3 rounded-sm">

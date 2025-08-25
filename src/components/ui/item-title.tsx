@@ -1,6 +1,5 @@
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 export const ItemTitle = ({
@@ -21,7 +20,3 @@ export const ItemTitle = ({
     </p>
   );
 };
-
-// export const TitleSkeleton = () => {
-//   return <Skeleton className="h-4 w-32" />;
-// };

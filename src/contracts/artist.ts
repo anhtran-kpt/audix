@@ -1,6 +1,6 @@
 import z from "zod";
 import { zCuid, zPublicId, zTimeStamps } from "./common";
-import { ArtistRoleSchema, CreditRoleSchema } from "./enums";
+import { CreditRoleSchema } from "./enums";
 
 export const ArtistBaseSchema = z.object({
   id: zCuid,

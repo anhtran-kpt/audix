@@ -12,7 +12,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 export function useAudioPlayerHydrated() {
-  const api = (useAudioStore as any).persist;
+  const api = useAudioStore.persist;
   const [ready, setReady] = useState<boolean>(
     () => api?.hasHydrated?.() ?? false
   );
@@ -28,9 +28,9 @@ export const selectUpNextRefs = (s: AudioStore) => buildUpNextRefs(s);
 export const selectHasNext = (s: AudioStore) => buildUpNextRefs(s).length > 0;
 export const selectHasPrev = (s: AudioStore) => s.history.length > 0;
 
-export const usenowPlayingRefRef = () => useAudioStore((s) => s.nowPlayingRef);
+export const useNowPlayingRef = () => useAudioStore((s) => s.nowPlayingRef);
 
-export const usenowPlayingRefId = () =>
+export const useNowPlayingRefId = () =>
   useAudioStore(useShallow((s) => s.nowPlayingRef?.id));
 
 export const usePlaybackContext = () =>
@@ -257,8 +257,7 @@ export function useAudioKeyboardShortcuts() {
       if (
         target &&
         (target instanceof HTMLInputElement ||
-          target instanceof HTMLTextAreaElement ||
-          (target as any).isContentEditable)
+          target instanceof HTMLTextAreaElement)
       ) {
         return;
       }

@@ -2,22 +2,15 @@
 
 import { useAudioStore } from "@/stores/use-audio-store";
 import { postApi } from "@/lib/http/request";
-import {
-  ResolveHistoryInput,
-  ResolveHistoryOutput,
-} from "@/contracts/playback";
+import {} from "@/contracts/playback";
 import { IconButton } from "../ui/icon-button";
-import {
-  useIsPlaying,
-  usenowPlayingRefId,
-  usePlaybackContext,
-} from "@/hooks/use-audio-player";
+import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { zCuidType } from "@/contracts/common";
 
 export function RecentlyPlayedPlayButton({ trackId }: { trackId: zCuidType }) {
   const isPlaying = useIsPlaying();
-  const nowPlayingRefId = usenowPlayingRefId();
+  const nowPlayingRefId = useNowPlayingRefId();
   const isThisTrack = nowPlayingRefId === trackId;
 
   const { startFromContext, clearExplicit } = useAudioStore((s) => ({
@@ -25,15 +18,10 @@ export function RecentlyPlayedPlayButton({ trackId }: { trackId: zCuidType }) {
     clearExplicit: s.clearExplicit,
   }));
 
-  const context = usePlaybackContext();
-
   const onClick = async () => {
-    const data = await postApi<ResolveHistoryOutput, ResolveHistoryInput>(
-      "/api/playback/resolve-history",
-      {
-        trackId: trackId,
-      }
-    );
+    const data = await postApi("/api/playback/resolve-history", {
+      trackId: trackId,
+    });
 
     if (!data?.refs?.length) return;
 

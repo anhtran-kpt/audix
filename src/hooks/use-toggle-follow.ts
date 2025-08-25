@@ -50,8 +50,8 @@ export function useToggleFollow(artistId: string) {
     },
 
     onSettled: () => {
-      qc.invalidateQueries({ queryKey: artistKeys.followStatus(artistId) }),
-        qc.invalidateQueries({ queryKey: sidebarKeys.artists() });
+      qc.invalidateQueries({ queryKey: artistKeys.followStatus(artistId) });
+      qc.invalidateQueries({ queryKey: sidebarKeys.artists() });
     },
   });
 }

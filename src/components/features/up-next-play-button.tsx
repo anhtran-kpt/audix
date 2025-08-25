@@ -2,7 +2,7 @@ import { PauseIcon, PlayIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import {
   useIsPlaying,
-  usenowPlayingRefId,
+  useNowPlayingRefId,
   useQueue,
 } from "@/hooks/use-audio-player";
 import { zCuidType } from "@/contracts/common";
@@ -16,7 +16,7 @@ export default function UpNextPlayButton({
   trackId,
   trackIndex,
 }: UpNextPlayButtonProps) {
-  const nowPlayingRefId = usenowPlayingRefId();
+  const nowPlayingRefId = useNowPlayingRefId();
   const isPlaying = useIsPlaying();
   const { skipToUpNextIndex } = useQueue();
 

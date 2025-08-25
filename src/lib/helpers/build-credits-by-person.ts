@@ -66,7 +66,7 @@ export function buildCreditsByPerson(input: {
   // 2) Nạp từ TrackCredit → thêm các role chi tiết
   for (const c of input.credits) {
     const m = ROLE_META[c.role] ?? { label: c.role, weight: 999 };
-    let label = m.label ?? c.role;
+    const label = m.label ?? c.role;
 
     const key = c.artist?.id ? `a:${c.artist.id}` : `n:${norm(c.name)}`;
     const displayName = c.artist?.name ?? c.name;

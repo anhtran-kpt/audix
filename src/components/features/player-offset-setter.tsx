@@ -1,10 +1,10 @@
 "use client";
 
-import { usenowPlayingRefId } from "@/hooks/use-audio-player";
+import { useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { useLayoutEffect } from "react";
 
 export function PlayerOffsetSetter() {
-  const nowPlayingRefId = usenowPlayingRefId();
+  const nowPlayingRefId = useNowPlayingRefId();
 
   useLayoutEffect(() => {
     const root = document.documentElement;

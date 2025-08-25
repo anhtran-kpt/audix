@@ -4,20 +4,12 @@ import { RowPlayButton } from "@/components/features/row-play-button";
 import TrackItem from "@/components/features/track-item";
 import SectionHeading from "@/components/ui/section-heading";
 import { FullTrack } from "@/contracts/track";
-import { useMemo } from "react";
 
 type NewReleasesSectionProps = {
   tracks: FullTrack[];
 };
 
 export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {
-  const trackRefs = useMemo(() => {
-    return tracks.map((track) => ({
-      id: track.id,
-      audioId: track.audioId,
-    }));
-  }, [tracks]);
-
   return (
     <section>
       <SectionHeading title="New Releases" hasShowAll href="/new-releases" />

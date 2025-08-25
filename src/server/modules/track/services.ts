@@ -2,7 +2,6 @@ import "server-only";
 import db from "@/lib/db";
 import { trackDetailSelect } from "./presets";
 import { AppError } from "@/lib/errors";
-import { RecordPlayInput } from "@/contracts/track";
 
 export const getTrackOrThrow = async (trackId: string) => {
   const track = await db.track.findUnique({

@@ -3,10 +3,6 @@ import { NextResponse } from "next/server";
 import { AppError, fail, ok } from "@/lib/errors";
 import { getUserIdOrThrow } from "@/lib/auth";
 
-type MaybePromise<T> = T | Promise<T>;
-type CtxParams = Record<string, string | string[]>;
-type RouteCtx = { params?: MaybePromise<CtxParams> };
-
 type Config<
   P extends ZodType | undefined = undefined,
   Q extends ZodType | undefined = undefined,
@@ -25,17 +21,20 @@ type Config<
   }) => Promise<any>;
 };
 
+type NextRouteContext = { params: Promise<any> };
+
 async function run<
   P extends ZodType | undefined,
   Q extends ZodType | undefined,
   B extends ZodType | undefined
->(req: Request, config: Config<P, Q, B>, routeCtx?: RouteCtx) {
+>(req: Request, config: Config<P, Q, B>, ctx: NextRouteContext) {
   try {
     const url = new URL(req.url);
+
     const rawQuery = Object.fromEntries(url.searchParams.entries());
     const query: any = config.query ? config.query.parse(rawQuery) : undefined;
 
-    const rawParams = (await Promise.resolve(routeCtx?.params)) ?? {};
+    const rawParams = await ctx.params;
     const params: any = config.params
       ? config.params.parse(rawParams)
       : undefined;
@@ -76,6 +75,7 @@ async function run<
           : err.code === "RATE_LIMIT"
           ? 429
           : 400;
+
       return NextResponse.json(fail(err.code, err.message, err.details), {
         status,
       });
@@ -91,29 +91,43 @@ export function makeGET<
   P extends ZodType | undefined,
   Q extends ZodType | undefined
 >(config: Config<P, Q, undefined>) {
-  return (req: Request, routeCtx?: RouteCtx) => run(req, config, routeCtx);
+  const handler = async (req: Request, ctx: NextRouteContext) =>
+    run(req, config, ctx);
+  return handler;
 }
+
 export function makePOST<
   P extends ZodType | undefined,
   B extends ZodType | undefined
 >(config: Config<P, undefined, B>) {
-  return (req: Request, routeCtx?: RouteCtx) => run(req, config, routeCtx);
+  const handler = async (req: Request, ctx: NextRouteContext) =>
+    run(req, config, ctx);
+  return handler;
 }
+
 export function makePATCH<
   P extends ZodType | undefined,
   B extends ZodType | undefined
 >(config: Config<P, undefined, B>) {
-  return (req: Request, routeCtx?: RouteCtx) => run(req, config, routeCtx);
+  const handler = async (req: Request, ctx: NextRouteContext) =>
+    run(req, config, ctx);
+  return handler;
 }
+
 export function makePUT<
   P extends ZodType | undefined,
   B extends ZodType | undefined
 >(config: Config<P, undefined, B>) {
-  return (req: Request, routeCtx?: RouteCtx) => run(req, config, routeCtx);
+  const handler = async (req: Request, ctx: NextRouteContext) =>
+    run(req, config, ctx);
+  return handler;
 }
+
 export function makeDELETE<
   P extends ZodType | undefined,
   Q extends ZodType | undefined
 >(config: Config<P, Q, undefined>) {
-  return (req: Request, routeCtx?: RouteCtx) => run(req, config, routeCtx);
+  const handler = async (req: Request, ctx: NextRouteContext) =>
+    run(req, config, ctx);
+  return handler;
 }

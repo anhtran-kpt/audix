@@ -242,9 +242,8 @@ const _useAudioStore = create<AudioStore>()(
         try {
           await a.play();
           set({ isPlaying: true });
-        } catch (err: any) {
-          const name = err?.name ?? "";
-          if (!String(name).includes("Abort")) {
+        } catch (err: unknown) {
+          if (!String(err).includes("Abort")) {
             set({ isPlaying: false, error: "Failed to play audio" });
           }
         } finally {
@@ -732,7 +731,7 @@ const _useAudioStore = create<AudioStore>()(
         history: s.history,
         server: { version: s.server.version },
       }),
-      merge: (persisted: any, current) => ({
+      merge: (persisted, current) => ({
         ...current,
         ...persisted,
         isLoading: false,

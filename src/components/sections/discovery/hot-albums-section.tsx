@@ -1,8 +1,6 @@
 "use client";
 
-import { NavLink } from "@/components/ui/nav-link";
 import SectionHeading from "@/components/ui/section-heading";
-import { TAlbum } from "@/types";
 import {
   Carousel,
   CarouselContent,
@@ -12,9 +10,10 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { AlbumItem } from "@/components/features/album-item";
+import { FullAlbum } from "@/contracts/album";
 
 type HotAlbumsSectionProps = {
-  albums: TAlbum[];
+  albums: FullAlbum[];
 };
 
 export const HotAlbumsSection = ({ albums }: HotAlbumsSectionProps) => {

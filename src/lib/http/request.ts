@@ -14,7 +14,7 @@ export function getApi<T = unknown>(
 
 export async function getApi(url: string, schema?: z.ZodTypeAny) {
   const res = await http.get(url);
-  const data = (res as any).unwrapped ?? res.data;
+  const data = res.data;
   return schema ? schema.parse(data) : data;
 }
 
@@ -31,9 +31,13 @@ export function postApi<T = unknown, B = unknown>(
   schema?: undefined
 ): Promise<T>;
 
-export async function postApi(url: string, body?: any, schema?: z.ZodTypeAny) {
+export async function postApi(
+  url: string,
+  body?: unknown,
+  schema?: z.ZodTypeAny
+) {
   const res = await http.post(url, body);
-  const data = (res as any).unwrapped ?? res.data;
+  const data = res.data;
   return schema ? schema.parse(data) : data;
 }
 
@@ -50,9 +54,13 @@ export function patchApi<T = unknown, B = unknown>(
   schema?: undefined
 ): Promise<T>;
 
-export async function patchApi(url: string, body?: any, schema?: z.ZodTypeAny) {
+export async function patchApi(
+  url: string,
+  body?: unknown,
+  schema?: z.ZodTypeAny
+) {
   const res = await http.patch(url, body);
-  const data = (res as any).unwrapped ?? res.data;
+  const data = res.data;
   return schema ? schema.parse(data) : data;
 }
 
@@ -69,9 +77,13 @@ export function putApi<T = unknown, B = unknown>(
   schema?: undefined
 ): Promise<T>;
 
-export async function putApi(url: string, body?: any, schema?: z.ZodTypeAny) {
+export async function putApi(
+  url: string,
+  body?: unknown,
+  schema?: z.ZodTypeAny
+) {
   const res = await http.put(url, body);
-  const data = (res as any).unwrapped ?? res.data;
+  const data = res.data;
   return schema ? schema.parse(data) : data;
 }
 
@@ -88,6 +100,6 @@ export function deleteApi<T = unknown>(
 
 export async function deleteApi(url: string, schema?: z.ZodTypeAny) {
   const res = await http.delete(url);
-  const data = (res as any).unwrapped ?? res.data;
+  const data = res.data;
   return schema ? schema.parse(data) : data;
 }

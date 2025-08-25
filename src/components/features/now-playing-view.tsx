@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import {
-  usenowPlayingRefId,
+  useNowPlayingRefId,
   usePlaybackContext,
 } from "@/hooks/use-audio-player";
 import { NavLink } from "../ui/nav-link";
@@ -23,12 +23,12 @@ import { useRightPanel } from "@/stores/use-right-panel";
 import { useTrack } from "@/hooks/api/use-tracks";
 import { FollowersBadge } from "./follow-badge";
 
-export default function nowPlayingRefView() {
+export default function NowPlayingRefView() {
   const close = useRightPanel((s) => s.close);
 
   const playbackContext = usePlaybackContext();
-  const nowPlayingRefId = usenowPlayingRefId();
-  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingRefId);
+  const nowPlayingRefId = useNowPlayingRefId();
+  const { data: currentTrack } = useTrack(nowPlayingRefId);
 
   if (!currentTrack) {
     return null;

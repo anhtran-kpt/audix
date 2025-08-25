@@ -24,7 +24,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { usenowPlayingRefId } from "@/hooks/use-audio-player";
+import { useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { useTrack } from "@/hooks/api/use-tracks";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
@@ -166,8 +166,8 @@ function Sidebar({
   collapsible?: "offcanvas" | "icon" | "none";
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
-  const nowPlayingRefId = usenowPlayingRefId();
-  const { data: currentTrack, isLoading, isError } = useTrack(nowPlayingRefId);
+  const nowPlayingRefId = useNowPlayingRefId();
+  const { data: currentTrack } = useTrack(nowPlayingRefId);
 
   if (collapsible === "none") {
     return (

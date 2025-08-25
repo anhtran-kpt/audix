@@ -8,7 +8,7 @@ export const http = axios.create({
 
 http.interceptors.response.use(
   (res) => {
-    const data = res.data as ResponseEnvelope<any>;
+    const data = res.data as ResponseEnvelope<unknown>;
     if (!data || typeof data !== "object" || !("ok" in data)) return res;
     if (data.ok) {
       (res as any).unwrapped = data.data;

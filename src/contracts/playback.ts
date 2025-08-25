@@ -1,4 +1,4 @@
-import z, { array } from "zod";
+import z from "zod";
 import { PlaybackContextTypeSchema, RepeatModeSchema } from "./enums";
 import { zCuid } from "./common";
 
