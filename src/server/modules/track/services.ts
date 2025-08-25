@@ -50,36 +50,3 @@ export const getRecentTracks = async (userId: string) => {
   const lastMap = new Map(rows.map((r) => [r.trackId, r._max.playedAt!]));
   return tracks.sort((a, b) => +lastMap.get(b.id)! - +lastMap.get(a.id)!);
 };
-
-export const recordPlay = async ({
-  userId,
-  trackId,
-  listenedSec,
-  playedAt,
-  sourceType,
-  sourceId,
-  snapshotId,
-}: RecordPlayInput) => {
-  return db.$transaction(async (tx) => {
-    const res = await tx.playHistory.create({
-      data: {
-        userId,
-        trackId,
-        listenedSec: Math.max(0, Math.floor(listenedSec)),
-        playedAt,
-        sourceType,
-        sourceId,
-        snapshotId,
-      },
-    });
-
-    if (listenedSec >= 30) {
-      await tx.track.update({
-        where: { id: trackId },
-        data: { playCount: { increment: 1 } },
-      });
-    }
-
-    return res;
-  });
-};

@@ -656,7 +656,7 @@ const _useAudioStore = create<AudioStore>()(
             try {
               audio.pause();
             } catch {}
-            audio.src = nextSrc; // Không gọi audio.load()
+            audio.src = nextSrc;
           }
         }
         set({
