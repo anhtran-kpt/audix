@@ -520,6 +520,7 @@ model PlaybackContextSnapshot {
   user            User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
   tracks          PlaybackSnapshotTrack[]
   playbackSession PlaybackSession?
+  playHistory     PlayHistory[]
 
   @@unique([deviceId, hash])
   @@index([deviceId, createdAt])
@@ -549,6 +550,9 @@ model PlayHistory {
 
   userId   String?
   deviceId String
+
+  snapshotId String?
+  snapshot   PlaybackContextSnapshot? @relation(fields: [snapshotId], references: [id], onDelete: SetNull)
 
   user    User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
   device  Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)

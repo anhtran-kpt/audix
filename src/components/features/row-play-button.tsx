@@ -12,7 +12,7 @@ import { PauseIcon, PlayIcon } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
 import { postApi } from "@/lib/http/request";
-import { SnapshotOutput } from "@/contracts/playback";
+import { SnapshotInput, SnapshotOutput } from "@/contracts/playback";
 
 type RowPlayButtonProps = {
   context: { type: PlaybackContextType; contextId?: string; name?: string };
@@ -48,26 +48,24 @@ export function RowPlayButton({
       else play();
     }
 
-    const data = await postApi<SnapshotOutput>("/playback/snapshot", {
-      type: context.type,
-      contextId: context.contextId,
-    });
+    const { trackRefs, ...meta } = await postApi<SnapshotOutput, SnapshotInput>(
+      "/playback/snapshot",
+      {
+        type: context.type,
+        contextId: context.contextId,
+      }
+    );
 
-    if (!data?.refs?.length) return;
+    if (!trackRefs?.length) return;
 
     const startIndex = Math.max(
       0,
-      data.refs.findIndex((r) => r.id === trackId)
+      trackRefs.findIndex((ref) => ref.id === trackId)
     );
 
     clearExplicit();
 
-    await startFromContext(data.refs, startIndex, {
-      type: context.type,
-      contextId: context.contextId,
-      name: data.name ?? context.name,
-      snapshotId: data.snapshotId,
-    });
+    await startFromContext(trackRefs, startIndex, meta);
   };
 
   return (

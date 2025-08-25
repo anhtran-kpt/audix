@@ -6,9 +6,16 @@ import { useQuery } from "@tanstack/react-query";
 import { zCuidType } from "@/contracts/common";
 import { followStatusOptions } from "@/react-query/query-options/follow";
 import { useToggleFollow } from "@/hooks/use-toggle-follow";
+import { useSession } from "next-auth/react";
 
 export const FollowButton = ({ artistId }: { artistId: zCuidType }) => {
-  const { data: followStatus } = useQuery(followStatusOptions(artistId));
+  const { status } = useSession();
+
+  const { data: followStatus } = useQuery({
+    ...followStatusOptions(artistId),
+    enabled: !!artistId && status === "authenticated",
+  });
+
   const toggle = useToggleFollow(artistId);
 
   if (!followStatus) return null;

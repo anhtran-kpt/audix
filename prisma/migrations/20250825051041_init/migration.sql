@@ -20,7 +20,7 @@ CREATE TYPE "public"."RepeatMode" AS ENUM ('OFF', 'ONE', 'ALL');
 CREATE TYPE "public"."QueueItemKind" AS ENUM ('NEXT', 'LATER');
 
 -- CreateEnum
-CREATE TYPE "public"."PlaybackContextType" AS ENUM ('PLAYLIST', 'ALBUM', 'ARTIST', 'LIKED', 'QUEUE', 'NEW_RELEASES', 'SEARCH');
+CREATE TYPE "public"."PlaybackContextType" AS ENUM ('PLAYLIST', 'ALBUM', 'ARTIST', 'LIKED', 'QUEUE', 'NEW_RELEASES', 'SEARCH', 'TRACK');
 
 -- CreateEnum
 CREATE TYPE "public"."ChartType" AS ENUM ('TOP_SONGS', 'TOP_ALBUMS', 'TOP_ARTISTS', 'TRENDING');
@@ -331,6 +331,7 @@ CREATE TABLE "public"."play_history" (
     "playbackContextId" TEXT,
     "userId" TEXT,
     "deviceId" TEXT NOT NULL,
+    "snapshotId" TEXT,
     "trackId" TEXT NOT NULL,
 
     CONSTRAINT "play_history_pkey" PRIMARY KEY ("id")
@@ -601,6 +602,9 @@ ALTER TABLE "public"."playback_snapshot_tracks" ADD CONSTRAINT "playback_snapsho
 
 -- AddForeignKey
 ALTER TABLE "public"."playback_snapshot_tracks" ADD CONSTRAINT "playback_snapshot_tracks_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_snapshotId_fkey" FOREIGN KEY ("snapshotId") REFERENCES "public"."playback_snapshots"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."play_history" ADD CONSTRAINT "play_history_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE SET NULL ON UPDATE CASCADE;

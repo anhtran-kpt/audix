@@ -8,7 +8,7 @@ import { postApi } from "@/lib/http/request";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IconButton } from "../ui/icon-button";
-import { SnapshotOutput } from "@/contracts/playback";
+import { SnapshotInput, SnapshotOutput } from "@/contracts/playback";
 import { useShallow } from "zustand/react/shallow";
 
 type ContextMeta = {
@@ -48,20 +48,19 @@ export function ContextPlayButton({
       await togglePlay();
     }
 
-    const data = await postApi<SnapshotOutput>("/playback/snapshot", {
-      type: context.type,
-      contextId: context.contextId,
-    });
+    const { trackRefs, ...meta } = await postApi<SnapshotOutput, SnapshotInput>(
+      "/playback/snapshot",
+      {
+        type: context.type,
+        contextId: context.contextId,
+        name: context.name,
+      }
+    );
 
-    if (!data?.refs?.length) return;
+    if (!trackRefs?.length) return;
 
     clearExplicit();
-    await startFromContext(data.refs, defaultStartIndex, {
-      type: context.type,
-      contextId: context.contextId,
-      name: data.name ?? context.name,
-      snapshotId: data.snapshotId,
-    });
+    await startFromContext(trackRefs, defaultStartIndex, meta);
   };
 
   return (

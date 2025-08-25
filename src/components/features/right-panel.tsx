@@ -2,7 +2,7 @@
 
 import { useRightPanel } from "@/stores/use-right-panel";
 import { Sheet, SheetContent, SheetTitle } from "../ui/sheet";
-import nowPlayingRefView from "./now-playing-view";
+import NowPlaying from "./now-playing-view";
 import QueueView from "./queue-view";
 
 export default function RightPanel() {
@@ -24,7 +24,7 @@ export default function RightPanel() {
           {active === "now-playing" && "Now Playing"}
           {active === "queue" && "Queue"}
         </SheetTitle>
-        {active === "now-playing" && <nowPlayingRefView />}
+        {active === "now-playing" && <NowPlaying />}
         {active === "queue" && <QueueView />}
       </SheetContent>
     </Sheet>
