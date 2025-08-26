@@ -16,6 +16,6 @@ export const resolveTrackRefsOrdered = async (
 
   return trackIds
     .map((id) => byId.get(id))
-    .filter(Boolean)
+    .filter((r): r is { id: string; audioId: string } => r !== undefined)
     .map((r) => ({ id: r.id, audioId: r.audioId }));
 };

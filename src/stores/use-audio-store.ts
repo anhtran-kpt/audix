@@ -733,7 +733,7 @@ const _useAudioStore = create<AudioStore>()(
       }),
       merge: (persisted, current) => ({
         ...current,
-        ...persisted,
+        ...(persisted ?? {}),
         isLoading: false,
         error: null,
         audioElement: null,

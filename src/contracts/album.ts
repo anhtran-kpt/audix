@@ -1,6 +1,6 @@
 import z from "zod";
 import { zCuid, zDate, zPublicId, zTimeStamps } from "./common";
-import { AlbumTypeSchema, ArtistRoleSchema, CreditRoleSchema } from "./enums";
+import { AlbumTypeSchema, CreditRoleSchema } from "./enums";
 
 export const AlbumBaseSchema = z.object({
   id: zCuid,
@@ -29,13 +29,11 @@ export const FullAlbumSchema = AlbumBaseSchema.extend({
       likedBy: z.number().int().nonnegative(),
     }),
   }),
-  artists: z.array(
-    z.object({
-      role: ArtistRoleSchema,
-      order: z.number().int().nonnegative(),
-      artist: z.object({ id: zCuid, name: z.string().min(1) }),
-    })
-  ),
+  artist: z.object({
+    name: z.string().min(1),
+    id: zCuid,
+    imageId: z.string().min(1),
+  }),
   credits: z.array(
     z.object({
       id: zCuid,
@@ -49,6 +47,15 @@ export const FullAlbumSchema = AlbumBaseSchema.extend({
       }),
     })
   ),
+  genres: z
+    .object({
+      genre: z.object({
+        name: z.string().min(1),
+        color: z.string().min(1),
+        id: zCuid,
+      }),
+    })
+    .array(),
 });
 
 export type AlbumBase = z.infer<typeof AlbumBaseSchema>;

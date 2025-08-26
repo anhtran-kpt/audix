@@ -8,7 +8,6 @@ import {
 } from "lucide-react";
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
-import { TFullAlbum } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { CoverImage } from "@/components/ui/cover-image";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
@@ -21,9 +20,10 @@ import pluralize from "pluralize";
 import { IconButton } from "@/components/ui/icon-button";
 import tinycolor from "tinycolor2";
 import { ContextPlayButton } from "@/components/features/context-play-button";
+import { FullAlbum } from "@/contracts/album";
 
 type BannerSectionProps = Pick<
-  TFullAlbum,
+  FullAlbum,
   | "releaseDate"
   | "imageId"
   | "albumType"
@@ -76,10 +76,7 @@ export const BannerSection = ({
             <p className="font-bold text-6xl mt-1 mb-3">{title}</p>
             <div className="space-x-2">
               {genres.map(({ genre }) => (
-                <Badge
-                  key={genre.name}
-                  style={{ backgroundColor: genre.color }}
-                >
+                <Badge key={genre.id} style={{ backgroundColor: genre.color }}>
                   {genre.name}
                 </Badge>
               ))}
@@ -90,7 +87,9 @@ export const BannerSection = ({
                 {artist.name}
               </NavLink>
               <Dot />
-              <span className="">{formatDate(releaseDate, "PP")}</span>
+              {releaseDate && (
+                <span className="">{formatDate(releaseDate, "PP")}</span>
+              )}
               <div className="flex items-center gap-2">
                 {totalTracks > 0 && (
                   <>

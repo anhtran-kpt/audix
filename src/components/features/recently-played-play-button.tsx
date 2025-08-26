@@ -2,7 +2,7 @@
 
 import { useAudioStore } from "@/stores/use-audio-store";
 import { postApi } from "@/lib/http/request";
-import {} from "@/contracts/playback";
+import { ContextFromHistoryOutput } from "@/contracts/playback";
 import { IconButton } from "../ui/icon-button";
 import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { PauseIcon, PlayIcon } from "lucide-react";
@@ -19,14 +19,23 @@ export function RecentlyPlayedPlayButton({ trackId }: { trackId: zCuidType }) {
   }));
 
   const onClick = async () => {
-    const data = await postApi("/api/playback/resolve-history", {
-      trackId: trackId,
-    });
+    const { trackRefs, startIndex, ...meta } =
+      await postApi<ContextFromHistoryOutput>(
+        "/api/playback/context-from-history",
+        {
+          trackId: trackId,
+        }
+      );
 
-    if (!data?.refs?.length) return;
+    if (!trackRefs?.length) return;
 
     clearExplicit();
-    await startFromContext(data.refs, data.index, data.meta);
+    await startFromContext(trackRefs, startIndex, {
+      contextId: meta.contextId,
+      type: meta.type,
+      snapshotId: meta.snapshotId,
+      name: meta.name,
+    });
   };
 
   return (

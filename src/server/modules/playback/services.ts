@@ -1,4 +1,5 @@
 import { zCuidType } from "@/contracts/common";
+import { PlaybackContextType } from "@/contracts/enums";
 import {
   PlaybackSessionInput,
   RecordPlayInput,
@@ -80,8 +81,11 @@ export const getContextFromHistory = async (trackId: zCuidType) => {
   const userId = await getUserIdOrNull();
   const deviceId = await ensureDevice();
 
+  const orConds: any[] = [{ deviceId }];
+  if (userId) orConds.push({ userId });
+
   const history = await db.playHistory.findFirst({
-    where: userId ? { userId, trackId } : { deviceId, trackId },
+    where: { trackId, OR: orConds },
     orderBy: { playedAt: "desc" },
     select: {
       playbackContextType: true,
@@ -91,95 +95,124 @@ export const getContextFromHistory = async (trackId: zCuidType) => {
   });
 
   if (!history || !history.playbackContextType) {
-    return { found: false };
+    return { found: false } as const;
   }
+
+  const findIndexInRefs = (refs: Array<{ trackId: string }>, id: string) =>
+    refs.findIndex((r) => r.trackId === id);
+
+  const upsertSession = async (snapshotId: string, index: number) => {
+    await db.playbackSession.upsert({
+      where: { deviceId },
+      update: {
+        userId,
+        snapshotId,
+        contextIndex: index,
+        version: { increment: 1 },
+      },
+      create: {
+        deviceId,
+        userId,
+        snapshotId,
+        contextIndex: index,
+      },
+    });
+  };
 
   if (history.snapshotId) {
     const snap = await db.playbackContextSnapshot.findUnique({
       where: { id: history.snapshotId },
-      include: { tracks: { orderBy: { index: "asc" } } },
+      include: {
+        tracks: { orderBy: { index: "asc" }, select: { trackId: true } },
+      },
     });
+
     if (snap) {
       const ids = snap.tracks.map((t) => t.trackId);
-      const refs = await resolveTrackRefsOrdered(ids);
-      const startIndex = Math.max(0, ids.indexOf(trackId));
-
-      await db.playbackSession.upsert({
-        where: { deviceId },
-        update: {
-          userId,
-          snapshotId: snap.id,
-          contextIndex: startIndex,
-          version: { increment: 1 },
-        },
-        create: {
-          deviceId,
-          userId,
-          snapshotId: snap.id,
-          contextIndex: startIndex,
-        },
-      });
-
-      return {
-        found: true,
-        type: snap.type,
-        contextId: snap.contextId,
-        snapshotId: snap.id,
-        name: snap.name,
-        trackRefs: refs,
-        startIndex,
-      };
+      if (ids.includes(trackId)) {
+        const refs = await resolveTrackRefsOrdered(ids);
+        const startIndex = findIndexInRefs(
+          refs.map((ref) => ({ trackId: ref.id })),
+          trackId
+        );
+        if (startIndex >= 0) {
+          await upsertSession(snap.id, startIndex);
+          return {
+            found: true as const,
+            type: snap.type,
+            contextId: snap.contextId,
+            snapshotId: snap.id,
+            name: snap.name,
+            trackRefs: refs,
+            startIndex,
+          };
+        }
+      }
     }
   }
 
-  if (!history.playbackContextType || !history.playbackContextId) {
-    return { found: false };
-  }
+  const ids = await buildTrackIdsForContextFlexible({
+    type: history.playbackContextType,
+    contextId: history.playbackContextId ?? null,
+    userId,
+  });
+  if (!ids?.length) return { found: false } as const;
 
-  const ids = await buildTrackIdsForContext(
-    history.playbackContextType,
-    history.playbackContextId
+  const refs = await resolveTrackRefsOrdered(ids);
+  const startIndex = findIndexInRefs(
+    refs.map((ref) => ({ trackId: ref.id })),
+    trackId
   );
-
-  if (ids.length === 0) return { found: false };
+  if (startIndex < 0) return { found: false } as const;
 
   const { snapshotId } = await createOrReuseSnapshot({
     deviceId,
     userId,
     type: history.playbackContextType,
-    contextId: history.playbackContextId,
+    contextId: history.playbackContextId ?? null,
     name: null,
-    trackIds: ids,
+    trackIds: refs.map((ref) => ref.id),
   });
 
-  const refs = await resolveTrackRefsOrdered(ids);
-  const startIndex = Math.max(0, ids.indexOf(trackId));
-
-  await db.playbackSession.upsert({
-    where: { deviceId },
-    update: {
-      userId,
-      snapshotId,
-      contextIndex: startIndex,
-      version: { increment: 1 },
-    },
-    create: {
-      deviceId,
-      userId,
-      snapshotId,
-      contextIndex: startIndex,
-    },
-  });
+  await upsertSession(snapshotId, startIndex);
 
   return {
-    found: true,
+    found: true as const,
     type: history.playbackContextType,
-    contextId: history.playbackContextId,
+    contextId: history.playbackContextId ?? null,
     snapshotId,
     trackRefs: refs,
     startIndex,
   };
 };
+
+async function buildTrackIdsForContextFlexible(args: {
+  type: PlaybackContextType;
+  contextId: string | null;
+  userId?: string | null;
+}): Promise<string[]> {
+  const { type, contextId, userId } = args;
+
+  if (
+    (type === "ALBUM" || type === "PLAYLIST" || type === "ARTIST") &&
+    contextId
+  ) {
+    return buildTrackIdsForContext(type, contextId);
+  }
+
+  if (type === "LIKED") {
+    if (!userId) return [];
+    const liked = await db.userLikedTrack.findMany({
+      where: { userId },
+      orderBy: { likedAt: "desc" },
+      select: { trackId: true },
+    });
+    return liked.map((x) => x.trackId);
+  }
+
+  // TODO: thêm các context khác nếu bạn có (e.g., "QUEUE")
+  return contextId ? buildTrackIdsForContext(type as any, contextId) : [];
+}
 
 export const updateSession = async (input: PlaybackSessionInput) => {
   const userId = await getUserIdOrNull();

@@ -21,6 +21,7 @@ export default async function AlbumDetail({
         select: {
           genre: {
             select: {
+              id: true,
               name: true,
               color: true,
             },
@@ -31,10 +32,8 @@ export default async function AlbumDetail({
         select: {
           id: true,
           title: true,
-          slug: true,
           audioId: true,
           duration: true,
-          trackNumber: true,
           isExplicit: true,
           playCount: true,
           album: {
@@ -131,7 +130,7 @@ export default async function AlbumDetail({
         duration={album.duration}
         genres={album.genres}
       />
-      <TracksSection tracks={album.tracks} />
+      {/* <TracksSection tracks={album.tracks} /> */}
       <OtherAlbumsSection artist={album.artist} albums={otherAlbums} />
     </>
   );

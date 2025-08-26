@@ -4,14 +4,18 @@ import { ContextPlayButton } from "@/components/features/context-play-button";
 import { GridWrapper } from "@/components/ui/grid-wrapper";
 import { NavLink } from "@/components/ui/nav-link";
 import SectionHeading from "@/components/ui/section-heading";
+import { AlbumBase } from "@/contracts/album";
+import { ArtistBase } from "@/contracts/artist";
 import { cn } from "@/lib/utils";
-import { TAlbumGridItem, TArtist } from "@/types";
 import { formatDate } from "date-fns";
 import { CldImage } from "next-cloudinary";
 
 interface OtherAlbumsSectionProps {
-  artist: Partial<TArtist>;
-  albums: TAlbumGridItem[];
+  artist: Pick<ArtistBase, "id" | "name">;
+  albums: Pick<
+    AlbumBase,
+    "id" | "title" | "albumType" | "releaseDate" | "imageId"
+  >[];
 }
 
 export const OtherAlbumsSection = ({
@@ -55,9 +59,11 @@ export const OtherAlbumsSection = ({
             >
               {album.title}
             </NavLink>
-            <p className="text-muted-foreground text-[calc(13rem/16)]">
-              {formatDate(album.releaseDate, "yyyy")}
-            </p>
+            {album.releaseDate && (
+              <p className="text-muted-foreground text-[calc(13rem/16)]">
+                {formatDate(album.releaseDate, "yyyy")}
+              </p>
+            )}
           </div>
         ))}
       </GridWrapper>

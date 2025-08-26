@@ -3,20 +3,31 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
 import { AlbumGrid } from "@/components/features/album-grid";
-import { TFullArtist } from "@/types";
+import { AlbumBase } from "@/contracts/album";
+import { zCuidType } from "@/contracts/common";
 
-type DiscographySectionProps = Pick<TFullArtist, "id">;
+type AlbumItem = Pick<
+  AlbumBase,
+  "id" | "imageId" | "title" | "releaseDate" | "albumType"
+>;
+
+type DiscographySectionProps = {
+  artistId: zCuidType;
+  popular: AlbumItem[];
+  albums: AlbumItem[];
+  singlesAndEps: AlbumItem[];
+};
 
 export const DiscographySection = ({
-  id: artistId,
-  popularReleases,
-  albumReleases,
-  singleAndEpReleases,
+  artistId,
+  popular,
+  albums,
+  singlesAndEps,
 }: DiscographySectionProps) => {
   const availableTabs = [
-    { key: "popular", label: "Popular Releases", data: popularReleases },
-    { key: "albums", label: "Albums", data: albumReleases },
-    { key: "singles", label: "Singles & EPs", data: singleAndEpReleases },
+    { key: "popular", label: "Popular Releases", data: popular },
+    { key: "albums", label: "Albums", data: albums },
+    { key: "singles", label: "Singles & EPs", data: singlesAndEps },
   ].filter((tab) => tab.data && tab.data.length > 0);
 
   if (availableTabs.length === 0) return null;
@@ -48,31 +59,3 @@ export const DiscographySection = ({
     </section>
   );
 };
-
-// export function ArtistDiscographySkeleton() {
-//   return (
-//     <section>
-//       <div className="flex justify-between items-center">
-//         <SectionHeading heading="Discography" />
-//         <Skeleton className="h-4 w-6" />
-//       </div>
-//       <Tabs defaultValue="Popular Releases" className="w-full gap-6">
-//         <TabsList>
-//           <TabsTrigger value="Popular Releases">Popular Releases</TabsTrigger>
-//           <TabsTrigger value="Albums">Albums</TabsTrigger>
-//           <TabsTrigger value="Singles">Singles & EPs</TabsTrigger>
-//         </TabsList>
-
-//         <TabsContent value="Popular Releases">
-//           <AlbumGridSkeleton count={5} />
-//         </TabsContent>
-//         <TabsContent value="Albums">
-//           <AlbumGridSkeleton count={5} />
-//         </TabsContent>
-//         <TabsContent value="Singles">
-//           <AlbumGridSkeleton count={5} />
-//         </TabsContent>
-//       </Tabs>
-//     </section>
-//   );
-// }

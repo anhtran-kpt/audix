@@ -12,19 +12,17 @@ import { ContextPlayButton } from "@/components/features/context-play-button";
 import { FollowersBadge } from "@/components/features/follow-badge";
 import { FullArtist } from "@/contracts/artist";
 import { zCuidType } from "@/contracts/common";
-import { TrackRef } from "@/contracts/playback";
 
 type BannerSectionProps = Pick<
   FullArtist,
   "name" | "imageId" | "genres" | "isVerified"
-> & { trackRefs: TrackRef[] } & { artistId: zCuidType };
+> & { artistId: zCuidType };
 
 export const BannerSection = ({
   imageId,
   isVerified,
   name,
   genres,
-  trackRefs,
   artistId,
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -78,7 +76,6 @@ export const BannerSection = ({
       </div>
       <div className="flex items-center gap-6 px-12">
         <ContextPlayButton
-          trackRefs={trackRefs}
           context={{ contextId: artistId, type: "ARTIST", name }}
         />
         <IconButton

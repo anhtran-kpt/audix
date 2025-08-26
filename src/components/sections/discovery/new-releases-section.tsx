@@ -6,7 +6,10 @@ import SectionHeading from "@/components/ui/section-heading";
 import { FullTrack } from "@/contracts/track";
 
 type NewReleasesSectionProps = {
-  tracks: FullTrack[];
+  tracks: Pick<
+    FullTrack,
+    "id" | "title" | "album" | "artists" | "isExplicit"
+  >[];
 };
 
 export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {

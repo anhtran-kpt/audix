@@ -10,7 +10,7 @@ export const PlaylistItem = z.object({
 export const PlaylistBaseSchema = z.object({
   id: zCuid,
   title: z.string().min(1),
-  description: z.string().optional(),
+  description: z.string().nullable(),
   imageId: zPublicId.nullable(),
   isPublic: z.boolean().optional(),
   isOfficial: z.boolean().optional(),
@@ -24,14 +24,16 @@ export const FullPlaylistSchema = PlaylistBaseSchema.extend({
     .object({
       name: z.string().min(1).nullable(),
       id: zCuid,
+      image: z.url().nullable(),
     })
     .nullable(),
 });
 
 export const CreatePlaylistInputSchema = PlaylistBaseSchema.pick({
   title: true,
-  description: true,
   isPublic: true,
+}).extend({
+  description: z.string().optional(),
 });
 
 export const CreatePlaylistOutputSchema = FullPlaylistSchema.pick({
@@ -45,7 +47,13 @@ export const SidebarPlaylistSchema = FullPlaylistSchema.pick({
   id: true,
   title: true,
   imageId: true,
-  user: true,
+}).extend({
+  user: z
+    .object({
+      name: z.string().min(1).nullable(),
+      id: zCuid,
+    })
+    .nullable(),
 });
 
 export type SidebarPlaylist = z.infer<typeof SidebarPlaylistSchema>;

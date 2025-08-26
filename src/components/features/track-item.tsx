@@ -9,7 +9,7 @@ import { FullTrack } from "@/contracts/track";
 import { ReactNode } from "react";
 
 type TrackItemProps = {
-  track: FullTrack;
+  track: Pick<FullTrack, "id" | "title" | "album" | "artists" | "isExplicit">;
   playButton: ReactNode;
 };
 
@@ -28,17 +28,6 @@ export default function TrackItem({ track, playButton }: TrackItemProps) {
             sizes="48px"
           />
           {playButton}
-          {/* <IconButton
-            icon={isCurrentTrackPlaying ? PauseIcon : PlayIcon}
-            size="sm"
-            onClick={
-              isCurrentTrackPlaying
-                ? () => controls.pause()
-                : () => playTrackRef(track)
-            }
-            iconClassName="fill-foreground stroke-0 size-5"
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
-          /> */}
         </div>
         <div className="flex flex-col gap-0.5 w-full overflow-hidden">
           <ItemTitle

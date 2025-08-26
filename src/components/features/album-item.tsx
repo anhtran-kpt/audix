@@ -2,13 +2,13 @@ import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { formatDate } from "date-fns";
 import { NavLink } from "../ui/nav-link";
 import { cn } from "@/lib/utils";
-import { TAlbum } from "@/types";
 import { CldImage } from "next-cloudinary";
 import Dot from "../ui/dot";
 import { ContextPlayButton } from "./context-play-button";
+import { AlbumBase } from "@/contracts/album";
 
 type AlbumItemProps = Pick<
-  TAlbum,
+  AlbumBase,
   "imageId" | "id" | "title" | "releaseDate" | "albumType"
 >;
 
@@ -50,8 +50,12 @@ export const AlbumItem = ({
           {title}
         </NavLink>
         <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
-          <span>{formatDate(releaseDate, "yyyy")}</span>
-          <Dot />
+          {releaseDate && (
+            <>
+              <span>{formatDate(releaseDate, "yyyy")}</span>
+              <Dot />
+            </>
+          )}
           <span>{albumTypeMap[albumType]}</span>
         </div>
       </div>

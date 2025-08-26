@@ -6,13 +6,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { TA, TCredit } from "@/types";
 import { Separator } from "../ui/separator";
+import { Credit, TA } from "@/types/credit";
 
 interface CreditDialogProps {
   trackTitle: string;
   artists: TA[];
-  credits: TCredit[];
+  credits: Credit[];
 }
 
 export default function CreditDialog({

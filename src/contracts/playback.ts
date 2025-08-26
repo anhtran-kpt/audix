@@ -48,8 +48,21 @@ export const RecordPlayInputSchema = z.object({
   events: HistoryEventSchema.array(),
 });
 
+export const ContextFromHistoryOutputSchema = z.object({
+  found: z.boolean(),
+  type: PlaybackContextTypeSchema,
+  contextId: zCuid.optional(),
+  snapshotId: z.string().min(1).optional(),
+  name: z.string().optional(),
+  trackRefs: TrackRefSchema.array().optional(),
+  startIndex: z.number().int().nonnegative(),
+});
+
 export type RecordPlayInput = z.infer<typeof RecordPlayInputSchema>;
 export type PlaybackSessionInput = z.infer<typeof PlaybackSessionInputSchema>;
 export type SnapshotInput = z.infer<typeof SnapshotInputSchema>;
 export type SnapshotOutput = z.infer<typeof SnapshotOutputSchema>;
 export type HistoryEvent = z.infer<typeof HistoryEventSchema>;
+export type ContextFromHistoryOutput = z.infer<
+  typeof ContextFromHistoryOutputSchema
+>;

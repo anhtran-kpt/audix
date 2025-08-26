@@ -1,9 +1,22 @@
 "use client";
 
 import { TrackGrid } from "@/components/features/track-grid";
-import { TTrack } from "@/types/track";
+import { FullTrack } from "@/contracts/track";
 
-export const TracksSection = ({ tracks }: { tracks: TTrack[] }) => {
+type TracksSectionProps = {
+  tracks: Pick<
+    FullTrack,
+    | "id"
+    | "duration"
+    | "playCount"
+    | "title"
+    | "isExplicit"
+    | "album"
+    | "artists"
+  >[];
+};
+
+export const TracksSection = ({ tracks }: TracksSectionProps) => {
   return (
     <section>
       <TrackGrid type="album" tracks={tracks} />

@@ -11,14 +11,22 @@ import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
 import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { useTrack } from "@/hooks/api/use-tracks";
-
 import { RowPlayButton } from "./row-play-button";
 import { FullTrack } from "@/contracts/track";
 
 interface TrackGridProps {
   artistId?: string;
   type: "album" | "popular" | "playlist";
-  tracks: FullTrack[];
+  tracks: Pick<
+    FullTrack,
+    | "id"
+    | "duration"
+    | "playCount"
+    | "title"
+    | "isExplicit"
+    | "album"
+    | "artists"
+  >[];
 }
 
 export const TrackGrid = ({ artistId, type, tracks }: TrackGridProps) => {

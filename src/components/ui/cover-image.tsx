@@ -6,12 +6,12 @@ import { CldImage, CldImageProps } from "next-cloudinary";
 import { FC } from "react";
 import { IconButton } from "./icon-button";
 import { PlayIcon } from "lucide-react";
-import { TTrack } from "@/types";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { Track } from "@/app/generated/prisma";
 
 interface CoverImageProps extends CldImageProps {
   size?: CoverImageSize;
-  track?: TTrack;
+  track?: Track;
 }
 
 export const CoverImage: FC<CoverImageProps> = ({
@@ -21,7 +21,7 @@ export const CoverImage: FC<CoverImageProps> = ({
   ...props
 }) => {
   const sizeClasses = coverImageSizeMap[size];
-  const { playTrack } = useAudioPlayer();
+  // const { playTrack } = useAudioPlayer();
 
   return (
     <div
@@ -40,7 +40,7 @@ export const CoverImage: FC<CoverImageProps> = ({
         <IconButton
           icon={PlayIcon}
           size="sm"
-          onClick={() => playTrack(track)}
+          // onClick={() => playTrack(track)}
           iconClassName="fill-foreground stroke-0"
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
         />

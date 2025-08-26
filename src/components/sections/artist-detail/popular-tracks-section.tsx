@@ -9,7 +9,16 @@ export const PopularTracksSection = ({
   tracks,
 }: {
   artistId: string;
-  tracks: FullTrack[];
+  tracks: Pick<
+    FullTrack,
+    | "id"
+    | "duration"
+    | "playCount"
+    | "title"
+    | "isExplicit"
+    | "album"
+    | "artists"
+  >[];
 }) => {
   return (
     <section>

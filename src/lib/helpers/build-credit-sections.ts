@@ -42,11 +42,16 @@ export function buildCreditSections(input: {
   artists: TA[];
   credits: Credit[];
 }): CreditSection[] {
-  const sections: Record<CreditGroupId, CreditSection> = Object.fromEntries(
-    SECTION_ORDER.map((id) => [
-      id,
-      { id, title: CREDIT_GROUP_TITLE[id], people: [] },
-    ])
+  const sections = SECTION_ORDER.reduce<Record<CreditGroupId, CreditSection>>(
+    (acc, id) => {
+      acc[id] = {
+        id,
+        title: CREDIT_GROUP_TITLE[id],
+        people: [],
+      };
+      return acc;
+    },
+    {} as Record<CreditGroupId, CreditSection>
   );
 
   // Headline "Performed by" from TrackArtist (badges + order/weight)

@@ -4,20 +4,22 @@ import { ContextPlayButton } from "@/components/features/context-play-button";
 import { GridWrapper } from "@/components/ui/grid-wrapper";
 import { NavLink } from "@/components/ui/nav-link";
 import SectionHeading from "@/components/ui/section-heading";
+import { ArtistBase } from "@/contracts/artist";
 import { cn } from "@/lib/utils";
-import { TArtistGridItem } from "@/types";
 import { CldImage } from "next-cloudinary";
 
-interface OtherArtistsSectionProps {
-  artists: TArtistGridItem[];
-}
+type OtherArtistsSectionProps = {
+  suggestions: Pick<ArtistBase, "id" | "imageId" | "name">[];
+};
 
-export const OtherArtistsSection = ({ artists }: OtherArtistsSectionProps) => {
+export const OtherArtistsSection = ({
+  suggestions,
+}: OtherArtistsSectionProps) => {
   return (
     <section>
       <SectionHeading title="Fans also like" href={`/artists`} hasShowAll />
       <GridWrapper>
-        {artists.map((artist) => (
+        {suggestions.map((artist) => (
           <div key={artist.id} className="space-y-4 group">
             <div className="relative rounded-full aspect-square">
               <CldImage
@@ -55,22 +57,3 @@ export const OtherArtistsSection = ({ artists }: OtherArtistsSectionProps) => {
     </section>
   );
 };
-
-// export const ArtistOthersSkeleton = () => {
-//   return (
-//     <section>
-//       <SectionHeading heading="Fans also like" />
-//       <GridWrapper>
-//         {Array.from({ length: 5 }).map((_, i) => (
-//           <div key={i} className="">
-//             <div className="relative rounded-full overflow-hidden aspect-square mb-4">
-//               <Skeleton className="size-full" />
-//             </div>
-//             <Skeleton className="h-4 w-32" />
-//             <Skeleton className="h-3 w-12 mt-4" />
-//           </div>
-//         ))}
-//       </GridWrapper>
-//     </section>
-//   );
-// };
