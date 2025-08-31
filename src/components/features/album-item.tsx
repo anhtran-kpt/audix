@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { CldImage } from "next-cloudinary";
 import Dot from "../ui/dot";
 import { ContextPlayButton } from "./context-play-button";
-import { AlbumBase } from "@/contracts/album";
+import { AlbumBase } from "@/features/album/contracts/album-dto";
 
 type AlbumItemProps = Pick<
   AlbumBase,

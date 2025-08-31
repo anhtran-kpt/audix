@@ -20,3 +20,11 @@ export type Credit = {
     id: string | null;
   } | null;
 };
+
+export type CreditGroupId =
+  | "PERFORMERS"
+  | "WRITERS"
+  | "PRODUCTION"
+  | "ENGINEERING"
+  | "LEGAL"
+  | "OTHER";

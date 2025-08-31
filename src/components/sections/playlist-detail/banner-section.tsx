@@ -21,8 +21,8 @@ import {
   UserPlus2Icon,
 } from "lucide-react";
 import tinycolor from "tinycolor2";
-import { FullPlaylist } from "@/contracts/playlist";
 import { ContextPlayButton } from "@/components/features/context-play-button";
+import { FullPlaylist } from "@/features/playlist/contracts/playlist-dto";
 
 type BannerSectionProps = Pick<
   FullPlaylist,

@@ -1,10 +1,4 @@
-export type CreditGroupId =
-  | "PERFORMERS"
-  | "WRITERS"
-  | "PRODUCTION"
-  | "ENGINEERING"
-  | "LEGAL"
-  | "OTHER";
+import { CreditGroupId } from "@/types/credit";
 
 export const CREDIT_GROUP_TITLE: Record<CreditGroupId, string> = {
   PERFORMERS: "Performed by",

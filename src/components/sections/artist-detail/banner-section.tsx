@@ -10,8 +10,8 @@ import { IconButton } from "@/components/ui/icon-button";
 import { FollowButton } from "@/components/features/follow-button";
 import { ContextPlayButton } from "@/components/features/context-play-button";
 import { FollowersBadge } from "@/components/features/follow-badge";
-import { FullArtist } from "@/contracts/artist";
-import { zCuidType } from "@/contracts/common";
+import { FullArtist } from "@/features/artist/contracts/artist-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 type BannerSectionProps = Pick<
   FullArtist,

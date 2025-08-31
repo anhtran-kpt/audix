@@ -22,10 +22,10 @@ import { FallbackCoverImage } from "./fallback-cover-image";
 import { ArtistImage } from "../ui/artist-image";
 import { ScrollArea } from "../ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
-import { sidebarPlaylistOptions } from "@/react-query/query-options/playlist";
-import { sidebarArtistOptions } from "@/react-query/query-options/artist";
-import { SidebarArtist } from "@/contracts/artist";
-import { SidebarPlaylist } from "@/contracts/playlist";
+import { SidebarArtist } from "@/features/artist/contracts/artist-dto";
+import { SidebarPlaylist } from "@/features/playlist/contracts/playlist-dto";
+import { sidebarPlaylistOptions } from "@/features/playlist/query/playlist-options";
+import { sidebarArtistOptions } from "@/features/artist/query/artist-options";
 
 const items = [
   {

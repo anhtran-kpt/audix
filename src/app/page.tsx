@@ -44,8 +44,8 @@ export default async function Home() {
 
   return (
     <>
-      {/* <NewReleasesSection tracks={tracks} />
-      <HotAlbumsSection albums={albums} /> */}
+      <NewReleasesSection tracks={tracks} />
+      <HotAlbumsSection albums={albums} />
     </>
   );
 }

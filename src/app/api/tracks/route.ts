@@ -1,4 +1,4 @@
-import { makePOST } from "@/server/api/route-factory";
+import { makePOST } from "@/lib/route-factory";
 import { getTrackListByIds } from "@/server/modules/track/services";
 import { cuid2, object } from "zod";
 

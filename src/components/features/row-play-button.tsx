@@ -48,24 +48,24 @@ export function RowPlayButton({
       else play();
     }
 
-    const { trackRefs, ...meta } = await postApi<SnapshotOutput, SnapshotInput>(
-      "/playback/snapshot",
-      {
-        type: context.type,
-        contextId: context.contextId,
-      }
-    );
+    const { trackRefs, startIndex, ...meta } = await postApi<
+      SnapshotOutput,
+      SnapshotInput
+    >("/playback/snapshot", {
+      type: context.type,
+      contextId: context.contextId,
+    });
 
     if (!trackRefs?.length) return;
 
-    const startIndex = Math.max(
-      0,
-      trackRefs.findIndex((ref) => ref.id === trackId)
-    );
-
     clearExplicit();
 
-    await startFromContext(trackRefs, startIndex, meta);
+    await startFromContext(trackRefs, startIndex, {
+      type: meta.type,
+      contextId: meta.contextId,
+      name: meta.name,
+      snapshotId: meta.snapshotId,
+    });
   };
 
   return (

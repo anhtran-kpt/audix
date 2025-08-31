@@ -1,7 +1,7 @@
 "use client";
 
+import { followStatusOptions } from "@/features/artist/query/artist-options";
 import { useQuery } from "@tanstack/react-query";
-import { followStatusOptions } from "@/react-query/query-options/follow";
 import pluralize from "pluralize";
 
 export function FollowersBadge({ artistId }: { artistId: string }) {

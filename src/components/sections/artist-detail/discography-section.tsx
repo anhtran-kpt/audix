@@ -3,8 +3,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
 import { AlbumGrid } from "@/components/features/album-grid";
-import { AlbumBase } from "@/contracts/album";
-import { zCuidType } from "@/contracts/common";
+import { AlbumBase } from "@/features/album/contracts/album-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 type AlbumItem = Pick<
   AlbumBase,

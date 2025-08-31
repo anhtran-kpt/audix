@@ -1,7 +1,7 @@
 "use client";
 
 import { TrackGrid } from "@/components/features/track-grid";
-import { FullTrack } from "@/contracts/track";
+import { FullTrack } from "@/features/track/contracts/track-dto";
 
 type TracksSectionProps = {
   tracks: Pick<

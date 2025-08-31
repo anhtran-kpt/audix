@@ -1,4 +1,4 @@
-import { makeGET } from "@/server/api/route-factory";
+import { makeGET } from "@/lib/route-factory";
 import { getRecentTracks } from "@/server/modules/track/services";
 
 export const GET = makeGET({

@@ -1,4 +1,4 @@
-import { makeGET } from "@/server/api/route-factory";
+import { makeGET } from "@/lib/route-factory";
 import { getTrackOrThrow } from "@/server/modules/track/services";
 import { cuid2, object } from "zod";
 

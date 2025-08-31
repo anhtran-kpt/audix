@@ -1,4 +1,4 @@
-import { makeGET } from "@/server/api/route-factory";
+import { makeGET } from "@/lib/route-factory";
 import { cookies, headers } from "next/headers";
 import { randomUUID } from "crypto";
 import db from "@/lib/db";

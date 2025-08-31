@@ -2,8 +2,8 @@
 
 import { CldImage } from "next-cloudinary";
 import SectionHeading from "@/components/ui/section-heading";
-import { ArtistBase } from "@/contracts/artist";
 import { FollowersBadge } from "@/components/features/follow-badge";
+import { ArtistBase } from "@/features/artist/contracts/artist-dto";
 
 type AboutSectionProps = Pick<ArtistBase, "bio" | "name" | "bannerId" | "id">;
 

@@ -8,8 +8,11 @@ import { postApi } from "@/lib/http/request";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { IconButton } from "../ui/icon-button";
-import { SnapshotInput, SnapshotOutput } from "@/contracts/playback";
 import { useShallow } from "zustand/react/shallow";
+import {
+  SnapshotInput,
+  SnapshotOutput,
+} from "@/features/playback/contracts/playback-dto";
 
 type ContextMeta = {
   type: PlaybackContextType;

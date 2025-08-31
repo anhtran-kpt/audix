@@ -5,8 +5,8 @@ import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon } from "lucide-react";
 import Explicit from "../ui/explicit";
 import { CldImage } from "next-cloudinary";
-import { FullTrack } from "@/contracts/track";
 import { ReactNode } from "react";
+import { FullTrack } from "@/features/track/contracts/track-dto";
 
 type TrackItemProps = {
   track: Pick<FullTrack, "id" | "title" | "album" | "artists" | "isExplicit">;

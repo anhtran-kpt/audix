@@ -2,7 +2,7 @@
 
 import { TrackGrid } from "@/components/features/track-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { FullTrack } from "@/contracts/track";
+import { FullTrack } from "@/features/track/contracts/track-dto";
 
 export const PopularTracksSection = ({
   artistId,

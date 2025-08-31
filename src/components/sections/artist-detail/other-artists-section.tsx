@@ -4,7 +4,7 @@ import { ContextPlayButton } from "@/components/features/context-play-button";
 import { GridWrapper } from "@/components/ui/grid-wrapper";
 import { NavLink } from "@/components/ui/nav-link";
 import SectionHeading from "@/components/ui/section-heading";
-import { ArtistBase } from "@/contracts/artist";
+import { ArtistBase } from "@/features/artist/contracts/artist-dto";
 import { cn } from "@/lib/utils";
 import { CldImage } from "next-cloudinary";
 

@@ -1,5 +1,5 @@
 import { zCuid } from "@/contracts/common";
-import { makeDELETE, makeGET, makePOST } from "@/server/api/route-factory";
+import { makeDELETE, makeGET, makePOST } from "@/lib/route-factory";
 import {
   followArtist,
   getFollowStatus,

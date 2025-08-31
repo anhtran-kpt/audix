@@ -8,7 +8,7 @@ import {
 import {
   getArtistDetailPage,
   getArtistReleases,
-} from "@/server/modules/artist/services";
+} from "@/features/artist/data-access/artist-repo";
 
 export default async function ArtistDetail({
   params,

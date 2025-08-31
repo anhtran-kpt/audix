@@ -10,9 +10,9 @@ import { NavLink } from "../ui/nav-link";
 import WaveForm from "../ui/wave-form";
 import { CoverImage } from "../ui/cover-image";
 import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
-import { useTrack } from "@/hooks/api/use-tracks";
 import { RowPlayButton } from "./row-play-button";
-import { FullTrack } from "@/contracts/track";
+import { FullTrack } from "@/features/track/contracts/track-dto";
+import { useTrack } from "@/features/track/hooks/use-tracks";
 
 interface TrackGridProps {
   artistId?: string;

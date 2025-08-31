@@ -7,8 +7,11 @@ import {
   subscribeWithSelector,
 } from "zustand/middleware";
 import { getAudioUrl } from "@/lib/helpers/get-audio-url";
-import { TrackRef } from "@/contracts/playback";
-import { PlaybackContextType, RepeatMode } from "@/contracts/enums";
+import {
+  PlaybackContextType,
+  RepeatMode,
+} from "@/features/shared/contracts/shared-enum";
+import { TrackRef } from "@/features/playback/contracts/playback-dto";
 
 export interface ServerMeta {
   version: number | null;
@@ -605,6 +608,7 @@ const _useAudioStore = create<AudioStore>()(
       // context/queue
       startFromContext: async (refs, startIndex, meta) => {
         const i = clamp(startIndex, 0, Math.max(0, refs.length - 1));
+
         set({
           playbackContext: {
             type: meta.type,
@@ -649,6 +653,7 @@ const _useAudioStore = create<AudioStore>()(
 
       setCurrentFromRef: (ref) => {
         const audio = get().audioElement;
+
         if (audio) {
           const nextSrc = getAudioUrl(ref.audioId);
           if (audio.src !== nextSrc) {

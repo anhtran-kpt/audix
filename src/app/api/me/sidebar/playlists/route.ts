@@ -1,4 +1,4 @@
-import { makeGET } from "@/server/api/route-factory";
+import { makeGET } from "@/lib/route-factory";
 import { getSidebarPlaylists } from "@/server/modules/playlist/services";
 
 export const GET = makeGET({

@@ -1,8 +1,8 @@
-import { useTracks } from "@/hooks/api/use-tracks";
 import { useQueue } from "@/hooks/use-audio-player";
 import { useMemo } from "react";
 import TrackItem from "./track-item";
 import UpNextPlayButton from "./up-next-play-button";
+import { useTracks } from "@/features/track/hooks/use-tracks";
 
 export default function UpNextList() {
   const { upNext } = useQueue();

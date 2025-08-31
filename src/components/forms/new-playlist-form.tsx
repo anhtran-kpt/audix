@@ -17,14 +17,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postApi } from "@/lib/http/request";
+import { toast } from "sonner";
 import {
   CreatePlaylistInput,
   CreatePlaylistInputSchema,
   CreatePlaylistOutput,
   SidebarPlaylist,
-} from "@/contracts/playlist";
-import { sidebarKeys } from "@/react-query/keys/sidebar";
-import { toast } from "sonner";
+} from "@/features/playlist/contracts/playlist-dto";
+import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 
 export const NewPlaylistForm = ({
   onSuccess,
@@ -52,10 +52,10 @@ export const NewPlaylistForm = ({
   const { mutate, isPending } = useMutation({
     mutationFn: (data) => postApi<CreatePlaylistOutput>("/playlists", data),
     onMutate: async (vars: CreatePlaylistInput) => {
-      await qc.cancelQueries({ queryKey: sidebarKeys.playlists() });
+      await qc.cancelQueries({ queryKey: playlistKeys.sidebarPlaylists() });
 
       const previousPlaylists = qc.getQueryData<SidebarPlaylist[]>(
-        sidebarKeys.playlists()
+        playlistKeys.sidebarPlaylists()
       );
 
       const optimistic: SidebarPlaylist = {
@@ -68,24 +68,28 @@ export const NewPlaylistForm = ({
         },
       };
 
-      qc.setQueryData<SidebarPlaylist[]>(sidebarKeys.playlists(), (old) =>
-        old ? [optimistic, ...old] : [optimistic]
+      qc.setQueryData<SidebarPlaylist[]>(
+        playlistKeys.sidebarPlaylists(),
+        (old) => (old ? [optimistic, ...old] : [optimistic])
       );
 
       return { previousPlaylists };
     },
     onError: (err, _, ctx) => {
       if (ctx?.previousPlaylists) {
-        qc.setQueryData(sidebarKeys.playlists(), ctx.previousPlaylists);
+        qc.setQueryData(playlistKeys.sidebarPlaylists(), ctx.previousPlaylists);
       }
 
       toast.error(err.message);
     },
     onSuccess: (res) => {
-      qc.setQueryData<SidebarPlaylist[]>(sidebarKeys.playlists(), (old) => {
-        if (!old) return old;
-        return [res, ...old];
-      });
+      qc.setQueryData<SidebarPlaylist[]>(
+        playlistKeys.sidebarPlaylists(),
+        (old) => {
+          if (!old) return old;
+          return [res, ...old];
+        }
+      );
 
       onSuccess(res);
       form.reset();

@@ -1,5 +1,5 @@
 import { zCuid } from "@/contracts/common";
-import { makePOST } from "@/server/api/route-factory";
+import { makePOST } from "@/lib/route-factory";
 import { getContextFromHistory } from "@/server/modules/playback/services";
 
 export const POST = makePOST({

@@ -2,11 +2,11 @@
 
 import { useAudioStore } from "@/stores/use-audio-store";
 import { postApi } from "@/lib/http/request";
-import { ContextFromHistoryOutput } from "@/contracts/playback";
 import { IconButton } from "../ui/icon-button";
 import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { PauseIcon, PlayIcon } from "lucide-react";
-import { zCuidType } from "@/contracts/common";
+import { ContextFromHistoryOutput } from "@/features/playback/contracts/playback-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 export function RecentlyPlayedPlayButton({ trackId }: { trackId: zCuidType }) {
   const isPlaying = useIsPlaying();

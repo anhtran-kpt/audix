@@ -4,13 +4,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
 import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
-import { useTrack } from "@/hooks/api/use-tracks";
 import UpNextList from "./up-next-list";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { useAudioStore } from "@/stores/use-audio-store";
 import { useShallow } from "zustand/react/shallow";
 import RecentlyPlayedList from "./recently-played-list";
+import { useTrack } from "@/features/track/hooks/use-tracks";
 
 export default function QueueView() {
   const nowPlayingRefId = useNowPlayingRefId();

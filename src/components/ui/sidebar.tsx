@@ -25,7 +25,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useNowPlayingRefId } from "@/hooks/use-audio-player";
-import { useTrack } from "@/hooks/api/use-tracks";
+import { useTrack } from "@/features/track/hooks/use-tracks";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;

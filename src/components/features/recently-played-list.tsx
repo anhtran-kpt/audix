@@ -1,6 +1,6 @@
-import { useRecentTracks } from "@/hooks/api/use-tracks";
 import TrackItem from "./track-item";
 import { RecentlyPlayedPlayButton } from "./recently-played-play-button";
+import { useRecentTracks } from "@/features/track/hooks/use-tracks";
 
 export default function RecentlyPlayedList() {
   const { data: recentTracks } = useRecentTracks();

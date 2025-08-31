@@ -1,6 +1,6 @@
 "use client";
 
-import { AlbumBase } from "@/contracts/album";
+import { AlbumBase } from "@/features/album/contracts/album-dto";
 import { GridWrapper } from "../ui/grid-wrapper";
 import { AlbumItem } from "./album-item";
 

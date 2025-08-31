@@ -23,8 +23,8 @@ import {
 } from "@/hooks/use-audio-player";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { useScrobble } from "@/hooks/use-scrobble";
-import { useTrack } from "@/hooks/api/use-tracks";
 import { useShallow } from "zustand/react/shallow";
+import { useTrack } from "@/features/track/hooks/use-tracks";
 
 function AudioPlayer() {
   const {
@@ -50,7 +50,6 @@ function AudioPlayer() {
     useShallow((s) => ({ toggle: s.toggle, active: s.active }))
   );
 
-  console.log(currentTrack);
   return (
     <>
       {currentTrack && (

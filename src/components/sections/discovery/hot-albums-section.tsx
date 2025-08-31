@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import { AlbumItem } from "@/components/features/album-item";
-import { FullAlbum } from "@/contracts/album";
+import { FullAlbum } from "@/features/album/contracts/album-dto";
 
 type HotAlbumsSectionProps = {
   albums: FullAlbum[];

@@ -1,4 +1,4 @@
-import { makePOST } from "@/server/api/route-factory";
+import { makePOST } from "@/lib/route-factory";
 import { mergeGuestSession } from "@/server/modules/playback/services";
 
 export const POST = makePOST({

@@ -3,7 +3,7 @@
 import { RowPlayButton } from "@/components/features/row-play-button";
 import TrackItem from "@/components/features/track-item";
 import SectionHeading from "@/components/ui/section-heading";
-import { FullTrack } from "@/contracts/track";
+import { FullTrack } from "@/features/track/contracts/track-dto";
 
 type NewReleasesSectionProps = {
   tracks: Pick<

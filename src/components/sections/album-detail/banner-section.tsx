@@ -20,7 +20,7 @@ import pluralize from "pluralize";
 import { IconButton } from "@/components/ui/icon-button";
 import tinycolor from "tinycolor2";
 import { ContextPlayButton } from "@/components/features/context-play-button";
-import { FullAlbum } from "@/contracts/album";
+import { FullAlbum } from "@/features/album/contracts/album-dto";
 
 type BannerSectionProps = Pick<
   FullAlbum,
