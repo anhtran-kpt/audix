@@ -59,3 +59,42 @@ export const trackDetailSelect = {
 export type TrackDetail = Prisma.TrackGetPayload<{
   select: typeof trackDetailSelect;
 }>;
+
+export const trackItemSelect = {
+  id: true,
+  title: true,
+  isExplicit: true,
+  album: {
+    select: {
+      imageId: true,
+    },
+  },
+  artists: {
+    select: {
+      artist: { select: { id: true, name: true } },
+    },
+    orderBy: { order: "asc" },
+  },
+  credits: {
+    select: {
+      id: true,
+      name: true,
+      order: true,
+      role: true,
+      details: true,
+      artist: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+    },
+    orderBy: {
+      order: "asc",
+    },
+  },
+} satisfies Prisma.TrackSelect;
+
+export type TrackItem = Prisma.TrackGetPayload<{
+  select: typeof trackItemSelect;
+}>;

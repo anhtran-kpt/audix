@@ -1,7 +1,7 @@
 import "server-only";
 import db from "@/lib/db";
 import { AppError } from "@/lib/errors";
-import { trackDetailSelect } from "./track-selects";
+import { trackDetailSelect, trackItemSelect } from "./track-selects";
 
 export const getTrackOrThrow = async (trackId: string) => {
   const track = await db.track.findUnique({
@@ -48,4 +48,14 @@ export const getRecentTracks = async (userId: string) => {
 
   const lastMap = new Map(rows.map((r) => [r.trackId, r._max.playedAt!]));
   return tracks.sort((a, b) => +lastMap.get(b.id)! - +lastMap.get(a.id)!);
+};
+
+export const getNewReleases = async () => {
+  return await db.track.findMany({
+    select: trackItemSelect,
+    take: 9,
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
 };

@@ -2,7 +2,7 @@ import { getApi } from "@/lib/http/request";
 import { queryOptions } from "@tanstack/react-query";
 import { FollowStatus, SidebarArtist } from "../contracts/artist-dto";
 import { artistKeys } from "./artist-keys";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
 
 export const sidebarArtistOptions = () => {
   return queryOptions({
@@ -11,7 +11,7 @@ export const sidebarArtistOptions = () => {
   });
 };
 
-export const followStatusOptions = (artistId: zCuidType) => {
+export const followStatusOptions = (artistId: zCuidSchemaType) => {
   return queryOptions({
     queryKey: artistKeys.followStatus(artistId),
     queryFn: () => getApi<FollowStatus>(`/artists/${artistId}/follow`),

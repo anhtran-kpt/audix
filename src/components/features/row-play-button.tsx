@@ -12,7 +12,10 @@ import { PauseIcon, PlayIcon } from "lucide-react";
 import { useShallow } from "zustand/react/shallow";
 import { cn } from "@/lib/utils";
 import { postApi } from "@/lib/http/request";
-import { SnapshotInput, SnapshotOutput } from "@/contracts/playback";
+import {
+  SnapshotInput,
+  SnapshotOutput,
+} from "@/features/playback/contracts/playback-dto";
 
 type RowPlayButtonProps = {
   context: { type: PlaybackContextType; contextId?: string; name?: string };

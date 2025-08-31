@@ -3,13 +3,10 @@
 import { RowPlayButton } from "@/components/features/row-play-button";
 import TrackItem from "@/components/features/track-item";
 import SectionHeading from "@/components/ui/section-heading";
-import { FullTrack } from "@/features/track/contracts/track-dto";
+import { TrackItem as TrackItemType } from "@/features/track/data-access/track-selects";
 
 type NewReleasesSectionProps = {
-  tracks: Pick<
-    FullTrack,
-    "id" | "title" | "album" | "artists" | "isExplicit"
-  >[];
+  tracks: TrackItemType[];
 };
 
 export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {

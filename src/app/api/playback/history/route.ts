@@ -1,6 +1,6 @@
-import { RecordPlayInputSchema } from "@/contracts/playback";
+import { RecordPlayInputSchema } from "@/features/playback/contracts/playback-dto";
+import { recordPlay } from "@/features/playback/data-access/playback-repo";
 import { makePOST } from "@/lib/route-factory";
-import { recordPlay } from "@/server/modules/playback/services";
 
 export const POST = makePOST({
   auth: "public",

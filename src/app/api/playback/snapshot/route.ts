@@ -1,6 +1,6 @@
-import { SnapshotInputSchema } from "@/contracts/playback";
+import { SnapshotInputSchema } from "@/features/playback/contracts/playback-dto";
+import { snapshot } from "@/features/playback/data-access/playback-repo";
 import { makePOST } from "@/lib/route-factory";
-import { snapshot } from "@/server/modules/playback/services";
 
 export const POST = makePOST({
   auth: "public",

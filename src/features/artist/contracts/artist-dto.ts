@@ -1,17 +1,17 @@
 import z from "zod";
 import {
-  zCuid,
-  zPublicId,
+  zCuidSchema,
+  zPublicIdSchema,
   zTimeStamps,
 } from "@/features/shared/contracts/shared-dto";
 import { CreditRoleSchema } from "@/features/shared/contracts/shared-enum";
 
 export const ArtistBaseSchema = z.object({
-  id: zCuid,
+  id: zCuidSchema,
   name: z.string().min(1),
   bio: z.string().nullish(),
-  imageId: zPublicId,
-  bannerId: zPublicId,
+  imageId: zPublicIdSchema,
+  bannerId: zPublicIdSchema,
   isVerified: z.boolean().optional(),
   followersCount: z.number().int().nonnegative(),
   ...zTimeStamps,
@@ -19,13 +19,13 @@ export const ArtistBaseSchema = z.object({
 
 export const FullArtistSchema = ArtistBaseSchema.extend({
   album: z.object({
-    id: zCuid,
-    imageId: zPublicId,
+    id: zCuidSchema,
+    imageId: zPublicIdSchema,
     title: z.string().min(1),
     artist: z.object({
-      id: zCuid,
+      id: zCuidSchema,
       name: z.string().min(1),
-      bannerId: zPublicId,
+      bannerId: zPublicIdSchema,
       bio: z.string().nullish(),
     }),
     _count: z.object({
@@ -34,20 +34,20 @@ export const FullArtistSchema = ArtistBaseSchema.extend({
   }),
   genres: z
     .object({
-      id: zCuid,
+      id: zCuidSchema,
       name: z.string().min(1),
       color: z.string().min(1),
     })
     .array(),
   credits: z.array(
     z.object({
-      id: zCuid,
+      id: zCuidSchema,
       name: z.string().min(1),
       order: z.number().int().nonnegative(),
       role: CreditRoleSchema,
       details: z.string().nullish(),
       artist: z.object({
-        id: zCuid,
+        id: zCuidSchema,
         name: z.string().min(1),
       }),
     })

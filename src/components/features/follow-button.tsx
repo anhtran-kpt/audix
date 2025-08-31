@@ -6,9 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { followStatusOptions } from "@/features/artist/query/artist-options";
 import { useToggleFollow } from "@/features/artist/hooks/use-toggle-follow";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
 
-export const FollowButton = ({ artistId }: { artistId: zCuidType }) => {
+export const FollowButton = ({ artistId }: { artistId: zCuidSchemaType }) => {
   const { status } = useSession();
 
   const { data: followStatus } = useQuery({

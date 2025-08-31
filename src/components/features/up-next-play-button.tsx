@@ -5,10 +5,10 @@ import {
   useNowPlayingRefId,
   useQueue,
 } from "@/hooks/use-audio-player";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
 
 type UpNextPlayButtonProps = {
-  trackId: zCuidType;
+  trackId: zCuidSchemaType;
   trackIndex: number;
 };
 

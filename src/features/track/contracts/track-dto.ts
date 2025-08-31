@@ -1,20 +1,18 @@
 import {
-  zCuid,
-  zDate,
-  zPublicId,
+  zCuidSchema,
+  zPublicIdSchema,
   zTimeStamps,
 } from "@/features/shared/contracts/shared-dto";
 import {
   ArtistRoleSchema,
   CreditRoleSchema,
-  PlaybackContextTypeSchema,
 } from "@/features/shared/contracts/shared-enum";
 import z from "zod";
 
 export const TrackBaseSchema = z.object({
-  id: zCuid,
+  id: zCuidSchema,
   title: z.string().min(1),
-  audioId: zPublicId,
+  audioId: zPublicIdSchema,
   duration: z.number().int().nonnegative(),
   trackNumber: z.number().int().nonnegative(),
   lyrics: z.string().nullish(),
@@ -25,13 +23,13 @@ export const TrackBaseSchema = z.object({
 
 export const FullTrackSchema = TrackBaseSchema.extend({
   album: z.object({
-    id: zCuid,
-    imageId: zPublicId,
+    id: zCuidSchema,
+    imageId: zPublicIdSchema,
     title: z.string().min(1),
     artist: z.object({
-      id: zCuid,
+      id: zCuidSchema,
       name: z.string().min(1),
-      bannerId: zPublicId,
+      bannerId: zPublicIdSchema,
       bio: z.string().nullish(),
     }),
     _count: z.object({
@@ -42,18 +40,18 @@ export const FullTrackSchema = TrackBaseSchema.extend({
     z.object({
       role: ArtistRoleSchema,
       order: z.number().int().nonnegative(),
-      artist: z.object({ id: zCuid, name: z.string().min(1) }),
+      artist: z.object({ id: zCuidSchema, name: z.string().min(1) }),
     })
   ),
   credits: z.array(
     z.object({
-      id: zCuid,
+      id: zCuidSchema,
       name: z.string().min(1),
       order: z.number().int().nonnegative(),
       role: CreditRoleSchema,
       details: z.string().nullable(),
       artist: z.object({
-        id: zCuid,
+        id: zCuidSchema,
         name: z.string().min(1),
       }),
     })
@@ -61,15 +59,3 @@ export const FullTrackSchema = TrackBaseSchema.extend({
 });
 
 export type FullTrack = z.infer<typeof FullTrackSchema>;
-
-export const RecordPlayInputSchema = z.object({
-  userId: zCuid,
-  trackId: zCuid,
-  listenedSec: z.number().int().min(30),
-  playedAt: zDate,
-  sourceType: PlaybackContextTypeSchema,
-  sourceId: zCuid.nullish(),
-  snapshotId: z.string().optional(),
-});
-
-export type RecordPlayInput = z.infer<typeof RecordPlayInputSchema>;

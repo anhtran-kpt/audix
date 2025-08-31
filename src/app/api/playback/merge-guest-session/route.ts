@@ -1,5 +1,5 @@
+import { mergeGuestSession } from "@/features/playback/data-access/playback-repo";
 import { makePOST } from "@/lib/route-factory";
-import { mergeGuestSession } from "@/server/modules/playback/services";
 
 export const POST = makePOST({
   auth: "required",

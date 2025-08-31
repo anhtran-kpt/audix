@@ -1,6 +1,6 @@
-import { CreatePlaylistInputSchema } from "@/contracts/playlist";
+import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-dto";
+import { createPlaylist } from "@/features/playlist/data-access/playlist-repos";
 import { makePOST } from "@/lib/route-factory";
-import { createPlaylist } from "@/server/modules/playlist/services";
 
 export const POST = makePOST({
   auth: "required",

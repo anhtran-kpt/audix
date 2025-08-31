@@ -1,5 +1,5 @@
+import { getTrackOrThrow } from "@/features/track/data-access/track-repos";
 import { makeGET } from "@/lib/route-factory";
-import { getTrackOrThrow } from "@/server/modules/track/services";
 import { cuid2, object } from "zod";
 
 export const GET = makeGET({

@@ -1,7 +1,7 @@
 import {
-  zCuid,
-  zDate,
-  zPublicId,
+  zCuidSchema,
+  zDateSchema,
+  zPublicIdSchema,
   zTimeStamps,
 } from "@/features/shared/contracts/shared-dto";
 import {
@@ -11,12 +11,12 @@ import {
 import z from "zod";
 
 export const AlbumBaseSchema = z.object({
-  id: zCuid,
+  id: zCuidSchema,
   title: z.string().min(1),
   description: z.string().nullish(),
-  imageId: zPublicId,
+  imageId: zPublicIdSchema,
   albumType: AlbumTypeSchema,
-  releaseDate: zDate.optional(),
+  releaseDate: zDateSchema.optional(),
   totalTracks: z.number().int().positive(),
   duration: z.number().int().nonnegative(),
   ...zTimeStamps,
@@ -24,13 +24,13 @@ export const AlbumBaseSchema = z.object({
 
 export const FullAlbumSchema = AlbumBaseSchema.extend({
   album: z.object({
-    id: zCuid,
-    imageId: zPublicId,
+    id: zCuidSchema,
+    imageId: zPublicIdSchema,
     title: z.string().min(1),
     artist: z.object({
-      id: zCuid,
+      id: zCuidSchema,
       name: z.string().min(1),
-      bannerId: zPublicId,
+      bannerId: zPublicIdSchema,
       bio: z.string().nullish(),
     }),
     _count: z.object({
@@ -39,18 +39,18 @@ export const FullAlbumSchema = AlbumBaseSchema.extend({
   }),
   artist: z.object({
     name: z.string().min(1),
-    id: zCuid,
+    id: zCuidSchema,
     imageId: z.string().min(1),
   }),
   credits: z.array(
     z.object({
-      id: zCuid,
+      id: zCuidSchema,
       name: z.string().min(1),
       order: z.number().int().nonnegative(),
       role: CreditRoleSchema,
       details: z.string().nullish(),
       artist: z.object({
-        id: zCuid,
+        id: zCuidSchema,
         name: z.string().min(1),
       }),
     })
@@ -60,7 +60,7 @@ export const FullAlbumSchema = AlbumBaseSchema.extend({
       genre: z.object({
         name: z.string().min(1),
         color: z.string().min(1),
-        id: zCuid,
+        id: zCuidSchema,
       }),
     })
     .array(),

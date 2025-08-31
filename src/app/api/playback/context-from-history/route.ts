@@ -1,12 +1,12 @@
-import { zCuid } from "@/contracts/common";
+import { getContextFromHistory } from "@/features/playback/data-access/playback-repo";
+import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
 import { makePOST } from "@/lib/route-factory";
-import { getContextFromHistory } from "@/server/modules/playback/services";
 
 export const POST = makePOST({
   auth: "public",
   handler: async ({ req }) => {
     const url = new URL(req.url);
-    const trackId = zCuid.parse(url.searchParams.get("trackId"));
+    const trackId = zCuidSchema.parse(url.searchParams.get("trackId"));
     return await getContextFromHistory(trackId);
   },
 });

@@ -5,12 +5,7 @@ import { cn } from "@/lib/utils";
 import { CldImage } from "next-cloudinary";
 import Dot from "../ui/dot";
 import { ContextPlayButton } from "./context-play-button";
-import { AlbumBase } from "@/features/album/contracts/album-dto";
-
-type AlbumItemProps = Pick<
-  AlbumBase,
-  "imageId" | "id" | "title" | "releaseDate" | "albumType"
->;
+import { AlbumItem as AlbumItemType } from "@/features/album/data-access/album-selects";
 
 export const AlbumItem = ({
   imageId,
@@ -18,7 +13,7 @@ export const AlbumItem = ({
   id,
   releaseDate,
   albumType,
-}: AlbumItemProps) => {
+}: AlbumItemType) => {
   return (
     <div key={id} className="flex flex-col group gap-2 overflow-hidden">
       <div className="relative rounded-md overflow-hidden size-full aspect-square">

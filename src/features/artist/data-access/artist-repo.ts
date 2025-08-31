@@ -1,9 +1,9 @@
 import "server-only";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
 import { trackDetailSelect } from "@/features/track/data-access/track-selects";
 import db from "@/lib/db";
 
-export const getSidebarArtists = async (userId: zCuidType) => {
+export const getSidebarArtists = async (userId: zCuidSchemaType) => {
   return await db.userFollowedArtist
     .findMany({
       where: {
@@ -23,8 +23,8 @@ export const getSidebarArtists = async (userId: zCuidType) => {
 };
 
 export const getFollowStatus = async (
-  userId: zCuidType,
-  artistId: zCuidType
+  userId: zCuidSchemaType,
+  artistId: zCuidSchemaType
 ) => {
   const [artist, link] = await Promise.all([
     db.artist.findUnique({
@@ -39,7 +39,10 @@ export const getFollowStatus = async (
   return { isFollowing: !!link, followersCount: artist?.followersCount ?? 0 };
 };
 
-export const followArtist = async (userId: zCuidType, artistId: zCuidType) => {
+export const followArtist = async (
+  userId: zCuidSchemaType,
+  artistId: zCuidSchemaType
+) => {
   return await db.$transaction(async (tx) => {
     const created = await tx.userFollowedArtist
       .create({ data: { userId, artistId } })
@@ -63,8 +66,8 @@ export const followArtist = async (userId: zCuidType, artistId: zCuidType) => {
 };
 
 export const unfollowArtist = async (
-  userId: zCuidType,
-  artistId: zCuidType
+  userId: zCuidSchemaType,
+  artistId: zCuidSchemaType
 ) => {
   return await db.$transaction(async (tx) => {
     const del = await tx.userFollowedArtist.deleteMany({
@@ -87,7 +90,7 @@ export const unfollowArtist = async (
   });
 };
 
-export const getArtistDetailPage = async (artistId: zCuidType) => {
+export const getArtistDetailPage = async (artistId: zCuidSchemaType) => {
   const artist = await db.artist
     .findUniqueOrThrow({
       where: {
@@ -170,7 +173,7 @@ export const getArtistReleases = async (artistId: string, take = 12) => {
         orderBy: [
           { likedBy: { _count: "desc" } },
           { releaseDate: "desc" },
-          { id: "desc" }, // phá tie để ổn định
+          { id: "desc" },
         ],
         take,
         select: {

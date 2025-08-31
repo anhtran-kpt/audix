@@ -1,6 +1,6 @@
-import { PlaybackSessionInputSchema } from "@/contracts/playback";
+import { PlaybackSessionInputSchema } from "@/features/playback/contracts/playback-dto";
+import { updateSession } from "@/features/playback/data-access/playback-repo";
 import { makePUT } from "@/lib/route-factory";
-import { updateSession } from "@/server/modules/playback/services";
 
 export const PUT = makePUT({
   auth: "public",

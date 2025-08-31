@@ -30,4 +30,4 @@ export const zTimeStamps = {
   updatedAt: zDateSchema.optional(),
 } as const;
 
-export type zCuidType = z.infer<typeof zCuidSchema>;
+export type zCuidSchemaType = z.infer<typeof zCuidSchema>;

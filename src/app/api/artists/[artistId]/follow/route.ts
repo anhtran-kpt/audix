@@ -1,13 +1,13 @@
-import { zCuid } from "@/contracts/common";
-import { makeDELETE, makeGET, makePOST } from "@/lib/route-factory";
 import {
   followArtist,
   getFollowStatus,
   unfollowArtist,
-} from "@/server/modules/artist/services";
+} from "@/features/artist/data-access/artist-repo";
+import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
+import { makeDELETE, makeGET, makePOST } from "@/lib/route-factory";
 import { object } from "zod";
 
-const FollowParamsSchema = object({ artistId: zCuid });
+const FollowParamsSchema = object({ artistId: zCuidSchema });
 
 export const GET = makeGET({
   auth: "required",

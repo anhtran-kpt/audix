@@ -1,4 +1,4 @@
-import { zCuid } from "@/features/shared/contracts/shared-dto";
+import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
 import {
   PlaybackContextTypeSchema,
   RepeatModeSchema,
@@ -6,7 +6,7 @@ import {
 import z from "zod";
 
 export const TrackRefSchema = z.object({
-  id: zCuid,
+  id: zCuidSchema,
   audioId: z.string().min(1),
 });
 
@@ -14,14 +14,14 @@ export type TrackRef = z.infer<typeof TrackRefSchema>;
 
 export const SnapshotInputSchema = z.object({
   type: PlaybackContextTypeSchema,
-  contextId: zCuid.optional(),
+  contextId: zCuidSchema.optional(),
   clickedTrackId: z.string().optional(),
   name: z.string().optional(),
 });
 
 export const SnapshotOutputSchema = z.object({
   type: PlaybackContextTypeSchema,
-  contextId: zCuid.optional(),
+  contextId: zCuidSchema.optional(),
   name: z.string().optional(),
   snapshotId: z.string().min(1),
   trackRefs: TrackRefSchema.array(),
@@ -38,7 +38,7 @@ export const PlaybackSessionInputSchema = z.object({
 });
 
 export const HistoryEventSchema = z.object({
-  trackId: zCuid,
+  trackId: zCuidSchema,
   listenedSec: z
     .number()
     .int()
@@ -54,7 +54,7 @@ export const RecordPlayInputSchema = z.object({
 export const ContextFromHistoryOutputSchema = z.object({
   found: z.boolean(),
   type: PlaybackContextTypeSchema,
-  contextId: zCuid.optional(),
+  contextId: zCuidSchema.optional(),
   snapshotId: z.string().min(1).optional(),
   name: z.string().optional(),
   trackRefs: TrackRefSchema.array().optional(),

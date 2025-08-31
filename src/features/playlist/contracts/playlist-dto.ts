@@ -1,22 +1,22 @@
 import z from "zod";
 import {
-  zCuid,
-  zDate,
-  zPublicId,
+  zCuidSchema,
+  zDateSchema,
+  zPublicIdSchema,
   zTimeStamps,
 } from "@/features/shared/contracts/shared-dto";
 
 export const PlaylistItem = z.object({
-  id: zCuid,
+  id: zCuidSchema,
   position: z.number().int().nonnegative(),
-  addedAt: zDate.optional(),
+  addedAt: zDateSchema.optional(),
 });
 
 export const PlaylistBaseSchema = z.object({
-  id: zCuid,
+  id: zCuidSchema,
   title: z.string().min(1),
   description: z.string().nullable(),
-  imageId: zPublicId.nullable(),
+  imageId: zPublicIdSchema.nullable(),
   isPublic: z.boolean().optional(),
   isOfficial: z.boolean().optional(),
   totalTracks: z.number().int().nonnegative(),
@@ -28,7 +28,7 @@ export const FullPlaylistSchema = PlaylistBaseSchema.extend({
   user: z
     .object({
       name: z.string().min(1).nullable(),
-      id: zCuid,
+      id: zCuidSchema,
       image: z.url().nullable(),
     })
     .nullable(),
@@ -56,7 +56,7 @@ export const SidebarPlaylistSchema = FullPlaylistSchema.pick({
   user: z
     .object({
       name: z.string().min(1).nullable(),
-      id: zCuid,
+      id: zCuidSchema,
     })
     .nullable(),
 });

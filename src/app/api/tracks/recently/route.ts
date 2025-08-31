@@ -1,5 +1,5 @@
+import { getRecentTracks } from "@/features/track/data-access/track-repos";
 import { makeGET } from "@/lib/route-factory";
-import { getRecentTracks } from "@/server/modules/track/services";
 
 export const GET = makeGET({
   auth: "required",

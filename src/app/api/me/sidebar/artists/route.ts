@@ -1,5 +1,5 @@
+import { getSidebarArtists } from "@/features/artist/data-access/artist-repo";
 import { makeGET } from "@/lib/route-factory";
-import { getSidebarArtists } from "@/server/modules/artist/services";
 
 export const GET = makeGET({
   auth: "required",
