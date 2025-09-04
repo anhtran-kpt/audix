@@ -1,4 +1,4 @@
-import { getContextFromHistory } from "@/features/playback/data-access/playback-repo";
+import { getContextFromHistory } from "@/features/playback/data-access/playback-repos";
 import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
 import { makePOST } from "@/lib/route-factory";
 

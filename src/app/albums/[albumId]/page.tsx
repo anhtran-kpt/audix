@@ -130,7 +130,7 @@ export default async function AlbumDetail({
         duration={album.duration}
         genres={album.genres}
       />
-      {/* <TracksSection tracks={album.tracks} /> */}
+      <TracksSection tracks={album.tracks} albumId={albumId} />
       <OtherAlbumsSection artist={album.artist} albums={otherAlbums} />
     </>
   );

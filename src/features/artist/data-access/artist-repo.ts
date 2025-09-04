@@ -111,21 +111,31 @@ export const getArtistDetailPage = async (artistId: zCuidType) => {
             },
           },
         },
-        tracks: {
-          select: {
-            track: {
-              select: trackDetailSelect,
-            },
-          },
-          take: 5,
-        },
       },
     })
     .then((artist) => ({
       ...artist,
       genres: artist.genres.map((data) => data.genre),
-      tracks: artist.tracks.map((data) => data.track),
     }));
+
+  const popularTracks = await db.trackArtist
+    .findMany({
+      where: {
+        artistId,
+      },
+      select: {
+        track: {
+          select: trackDetailSelect,
+        },
+      },
+      orderBy: {
+        track: {
+          playCount: "desc",
+        },
+      },
+      take: 5,
+    })
+    .then((tracks) => tracks.map((item) => item.track));
 
   const genreIds = artist.genres.map((genre) => genre.id);
 
@@ -158,6 +168,7 @@ export const getArtistDetailPage = async (artistId: zCuidType) => {
 
   return {
     artist,
+    popularTracks,
     suggestions,
   };
 };

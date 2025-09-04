@@ -1,29 +1,20 @@
 "use client";
 
-import { TrackGrid } from "@/components/features/track-grid";
+import { TrackList } from "@/components/features/track-list";
 import SectionHeading from "@/components/ui/section-heading";
-import { FullTrack } from "@/features/track/contracts/track-dto";
+import { TrackListItem } from "@/features/track/contracts/track-dto";
 
 export const PopularTracksSection = ({
   artistId,
   tracks,
 }: {
   artistId: string;
-  tracks: Pick<
-    FullTrack,
-    | "id"
-    | "duration"
-    | "playCount"
-    | "title"
-    | "isExplicit"
-    | "album"
-    | "artists"
-  >[];
+  tracks: TrackListItem[];
 }) => {
   return (
     <section>
       <SectionHeading title="Popular" />
-      <TrackGrid artistId={artistId} type="popular" tracks={tracks} />
+      <TrackList contextId={artistId} type="ARTIST" tracks={tracks} />
     </section>
   );
 };

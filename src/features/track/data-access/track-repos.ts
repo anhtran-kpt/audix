@@ -117,3 +117,14 @@ export const getNowPlayingTrack = async (trackId: zCuidType) => {
 
   return track;
 };
+
+export const getAlbumTracks = async (albumId: zCuidType) => {
+  const album = await db.album.findUniqueOrThrow({
+    where: { id: albumId },
+    select: {
+      tracks: { select: { id: true }, orderBy: { trackNumber: "asc" } },
+    },
+  });
+
+  return album.tracks;
+};

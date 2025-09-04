@@ -1,25 +1,17 @@
 "use client";
 
-import { TrackGrid } from "@/components/features/track-grid";
-import { FullTrack } from "@/features/track/contracts/track-dto";
+import { TrackList } from "@/components/features/track-list";
+import { TrackListItem } from "@/features/track/contracts/track-dto";
 
 type TracksSectionProps = {
-  tracks: Pick<
-    FullTrack,
-    | "id"
-    | "duration"
-    | "playCount"
-    | "title"
-    | "isExplicit"
-    | "album"
-    | "artists"
-  >[];
+  tracks: TrackListItem[];
+  albumId: string;
 };
 
-export const TracksSection = ({ tracks }: TracksSectionProps) => {
+export const TracksSection = ({ tracks, albumId }: TracksSectionProps) => {
   return (
     <section>
-      <TrackGrid type="album" tracks={tracks} />
+      <TrackList contextId={albumId} tracks={tracks} type="ALBUM" />
     </section>
   );
 };

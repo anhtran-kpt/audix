@@ -17,11 +17,13 @@ export default async function ArtistDetail({
 }) {
   const { artistId } = await params;
 
-  const [{ artist, suggestions }, { popular, albums, singlesAndEps }] =
-    await Promise.all([
-      getArtistDetailPage(artistId),
-      getArtistReleases(artistId),
-    ]);
+  const [
+    { artist, suggestions, popularTracks },
+    { popular, albums, singlesAndEps },
+  ] = await Promise.all([
+    getArtistDetailPage(artistId),
+    getArtistReleases(artistId),
+  ]);
 
   return (
     <>
@@ -32,7 +34,7 @@ export default async function ArtistDetail({
         genres={artist.genres}
         artistId={artistId}
       />
-      <PopularTracksSection tracks={artist.tracks} artistId={artistId} />
+      <PopularTracksSection tracks={popularTracks} artistId={artistId} />
       <DiscographySection
         artistId={artistId}
         popular={popular}
