@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useAudioStore } from "@/stores/use-audio-store";
 import { useShallow } from "zustand/react/shallow";
 import { postApi } from "@/lib/http/request";
-import { HistoryEvent } from "@/contracts/playback";
+import { HistoryEvent } from "@/features/playback/contracts/playback-dto";
 
 export function useScrobble() {
   const { nowPlayingRef, listenedSec, durationSec, audioElement } =

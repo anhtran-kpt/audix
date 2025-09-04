@@ -3,16 +3,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
 import { AlbumGrid } from "@/components/features/album-grid";
-import { AlbumBase } from "@/features/album/contracts/album-dto";
-import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
-
-type AlbumItem = Pick<
-  AlbumBase,
-  "id" | "imageId" | "title" | "releaseDate" | "albumType"
->;
+import { AlbumItem } from "@/features/album/contracts/album-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 type DiscographySectionProps = {
-  artistId: zCuidSchemaType;
+  artistId: zCuidType;
   popular: AlbumItem[];
   albums: AlbumItem[];
   singlesAndEps: AlbumItem[];

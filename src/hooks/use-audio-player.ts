@@ -1,7 +1,7 @@
 "use client";
 
 import { PlaybackContextType } from "@/app/generated/prisma";
-import { TrackRef } from "@/contracts/playback";
+import { TrackRef } from "@/features/playback/contracts/playback-dto";
 import { getAudioUrl } from "@/lib/helpers/get-audio-url";
 import {
   AudioStore,

@@ -11,12 +11,12 @@ import { FollowButton } from "@/components/features/follow-button";
 import { ContextPlayButton } from "@/components/features/context-play-button";
 import { FollowersBadge } from "@/components/features/follow-badge";
 import { FullArtist } from "@/features/artist/contracts/artist-dto";
-import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 type BannerSectionProps = Pick<
   FullArtist,
   "name" | "imageId" | "genres" | "isVerified"
-> & { artistId: zCuidSchemaType };
+> & { artistId: zCuidType };
 
 export const BannerSection = ({
   imageId,

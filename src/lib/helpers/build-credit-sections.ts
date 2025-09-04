@@ -1,9 +1,8 @@
 import {
   CREDIT_GROUP_TITLE,
   ROLE_META,
-  type CreditGroupId,
 } from "@/lib/constants/credit-role-meta";
-import { Credit, type TA } from "@/types/credit";
+import { Credit, CreditGroupId, type TA } from "@/types/credit";
 import { norm } from "./norm";
 
 export type CreditSection = {

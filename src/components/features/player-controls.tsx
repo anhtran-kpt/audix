@@ -12,9 +12,9 @@ import {
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { cn } from "@/lib/utils";
-import { RepeatMode } from "@/contracts/enums";
 import { useAudioStore } from "@/stores/use-audio-store";
 import { useShallow } from "zustand/react/shallow";
+import { RepeatMode } from "@/features/shared/contracts/shared-enum";
 
 interface PlayerControlsProps {
   isPlaying: boolean;

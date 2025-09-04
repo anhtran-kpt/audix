@@ -16,11 +16,15 @@ export default function QueueView() {
   const nowPlayingRefId = useNowPlayingRefId();
   const isPlaying = useIsPlaying();
 
-  const { data: currentTrack } = useTrack(nowPlayingRefId);
+  const { data: currentTrack, status, error } = useTrack(nowPlayingRefId);
   const togglePlay = useAudioStore(useShallow((state) => state.togglePlay));
 
-  if (!currentTrack) {
+  if (status === "pending") {
     return null;
+  }
+
+  if (status === "error") {
+    return <span>Error {error.message}</span>;
   }
 
   return (

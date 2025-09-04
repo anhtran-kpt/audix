@@ -6,7 +6,7 @@ import { EllipsisIcon } from "lucide-react";
 import Explicit from "../ui/explicit";
 import { CldImage } from "next-cloudinary";
 import { ReactNode } from "react";
-import { TrackItem as TrackItemType } from "@/features/track/data-access/track-selects";
+import { TrackItem as TrackItemType } from "@/features/track/contracts/track-dto";
 
 export type TrackItemProps = {
   track: TrackItemType;

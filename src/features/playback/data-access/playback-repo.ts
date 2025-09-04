@@ -13,7 +13,7 @@ import {
   RecordPlayInput,
   SnapshotInput,
 } from "@/features/playback/contracts/playback-dto";
-import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { PlaybackContextType } from "@/features/shared/contracts/shared-enum";
 
 export const snapshot = async (input: SnapshotInput) => {
@@ -77,7 +77,7 @@ export const snapshot = async (input: SnapshotInput) => {
   };
 };
 
-export const getContextFromHistory = async (trackId: zCuidSchemaType) => {
+export const getContextFromHistory = async (trackId: zCuidType) => {
   const userId = await getUserIdOrNull();
   const deviceId = await ensureDevice();
 
@@ -254,7 +254,7 @@ export const updateSession = async (input: PlaybackSessionInput) => {
   return { version: Number(updated.version ?? BigInt(0)) };
 };
 
-export const mergeGuestSession = async (userId: zCuidSchemaType) => {
+export const mergeGuestSession = async (userId: zCuidType) => {
   const deviceId = await ensureDevice();
 
   await db.$transaction([

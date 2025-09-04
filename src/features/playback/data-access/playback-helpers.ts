@@ -2,7 +2,7 @@ import "server-only";
 import { createHash } from "crypto";
 import db from "@/lib/db";
 import { PlaybackContextType } from "@/features/shared/contracts/shared-enum";
-import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { TrackRef } from "../contracts/playback-dto";
 
 export async function buildTrackIdsForContext(
@@ -70,7 +70,7 @@ export async function buildTrackIdsForContext(
 
 export function computeSnapshotHash(
   type: PlaybackContextType,
-  trackIds: zCuidSchemaType[],
+  trackIds: zCuidType[],
   contextId?: string | null
 ) {
   const h = createHash("md5");
@@ -171,7 +171,7 @@ export async function getHydratePayloadForDevice(deviceId: string) {
 }
 
 export const resolveTrackRefsOrdered = async (
-  trackIds: zCuidSchemaType[]
+  trackIds: zCuidType[]
 ): Promise<TrackRef[]> => {
   if (trackIds.length === 0) return [];
 

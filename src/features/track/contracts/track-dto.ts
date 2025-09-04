@@ -58,4 +58,65 @@ export const FullTrackSchema = TrackBaseSchema.extend({
   ),
 });
 
+export const TrackItemSchema = FullTrackSchema.pick({
+  id: true,
+  title: true,
+  isExplicit: true,
+}).extend({
+  album: z.object({
+    imageId: zCuidSchema,
+  }),
+  artists: z
+    .object({
+      artist: z.object({
+        id: zCuidSchema,
+        name: z.string(),
+      }),
+    })
+    .array(),
+});
+
+export const NowPlayingTrackSchema = FullTrackSchema.pick({
+  id: true,
+  title: true,
+  isExplicit: true,
+}).extend({
+  album: z.object({
+    imageId: zCuidSchema,
+    artist: z.object({
+      id: zCuidSchema,
+      name: z.string(),
+      bio: z.string().optional(),
+      bannerId: zCuidSchema,
+    }),
+  }),
+  artists: z
+    .object({
+      role: ArtistRoleSchema,
+      order: z.number().int().nonnegative(),
+      artist: z.object({
+        id: zCuidSchema,
+        name: z.string(),
+      }),
+    })
+    .array(),
+  credits: z
+    .object({
+      id: zCuidSchema,
+      name: z.string(),
+      role: CreditRoleSchema,
+      details: z.string().nullable(),
+      order: z.number().int().nonnegative(),
+      artist: z
+        .object({
+          name: z.string(),
+          id: zCuidSchema.nullable(),
+        })
+        .nullable(),
+    })
+    .array(),
+});
+
 export type FullTrack = z.infer<typeof FullTrackSchema>;
+export type TrackItem = z.infer<typeof TrackItemSchema>;
+export type NowPlayingTrack = z.infer<typeof NowPlayingTrackSchema>;

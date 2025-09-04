@@ -1,15 +1,10 @@
 "use client";
 
-import { AlbumBase } from "@/features/album/contracts/album-dto";
+import { AlbumItem as AlbumItemType } from "@/features/album/contracts/album-dto";
 import { GridWrapper } from "../ui/grid-wrapper";
 import { AlbumItem } from "./album-item";
 
-type AlbumItem = Pick<
-  AlbumBase,
-  "id" | "imageId" | "title" | "releaseDate" | "albumType"
->;
-
-export const AlbumGrid = ({ albums }: { albums: AlbumItem[] }) => {
+export const AlbumGrid = ({ albums }: { albums: AlbumItemType[] }) => {
   return (
     <GridWrapper>
       {albums.map((album) => (

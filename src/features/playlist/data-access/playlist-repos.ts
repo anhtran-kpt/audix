@@ -1,8 +1,8 @@
-import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import db from "@/lib/db";
 import { CreatePlaylistInput } from "@/features/playlist/contracts/playlist-dto";
 
-export const getSidebarPlaylists = async (userId: zCuidSchemaType) => {
+export const getSidebarPlaylists = async (userId: zCuidType) => {
   return await db.playlist.findMany({
     where: {
       userId,
@@ -25,7 +25,7 @@ export const getSidebarPlaylists = async (userId: zCuidSchemaType) => {
 };
 
 export const createPlaylist = async (
-  userId: zCuidSchemaType,
+  userId: zCuidType,
   input: CreatePlaylistInput
 ) => {
   return await db.playlist.create({

@@ -66,5 +66,14 @@ export const FullAlbumSchema = AlbumBaseSchema.extend({
     .array(),
 });
 
+export const AlbumItemSchema = AlbumBaseSchema.pick({
+  id: true,
+  title: true,
+  imageId: true,
+  releaseDate: true,
+  albumType: true,
+});
+
 export type AlbumBase = z.infer<typeof AlbumBaseSchema>;
 export type FullAlbum = z.infer<typeof FullAlbumSchema>;
+export type AlbumItem = z.infer<typeof AlbumItemSchema>;

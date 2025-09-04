@@ -6,13 +6,9 @@ import { IconButton } from "../ui/icon-button";
 import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { ContextFromHistoryOutput } from "@/features/playback/contracts/playback-dto";
-import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
-export function RecentlyPlayedPlayButton({
-  trackId,
-}: {
-  trackId: zCuidSchemaType;
-}) {
+export function RecentlyPlayedPlayButton({ trackId }: { trackId: zCuidType }) {
   const isPlaying = useIsPlaying();
   const nowPlayingRefId = useNowPlayingRefId();
   const isThisTrack = nowPlayingRefId === trackId;

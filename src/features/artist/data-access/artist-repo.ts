@@ -1,9 +1,9 @@
 import "server-only";
-import { zCuidSchemaType } from "@/features/shared/contracts/shared-dto";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { trackDetailSelect } from "@/features/track/data-access/track-selects";
 import db from "@/lib/db";
 
-export const getSidebarArtists = async (userId: zCuidSchemaType) => {
+export const getSidebarArtists = async (userId: zCuidType) => {
   return await db.userFollowedArtist
     .findMany({
       where: {
@@ -23,8 +23,8 @@ export const getSidebarArtists = async (userId: zCuidSchemaType) => {
 };
 
 export const getFollowStatus = async (
-  userId: zCuidSchemaType,
-  artistId: zCuidSchemaType
+  userId: zCuidType,
+  artistId: zCuidType
 ) => {
   const [artist, link] = await Promise.all([
     db.artist.findUnique({
@@ -39,10 +39,7 @@ export const getFollowStatus = async (
   return { isFollowing: !!link, followersCount: artist?.followersCount ?? 0 };
 };
 
-export const followArtist = async (
-  userId: zCuidSchemaType,
-  artistId: zCuidSchemaType
-) => {
+export const followArtist = async (userId: zCuidType, artistId: zCuidType) => {
   return await db.$transaction(async (tx) => {
     const created = await tx.userFollowedArtist
       .create({ data: { userId, artistId } })
@@ -66,8 +63,8 @@ export const followArtist = async (
 };
 
 export const unfollowArtist = async (
-  userId: zCuidSchemaType,
-  artistId: zCuidSchemaType
+  userId: zCuidType,
+  artistId: zCuidType
 ) => {
   return await db.$transaction(async (tx) => {
     const del = await tx.userFollowedArtist.deleteMany({
@@ -90,7 +87,7 @@ export const unfollowArtist = async (
   });
 };
 
-export const getArtistDetailPage = async (artistId: zCuidSchemaType) => {
+export const getArtistDetailPage = async (artistId: zCuidType) => {
   const artist = await db.artist
     .findUniqueOrThrow({
       where: {

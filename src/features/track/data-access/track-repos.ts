@@ -2,6 +2,7 @@ import "server-only";
 import db from "@/lib/db";
 import { AppError } from "@/lib/errors";
 import { trackDetailSelect, trackItemSelect } from "./track-selects";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 export const getTrackOrThrow = async (trackId: string) => {
   const track = await db.track.findUnique({
@@ -58,4 +59,61 @@ export const getNewReleases = async () => {
       createdAt: "desc",
     },
   });
+};
+
+export const getNowPlayingTrack = async (trackId: zCuidType) => {
+  const track = await db.track.findUniqueOrThrow({
+    where: {
+      id: trackId,
+    },
+    select: {
+      id: true,
+      title: true,
+      album: {
+        select: {
+          id: true,
+          imageId: true,
+          artist: {
+            select: {
+              name: true,
+              bannerId: true,
+              id: true,
+              bio: true,
+            },
+          },
+        },
+      },
+      artists: {
+        select: {
+          order: true,
+          role: true,
+          artist: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+      credits: {
+        select: {
+          id: true,
+          name: true,
+          role: true,
+          details: true,
+          order: true,
+          artist: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!track) throw new AppError("NOT_FOUND", "Track not found");
+
+  return track;
 };

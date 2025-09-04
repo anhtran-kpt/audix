@@ -21,22 +21,22 @@ import { CldImage } from "next-cloudinary";
 import { cn } from "@/lib/utils";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { FollowersBadge } from "./follow-badge";
-import { useTrack } from "@/features/track/hooks/use-tracks";
+import { useNowPlayingTrack } from "@/features/track/hooks/use-tracks";
 
 export default function NowPlayingRefView() {
   const close = useRightPanel((s) => s.close);
 
   const playbackContext = usePlaybackContext();
   const nowPlayingRefId = useNowPlayingRefId();
-  const { data: currentTrack } = useTrack(nowPlayingRefId);
+  const { data: nowPlayingTrack } = useNowPlayingTrack(nowPlayingRefId);
 
-  if (!currentTrack) {
+  if (!nowPlayingTrack) {
     return null;
   }
 
   const creditByPerson = buildCreditsByPerson({
-    artists: currentTrack.artists,
-    credits: currentTrack.credits,
+    artists: nowPlayingTrack.artists,
+    credits: nowPlayingTrack.credits,
   });
 
   return (
@@ -65,7 +65,7 @@ export default function NowPlayingRefView() {
             icon={EllipsisIcon}
             tooltipContent={
               <>
-                More options for <strong>{currentTrack.title}</strong>
+                More options for <strong>{nowPlayingTrack.title}</strong>
               </>
             }
             className="opacity-0 pointer-events-none transition-opacity duration-300 group-hover/np:opacity-100 group-hover/np:pointer-events-auto"
@@ -82,16 +82,16 @@ export default function NowPlayingRefView() {
           <div className="relative overflow-hidden rounded-md aspect-square shrink-0">
             <CldImage
               className="object-cover"
-              alt={currentTrack.title}
-              src={currentTrack.album.imageId}
+              alt={nowPlayingTrack.title}
+              src={nowPlayingTrack.album.imageId}
               fill
               sizes="256px"
             />
           </div>
           <div className="flex items-center justify-between gap-4">
             <div>
-              <p className="font-semibold text-xl">{currentTrack.title}</p>
-              {currentTrack.artists.map(({ artist }, index, originalArr) => (
+              <p className="font-semibold text-xl">{nowPlayingTrack.title}</p>
+              {nowPlayingTrack.artists.map(({ artist }, index, originalArr) => (
                 <span key={artist.id} className="text-muted-foreground">
                   <NavLink
                     href={`/artists/${artist.id}`}
@@ -128,26 +128,26 @@ export default function NowPlayingRefView() {
               <CldImage
                 fill
                 className="object-cover brightness-65"
-                alt={currentTrack.album.artist.name}
-                src={currentTrack.album.artist.bannerId}
+                alt={nowPlayingTrack.album.artist.name}
+                src={nowPlayingTrack.album.artist.bannerId}
                 sizes="(min-width: 768px) 768px, 100vw"
               />
             </div>
             <div className="p-4 space-y-3">
               <div>
                 <NavLink
-                  href={`/artists/${currentTrack.album.artist.id}`}
+                  href={`/artists/${nowPlayingTrack.album.artist.id}`}
                   className="font-semibold text-base"
                 >
-                  {currentTrack.album.artist.name}
+                  {nowPlayingTrack.album.artist.name}
                 </NavLink>
               </div>
               <div className="flex items-center gap-4 justify-between">
-                <FollowersBadge artistId={currentTrack.album.artist.id} />
-                <FollowButton artistId={currentTrack.album.artist.id} />
+                <FollowersBadge artistId={nowPlayingTrack.album.artist.id} />
+                <FollowButton artistId={nowPlayingTrack.album.artist.id} />
               </div>
               <p className="text-[calc(13rem/16)] text-muted-foreground line-clamp-3">
-                {currentTrack.album.artist.bio}
+                {nowPlayingTrack.album.artist.bio}
               </p>
             </div>
           </div>
@@ -158,9 +158,9 @@ export default function NowPlayingRefView() {
                 Credits
               </span>
               <CreditDialog
-                trackTitle={currentTrack.title}
-                artists={currentTrack.artists}
-                credits={currentTrack.credits}
+                trackTitle={nowPlayingTrack.title}
+                artists={nowPlayingTrack.artists}
+                credits={nowPlayingTrack.credits}
               />
             </div>
 
