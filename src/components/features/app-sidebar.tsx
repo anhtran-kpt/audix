@@ -26,6 +26,8 @@ import { SidebarArtist } from "@/features/artist/contracts/artist-dto";
 import { SidebarPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { sidebarPlaylistOptions } from "@/features/playlist/query/playlist-options";
 import { sidebarArtistOptions } from "@/features/artist/query/artist-options";
+import { useIsPlaying, usePlaybackContext } from "@/hooks/use-audio-player";
+import WaveForm from "../ui/wave-form";
 
 const items = [
   {
@@ -65,6 +67,9 @@ export function AppSidebar({
     initialData: initialArtists,
     initialDataUpdatedAt: Date.now(),
   });
+
+  const playbackContext = usePlaybackContext();
+  const isPlaying = useIsPlaying();
 
   return (
     <Sidebar collapsible="icon" variant="inset">
@@ -119,6 +124,10 @@ export function AppSidebar({
                           </p>
                         </div>
                       </div>
+                      {isPlaying &&
+                        playbackContext?.contextId === artist.id && (
+                          <WaveForm />
+                        )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -156,6 +165,10 @@ export function AppSidebar({
                           </div>
                         </div>
                       </div>
+                      {isPlaying &&
+                        playbackContext?.contextId === playlist.id && (
+                          <WaveForm />
+                        )}
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

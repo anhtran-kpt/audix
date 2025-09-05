@@ -21,6 +21,7 @@ export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {
           <TrackItem
             track={track}
             key={track.id}
+            isActive={false}
             playButton={
               <RowPlayButton
                 trackId={track.id}

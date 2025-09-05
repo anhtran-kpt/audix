@@ -57,6 +57,7 @@ export function RowPlayButton({
     >("/playback/snapshot", {
       type: context.type,
       contextId: context.contextId,
+      clickedTrackId: trackId,
     });
 
     if (!trackRefs?.length) return;

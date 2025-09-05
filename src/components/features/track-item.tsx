@@ -12,15 +12,15 @@ export type TrackItemProps = {
   track: TrackItemType;
   playButton?: ReactNode;
   hideCoverImage?: boolean;
+  isActive?: boolean;
 };
 
 export default function TrackItem({
   track,
   playButton,
   hideCoverImage = false,
+  isActive = false,
 }: TrackItemProps) {
-  const nowPlayingRefId = useNowPlayingRefId();
-
   return (
     <div className="flex items-center gap-3 flex-1 min-w-0">
       {!hideCoverImage && (
@@ -38,10 +38,7 @@ export default function TrackItem({
         </div>
       )}
       <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-        <ItemTitle
-          title={track.title}
-          isActive={nowPlayingRefId === track.id}
-        />
+        <ItemTitle title={track.title} isActive={isActive} />
         <div className="flex items-center text-sm gap-x-1 text-muted-foreground truncate">
           {track.isExplicit && <Explicit />}
           {track.artists.map(({ artist }, index, originalArr) => (

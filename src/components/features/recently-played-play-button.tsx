@@ -7,23 +7,26 @@ import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { ContextFromHistoryOutput } from "@/features/playback/contracts/playback-dto";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import { useShallow } from "zustand/react/shallow";
 
 export function RecentlyPlayedPlayButton({ trackId }: { trackId: zCuidType }) {
   const isPlaying = useIsPlaying();
   const nowPlayingRefId = useNowPlayingRefId();
   const isThisTrack = nowPlayingRefId === trackId;
 
-  const { startFromContext, clearExplicit } = useAudioStore((s) => ({
-    startFromContext: s.startFromContext,
-    clearExplicit: s.clearExplicit,
-  }));
+  const { startFromContext, clearExplicit } = useAudioStore(
+    useShallow((s) => ({
+      startFromContext: s.startFromContext,
+      clearExplicit: s.clearExplicit,
+    }))
+  );
 
   const onClick = async () => {
     const { trackRefs, startIndex, ...meta } =
       await postApi<ContextFromHistoryOutput>(
         "/api/playback/context-from-history",
         {
-          trackId: trackId,
+          trackId,
         }
       );
 
