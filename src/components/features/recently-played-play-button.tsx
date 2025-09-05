@@ -24,10 +24,8 @@ export function RecentlyPlayedPlayButton({ trackId }: { trackId: zCuidType }) {
   const onClick = async () => {
     const { trackRefs, startIndex, ...meta } =
       await postApi<ContextFromHistoryOutput>(
-        "/api/playback/context-from-history",
-        {
-          trackId,
-        }
+        `/playback/context-from-history`,
+        { trackId }
       );
 
     if (!trackRefs?.length) return;

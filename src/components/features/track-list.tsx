@@ -101,7 +101,8 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
 
             <TrackItem
               track={track}
-              hideCoverImage={type === "ALBUM"}
+              hasCover={type === "ALBUM"}
+              canHover={false}
               isActive={isThisTrack}
             />
 

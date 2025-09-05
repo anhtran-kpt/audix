@@ -133,7 +133,6 @@ export const getArtistDetailPage = async (artistId: zCuidType) => {
           playCount: "desc",
         },
       },
-      take: 5,
     })
     .then((tracks) => tracks.map((item) => item.track));
 

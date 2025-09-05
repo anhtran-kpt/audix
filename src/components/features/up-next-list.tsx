@@ -10,14 +10,13 @@ export default function UpNextList() {
   const { data: queueTracks } = useTracks(trackIds);
 
   return (
-    <ol role="list" className="flex flex-col gap-1">
+    <ol role="list" className="flex flex-col">
       {queueTracks?.map((track, i) => (
-        <div key={track.id} className="group hover:bg-muted p-2 rounded-md">
-          <TrackItem
-            track={track}
-            playButton={<UpNextPlayButton trackId={track.id} trackIndex={i} />}
-          />
-        </div>
+        <TrackItem
+          track={track}
+          key={track.id}
+          playButton={<UpNextPlayButton trackId={track.id} trackIndex={i} />}
+        />
       ))}
     </ol>
   );

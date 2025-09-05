@@ -6,7 +6,7 @@ export default function RecentlyPlayedList() {
   const { data: recentTracks } = useRecentTracks();
 
   return (
-    <ol role="list">
+    <ol role="list" className="flex flex-col">
       {recentTracks?.map((track) => (
         <TrackItem
           key={track.id}

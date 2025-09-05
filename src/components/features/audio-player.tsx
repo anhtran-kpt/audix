@@ -25,6 +25,7 @@ import { useRightPanel } from "@/stores/use-right-panel";
 import { useScrobble } from "@/hooks/use-scrobble";
 import { useShallow } from "zustand/react/shallow";
 import { useTrack } from "@/features/track/hooks/use-tracks";
+import TrackItem from "./track-item";
 
 function AudioPlayer() {
   const {
@@ -40,7 +41,7 @@ function AudioPlayer() {
 
   const nowPlayingRefId = useNowPlayingRefId();
 
-  const { data: currentTrack } = useTrack(nowPlayingRefId);
+  const { data: nowPlayingTrack } = useTrack(nowPlayingRefId);
 
   useAudioKeyboardShortcuts();
 
@@ -52,32 +53,16 @@ function AudioPlayer() {
 
   return (
     <>
-      {currentTrack && (
+      {nowPlayingTrack && (
         <div className="fixed bottom-0 left-0 right-0 bg-player border z-60 px-4 py-2">
           <div className="flex items-center justify-between gap-12">
             <div className="flex items-center">
-              <div className="flex items-center gap-3 min-w-3xs">
-                <CoverImage
-                  src={currentTrack.album.imageId}
-                  alt={currentTrack.title}
-                  size="sm"
+              <div className="w-3xs">
+                <TrackItem
+                  track={nowPlayingTrack}
+                  canHover={false}
+                  coverSize="lg"
                 />
-                <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-                  <ItemTitle title={currentTrack.title} />
-                  <div className="flex items-center text-sm gap-x-1 text-muted-foreground truncate">
-                    {currentTrack.isExplicit && <Explicit />}
-                    {currentTrack.artists.map(
-                      ({ artist }, index, originalArr) => (
-                        <span key={artist.id}>
-                          <NavLink href={`/artists/${artist.id}`}>
-                            {artist.name}
-                          </NavLink>
-                          {index < originalArr.length - 1 && ", "}
-                        </span>
-                      )
-                    )}
-                  </div>
-                </div>
               </div>
               <IconButton
                 className="ml-6"

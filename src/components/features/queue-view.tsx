@@ -28,36 +28,38 @@ export default function QueueView() {
   }
 
   return (
-    <Tabs defaultValue="queue" className="size-full">
-      <TabsList className="w-full h-15">
+    <Tabs defaultValue="queue" className="size-full p-2">
+      <TabsList className="w-full">
         <TabsTrigger value="queue">Queue</TabsTrigger>
         <TabsTrigger value="recently-played">Recently played</TabsTrigger>
       </TabsList>
       <TabsContent value="queue" className="flex flex-col gap-4 h-full">
-        <ScrollArea className="min-h-0 size-full" scrollBarClassName="w-2">
-          <div className="space-y-4">
-            <div className="flex flex-col gap-2 px-2">
+        <ScrollArea
+          className="min-h-0 size-full"
+          scrollBarClassName="w-2 -mr-2"
+        >
+          <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               <p className="font-semibold text-[calc(15rem/16)] px-2">
                 Now playing
               </p>
-              <div className="group hover:bg-muted p-2 rounded-md">
-                <TrackItem
-                  track={nowPlayingTrack}
-                  isActive
-                  playButton={
-                    <IconButton
-                      aria-pressed={isPlaying}
-                      icon={isPlaying ? PauseIcon : PlayIcon}
-                      size="sm"
-                      onClick={togglePlay}
-                      iconClassName="fill-foreground stroke-0"
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
-                    />
-                  }
-                />
-              </div>
+
+              <TrackItem
+                track={nowPlayingTrack}
+                isActive
+                playButton={
+                  <IconButton
+                    aria-pressed={isPlaying}
+                    icon={isPlaying ? PauseIcon : PlayIcon}
+                    size="sm"
+                    onClick={togglePlay}
+                    iconClassName="fill-foreground stroke-0"
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
+                  />
+                }
+              />
             </div>
-            <div className="flex flex-col gap-2 px-2">
+            <div className="flex flex-col gap-2">
               <p className="font-semibold text-[calc(15rem/16)] px-2">
                 Next from: {nowPlayingTrack.title}
               </p>
@@ -70,7 +72,10 @@ export default function QueueView() {
         value="recently-played"
         className="flex flex-col gap-4 h-full"
       >
-        <ScrollArea className="min-h-0 size-full">
+        <ScrollArea
+          className="min-h-0 size-full"
+          scrollBarClassName="w-2 -mr-2"
+        >
           <RecentlyPlayedList />
         </ScrollArea>
       </TabsContent>
