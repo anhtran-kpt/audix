@@ -6,10 +6,12 @@ import {
   zTimeStamps,
 } from "@/features/shared/contracts/shared-dto";
 
-export const PlaylistItem = z.object({
+export const PlaylistItemSchema = z.object({
   id: zCuidSchema,
   position: z.number().int().nonnegative(),
   addedAt: zDateSchema.optional(),
+  trackId: zCuidSchema,
+  playlistId: zCuidSchema,
 });
 
 export const PlaylistBaseSchema = z.object({
@@ -32,6 +34,7 @@ export const FullPlaylistSchema = PlaylistBaseSchema.extend({
       image: z.url().nullable(),
     })
     .nullable(),
+  items: PlaylistItemSchema.array(),
 });
 
 export const CreatePlaylistInputSchema = PlaylistBaseSchema.pick({
@@ -60,6 +63,24 @@ export const SidebarPlaylistSchema = FullPlaylistSchema.pick({
     })
     .nullable(),
 });
+
+export const AddTrackToPlaylistInputSchema = z.object({
+  trackId: zCuidSchema,
+  position: z.number().int().nonnegative(),
+});
+
+export const AddTrackToPlaylistOutputSchema = z.object({
+  trackId: zCuidSchema,
+  position: z.number().int().nonnegative(),
+});
+
+export type AddTrackToPlaylistInput = z.infer<
+  typeof AddTrackToPlaylistInputSchema
+>;
+
+export type AddTrackToPlaylistOutput = z.infer<
+  typeof AddTrackToPlaylistOutputSchema
+>;
 
 export type SidebarPlaylist = z.infer<typeof SidebarPlaylistSchema>;
 export type CreatePlaylistInput = z.infer<typeof CreatePlaylistInputSchema>;

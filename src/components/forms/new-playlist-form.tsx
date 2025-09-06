@@ -25,12 +25,14 @@ import {
   SidebarPlaylist,
 } from "@/features/playlist/contracts/playlist-dto";
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
+import { useSession } from "next-auth/react";
 
 export const NewPlaylistForm = ({
   onSuccess,
 }: {
   onSuccess: (res: CreatePlaylistOutput) => void;
 }) => {
+  const { data: session } = useSession();
   const form = useForm<CreatePlaylistInput>({
     resolver: zodResolver(CreatePlaylistInputSchema),
     mode: "onChange",
@@ -63,7 +65,7 @@ export const NewPlaylistForm = ({
         title: vars.title,
         imageId: null,
         user: {
-          name: null,
+          name: session?.user.name ?? "",
           id: `optimistic-${Date.now()}`,
         },
       };
@@ -86,8 +88,10 @@ export const NewPlaylistForm = ({
       qc.setQueryData<SidebarPlaylist[]>(
         playlistKeys.sidebarPlaylists(),
         (old) => {
-          if (!old) return old;
-          return [res, ...old];
+          if (!old) return [res];
+
+          const filtered = old.filter((pl) => !pl.id.startsWith("optimistic-"));
+          return [res, ...filtered];
         }
       );
 

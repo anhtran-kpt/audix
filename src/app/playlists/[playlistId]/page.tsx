@@ -1,4 +1,9 @@
-import { BannerSection } from "@/components/sections/playlist-detail";
+import {
+  BannerSection,
+  TrackAddingSection,
+  TracksSection,
+} from "@/components/sections/playlist-detail";
+import { getPlaylistDetail } from "@/features/playlist/data-access/playlist-repos";
 import db from "@/lib/db";
 
 export default async function PlaylistDetailPage({
@@ -8,20 +13,7 @@ export default async function PlaylistDetailPage({
 }) {
   const { playlistId } = await params;
 
-  const playlist = await db.playlist.findUniqueOrThrow({
-    where: {
-      id: playlistId,
-    },
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          image: true,
-        },
-      },
-    },
-  });
+  const playlist = await getPlaylistDetail(playlistId);
 
   return (
     <>
@@ -35,6 +27,8 @@ export default async function PlaylistDetailPage({
         user={playlist.user}
         description={playlist.description}
       />
+      <TracksSection playlistId={playlistId} />
+      <TrackAddingSection />
     </>
   );
 }

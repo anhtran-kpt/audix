@@ -120,23 +120,27 @@ export const BannerSection = ({
       </div>
       <div className="flex items-center justify-between gap-6 px-12">
         <div className="flex items-center gap-6">
-          <ContextPlayButton
-            context={{ type: "PLAYLIST", contextId: id, name: title }}
-          />
-          <IconButton
-            icon={ShuffleIcon}
-            size="xl"
-            tooltipContent={
-              <>
-                Enable shuffle for <strong>{title}</strong>
-              </>
-            }
-          />
-          <IconButton
-            icon={DownloadIcon}
-            size="xl"
-            tooltipContent={<>Download</>}
-          />
+          {totalTracks > 0 && (
+            <>
+              <ContextPlayButton
+                context={{ type: "PLAYLIST", contextId: id, name: title }}
+              />
+              <IconButton
+                icon={ShuffleIcon}
+                size="xl"
+                tooltipContent={
+                  <>
+                    Enable shuffle for <strong>{title}</strong>
+                  </>
+                }
+              />
+              <IconButton
+                icon={DownloadIcon}
+                size="xl"
+                tooltipContent={<>Download</>}
+              />
+            </>
+          )}
           <IconButton
             icon={UserPlus2Icon}
             size="xl"
