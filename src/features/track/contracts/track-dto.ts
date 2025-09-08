@@ -1,5 +1,6 @@
 import {
   zCuidSchema,
+  zDateSchema,
   zPublicIdSchema,
   zTimeStamps,
 } from "@/features/shared/contracts/shared-dto";
@@ -125,6 +126,8 @@ export const TrackListItemSchema = FullTrackSchema.pick({
   duration: true,
 }).extend({
   album: z.object({
+    id: zCuidSchema,
+    title: z.string(),
     imageId: zCuidSchema,
   }),
   artists: z
@@ -135,6 +138,7 @@ export const TrackListItemSchema = FullTrackSchema.pick({
       }),
     })
     .array(),
+  addedAt: zDateSchema,
 });
 
 export const RecommendedTrackItemSchema = FullTrackSchema.pick({
@@ -157,6 +161,7 @@ export const RecommendedTrackItemSchema = FullTrackSchema.pick({
       }),
     })
     .array(),
+  addedAt: zDateSchema,
 });
 
 export type RecommendedTrackItem = z.infer<typeof RecommendedTrackItemSchema>;

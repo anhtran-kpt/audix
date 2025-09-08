@@ -67,20 +67,19 @@ export const SidebarPlaylistSchema = FullPlaylistSchema.pick({
 
 export const AddTrackToPlaylistInputSchema = z.object({
   trackId: zCuidSchema,
-  position: z.number().int().nonnegative(),
 });
 
-export const AddTrackToPlaylistOutputSchema = z.object({
+export const RemoveTrackFromPlaylistSchema = z.object({
+  playlistId: zCuidSchema,
   trackId: zCuidSchema,
-  position: z.number().int().nonnegative(),
 });
 
 export type AddTrackToPlaylistInput = z.infer<
   typeof AddTrackToPlaylistInputSchema
 >;
 
-export type AddTrackToPlaylistOutput = z.infer<
-  typeof AddTrackToPlaylistOutputSchema
+export type RemoveTrackFromPlaylistInput = z.infer<
+  typeof RemoveTrackFromPlaylistSchema
 >;
 
 export const PlaylistDetailSchema = PlaylistBaseSchema.extend({
@@ -89,9 +88,11 @@ export const PlaylistDetailSchema = PlaylistBaseSchema.extend({
       id: zCuidSchema,
       title: z.string(),
       duration: z.number().int().nonnegative(),
-      isExplicit: zBoolSchema,
+      isExplicit: zBoolSchema.optional(),
       playCount: z.number().int().nonnegative(),
       album: z.object({
+        id: zCuidSchema,
+        title: z.string(),
         imageId: zCuidSchema,
       }),
       artists: z
@@ -102,6 +103,7 @@ export const PlaylistDetailSchema = PlaylistBaseSchema.extend({
           }),
         })
         .array(),
+      addedAt: zDateSchema,
     })
     .array(),
   user: z
@@ -114,7 +116,6 @@ export const PlaylistDetailSchema = PlaylistBaseSchema.extend({
 });
 
 export type PlaylistDetail = z.infer<typeof PlaylistDetailSchema>;
-
 export type SidebarPlaylist = z.infer<typeof SidebarPlaylistSchema>;
 export type CreatePlaylistInput = z.infer<typeof CreatePlaylistInputSchema>;
 export type CreatePlaylistOutput = z.infer<typeof CreatePlaylistOutputSchema>;

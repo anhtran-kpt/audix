@@ -9,6 +9,6 @@ export const POST = makePOST({
   params: object({ playlistId: zCuidSchema }),
   body: AddTrackToPlaylistInputSchema,
   handler: async ({ body, params }) => {
-    addTrackToPlaylist(params.playlistId, body.trackId, body.position);
+    return addTrackToPlaylist(params.playlistId, body.trackId);
   },
 });

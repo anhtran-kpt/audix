@@ -103,6 +103,7 @@ export const recommendedTrackItemSelect = {
   id: true,
   title: true,
   isExplicit: true,
+  duration: true,
   album: {
     select: {
       id: true,

@@ -1,5 +1,5 @@
 import { ZodType, ZodError } from "zod";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { AppError, fail, ok } from "@/lib/errors";
 import { getUserIdOrThrow } from "@/lib/auth";
 
@@ -17,7 +17,7 @@ type Config<
     params: P extends ZodType ? ReturnType<P["parse"]> : undefined;
     query: Q extends ZodType ? ReturnType<Q["parse"]> : undefined;
     body: B extends ZodType ? ReturnType<B["parse"]> : undefined;
-    req: Request;
+    req: NextRequest;
   }) => Promise<any>;
 };
 
@@ -27,7 +27,7 @@ async function run<
   P extends ZodType | undefined,
   Q extends ZodType | undefined,
   B extends ZodType | undefined
->(req: Request, config: Config<P, Q, B>, ctx: NextRouteContext) {
+>(req: NextRequest, config: Config<P, Q, B>, ctx: NextRouteContext) {
   try {
     const url = new URL(req.url);
 
@@ -91,7 +91,7 @@ export function makeGET<
   P extends ZodType | undefined,
   Q extends ZodType | undefined
 >(config: Config<P, Q, undefined>) {
-  const handler = async (req: Request, ctx: NextRouteContext) =>
+  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
     run(req, config, ctx);
   return handler;
 }
@@ -100,7 +100,7 @@ export function makePOST<
   P extends ZodType | undefined,
   B extends ZodType | undefined
 >(config: Config<P, undefined, B>) {
-  const handler = async (req: Request, ctx: NextRouteContext) =>
+  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
     run(req, config, ctx);
   return handler;
 }
@@ -109,7 +109,7 @@ export function makePATCH<
   P extends ZodType | undefined,
   B extends ZodType | undefined
 >(config: Config<P, undefined, B>) {
-  const handler = async (req: Request, ctx: NextRouteContext) =>
+  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
     run(req, config, ctx);
   return handler;
 }
@@ -118,7 +118,7 @@ export function makePUT<
   P extends ZodType | undefined,
   B extends ZodType | undefined
 >(config: Config<P, undefined, B>) {
-  const handler = async (req: Request, ctx: NextRouteContext) =>
+  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
     run(req, config, ctx);
   return handler;
 }
@@ -127,7 +127,7 @@ export function makeDELETE<
   P extends ZodType | undefined,
   Q extends ZodType | undefined
 >(config: Config<P, Q, undefined>) {
-  const handler = async (req: Request, ctx: NextRouteContext) =>
+  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
     run(req, config, ctx);
   return handler;
 }

@@ -6,7 +6,9 @@ import { object } from "zod";
 export const GET = makeGET({
   auth: "required",
   params: object({ playlistId: zCuidSchema }),
-  handler: async ({ params }) => {
-    return getRecommendedTracks(params.playlistId);
+  handler: async ({ params, req }) => {
+    const searchParams = req.nextUrl.searchParams;
+    const take = searchParams.get("take") ?? "5";
+    return getRecommendedTracks(params.playlistId, parseInt(take));
   },
 });

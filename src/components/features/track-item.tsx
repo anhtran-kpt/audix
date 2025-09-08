@@ -7,6 +7,7 @@ import { CldImage } from "next-cloudinary";
 import { ReactNode } from "react";
 import { TrackItem as TrackItemType } from "@/features/track/contracts/track-dto";
 import { cn } from "@/lib/utils";
+import { FallbackCoverImage } from "./fallback-cover-image";
 
 export type TrackItemProps = {
   track: TrackItemType;
@@ -39,15 +40,19 @@ export default function TrackItem({
             coverSize === "md" ? "size-12" : "size-14"
           )}
         >
-          <CldImage
-            className={`object-cover ${
-              playButton ? "group-hover:brightness-65" : ""
-            }`}
-            alt={track.title}
-            src={track.album.imageId}
-            fill
-            sizes="48px"
-          />
+          {track.album.imageId === "placeholder" ? (
+            <FallbackCoverImage type="item" />
+          ) : (
+            <CldImage
+              className={`object-cover ${
+                playButton ? "group-hover:brightness-65" : ""
+              }`}
+              alt={track.title}
+              src={track.album.imageId}
+              fill
+              sizes="48px"
+            />
+          )}
           {playButton}
         </div>
       )}

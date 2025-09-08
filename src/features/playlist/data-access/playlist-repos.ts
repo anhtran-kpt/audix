@@ -1,10 +1,15 @@
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import db from "@/lib/db";
-import { CreatePlaylistInput } from "@/features/playlist/contracts/playlist-dto";
+import {
+  CreatePlaylistInput,
+  RemoveTrackFromPlaylistInput,
+} from "@/features/playlist/contracts/playlist-dto";
 import {
   recommendedTrackItemSelect,
+  trackDetailSelect,
   trackItemSelect,
 } from "@/features/track/data-access/track-selects";
+import { Prisma } from "@/app/generated/prisma";
 
 export const getSidebarPlaylists = async (userId: zCuidType) => {
   return await db.playlist.findMany({
@@ -54,15 +59,95 @@ export const createPlaylist = async (
 
 export const addTrackToPlaylist = async (
   playlistId: zCuidType,
-  trackId: zCuidType,
-  position: number
+  trackId: zCuidType
 ) => {
-  return await db.playlistTrack.create({
-    data: {
-      playlistId,
-      trackId,
-      position,
-    },
+  return db.$transaction(async (tx) => {
+    const track = await tx.track.findUniqueOrThrow({
+      where: { id: trackId },
+      select: { duration: true },
+    });
+
+    const last = await tx.playlistTrack.findFirst({
+      where: { playlistId },
+      orderBy: { position: "desc" },
+      select: { position: true },
+    });
+    const finalPosition = last ? last.position + 1 : 0;
+
+    const playlistTrack = await tx.playlistTrack.create({
+      data: {
+        playlistId,
+        trackId,
+        position: finalPosition,
+      },
+      select: {
+        trackId: true,
+      },
+    });
+
+    await tx.playlist.update({
+      where: { id: playlistId },
+      data: {
+        totalTracks: { increment: 1 },
+        duration: { increment: track.duration },
+      },
+    });
+
+    return db.track.findUnique({
+      where: {
+        id: playlistTrack.trackId,
+      },
+      select: trackDetailSelect,
+    });
+  });
+};
+
+export const removeTrackFromPlaylist = async ({
+  playlistId,
+  trackId,
+}: RemoveTrackFromPlaylistInput) => {
+  return db.$transaction(async (tx) => {
+    const playlistTrack = await tx.playlistTrack.findUnique({
+      where: {
+        playlistId_trackId: {
+          playlistId,
+          trackId,
+        },
+      },
+      select: {
+        id: true,
+        position: true,
+        track: { select: { duration: true } },
+      },
+    });
+
+    if (!playlistTrack) {
+      throw new Error("Track not found in playlist");
+    }
+
+    const { position, track } = playlistTrack;
+
+    await tx.playlistTrack.delete({
+      where: { id: playlistTrack.id },
+    });
+
+    await tx.playlistTrack.updateMany({
+      where: {
+        playlistId,
+        position: { gt: position },
+      },
+      data: { position: { decrement: 1 } },
+    });
+
+    await tx.playlist.update({
+      where: { id: playlistId },
+      data: {
+        totalTracks: { decrement: 1 },
+        duration: { decrement: track.duration },
+      },
+    });
+
+    return { removedTrackId: trackId, position };
   });
 };
 
@@ -108,6 +193,7 @@ export const getPlaylistDetail = async (playlistId: zCuidType) => {
         },
         tracks: {
           select: {
+            addedAt: true,
             track: {
               select: {
                 id: true,
@@ -116,6 +202,8 @@ export const getPlaylistDetail = async (playlistId: zCuidType) => {
                 playCount: true,
                 album: {
                   select: {
+                    id: true,
+                    title: true,
                     imageId: true,
                   },
                 },
@@ -138,11 +226,14 @@ export const getPlaylistDetail = async (playlistId: zCuidType) => {
     })
     .then((playlist) => ({
       ...playlist,
-      tracks: playlist.tracks.map((item) => item.track),
+      tracks: playlist.tracks.map((track) => ({
+        ...track.track,
+        addedAt: track.addedAt,
+      })),
     }));
 };
 
-export const getRecommendedTracks = async (playlistId: zCuidType) => {
+export const getRecommendedTracks = async (playlistId: zCuidType, take = 5) => {
   const playlist = await db.playlist.findUniqueOrThrow({
     where: { id: playlistId },
     select: {
@@ -151,11 +242,7 @@ export const getRecommendedTracks = async (playlistId: zCuidType) => {
           track: {
             select: {
               id: true,
-              genres: {
-                select: {
-                  genre: { select: { id: true, name: true } },
-                },
-              },
+              genres: { select: { genre: { select: { id: true } } } },
             },
           },
         },
@@ -164,45 +251,82 @@ export const getRecommendedTracks = async (playlistId: zCuidType) => {
   });
 
   const trackIds = playlist.tracks.map((t) => t.track.id);
-
-  if (playlist.tracks.length === 0) {
-    return db.track.findMany({
-      select: recommendedTrackItemSelect,
-      orderBy: { playCount: "desc" },
-      take: 5,
-    });
-  }
-
   const genreIds = playlist.tracks.flatMap((t) =>
     t.track.genres.map((g) => g.genre.id)
   );
 
-  if (genreIds.length === 0) {
-    return db.track.findMany({
-      where: { id: { notIn: trackIds } },
-      select: recommendedTrackItemSelect,
-      orderBy: { playCount: "desc" },
-      take: 5,
-    });
+  let candidateIds: { id: string }[] = [];
+
+  if (genreIds.length > 0) {
+    candidateIds = await db.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+      SELECT t.id
+      FROM "tracks" t
+      JOIN "track_genres" tg ON tg."trackId" = t.id
+      WHERE tg."genreId" IN (${
+        genreIds.length > 0 ? Prisma.join(genreIds) : Prisma.empty
+      })
+      ${
+        trackIds.length > 0
+          ? Prisma.sql`AND t.id NOT IN (${Prisma.join(trackIds)})`
+          : Prisma.empty
+      }
+      ORDER BY RANDOM()
+      LIMIT ${take}
+    `);
   }
 
-  const genreCount: Record<string, number> = {};
-  for (const g of genreIds) {
-    genreCount[g] = (genreCount[g] ?? 0) + 1;
+  if (candidateIds.length < take) {
+    const needed = take - candidateIds.length;
+
+    const fallbackIds = await db.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+      SELECT id
+      FROM "tracks" t
+      ${
+        trackIds.length + candidateIds.length > 0
+          ? Prisma.sql`WHERE t.id NOT IN (${Prisma.join([
+              ...trackIds,
+              ...candidateIds.map((r) => r.id),
+            ])})`
+          : Prisma.empty
+      }
+      ORDER BY RANDOM()
+      LIMIT ${needed}
+    `);
+
+    candidateIds = [...candidateIds, ...fallbackIds];
   }
 
-  const topGenreIds = Object.entries(genreCount)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 2)
-    .map(([id]) => id);
-
-  return db.track.findMany({
-    where: {
-      id: { notIn: trackIds },
-      genres: { some: { genreId: { in: topGenreIds } } },
-    },
+  let tracks = await db.track.findMany({
+    where: { id: { in: candidateIds.map((r) => r.id) } },
     select: recommendedTrackItemSelect,
-    orderBy: { playCount: "desc" },
-    take: 5,
   });
+
+  if (tracks.length < take) {
+    const missing = take - tracks.length;
+
+    const moreIds = await db.$queryRaw<Array<{ id: string }>>(Prisma.sql`
+      SELECT id
+      FROM "tracks" t
+      WHERE t.id NOT IN (${Prisma.join([
+        ...trackIds,
+        ...tracks.map((t) => t.id),
+      ])})
+      ORDER BY RANDOM()
+      LIMIT ${missing}
+    `);
+
+    if (moreIds.length > 0) {
+      const moreTracks = await db.track.findMany({
+        where: { id: { in: moreIds.map((r) => r.id) } },
+        select: recommendedTrackItemSelect,
+      });
+
+      tracks = [...tracks, ...moreTracks];
+    }
+  }
+
+  return tracks.map((track) => ({
+    ...track,
+    addedAt: new Date(),
+  }));
 };
