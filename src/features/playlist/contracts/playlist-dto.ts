@@ -1,5 +1,6 @@
 import z from "zod";
 import {
+  zBoolSchema,
   zCuidSchema,
   zDateSchema,
   zPublicIdSchema,
@@ -34,7 +35,7 @@ export const FullPlaylistSchema = PlaylistBaseSchema.extend({
       image: z.url().nullable(),
     })
     .nullable(),
-  items: PlaylistItemSchema.array(),
+  tracks: PlaylistItemSchema.array(),
 });
 
 export const CreatePlaylistInputSchema = PlaylistBaseSchema.pick({
@@ -81,6 +82,38 @@ export type AddTrackToPlaylistInput = z.infer<
 export type AddTrackToPlaylistOutput = z.infer<
   typeof AddTrackToPlaylistOutputSchema
 >;
+
+export const PlaylistDetailSchema = PlaylistBaseSchema.extend({
+  tracks: z
+    .object({
+      id: zCuidSchema,
+      title: z.string(),
+      duration: z.number().int().nonnegative(),
+      isExplicit: zBoolSchema,
+      playCount: z.number().int().nonnegative(),
+      album: z.object({
+        imageId: zCuidSchema,
+      }),
+      artists: z
+        .object({
+          artist: z.object({
+            id: zCuidSchema,
+            name: z.string(),
+          }),
+        })
+        .array(),
+    })
+    .array(),
+  user: z
+    .object({
+      name: z.string().min(1).nullable(),
+      id: zCuidSchema,
+      image: z.url().nullable(),
+    })
+    .nullable(),
+});
+
+export type PlaylistDetail = z.infer<typeof PlaylistDetailSchema>;
 
 export type SidebarPlaylist = z.infer<typeof SidebarPlaylistSchema>;
 export type CreatePlaylistInput = z.infer<typeof CreatePlaylistInputSchema>;

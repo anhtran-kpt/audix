@@ -22,29 +22,19 @@ import {
 } from "lucide-react";
 import tinycolor from "tinycolor2";
 import { ContextPlayButton } from "@/components/features/context-play-button";
-import { FullPlaylist } from "@/features/playlist/contracts/playlist-dto";
+import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
+import { useQuery } from "@tanstack/react-query";
+import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
-type BannerSectionProps = Pick<
-  FullPlaylist,
-  | "id"
-  | "imageId"
-  | "title"
-  | "totalTracks"
-  | "duration"
-  | "isPublic"
-  | "user"
-  | "description"
->;
+type BannerSectionProps = {
+  initialData: PlaylistDetail;
+  playlistId: zCuidType;
+};
 
 export const BannerSection = ({
-  id,
-  imageId,
-  title,
-  totalTracks,
-  duration,
-  isPublic,
-  user,
-  description,
+  initialData,
+  playlistId,
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
@@ -54,6 +44,21 @@ export const BannerSection = ({
   const toT = tinycolor(gradient?.to ?? from)
     .setAlpha(0)
     .toRgbString();
+
+  const { data: playlist } = useQuery({
+    ...playlistDetailOption(playlistId),
+    select: (data) => ({
+      id: data.id,
+      imageId: data.imageId,
+      title: data.title,
+      isPublic: data.isPublic,
+      description: data.description,
+      user: data.user,
+      totalTracks: data.totalTracks,
+      duration: data.duration,
+    }),
+    initialData: initialData,
+  });
 
   return (
     <section
@@ -66,10 +71,10 @@ export const BannerSection = ({
     >
       <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
-          {imageId ? (
+          {playlist.imageId ? (
             <CoverImage
-              alt={title}
-              src={imageId}
+              alt={playlist.title}
+              src={playlist.imageId}
               size="xl"
               onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
               priority
@@ -79,21 +84,26 @@ export const BannerSection = ({
           )}
           <div className="flex flex-col gap-3">
             <p className="font-medium">
-              {isPublic ? "Public" : "Private"} Playlist
+              {playlist.isPublic ? "Public" : "Private"} Playlist
             </p>
-            <p className="font-bold text-6xl mt-1 mb-3">{title}</p>
-            {description && (
-              <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="font-bold text-6xl mt-1 mb-3">{playlist.title}</p>
+            {playlist.description && (
+              <p className="text-sm text-muted-foreground">
+                {playlist.description}
+              </p>
             )}
             <div className="inline-flex items-center gap-2">
-              {user ? (
+              {playlist.user ? (
                 <>
                   <Avatar>
-                    <AvatarImage src={user.image as string} />
-                    <AvatarFallback>{user.name}</AvatarFallback>
+                    <AvatarImage src={playlist.user.image as string} />
+                    <AvatarFallback>{playlist.user.name}</AvatarFallback>
                   </Avatar>
-                  <NavLink href={`/users/${user.id}`} className="text-sm">
-                    {user.name}
+                  <NavLink
+                    href={`/users/${playlist.user.id}`}
+                    className="text-sm"
+                  >
+                    {playlist.user.name}
                   </NavLink>
                 </>
               ) : (
@@ -102,14 +112,14 @@ export const BannerSection = ({
                 </>
               )}
               <div className="flex items-center gap-2">
-                {totalTracks > 0 && (
+                {playlist.totalTracks > 0 && (
                   <>
                     <Dot />
                     <span>
-                      {`${totalTracks} ${pluralize(
+                      {`${playlist.totalTracks} ${pluralize(
                         "tracks",
-                        totalTracks
-                      )}, ${prettyMilliseconds(duration * 1000)}`}
+                        playlist.totalTracks
+                      )}, ${prettyMilliseconds(playlist.duration * 1000)}`}
                     </span>
                   </>
                 )}
@@ -120,17 +130,21 @@ export const BannerSection = ({
       </div>
       <div className="flex items-center justify-between gap-6 px-12">
         <div className="flex items-center gap-6">
-          {totalTracks > 0 && (
+          {playlist.totalTracks > 0 && (
             <>
               <ContextPlayButton
-                context={{ type: "PLAYLIST", contextId: id, name: title }}
+                context={{
+                  type: "PLAYLIST",
+                  contextId: playlist.id,
+                  name: playlist.title,
+                }}
               />
               <IconButton
                 icon={ShuffleIcon}
                 size="xl"
                 tooltipContent={
                   <>
-                    Enable shuffle for <strong>{title}</strong>
+                    Enable shuffle for <strong>{playlist.title}</strong>
                   </>
                 }
               />
@@ -146,7 +160,7 @@ export const BannerSection = ({
             size="xl"
             tooltipContent={
               <>
-                Invite collaborators to <strong>{title}</strong>
+                Invite collaborators to <strong>{playlist.title}</strong>
               </>
             }
           />
@@ -160,7 +174,7 @@ export const BannerSection = ({
             size="xl"
             tooltipContent={
               <>
-                More options for <strong>{title}</strong>
+                More options for <strong>{playlist.title}</strong>
               </>
             }
           />
@@ -171,7 +185,7 @@ export const BannerSection = ({
             size="lg"
             tooltipContent={
               <>
-                Search in <strong>{title}</strong>
+                Search in <strong>{playlist.title}</strong>
               </>
             }
           />

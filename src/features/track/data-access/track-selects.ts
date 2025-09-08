@@ -98,3 +98,22 @@ export const trackItemSelect = {
 export type TrackItem = Prisma.TrackGetPayload<{
   select: typeof trackItemSelect;
 }>;
+
+export const recommendedTrackItemSelect = {
+  id: true,
+  title: true,
+  isExplicit: true,
+  album: {
+    select: {
+      id: true,
+      title: true,
+      imageId: true,
+    },
+  },
+  artists: {
+    select: {
+      artist: { select: { id: true, name: true } },
+    },
+    orderBy: { order: "asc" },
+  },
+} satisfies Prisma.TrackSelect;

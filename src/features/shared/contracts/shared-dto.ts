@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const zPage = z.coerce.number().int().min(1).default(1);
 export const zLimit = z.coerce.number().int().min(1).max(100).default(20);
-export const zBool = z.coerce.boolean();
+export const zBoolSchema = z.coerce.boolean();
 export const zDateSchema = z.coerce.date();
 
 export const zCuidSchema = z.cuid2();

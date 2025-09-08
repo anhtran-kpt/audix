@@ -49,7 +49,7 @@ export default function TrackAddingButton({
       };
 
       qc.setQueryData(playlistKeys.detail(playlistId), (old: FullPlaylist) =>
-        old ? { ...old, items: [...old.items, { ...optimistic }] } : old
+        old ? { ...old, tracks: [...old.tracks, { ...optimistic }] } : old
       );
 
       return { prev };
@@ -60,7 +60,7 @@ export default function TrackAddingButton({
         qc.setQueryData(playlistKeys.detail(ctx.prev.id), ctx.prev);
     },
 
-    onSuccess: (res, vars) => {
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: playlistKeys.detail(playlistId) });
     },
   });
@@ -70,6 +70,7 @@ export default function TrackAddingButton({
       variant="outline"
       disabled={isPending}
       onClick={() => mutate(playlistId)}
+      className="text-foreground rounded-full"
     >
       Add
     </Button>

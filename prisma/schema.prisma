@@ -202,7 +202,7 @@ model Track {
   credits               TrackCredit[]
   genres                TrackGenre[]
   likedBy               UserLikedTrack[]
-  playlistItems         PlaylistItem[]
+  playlistItems         PlaylistTrack[]
   playHistory           PlayHistory[]
   playbackSnapshotTrack PlaybackSnapshotTrack[]
   playbackQueueItem     PlaybackQueueItem[]
@@ -366,13 +366,13 @@ model Playlist {
   // Relationships
   userId  String?
   user    User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items   PlaylistItem[]
+  tracks  PlaylistTrack[]
   likedBy UserLikedPlaylist[]
 
   @@map("playlists")
 }
 
-model PlaylistItem {
+model PlaylistTrack {
   id       String   @id @default(cuid())
   position Int // Position in playlist
   addedAt  DateTime @default(now())

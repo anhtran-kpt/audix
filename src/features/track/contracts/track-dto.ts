@@ -137,6 +137,29 @@ export const TrackListItemSchema = FullTrackSchema.pick({
     .array(),
 });
 
+export const RecommendedTrackItemSchema = FullTrackSchema.pick({
+  id: true,
+  title: true,
+  isExplicit: true,
+  playCount: true,
+  duration: true,
+}).extend({
+  album: z.object({
+    id: zCuidSchema,
+    title: z.string(),
+    imageId: zCuidSchema,
+  }),
+  artists: z
+    .object({
+      artist: z.object({
+        id: zCuidSchema,
+        name: z.string(),
+      }),
+    })
+    .array(),
+});
+
+export type RecommendedTrackItem = z.infer<typeof RecommendedTrackItemSchema>;
 export type FullTrack = z.infer<typeof FullTrackSchema>;
 export type TrackItem = z.infer<typeof TrackItemSchema>;
 export type TrackListItem = z.infer<typeof TrackListItemSchema>;

@@ -46,7 +46,7 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
         <div className=""></div>
       </div>
 
-      {tracks.length > 0 ? (
+      {tracks && tracks.length > 0 ? (
         tracks.map((track, trackIndex) => {
           const isThisTrack =
             playbackContext?.type === type &&

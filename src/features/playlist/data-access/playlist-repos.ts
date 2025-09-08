@@ -1,7 +1,10 @@
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import db from "@/lib/db";
 import { CreatePlaylistInput } from "@/features/playlist/contracts/playlist-dto";
-import { trackItemSelect } from "@/features/track/data-access/track-selects";
+import {
+  recommendedTrackItemSelect,
+  trackItemSelect,
+} from "@/features/track/data-access/track-selects";
 
 export const getSidebarPlaylists = async (userId: zCuidType) => {
   return await db.playlist.findMany({
@@ -54,7 +57,7 @@ export const addTrackToPlaylist = async (
   trackId: zCuidType,
   position: number
 ) => {
-  return await db.playlistItem.create({
+  return await db.playlistTrack.create({
     data: {
       playlistId,
       trackId,
@@ -70,7 +73,7 @@ export const getPlaylistTracks = async (playlistId: zCuidType) => {
         id: playlistId,
       },
       select: {
-        items: {
+        tracks: {
           select: {
             track: {
               select: trackItemSelect,
@@ -79,7 +82,7 @@ export const getPlaylistTracks = async (playlistId: zCuidType) => {
         },
       },
     })
-    .then((data) => data.items.map((item) => item.track));
+    .then((data) => data.tracks.map((item) => item.track));
 };
 
 export const getPlaylistDetail = async (playlistId: zCuidType) => {
@@ -103,7 +106,7 @@ export const getPlaylistDetail = async (playlistId: zCuidType) => {
             image: true,
           },
         },
-        items: {
+        tracks: {
           select: {
             track: {
               select: {
@@ -116,7 +119,6 @@ export const getPlaylistDetail = async (playlistId: zCuidType) => {
                     imageId: true,
                   },
                 },
-
                 artists: {
                   select: {
                     artist: {
@@ -136,6 +138,71 @@ export const getPlaylistDetail = async (playlistId: zCuidType) => {
     })
     .then((playlist) => ({
       ...playlist,
-      tracks: playlist.items.map((item) => item.track),
+      tracks: playlist.tracks.map((item) => item.track),
     }));
+};
+
+export const getRecommendedTracks = async (playlistId: zCuidType) => {
+  const playlist = await db.playlist.findUniqueOrThrow({
+    where: { id: playlistId },
+    select: {
+      tracks: {
+        select: {
+          track: {
+            select: {
+              id: true,
+              genres: {
+                select: {
+                  genre: { select: { id: true, name: true } },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const trackIds = playlist.tracks.map((t) => t.track.id);
+
+  if (playlist.tracks.length === 0) {
+    return db.track.findMany({
+      select: recommendedTrackItemSelect,
+      orderBy: { playCount: "desc" },
+      take: 5,
+    });
+  }
+
+  const genreIds = playlist.tracks.flatMap((t) =>
+    t.track.genres.map((g) => g.genre.id)
+  );
+
+  if (genreIds.length === 0) {
+    return db.track.findMany({
+      where: { id: { notIn: trackIds } },
+      select: recommendedTrackItemSelect,
+      orderBy: { playCount: "desc" },
+      take: 5,
+    });
+  }
+
+  const genreCount: Record<string, number> = {};
+  for (const g of genreIds) {
+    genreCount[g] = (genreCount[g] ?? 0) + 1;
+  }
+
+  const topGenreIds = Object.entries(genreCount)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 2)
+    .map(([id]) => id);
+
+  return db.track.findMany({
+    where: {
+      id: { notIn: trackIds },
+      genres: { some: { genreId: { in: topGenreIds } } },
+    },
+    select: recommendedTrackItemSelect,
+    orderBy: { playCount: "desc" },
+    take: 5,
+  });
 };
