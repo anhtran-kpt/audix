@@ -10,6 +10,7 @@ import {
   trackItemSelect,
 } from "@/features/track/data-access/track-selects";
 import { Prisma } from "@/app/generated/prisma";
+import { generatePlaylistCover } from "@/lib/helpers/build-playlist-cover";
 
 export const getSidebarPlaylists = async (userId: zCuidType) => {
   return await db.playlist.findMany({
@@ -61,8 +62,8 @@ export const addTrackToPlaylist = async (
   playlistId: zCuidType,
   trackId: zCuidType
 ) => {
-  return db.$transaction(async (tx) => {
-    const track = await tx.track.findUniqueOrThrow({
+  const track = await db.$transaction(async (tx) => {
+    const t = await tx.track.findUniqueOrThrow({
       where: { id: trackId },
       select: { duration: true },
     });
@@ -72,33 +73,43 @@ export const addTrackToPlaylist = async (
       orderBy: { position: "desc" },
       select: { position: true },
     });
+
     const finalPosition = last ? last.position + 1 : 0;
 
     const playlistTrack = await tx.playlistTrack.create({
-      data: {
-        playlistId,
-        trackId,
-        position: finalPosition,
-      },
-      select: {
-        trackId: true,
-      },
+      data: { playlistId, trackId, position: finalPosition },
+      select: { trackId: true },
     });
 
     await tx.playlist.update({
       where: { id: playlistId },
       data: {
         totalTracks: { increment: 1 },
-        duration: { increment: track.duration },
+        duration: { increment: t.duration },
       },
     });
 
-    return db.track.findUnique({
-      where: {
-        id: playlistTrack.trackId,
-      },
-      select: trackDetailSelect,
-    });
+    return playlistTrack;
+  });
+
+  const tracks = await db.playlistTrack.findMany({
+    where: { playlistId },
+    select: { track: { select: { album: { select: { imageId: true } } } } },
+    orderBy: { position: "asc" },
+  });
+
+  const imageIds = tracks.map((x) => x.track.album.imageId!).filter(Boolean);
+
+  const newCoverId = await generatePlaylistCover(imageIds, playlistId);
+
+  await db.playlist.update({
+    where: { id: playlistId },
+    data: { imageId: newCoverId },
+  });
+
+  return db.track.findUnique({
+    where: { id: track.trackId },
+    select: trackDetailSelect,
   });
 };
 
@@ -145,6 +156,23 @@ export const removeTrackFromPlaylist = async ({
         totalTracks: { decrement: 1 },
         duration: { decrement: track.duration },
       },
+    });
+
+    const trackImages = await tx.playlistTrack.findMany({
+      where: { playlistId },
+      select: { track: { select: { album: { select: { imageId: true } } } } },
+      orderBy: { position: "asc" },
+    });
+
+    const imageIds = trackImages
+      .map((x) => x.track.album.imageId!)
+      .filter(Boolean);
+
+    const newCoverId = await generatePlaylistCover(imageIds, playlistId);
+
+    await tx.playlist.update({
+      where: { id: playlistId },
+      data: { imageId: newCoverId },
     });
 
     return { removedTrackId: trackId, position };

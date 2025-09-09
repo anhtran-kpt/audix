@@ -9,7 +9,7 @@ export const iconSizeMap = {
 export type IconSize = keyof typeof iconSizeMap;
 
 export const coverImageSizeMap = {
-  xs: "size-12",
+  xs: "size-9",
   sm: "size-14",
   md: "size-40",
   lg: "size-48",

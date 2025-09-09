@@ -20,7 +20,7 @@ export async function buildTrackIdsForContext(
       return album.tracks.map((t) => t.id);
     }
     case "PLAYLIST": {
-      const items = await db.playlistItem.findMany({
+      const items = await db.playlistTrack.findMany({
         where: { playlistId: contextId },
         select: { trackId: true, position: true },
         orderBy: { position: "asc" },
