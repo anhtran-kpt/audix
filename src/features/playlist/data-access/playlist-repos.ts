@@ -11,6 +11,7 @@ import {
 } from "@/features/track/data-access/track-selects";
 import { Prisma } from "@/app/generated/prisma";
 import { generatePlaylistCover } from "@/lib/helpers/build-playlist-cover";
+import { shouldUpdateCover } from "@/lib/helpers/should-update-cover";
 
 export const getSidebarPlaylists = async (userId: zCuidType) => {
   return await db.playlist.findMany({
@@ -100,17 +101,23 @@ export const addTrackToPlaylist = async (
 
   const imageIds = tracks.map((x) => x.track.album.imageId!).filter(Boolean);
 
-  const newCoverId = await generatePlaylistCover(imageIds, playlistId);
-
-  await db.playlist.update({
+  const playlist = await db.playlist.findUnique({
     where: { id: playlistId },
-    data: { imageId: newCoverId },
+    select: { imageId: true },
   });
 
-  return db.track.findUnique({
+  if (
+    shouldUpdateCover(playlist?.imageId ? [playlist.imageId] : [], imageIds)
+  ) {
+    await generatePlaylistCover(imageIds, playlistId);
+  }
+
+  const addedTrack = await db.track.findUnique({
     where: { id: track.trackId },
-    select: trackDetailSelect,
+    select: { ...trackDetailSelect },
   });
+
+  return { ...addedTrack, addedAt: new Date() };
 };
 
 export const removeTrackFromPlaylist = async ({
@@ -158,6 +165,7 @@ export const removeTrackFromPlaylist = async ({
       },
     });
 
+    // Cập nhật cover
     const trackImages = await tx.playlistTrack.findMany({
       where: { playlistId },
       select: { track: { select: { album: { select: { imageId: true } } } } },
@@ -168,12 +176,7 @@ export const removeTrackFromPlaylist = async ({
       .map((x) => x.track.album.imageId!)
       .filter(Boolean);
 
-    const newCoverId = await generatePlaylistCover(imageIds, playlistId);
-
-    await tx.playlist.update({
-      where: { id: playlistId },
-      data: { imageId: newCoverId },
-    });
+    await generatePlaylistCover(imageIds, playlistId);
 
     return { removedTrackId: trackId, position };
   });

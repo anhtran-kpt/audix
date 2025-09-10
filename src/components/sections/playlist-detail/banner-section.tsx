@@ -26,6 +26,7 @@ import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
 import { useQuery } from "@tanstack/react-query";
 import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import Image from "next/image";
 
 type BannerSectionProps = {
   initialData: PlaylistDetail;
@@ -72,13 +73,28 @@ export const BannerSection = ({
       <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
           {playlist.imageId ? (
-            <CoverImage
-              alt={playlist.title}
-              src={playlist.imageId}
-              size="xl"
-              onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
-              priority
-            />
+            playlist.imageId.startsWith("https") ? (
+              <div className="relative overflow-hidden rounded-sm aspect-square shrink-0 size-56">
+                <Image
+                  src={playlist.imageId}
+                  alt={playlist.title}
+                  fill
+                  className="object-cover"
+                  onLoad={(e) =>
+                    setImageUrl((e.target as HTMLImageElement).src)
+                  }
+                  priority
+                />
+              </div>
+            ) : (
+              <CoverImage
+                alt={playlist.title}
+                src={playlist.imageId}
+                size="xl"
+                onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
+                priority
+              />
+            )
           ) : (
             <FallbackCoverImage type="detail" />
           )}

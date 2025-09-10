@@ -1,14 +1,15 @@
 import { Button } from "../ui/button";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import { RecommendedTrackItem } from "@/features/track/contracts/track-dto";
 import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
 
 type AddToPlaylistButtonProps = {
-  trackId: zCuidType;
+  track: RecommendedTrackItem;
   playlistId: zCuidType;
 };
 
 export default function AddToPlaylistButton({
-  trackId,
+  track,
   playlistId,
 }: AddToPlaylistButtonProps) {
   const { mutate, isPending } = useOptimisticTrackAdd();
@@ -17,7 +18,7 @@ export default function AddToPlaylistButton({
     <Button
       variant="outline"
       disabled={isPending}
-      onClick={() => mutate({ playlistId, trackId })}
+      onClick={() => mutate({ playlistId, track })}
       className="text-foreground rounded-full"
     >
       Add

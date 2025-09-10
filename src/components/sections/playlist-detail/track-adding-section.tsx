@@ -41,7 +41,7 @@ export const TrackAddingSection = ({ playlistId }: TrackAddingSectionProps) => {
         Based on what&apos;s in this playlist
       </p>
 
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-end justify-between gap-4">
         <div className="grid w-full max-w-sm items-center gap-3 relative mt-6">
           <Label
             htmlFor="header-search-bar"
@@ -100,7 +100,7 @@ export const TrackAddingSection = ({ playlistId }: TrackAddingSectionProps) => {
                 </NavLink>
               </div>
 
-              <AddToPlaylistButton trackId={track.id} playlistId={playlistId} />
+              <AddToPlaylistButton track={track} playlistId={playlistId} />
             </div>
           ))
         ) : (

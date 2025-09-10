@@ -6,7 +6,6 @@ import { CldImage, CldImageProps } from "next-cloudinary";
 import { FC } from "react";
 import { IconButton } from "./icon-button";
 import { PlayIcon } from "lucide-react";
-import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { Track } from "@/app/generated/prisma";
 
 interface CoverImageProps extends CldImageProps {
@@ -21,7 +20,6 @@ export const CoverImage: FC<CoverImageProps> = ({
   ...props
 }) => {
   const sizeClasses = coverImageSizeMap[size];
-  // const { playTrack } = useAudioPlayer();
 
   return (
     <div
