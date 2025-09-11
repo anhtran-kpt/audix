@@ -24,8 +24,8 @@ export const buildPlaylistCoverUrl = (publicIds: string[]) => {
     `h_${imageSize},l_${escapePublicId(publicIds[3])},w_${imageSize}`,
     `fl_layer_apply,g_north_west,x_${rightX},y_${bottomY}`,
 
-    `f_auto,q_auto`,
+    `f_auto,q_auto,dpr_auto`,
   ].join("/");
 
-  return `https://res.cloudinary.com/${cloudName}/image/upload/${transformations}/${publicIds[0]}`;
+  return `https://res.cloudinary.com/${cloudName}/image/upload/${transformations}/v1/${publicIds[0]}`;
 };

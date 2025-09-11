@@ -7,8 +7,7 @@ import {
 import { getApi, postApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
-import { shouldUpdateCover } from "@/lib/helpers/should-update-cover";
-import { buildPlaylistCoverUrl } from "@/lib/helpers/build-playlist-cover-url";
+import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 
 type RecommendedTrackItemWithOptimistic = RecommendedTrackItem & {
   optimistic?: boolean;
@@ -19,7 +18,6 @@ type PlaylistDetailWithOptimistic = Omit<
   "tracks" | "imageUrl"
 > & {
   tracks: RecommendedTrackItemWithOptimistic[];
-  optimisticCover?: boolean;
 };
 
 type AddTrackToPlaylist = {
@@ -29,6 +27,7 @@ type AddTrackToPlaylist = {
 
 export function useOptimisticTrackAdd() {
   const qc = useQueryClient();
+  const updateCoverMutation = useOptimisticCoverUpdate();
 
   const recommendedKey = (playlistId: string) =>
     ["playlists", playlistId, "recommended"] as const;
@@ -42,9 +41,11 @@ export function useOptimisticTrackAdd() {
     onMutate: async ({ playlistId, track }) => {
       await qc.cancelQueries({ queryKey: playlistKeys.detail(playlistId) });
 
-      const prev = qc.getQueryData<PlaylistDetail>(
+      const prev = qc.getQueryData<PlaylistDetailWithOptimistic>(
         playlistKeys.detail(playlistId)
       );
+
+      if (!prev) return null;
 
       const optimistic: RecommendedTrackItemWithOptimistic = {
         ...track,
@@ -52,34 +53,34 @@ export function useOptimisticTrackAdd() {
         optimistic: true,
       };
 
-      const old = qc.getQueryData<PlaylistDetailWithOptimistic>(
-        playlistKeys.detail(playlistId)
-      );
-
-      if (!old) return { prev, playlistId };
-
-      const newTracks = [...old.tracks, optimistic];
+      const newTracks = [...prev.tracks, optimistic];
 
       const newImageIds = newTracks.map((t) => t.album.imageId);
+      const imageIdSet = new Set(newImageIds);
 
-      const nextSet = new Set(newImageIds);
+      const isFirstTrack = prev.tracks.length === 0;
+      const has4UniqueImages = imageIdSet.size === 4;
 
-      let newCover = old.imageId;
-
-      if (newTracks.length === 1) {
-        newCover = optimistic.album.imageId;
-      } else if (nextSet.size === 4) {
-        newCover = buildPlaylistCoverUrl(Array.from(nextSet).slice(0, 4));
+      if (isFirstTrack || has4UniqueImages) {
+        updateCoverMutation.mutate({
+          playlistId,
+          imageIds: isFirstTrack
+            ? [track.album.imageId]
+            : Array.from(imageIdSet).slice(0, 4),
+        });
       }
 
       qc.setQueryData(playlistKeys.detail(playlistId), {
-        ...old,
+        ...prev,
         tracks: newTracks,
-        imageId: newCover,
-        optimisticCover: true,
       });
 
-      return { prev, playlistId };
+      return {
+        prev,
+        playlistId,
+        optimisticIndex: newTracks.length - 1,
+        trackId: track.id,
+      };
     },
 
     onError: (_, __, ctx) => {
@@ -88,19 +89,19 @@ export function useOptimisticTrackAdd() {
       }
     },
 
-    onSuccess: async (newTrack, { playlistId, track }) => {
+    onSuccess: async (newTrack, { playlistId }, ctx) => {
       qc.setQueryData(
         playlistKeys.detail(playlistId),
         (old: PlaylistDetailWithOptimistic | undefined) => {
           if (!old) return old;
 
           const updated = [...old.tracks];
-          const optimisticIndex = updated.findIndex((t) => t.optimistic);
-
-          if (optimisticIndex !== -1) {
-            updated[optimisticIndex] = { ...newTrack, optimistic: false };
+          if (ctx && ctx.optimisticIndex !== undefined) {
+            updated[ctx.optimisticIndex] = newTrack;
           } else {
-            updated.push(newTrack);
+            const idx = updated.findIndex((t) => t.id === newTrack.id);
+            if (idx !== -1) updated[idx] = newTrack;
+            else updated.push(newTrack);
           }
 
           return {
@@ -108,7 +109,6 @@ export function useOptimisticTrackAdd() {
             tracks: updated,
             totalTracks: old.totalTracks + 1,
             duration: old.duration + newTrack.duration,
-            optimisticCover: false,
           };
         }
       );
@@ -117,17 +117,14 @@ export function useOptimisticTrackAdd() {
       const currentRec =
         qc.getQueryData<RecommendedTrackItem[] | undefined>(rk) ?? [];
 
-      const removedIdx = currentRec.findIndex((t) => t.id === track.id);
-      const filteredRec = currentRec.filter((t) => t.id !== track.id);
-
-      const excludeSet = new Set<string>([
+      const filteredRec = currentRec.filter((t) => t.id !== ctx?.trackId);
+      const excludeSet = new Set([
         ...filteredRec.map((t) => t.id),
-        track.id,
+        ctx?.trackId ?? "",
       ]);
 
       const BATCH = 8;
       let replacement: RecommendedTrackItem | undefined;
-
       try {
         const candidates = await getApi<RecommendedTrackItem[]>(
           `/playlists/${playlistId}/recommended?take=${BATCH}`
@@ -136,11 +133,7 @@ export function useOptimisticTrackAdd() {
       } catch {}
 
       if (replacement) {
-        if (removedIdx !== -1 && removedIdx <= filteredRec.length) {
-          filteredRec.splice(removedIdx, 0, replacement);
-        } else {
-          filteredRec.unshift(replacement);
-        }
+        filteredRec.unshift(replacement);
       }
 
       const deduped = Array.from(

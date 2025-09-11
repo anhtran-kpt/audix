@@ -1,7 +1,7 @@
 "use client";
 
 import { useImageGradient } from "@/hooks/use-image-gradient";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CoverImage } from "@/components/ui/cover-image";
 import { NavLink } from "@/components/ui/nav-link";
 import Dot from "@/components/ui/dot";
@@ -39,6 +39,7 @@ export const BannerSection = ({
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
+  const [oldImageId, setOldImageId] = useState<string | null>(null);
 
   const from = gradient?.from ?? "transparent";
   const via = gradient?.via ?? from;
@@ -61,6 +62,14 @@ export const BannerSection = ({
     initialData: initialData,
   });
 
+  useEffect(() => {
+    if (playlist?.imageId) {
+      setOldImageId((prev) =>
+        playlist.imageId !== prev ? prev ?? playlist.imageId : prev
+      );
+    }
+  }, [playlist?.imageId]);
+
   return (
     <section
       className="relative text-white -mx-12 -mt-30 space-y-8"
@@ -73,18 +82,44 @@ export const BannerSection = ({
       <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
           {playlist.imageId ? (
+            <CoverImage
+              alt={playlist.title}
+              src={playlist.imageId}
+              size="xl"
+              onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
+              priority
+            />
+          ) : (
+            <FallbackCoverImage type="detail" />
+          )}
+          {/* {playlist.imageId ? (
             playlist.imageId.startsWith("https") ? (
               <div className="relative overflow-hidden rounded-sm aspect-square shrink-0 size-56">
-                <Image
-                  src={playlist.imageId}
-                  alt={playlist.title}
-                  fill
-                  className="object-cover"
-                  onLoad={(e) =>
-                    setImageUrl((e.target as HTMLImageElement).src)
-                  }
-                  priority
-                />
+                {oldImageId && (
+                  <CoverImage
+                    alt={playlist.title}
+                    src={oldImageId}
+                    size="xl"
+                    onLoad={(e) =>
+                      setImageUrl((e.target as HTMLImageElement).src)
+                    }
+                    priority
+                    preserveTransformations
+                  />
+                )}
+
+                {playlist.imageId && (
+                  <Image
+                    src={playlist.imageId}
+                    alt={playlist.title}
+                    fill
+                    className="object-cover absolute inset-0 transition-opacity duration-500"
+                    onLoadingComplete={(img) => {
+                      img.style.opacity = "1";
+                    }}
+                    style={{ opacity: 0 }}
+                  />
+                )}
               </div>
             ) : (
               <CoverImage
@@ -93,11 +128,12 @@ export const BannerSection = ({
                 size="xl"
                 onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
                 priority
+                preserveTransformations
               />
             )
           ) : (
             <FallbackCoverImage type="detail" />
-          )}
+          )} */}
           <div className="flex flex-col gap-3">
             <p className="font-medium">
               {playlist.isPublic ? "Public" : "Private"} Playlist

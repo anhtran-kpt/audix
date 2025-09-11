@@ -10,8 +10,9 @@ import {
   trackItemSelect,
 } from "@/features/track/data-access/track-selects";
 import { Prisma } from "@/app/generated/prisma";
-import { generatePlaylistCover } from "@/lib/helpers/build-playlist-cover";
-import { shouldUpdateCover } from "@/lib/helpers/should-update-cover";
+import cloudinary from "@/lib/config/cloudinary";
+import { escapePublicId } from "@/lib/helpers/escape-public-id";
+import { buildPlaylistCoverUrl } from "@/lib/helpers/build-playlist-cover-url";
 
 export const getSidebarPlaylists = async (userId: zCuidType) => {
   return await db.playlist.findMany({
@@ -93,25 +94,6 @@ export const addTrackToPlaylist = async (
     return playlistTrack;
   });
 
-  const tracks = await db.playlistTrack.findMany({
-    where: { playlistId },
-    select: { track: { select: { album: { select: { imageId: true } } } } },
-    orderBy: { position: "asc" },
-  });
-
-  const imageIds = tracks.map((x) => x.track.album.imageId!).filter(Boolean);
-
-  const playlist = await db.playlist.findUnique({
-    where: { id: playlistId },
-    select: { imageId: true },
-  });
-
-  if (
-    shouldUpdateCover(playlist?.imageId ? [playlist.imageId] : [], imageIds)
-  ) {
-    await generatePlaylistCover(imageIds, playlistId);
-  }
-
   const addedTrack = await db.track.findUnique({
     where: { id: track.trackId },
     select: { ...trackDetailSelect },
@@ -164,19 +146,6 @@ export const removeTrackFromPlaylist = async ({
         duration: { decrement: track.duration },
       },
     });
-
-    // Cập nhật cover
-    const trackImages = await tx.playlistTrack.findMany({
-      where: { playlistId },
-      select: { track: { select: { album: { select: { imageId: true } } } } },
-      orderBy: { position: "asc" },
-    });
-
-    const imageIds = trackImages
-      .map((x) => x.track.album.imageId!)
-      .filter(Boolean);
-
-    await generatePlaylistCover(imageIds, playlistId);
 
     return { removedTrackId: trackId, position };
   });
@@ -360,4 +329,58 @@ export const getRecommendedTracks = async (playlistId: zCuidType, take = 5) => {
     ...track,
     addedAt: new Date(),
   }));
+};
+
+export const uploadPlaylistCover = async (
+  playlistId: zCuidType,
+  imageIds: string[]
+) => {
+  try {
+    if (imageIds.length === 1) {
+      const [imageId] = imageIds;
+
+      const response = await cloudinary.uploader.upload(
+        `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/${imageId}`,
+        {
+          folder: "audix/playlists",
+          public_id: playlistId,
+          overwrite: true,
+          resource_type: "image",
+          format: "webp",
+        }
+      );
+
+      return await db.playlist.update({
+        where: { id: playlistId },
+        data: { imageId: response.secure_url },
+        select: { imageId: true },
+      });
+    }
+
+    const imageIdSet = new Set(imageIds);
+    if (imageIdSet.size === 4) {
+      const collageUrl = buildPlaylistCoverUrl(
+        Array.from(imageIdSet).slice(0, 4)
+      );
+
+      const response = await cloudinary.uploader.upload(collageUrl, {
+        folder: "audix/playlists",
+        public_id: playlistId,
+        overwrite: true,
+        resource_type: "image",
+        format: "webp",
+      });
+
+      return await db.playlist.update({
+        where: { id: playlistId },
+        data: { imageId: response.secure_url },
+        select: { imageId: true },
+      });
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Failed to upload playlist cover:", error);
+    return null;
+  }
 };

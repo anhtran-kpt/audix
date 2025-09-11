@@ -3,7 +3,7 @@
 import { CoverImageSize, coverImageSizeMap } from "@/lib/constants/size-maps";
 import { cn } from "@/lib/utils";
 import { CldImage, CldImageProps } from "next-cloudinary";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { IconButton } from "./icon-button";
 import { PlayIcon } from "lucide-react";
 import { Track } from "@/app/generated/prisma";
@@ -17,9 +17,16 @@ export const CoverImage: FC<CoverImageProps> = ({
   size = "md",
   track,
   className,
+  onLoad,
   ...props
 }) => {
   const sizeClasses = coverImageSizeMap[size];
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const handleLoad: NonNullable<CldImageProps["onLoad"]> = (e) => {
+    setIsLoaded(true);
+    onLoad?.(e);
+  };
 
   return (
     <div
@@ -29,16 +36,21 @@ export const CoverImage: FC<CoverImageProps> = ({
       )}
     >
       <CldImage
-        className={cn("object-cover", sizeClasses, className)}
+        className={cn(
+          "object-cover transition-opacity duration-500",
+          sizeClasses,
+          className
+        )}
         fill
         sizes="(max-width: 640px) 100vw, 640px"
+        style={{ opacity: isLoaded ? 1 : 0 }}
+        onLoad={handleLoad}
         {...props}
       />
       {track && (
         <IconButton
           icon={PlayIcon}
           size="sm"
-          // onClick={() => playTrack(track)}
           iconClassName="fill-foreground stroke-0"
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
         />
