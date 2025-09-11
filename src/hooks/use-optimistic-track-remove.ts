@@ -1,26 +1,8 @@
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { deleteApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
-type RecommendedTrackItem = {
-  id: string;
-  title: string;
-  duration: number;
-  playCount: number;
-  album: {
-    id: string;
-    title: string;
-    imageId: string;
-  };
-  artists: { artist: { id: string; name: string } }[];
-  addedAt: Date;
-  isExplicit?: boolean;
-};
-
-type PlaylistDetail = {
-  id: string;
-  tracks: RecommendedTrackItem[];
-};
+import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
+import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
 
 type RemoveTrackInput = {
   playlistId: string;
@@ -29,6 +11,7 @@ type RemoveTrackInput = {
 
 export function useOptimisticTrackRemove() {
   const qc = useQueryClient();
+  const updateCoverMutation = useOptimisticCoverUpdate();
 
   return useMutation({
     mutationFn: ({ playlistId, trackId }: RemoveTrackInput) =>
@@ -40,22 +23,37 @@ export function useOptimisticTrackRemove() {
       const prev = qc.getQueryData<PlaylistDetail>(
         playlistKeys.detail(playlistId)
       );
+      if (!prev) return { prev, playlistId };
 
-      qc.setQueryData(
-        playlistKeys.detail(playlistId),
-        (old: PlaylistDetail | undefined) => {
-          if (!old) return old;
-          return {
-            ...old,
-            tracks: old.tracks.filter((t) => t.id !== trackId),
-          };
-        }
-      );
+      const newTracks = prev.tracks.filter((t) => t.id !== trackId);
+      const newImageIds = newTracks.map((t) => t.album.imageId);
+      const imageIdSet = new Set(newImageIds);
+
+      if (newTracks.length === 0) {
+        updateCoverMutation.mutate({ playlistId, imageIds: [] });
+      } else if (imageIdSet.size < 4) {
+        updateCoverMutation.mutate({
+          playlistId,
+          imageIds: [newTracks[0].album.imageId],
+        });
+      }
+
+      const removedTrack = prev.tracks.find((t) => t.id === trackId);
+      const removedTrackDuration = removedTrack?.duration ?? 0;
+
+      qc.setQueryData<PlaylistDetail>(playlistKeys.detail(playlistId), {
+        ...prev,
+        tracks: newTracks,
+        totalTracks: (prev.totalTracks ?? prev.tracks.length) - 1,
+        duration:
+          (prev.duration ?? prev.tracks.reduce((a, t) => a + t.duration, 0)) -
+          removedTrackDuration,
+      });
 
       return { prev, playlistId };
     },
 
-    onError: (err, _, ctx) => {
+    onError: (_err, _input, ctx) => {
       if (ctx?.prev) {
         qc.setQueryData(playlistKeys.detail(ctx.playlistId), ctx.prev);
       }

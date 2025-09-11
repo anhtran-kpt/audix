@@ -1,9 +1,6 @@
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import db from "@/lib/db";
-import {
-  CreatePlaylistInput,
-  RemoveTrackFromPlaylistInput,
-} from "@/features/playlist/contracts/playlist-dto";
+import { CreatePlaylistInput } from "@/features/playlist/contracts/playlist-dto";
 import {
   recommendedTrackItemSelect,
   trackDetailSelect,
@@ -11,7 +8,6 @@ import {
 } from "@/features/track/data-access/track-selects";
 import { Prisma } from "@/app/generated/prisma";
 import cloudinary from "@/lib/config/cloudinary";
-import { escapePublicId } from "@/lib/helpers/escape-public-id";
 import { buildPlaylistCoverUrl } from "@/lib/helpers/build-playlist-cover-url";
 
 export const getSidebarPlaylists = async (userId: zCuidType) => {
@@ -105,7 +101,10 @@ export const addTrackToPlaylist = async (
 export const removeTrackFromPlaylist = async ({
   playlistId,
   trackId,
-}: RemoveTrackFromPlaylistInput) => {
+}: {
+  playlistId: string;
+  trackId: string;
+}) => {
   return db.$transaction(async (tx) => {
     const playlistTrack = await tx.playlistTrack.findUnique({
       where: {
@@ -117,7 +116,9 @@ export const removeTrackFromPlaylist = async ({
       select: {
         id: true,
         position: true,
-        track: { select: { duration: true } },
+        track: {
+          select: { duration: true, album: { select: { imageId: true } } },
+        },
       },
     });
 
@@ -139,15 +140,48 @@ export const removeTrackFromPlaylist = async ({
       data: { position: { decrement: 1 } },
     });
 
-    await tx.playlist.update({
+    const playlist = await tx.playlist.update({
       where: { id: playlistId },
       data: {
         totalTracks: { decrement: 1 },
         duration: { decrement: track.duration },
       },
+      select: {
+        id: true,
+        totalTracks: true,
+        tracks: {
+          select: {
+            track: { select: { album: { select: { imageId: true } } } },
+          },
+        },
+      },
     });
 
-    return { removedTrackId: trackId, position };
+    const imageIds = playlist.tracks.map((t) => t.track.album.imageId);
+    const imageIdSet = new Set(imageIds);
+
+    let newCover: string | null = null;
+
+    if (playlist.totalTracks === 0) {
+      newCover = null;
+    } else if (imageIdSet.size < 4) {
+      newCover = imageIds[0];
+    } else if (imageIdSet.size >= 4) {
+      newCover = buildPlaylistCoverUrl(Array.from(imageIdSet).slice(0, 4));
+    }
+
+    if (newCover !== null) {
+      await tx.playlist.update({
+        where: { id: playlistId },
+        data: { imageId: newCover },
+      });
+    }
+
+    return {
+      removedTrackId: trackId,
+      position,
+      newCover,
+    };
   });
 };
 
