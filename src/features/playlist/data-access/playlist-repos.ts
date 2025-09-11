@@ -418,3 +418,49 @@ export const uploadPlaylistCover = async (
     return null;
   }
 };
+
+export const deletePlaylist = async ({
+  playlistId,
+  userId,
+}: {
+  playlistId: zCuidType;
+  userId: zCuidType;
+}) => {
+  return db.$transaction(async (tx) => {
+    const playlist = await tx.playlist.findUnique({
+      where: { id: playlistId },
+      select: {
+        id: true,
+        userId: true,
+        imageId: true,
+      },
+    });
+
+    if (!playlist) {
+      throw new Error("Playlist not found");
+    }
+
+    if (playlist.userId !== userId) {
+      throw new Error("You do not have permission to delete this playlist");
+    }
+
+    await tx.playlistTrack.deleteMany({
+      where: { playlistId },
+    });
+
+    await tx.playlist.delete({
+      where: { id: playlistId },
+    });
+
+    if (playlist.imageId && playlist.imageId.startsWith("http")) {
+      try {
+        const publicId = `audix/playlists/${playlistId}`;
+        await cloudinary.uploader.destroy(publicId, { resource_type: "image" });
+      } catch (err) {
+        console.error("Failed to delete cover from Cloudinary:", err);
+      }
+    }
+
+    return { deletedPlaylistId: playlistId };
+  });
+};

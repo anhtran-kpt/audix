@@ -13,7 +13,6 @@ import { IconButton } from "@/components/ui/icon-button";
 import {
   DownloadIcon,
   EditIcon,
-  EllipsisIcon,
   ListIcon,
   SearchIcon,
   ShuffleIcon,
@@ -26,7 +25,7 @@ import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
 import { useQuery } from "@tanstack/react-query";
 import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
-import Image from "next/image";
+import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
 
 type BannerSectionProps = {
   initialData: PlaylistDetail;
@@ -39,7 +38,6 @@ export const BannerSection = ({
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
-  const [oldImageId, setOldImageId] = useState<string | null>(null);
 
   const from = gradient?.from ?? "transparent";
   const via = gradient?.via ?? from;
@@ -61,14 +59,6 @@ export const BannerSection = ({
     }),
     initialData: initialData,
   });
-
-  useEffect(() => {
-    if (playlist?.imageId) {
-      setOldImageId((prev) =>
-        playlist.imageId !== prev ? prev ?? playlist.imageId : prev
-      );
-    }
-  }, [playlist?.imageId]);
 
   return (
     <section
@@ -92,48 +82,6 @@ export const BannerSection = ({
           ) : (
             <FallbackCoverImage type="detail" />
           )}
-          {/* {playlist.imageId ? (
-            playlist.imageId.startsWith("https") ? (
-              <div className="relative overflow-hidden rounded-sm aspect-square shrink-0 size-56">
-                {oldImageId && (
-                  <CoverImage
-                    alt={playlist.title}
-                    src={oldImageId}
-                    size="xl"
-                    onLoad={(e) =>
-                      setImageUrl((e.target as HTMLImageElement).src)
-                    }
-                    priority
-                    preserveTransformations
-                  />
-                )}
-
-                {playlist.imageId && (
-                  <Image
-                    src={playlist.imageId}
-                    alt={playlist.title}
-                    fill
-                    className="object-cover absolute inset-0 transition-opacity duration-500"
-                    onLoadingComplete={(img) => {
-                      img.style.opacity = "1";
-                    }}
-                    style={{ opacity: 0 }}
-                  />
-                )}
-              </div>
-            ) : (
-              <CoverImage
-                alt={playlist.title}
-                src={playlist.imageId}
-                size="xl"
-                onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
-                priority
-                preserveTransformations
-              />
-            )
-          ) : (
-            <FallbackCoverImage type="detail" />
-          )} */}
           <div className="flex flex-col gap-3">
             <p className="font-medium">
               {playlist.isPublic ? "Public" : "Private"} Playlist
@@ -221,14 +169,9 @@ export const BannerSection = ({
             size="xl"
             tooltipContent={<>Edit details</>}
           />
-          <IconButton
-            icon={EllipsisIcon}
-            size="xl"
-            tooltipContent={
-              <>
-                More options for <strong>{playlist.title}</strong>
-              </>
-            }
+          <PlaylistDetailDropdown
+            playlistId={playlist.id}
+            title={playlist.title}
           />
         </div>
         <div className="flex items-center gap-6">
