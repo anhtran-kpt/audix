@@ -22,8 +22,6 @@ import {
   PlusIcon,
   TrashIcon,
 } from "lucide-react";
-import { useOptimisticPlaylistDelete } from "@/hooks/use-optimistic-playlist-delete";
-import { ConfirmDialog } from "./confirm-dialog";
 import CreditsDialog from "./credits-dialog";
 import {
   Command,
@@ -41,14 +39,21 @@ import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
 import { getApi } from "@/lib/http/request";
 import { UserPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
+import { useOptimisticTrackRemove } from "@/hooks/use-optimistic-track-remove";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 type TrackDropdownProps = {
   track: RecommendedTrackItem;
   title: string;
+  playlistId?: string;
 };
 
-export function TrackDropdown({ track, title }: TrackDropdownProps) {
-  const deletePlaylistMutation = useOptimisticPlaylistDelete();
+export function TrackDropdown({
+  track,
+  title,
+  playlistId,
+}: TrackDropdownProps) {
+  const removeTrackMutation = useOptimisticTrackRemove();
   const addTrackMutation = useOptimisticTrackAdd();
   const [openConfirm, setOpenConfirm] = useState(false);
   const { data: session, status } = useSession();
@@ -65,8 +70,10 @@ export function TrackDropdown({ track, title }: TrackDropdownProps) {
 
   const [open, setOpen] = useState(false);
 
-  const handleDelete = () => {
-    // deletePlaylistMutation.mutate({ playlistId });
+  const removeTrackFromPlaylist = (trackId: zCuidType) => {
+    if (playlistId) {
+      removeTrackMutation.mutate({ playlistId, trackId });
+    }
     setOpenConfirm(false);
   };
 
@@ -143,10 +150,16 @@ export function TrackDropdown({ track, title }: TrackDropdownProps) {
               <ListPlusIcon />
               Add to queue
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setOpenConfirm(true)}>
-              <TrashIcon />
-              Remove from this playlist
-            </DropdownMenuItem>
+            {playlistId && (
+              <DropdownMenuItem
+                onClick={() =>
+                  removeTrackMutation.mutate({ playlistId, trackId: track.id })
+                }
+              >
+                <TrashIcon />
+                Remove from this playlist
+              </DropdownMenuItem>
+            )}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
@@ -170,20 +183,6 @@ export function TrackDropdown({ track, title }: TrackDropdownProps) {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <ConfirmDialog
-        open={openConfirm}
-        onOpenChange={setOpenConfirm}
-        title="Delete this playlist?"
-        description={
-          <>
-            This action cannot be undone. Playlist <strong>{title}</strong> will
-            be permanently deleted.
-          </>
-        }
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
-        onConfirm={handleDelete}
-      />
     </>
   );
 }
