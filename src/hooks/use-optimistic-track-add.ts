@@ -6,8 +6,12 @@ import {
 } from "@/features/track/contracts/track-dto";
 import { getApi, postApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
+import {
+  PlaylistDetail,
+  UserPlaylist,
+} from "@/features/playlist/contracts/playlist-dto";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
+import { toast } from "sonner";
 
 type RecommendedTrackItemWithOptimistic = RecommendedTrackItem & {
   optimistic?: boolean;
@@ -90,6 +94,8 @@ export function useOptimisticTrackAdd() {
     },
 
     onSuccess: async (newTrack, { playlistId }, ctx) => {
+      toast.success(`Added ${newTrack.title} to playlist.`);
+
       qc.setQueryData(
         playlistKeys.detail(playlistId),
         (old: PlaylistDetailWithOptimistic | undefined) => {
@@ -112,6 +118,10 @@ export function useOptimisticTrackAdd() {
           };
         }
       );
+
+      qc.invalidateQueries({
+        queryKey: playlistKeys.playlistsWithoutTrack(newTrack.id),
+      });
 
       const rk = recommendedKey(playlistId);
       const currentRec =

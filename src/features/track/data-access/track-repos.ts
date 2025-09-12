@@ -128,3 +128,39 @@ export const getAlbumTracks = async (albumId: zCuidType) => {
 
   return album.tracks;
 };
+
+export const getCredits = async (trackId: zCuidType) => {
+  return await db.track.findUniqueOrThrow({
+    where: { id: trackId },
+    select: {
+      title: true,
+      artists: {
+        select: {
+          role: true,
+          order: true,
+          artist: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+      credits: {
+        select: {
+          id: true,
+          name: true,
+          role: true,
+          details: true,
+          order: true,
+          artist: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+};

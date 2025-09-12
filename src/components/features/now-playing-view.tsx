@@ -16,7 +16,7 @@ import { NavLink } from "../ui/nav-link";
 import { FollowButton } from "./follow-button";
 import { buildCreditsByPerson } from "@/lib/helpers/build-credits-by-person";
 import { ScrollArea } from "../ui/scroll-area";
-import CreditDialog from "./credit-dialog";
+import CreditDialog from "./credits-dialog";
 import { CldImage } from "next-cloudinary";
 import { cn } from "@/lib/utils";
 import { useRightPanel } from "@/stores/use-right-panel";
@@ -158,9 +158,12 @@ export default function NowPlayingRefView() {
                 Credits
               </span>
               <CreditDialog
-                trackTitle={nowPlayingTrack.title}
-                artists={nowPlayingTrack.artists}
-                credits={nowPlayingTrack.credits}
+                trackId={nowPlayingTrack.id}
+                trigger={
+                  <span className="font-medium text-[calc(13rem/16)] text-muted-foreground hover:text-primary hover:underline underline-offset-2 cursor-pointer">
+                    Show all
+                  </span>
+                }
               />
             </div>
 

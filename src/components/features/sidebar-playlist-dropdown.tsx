@@ -12,15 +12,15 @@ import { useOptimisticPlaylistDelete } from "@/hooks/use-optimistic-playlist-del
 import { ConfirmDialog } from "./confirm-dialog";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
-type PlaylistDetailDropdownProps = {
+type SidebarPlaylistDropdownProps = {
   playlistId: zCuidType;
   title: string;
 };
 
-export function PlaylistDetailDropdown({
+export default function SidebarPlaylistDropdown({
   playlistId,
   title,
-}: PlaylistDetailDropdownProps) {
+}: SidebarPlaylistDropdownProps) {
   const deletePlaylistMutation = useOptimisticPlaylistDelete();
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -35,7 +35,6 @@ export function PlaylistDetailDropdown({
         <DropdownMenuTrigger asChild>
           <IconButton
             icon={EllipsisIcon}
-            size="xl"
             tooltipContent={
               <>
                 More options for <strong>{title}</strong>
@@ -51,7 +50,7 @@ export function PlaylistDetailDropdown({
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setOpenConfirm(true)}>
               <TrashIcon />
-              Delete this playlist
+              Delete playlist
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

@@ -23,6 +23,7 @@ import {
   CreatePlaylistInputSchema,
   CreatePlaylistOutput,
   SidebarPlaylist,
+  UserPlaylist,
 } from "@/features/playlist/contracts/playlist-dto";
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { useSession } from "next-auth/react";
@@ -94,6 +95,12 @@ export const NewPlaylistForm = ({
           return [res, ...filtered];
         }
       );
+
+      qc.setQueryData<UserPlaylist[]>(playlistKeys.list(), (old) => {
+        if (!old) return old;
+
+        return [res, ...old];
+      });
 
       onSuccess(res);
       form.reset();

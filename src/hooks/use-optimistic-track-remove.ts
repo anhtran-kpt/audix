@@ -58,5 +58,10 @@ export function useOptimisticTrackRemove() {
         qc.setQueryData(playlistKeys.detail(ctx.playlistId), ctx.prev);
       }
     },
+    onSuccess: (_, { trackId }) => {
+      qc.invalidateQueries({
+        queryKey: playlistKeys.playlistsWithoutTrack(trackId),
+      });
+    },
   });
 }

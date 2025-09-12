@@ -464,3 +464,23 @@ export const deletePlaylist = async ({
     return { deletedPlaylistId: playlistId };
   });
 };
+
+export const getUserPlaylistsWithoutTrack = async (
+  userId: zCuidType,
+  trackId: zCuidType
+) => {
+  return await db.playlist.findMany({
+    where: {
+      userId,
+      tracks: {
+        none: {
+          trackId: trackId,
+        },
+      },
+    },
+    select: {
+      id: true,
+      title: true,
+    },
+  });
+};

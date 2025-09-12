@@ -15,6 +15,7 @@ import { TrackListItem } from "@/features/track/contracts/track-dto";
 import TrackItem from "./track-item";
 import { format } from "date-fns";
 import { NavLink } from "../ui/nav-link";
+import { TrackDropdown } from "./track-dropdown";
 
 type TrackListProps = {
   contextId: string;
@@ -146,15 +147,7 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
               <div className="text-right">{formatDuration(track.duration)}</div>
 
               <div className="invisible group-hover:visible flex items-center justify-end">
-                <IconButton
-                  icon={EllipsisIcon}
-                  className="text-current"
-                  tooltipContent={
-                    <>
-                      More options for <strong>{track.title}</strong>
-                    </>
-                  }
-                />
+                <TrackDropdown track={track} title={track.title} />
               </div>
             </div>
           );

@@ -115,6 +115,12 @@ export const PlaylistDetailSchema = PlaylistBaseSchema.extend({
     .nullable(),
 });
 
+const UserPlaylistSchema = FullPlaylistSchema.pick({
+  id: true,
+  title: true,
+});
+
+export type UserPlaylist = z.infer<typeof UserPlaylistSchema>;
 export type PlaylistDetail = z.infer<typeof PlaylistDetailSchema>;
 export type SidebarPlaylist = z.infer<typeof SidebarPlaylistSchema>;
 export type CreatePlaylistInput = z.infer<typeof CreatePlaylistInputSchema>;
