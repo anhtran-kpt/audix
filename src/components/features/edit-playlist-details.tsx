@@ -20,20 +20,21 @@ import { Textarea } from "../ui/textarea";
 import { CoverImage } from "../ui/cover-image";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { useOptimisticPlaylistUpdate } from "@/hooks/use-optimistic-playlist-update";
-import { Form, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   UpdatePlaylistInput,
   UpdatePlaylistInputSchema,
 } from "@/features/playlist/contracts/playlist-dto";
 import {
+  Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function EditPlaylistDetails({
   playlistId,
@@ -57,12 +58,21 @@ export default function EditPlaylistDetails({
   const form = useForm<UpdatePlaylistInput>({
     resolver: zodResolver(UpdatePlaylistInputSchema),
     defaultValues: {
-      title: playlist?.title ?? "",
-      description: playlist?.description ?? "",
+      title: "",
+      description: "",
     },
   });
 
-  function onSubmit(input: UpdatePlaylistInput) {
+  useEffect(() => {
+    if (playlist) {
+      form.reset({
+        title: playlist.title ?? "",
+        description: playlist.description ?? "",
+      });
+    }
+  }, [playlist, form]);
+
+  const onSubmit = (input: UpdatePlaylistInput) => {
     updatePlaylistInfo(
       { playlistId, input },
       {
@@ -72,7 +82,7 @@ export default function EditPlaylistDetails({
         },
       }
     );
-  }
+  };
 
   if (status === "pending" || status === "error") {
     return null;
@@ -80,22 +90,24 @@ export default function EditPlaylistDetails({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex items-center"
-        >
-          <DialogTrigger asChild>
-            <IconButton
-              icon={EditIcon}
-              size="xl"
-              tooltipContent={<>Edit details</>}
-            />
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] lg:max-w-xl">
-            <DialogHeader>
-              <DialogTitle>Edit details</DialogTitle>
-            </DialogHeader>
+      <DialogTrigger asChild>
+        <IconButton
+          icon={EditIcon}
+          size="xl"
+          tooltipContent={<>Edit details</>}
+        />
+      </DialogTrigger>
+
+      <DialogContent className="lg:max-w-xl" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Edit details</DialogTitle>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex flex-col gap-6"
+          >
             <div className="flex items-stretch gap-4">
               <div className="flex-shrink-0">
                 {playlist.imageId ? (
@@ -115,7 +127,7 @@ export default function EditPlaylistDetails({
                   name="title"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Username</FormLabel>
+                      <FormLabel>Title</FormLabel>
                       <FormControl>
                         <Input placeholder="Add a playlist title" {...field} />
                       </FormControl>
@@ -123,38 +135,24 @@ export default function EditPlaylistDetails({
                     </FormItem>
                   )}
                 />
-                {/* <div className="grid gap-3">
-                  <Label htmlFor="playlist-title">Title</Label>
-                  <Input id="playlist-title" name="title" />
-                </div> */}
 
-                <div className="flex flex-col flex-1 gap-3">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Add an optional description"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    className="h-full resize-none"
-                    defaultValue={playlist.description ?? ""}
-                    placeholder="Add an optional description"
-                  /> */}
-                </div>
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col flex-1">
+                      <FormLabel>Description</FormLabel>
+                      <FormControl className="flex-1 flex">
+                        <Textarea
+                          className="flex-1 resize-none"
+                          placeholder="Add an optional description"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
@@ -166,9 +164,9 @@ export default function EditPlaylistDetails({
                 Save changes
               </Button>
             </DialogFooter>
-          </DialogContent>
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </DialogContent>
     </Dialog>
   );
 }

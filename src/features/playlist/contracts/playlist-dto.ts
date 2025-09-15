@@ -18,7 +18,7 @@ export const PlaylistItemSchema = z.object({
 export const PlaylistBaseSchema = z.object({
   id: zCuidSchema,
   title: z.string().min(1),
-  description: z.string().nullable(),
+  description: z.string().optional(),
   imageId: zPublicIdSchema.nullable(),
   isPublic: z.boolean().optional(),
   isOfficial: z.boolean().optional(),
