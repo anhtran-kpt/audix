@@ -7,14 +7,6 @@ import {
   zTimeStamps,
 } from "@/features/shared/contracts/shared-dto";
 
-export const PlaylistItemSchema = z.object({
-  id: zCuidSchema,
-  position: z.number().int().nonnegative(),
-  addedAt: zDateSchema.optional(),
-  trackId: zCuidSchema,
-  playlistId: zCuidSchema,
-});
-
 export const PlaylistBaseSchema = z.object({
   id: zCuidSchema,
   title: z.string().min(1),
@@ -35,7 +27,15 @@ export const FullPlaylistSchema = PlaylistBaseSchema.extend({
       image: z.url().nullable(),
     })
     .nullable(),
-  tracks: PlaylistItemSchema.array(),
+  tracks: z
+    .object({
+      id: zCuidSchema,
+      position: z.number().int().nonnegative(),
+      addedAt: zDateSchema.optional(),
+      trackId: zCuidSchema,
+      playlistId: zCuidSchema,
+    })
+    .array(),
 });
 
 export const CreatePlaylistInputSchema = PlaylistBaseSchema.pick({
@@ -132,6 +132,14 @@ export const UpdatePlaylistOutputSchema = PlaylistBaseSchema.pick({
   description: true,
 });
 
+export const PlaylistItemSchema = FullPlaylistSchema.pick({
+  id: true,
+  title: true,
+  imageId: true,
+  user: true,
+});
+
+export type PlaylistItem = z.infer<typeof PlaylistItemSchema>;
 export type UpdatePlaylistInput = z.infer<typeof UpdatePlaylistInputSchema>;
 export type UpdatePlaylistOutput = z.infer<typeof UpdatePlaylistOutputSchema>;
 export type UserPlaylist = z.infer<typeof UserPlaylistSchema>;

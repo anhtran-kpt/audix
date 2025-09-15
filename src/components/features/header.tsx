@@ -8,11 +8,17 @@ import { cn } from "@/lib/utils";
 import { ModeToggle } from "./mode-toggle";
 import { AppNavigation } from "./app-navigation";
 import { UserProfile } from "./user-profile";
+import { useQuery } from "@tanstack/react-query";
+import { searchOptions } from "@/features/search/query/search-options";
 
 export const Header = () => {
   const [isAtTop, setIsAtTop] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
   const prevY = useRef(0);
+  const [query, setQuery] = useState("");
+  const { data, status } = useQuery({
+    ...searchOptions(query),
+  });
 
   useEffect(() => {
     const el = document.getElementById("app-scroll");
@@ -40,6 +46,12 @@ export const Header = () => {
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
+  if (status === "error") {
+    return <p>Error</p>;
+  }
+
+  console.log(data);
+
   return (
     <header
       className={cn(
@@ -51,7 +63,7 @@ export const Header = () => {
     >
       <div className="flex items-center gap-8 grow">
         <AppNavigation />
-        <HeaderSearchBar />
+        <HeaderSearchBar onSearch={setQuery} />
       </div>
       <div className="flex gap-8 items-center">
         <ModeToggle />

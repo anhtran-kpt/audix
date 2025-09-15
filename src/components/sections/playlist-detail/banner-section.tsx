@@ -13,7 +13,9 @@ import { IconButton } from "@/components/ui/icon-button";
 import {
   DownloadIcon,
   EditIcon,
+  GlobeIcon,
   ListIcon,
+  LockIcon,
   SearchIcon,
   ShuffleIcon,
   SortDescIcon,
@@ -84,9 +86,22 @@ export const BannerSection = ({
             <FallbackCoverImage type="detail" />
           )}
           <div className="flex flex-col gap-3">
-            <p className="font-medium">
-              {playlist.isPublic ? "Public" : "Private"} Playlist
-            </p>
+            {playlist.isPublic ? (
+              <div className="flex items-center gap-2">
+                <GlobeIcon className="size-5" />{" "}
+                <span className="font-medium flex items-center">
+                  Public Playlist
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <LockIcon className="size-5" />{" "}
+                <span className="font-medium flex items-center">
+                  Private Playlist
+                </span>
+              </div>
+            )}
+
             <p className="font-bold text-6xl mt-1 mb-3">{playlist.title}</p>
             {playlist.description && (
               <p className="text-sm text-muted-foreground">
