@@ -1,7 +1,7 @@
 "use client";
 
 import { useImageGradient } from "@/hooks/use-image-gradient";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CoverImage } from "@/components/ui/cover-image";
 import { NavLink } from "@/components/ui/nav-link";
 import Dot from "@/components/ui/dot";
@@ -26,6 +26,7 @@ import { useQuery } from "@tanstack/react-query";
 import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
+import EditPlaylistDetails from "@/components/features/edit-playlist-details";
 
 type BannerSectionProps = {
   initialData: PlaylistDetail;
@@ -164,11 +165,7 @@ export const BannerSection = ({
               </>
             }
           />
-          <IconButton
-            icon={EditIcon}
-            size="xl"
-            tooltipContent={<>Edit details</>}
-          />
+          <EditPlaylistDetails playlistId={playlistId} />
           <PlaylistDetailDropdown
             playlistId={playlist.id}
             title={playlist.title}

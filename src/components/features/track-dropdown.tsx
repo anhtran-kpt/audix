@@ -63,9 +63,8 @@ export function TrackDropdown({
     error,
   } = useQuery({
     enabled: !!track.id,
-    queryKey: playlistKeys.playlistsWithoutTrack(track.id),
-    queryFn: () =>
-      getApi<UserPlaylist[]>(`/playlists?excludeTrackId=${track.id}`),
+    queryKey: playlistKeys.userPlaylists(track.id),
+    queryFn: () => getApi<UserPlaylist[]>(`/me/playlists?trackId=${track.id}`),
   });
 
   const [open, setOpen] = useState(false);
@@ -123,6 +122,7 @@ export function TrackDropdown({
                               <CommandItem
                                 key={playlist.id}
                                 value={playlist.id}
+                                disabled={playlist.hasTrack}
                                 onSelect={(value) => {
                                   addTrackMutation.mutate({
                                     playlistId: value,
@@ -131,7 +131,8 @@ export function TrackDropdown({
                                   setOpen(false);
                                 }}
                               >
-                                {playlist.title}
+                                {playlist.title}{" "}
+                                {playlist.hasTrack && "(already added)"}
                               </CommandItem>
                             ))
                           )}

@@ -1,6 +1,9 @@
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import db from "@/lib/db";
-import { CreatePlaylistInput } from "@/features/playlist/contracts/playlist-dto";
+import {
+  CreatePlaylistInput,
+  UpdatePlaylistInput,
+} from "@/features/playlist/contracts/playlist-dto";
 import {
   recommendedTrackItemSelect,
   trackDetailSelect,
@@ -481,6 +484,45 @@ export const getUserPlaylistsWithoutTrack = async (
     select: {
       id: true,
       title: true,
+    },
+  });
+};
+
+export const getUserPlaylists = async (
+  userId: zCuidType,
+  trackId: zCuidType
+) => {
+  const playlists = await db.playlist.findMany({
+    where: { userId },
+    select: {
+      id: true,
+      title: true,
+      tracks: {
+        where: { trackId },
+        select: { trackId: true },
+      },
+    },
+  });
+
+  return playlists.map((pl) => ({
+    id: pl.id,
+    title: pl.title,
+    hasTrack: pl.tracks.length > 0,
+  }));
+};
+
+export const updatePlaylistInfo = async (
+  playlistId: zCuidType,
+  input: UpdatePlaylistInput
+) => {
+  return await db.playlist.update({
+    where: {
+      id: playlistId,
+    },
+    data: input,
+    select: {
+      title: true,
+      description: true,
     },
   });
 };

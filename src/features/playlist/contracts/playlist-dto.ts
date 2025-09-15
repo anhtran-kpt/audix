@@ -118,8 +118,22 @@ export const PlaylistDetailSchema = PlaylistBaseSchema.extend({
 const UserPlaylistSchema = FullPlaylistSchema.pick({
   id: true,
   title: true,
+}).extend({
+  hasTrack: zBoolSchema,
 });
 
+export const UpdatePlaylistInputSchema = PlaylistBaseSchema.pick({
+  title: true,
+  description: true,
+}).partial();
+
+export const UpdatePlaylistOutputSchema = PlaylistBaseSchema.pick({
+  title: true,
+  description: true,
+});
+
+export type UpdatePlaylistInput = z.infer<typeof UpdatePlaylistInputSchema>;
+export type UpdatePlaylistOutput = z.infer<typeof UpdatePlaylistOutputSchema>;
 export type UserPlaylist = z.infer<typeof UserPlaylistSchema>;
 export type PlaylistDetail = z.infer<typeof PlaylistDetailSchema>;
 export type SidebarPlaylist = z.infer<typeof SidebarPlaylistSchema>;

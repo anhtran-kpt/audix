@@ -1,9 +1,11 @@
+import { UpdatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-dto";
 import {
   deletePlaylist,
   getPlaylistDetail,
+  updatePlaylistInfo,
 } from "@/features/playlist/data-access/playlist-repos";
 import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
-import { makeDELETE, makeGET } from "@/lib/route-factory";
+import { makeDELETE, makeGET, makePATCH } from "@/lib/route-factory";
 import { object } from "zod";
 
 export const GET = makeGET({
@@ -19,5 +21,16 @@ export const DELETE = makeDELETE({
   params: object({ playlistId: zCuidSchema }),
   handler: async ({ params, userId }) => {
     return deletePlaylist({ playlistId: params.playlistId, userId: userId! });
+  },
+});
+
+export const PATCH = makePATCH({
+  auth: "required",
+  body: UpdatePlaylistInputSchema,
+  params: object({
+    playlistId: zCuidSchema,
+  }),
+  handler: async ({ body, params }) => {
+    return updatePlaylistInfo(params.playlistId, body);
   },
 });
