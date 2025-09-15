@@ -4,20 +4,20 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export const HeaderSearchBar = ({
-  onSearch,
-}: {
-  onSearch: (q: string) => void;
-}) => {
-  const [value, setValue] = useState("");
+export const HeaderSearchBar = () => {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get("q") ?? "";
+  const [value, setValue] = useState(initialQuery);
   const debounced = useDebounce(value, 400);
   const router = useRouter();
 
   useEffect(() => {
     if (debounced.trim()) {
       router.push(`/search?q=${encodeURIComponent(debounced.trim())}`);
+    } else {
+      router.push("/");
     }
   }, [debounced, router]);
 

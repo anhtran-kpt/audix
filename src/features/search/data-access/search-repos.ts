@@ -22,6 +22,25 @@ export const search = async (query: SearchQuery) => {
           where: { name: { contains: q, mode: "insensitive" } },
           take: limit,
           skip: offset,
+          select: {
+            id: true,
+            name: true,
+            imageId: true,
+            bannerId: true,
+            isVerified: true,
+            followersCount: true,
+            genres: {
+              select: {
+                genre: {
+                  select: {
+                    id: true,
+                    name: true,
+                    color: true,
+                  },
+                },
+              },
+            },
+          },
         })
       : [],
     type.includes("album")

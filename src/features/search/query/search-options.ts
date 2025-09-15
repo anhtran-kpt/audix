@@ -4,7 +4,9 @@ import { SearchResult } from "../contracts/search-dtos";
 
 export const searchOptions = (
   q: string,
-  type: string[] = ["track", "artist", "album", "playlist"]
+  type: string[] = ["track", "artist", "album", "playlist, user"],
+  limit = 5,
+  offset = 0
 ) => {
   return queryOptions({
     queryKey: ["search", q, type],
@@ -12,7 +14,9 @@ export const searchOptions = (
       getApi<SearchResult>(
         `/search?q=${encodeURIComponent(q)}&type=${encodeURIComponent(
           type.join(",")
-        )}&limit=10`
+        )}&limit=${encodeURIComponent(limit)}&offset=${encodeURIComponent(
+          offset
+        )}`
       ),
     enabled: !!q,
   });
