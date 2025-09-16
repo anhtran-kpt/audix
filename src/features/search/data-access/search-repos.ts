@@ -8,8 +8,8 @@ import stringSimilarity from "string-similarity";
 export const search = async (query: SearchQuery) => {
   const { q, type, limit, offset } = query;
 
-  const [tracks, artists, albums, playlists, users] = await Promise.all([
-    type.includes("track")
+  const [tracks, artists, albums, playlists, profiles] = await Promise.all([
+    type.includes("tracks")
       ? await db.track.findMany({
           where: { title: { contains: q, mode: "insensitive" } },
           take: limit,
@@ -17,7 +17,7 @@ export const search = async (query: SearchQuery) => {
           skip: offset,
         })
       : [],
-    type.includes("artist")
+    type.includes("artists")
       ? await db.artist.findMany({
           where: { name: { contains: q, mode: "insensitive" } },
           take: limit,
@@ -43,7 +43,7 @@ export const search = async (query: SearchQuery) => {
           },
         })
       : [],
-    type.includes("album")
+    type.includes("albums")
       ? await db.album.findMany({
           where: { title: { contains: q, mode: "insensitive" } },
           take: limit,
@@ -58,7 +58,7 @@ export const search = async (query: SearchQuery) => {
           },
         })
       : [],
-    type.includes("playlist")
+    type.includes("playlists")
       ? await db.playlist.findMany({
           where: { title: { contains: q, mode: "insensitive" } },
           take: limit,
@@ -76,7 +76,7 @@ export const search = async (query: SearchQuery) => {
           },
         })
       : [],
-    type.includes("user")
+    type.includes("profiles")
       ? await db.user.findMany({
           where: { name: { contains: q, mode: "insensitive" } },
           take: limit,
@@ -92,25 +92,25 @@ export const search = async (query: SearchQuery) => {
 
   const candidates = [
     ...tracks.map((t) => ({
-      type: "track",
+      type: "tracks",
       name: t.title,
       popularity: t.playCount ?? 0,
       item: t,
     })),
     ...artists.map((a) => ({
-      type: "artist",
+      type: "artists",
       name: a.name,
       popularity: a.followersCount ?? 0,
       item: a,
     })),
     ...albums.map((al) => ({
-      type: "album",
+      type: "albums",
       name: al.title,
       popularity: al._count.likedBy ?? 0,
       item: al,
     })),
     ...playlists.map((pl) => ({
-      type: "playlist",
+      type: "playlists",
       name: pl.title,
       popularity: pl._count.likedBy ?? 0,
       item: pl,
@@ -142,6 +142,6 @@ export const search = async (query: SearchQuery) => {
     artists,
     albums,
     playlists,
-    users,
+    profiles,
   };
 };

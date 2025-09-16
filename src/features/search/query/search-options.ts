@@ -4,7 +4,7 @@ import { SearchResult } from "../contracts/search-dtos";
 
 export const searchOptions = (
   q: string,
-  type: string[] = ["track", "artist", "album", "playlist, user"],
+  type: string[] = ["tracks", "artists", "albums", "playlists, profiles"],
   limit = 5,
   offset = 0
 ) => {

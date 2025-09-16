@@ -7,15 +7,21 @@ import { NavLink } from "../../ui/nav-link";
 import { ContextPlayButton } from "../context-play-button";
 import { CldImage } from "next-cloudinary";
 import SectionHeading from "../../ui/section-heading";
+import SeeAllButton from "./see-all-button";
 
 export default function ArtistsSection({
   artists,
+  q,
 }: {
   artists: SearchResult["artists"];
+  q?: string;
 }) {
   return (
     <section>
-      <SectionHeading title="Artists" />
+      <SectionHeading
+        title="Artists"
+        seeAllBtn={q && <SeeAllButton q={q} targetType="artists" />}
+      />
       <GridWrapper>
         {artists.map((artist) => (
           <div key={artist.id} className="space-y-4 group">

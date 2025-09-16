@@ -48,7 +48,7 @@ export const searchResult = z.object({
     name: true,
     imageId: true,
   }).array(),
-  users: z
+  profiles: z
     .object({
       id: true,
       name: true,

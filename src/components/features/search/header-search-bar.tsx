@@ -16,12 +16,15 @@ export const HeaderSearchBar = () => {
   const router = useRouter();
 
   useEffect(() => {
+    const params = new URLSearchParams(searchParams.toString());
+
     if (debounced.trim()) {
-      router.push(`/search?q=${encodeURIComponent(debounced.trim())}`);
+      params.set("q", debounced.trim());
+      router.push(`/search?${params.toString()}`);
     } else {
       router.push("/");
     }
-  }, [debounced, router]);
+  }, [debounced, router, searchParams]);
 
   return (
     <div className="grid w-full max-w-md items-center gap-3 relative">
