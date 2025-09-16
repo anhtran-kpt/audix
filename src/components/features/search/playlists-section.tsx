@@ -1,7 +1,7 @@
 import { SearchResult } from "@/features/search/contracts/search-dtos";
-import SectionHeading from "../ui/section-heading";
-import { GridWrapper } from "../ui/grid-wrapper";
-import PlaylistItem from "./playlist-item";
+import SectionHeading from "../../ui/section-heading";
+import { GridWrapper } from "../../ui/grid-wrapper";
+import PlaylistItem from "../playlist-item";
 
 export default function PlaylistsSection({
   playlists,

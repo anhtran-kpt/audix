@@ -1,8 +1,8 @@
 "use client";
 
 import { SearchResult } from "@/features/search/contracts/search-dtos";
-import TrackItem from "./track-item";
-import SectionHeading from "../ui/section-heading";
+import TrackItem from "../track-item";
+import SectionHeading from "../../ui/section-heading";
 
 export default function TrackSection({
   tracks,

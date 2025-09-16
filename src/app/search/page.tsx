@@ -4,12 +4,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { searchOptions } from "@/features/search/query/search-options";
 import { useSearchParams } from "next/navigation";
-import TopResultSection from "@/components/features/top-result-section";
-import TrackSection from "@/components/features/tracks-section";
-import ArtistsSection from "@/components/features/artists-section";
-import AlbumsSection from "@/components/features/albums-section";
-import PlaylistsSection from "@/components/features/playlists-section";
+import TopResultSection from "@/components/features/search/top-result-section";
+import TrackSection from "@/components/features/search/tracks-section";
+import ArtistsSection from "@/components/features/search/artists-section";
+import AlbumsSection from "@/components/features/search/albums-section";
+import PlaylistsSection from "@/components/features/search/playlists-section";
 import { LoaderCircleIcon } from "lucide-react";
+import ProfilesSection from "@/components/features/search/profiles-section";
 
 export default function SearchPage() {
   const searchParams = useSearchParams();
@@ -60,6 +61,10 @@ export default function SearchPage() {
 
             {data.playlists && data.playlists.length > 0 && (
               <PlaylistsSection playlists={data.playlists} />
+            )}
+
+            {data.users && data.users.length > 0 && (
+              <ProfilesSection profiles={data.users} />
             )}
           </div>
         ) : (

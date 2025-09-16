@@ -1,12 +1,12 @@
 "use client";
 
 import { SearchResult } from "@/features/search/contracts/search-dtos";
-import { GridWrapper } from "../ui/grid-wrapper";
+import { GridWrapper } from "../../ui/grid-wrapper";
 import { cn } from "@/lib/utils";
-import { NavLink } from "../ui/nav-link";
-import { ContextPlayButton } from "./context-play-button";
+import { NavLink } from "../../ui/nav-link";
+import { ContextPlayButton } from "../context-play-button";
 import { CldImage } from "next-cloudinary";
-import SectionHeading from "../ui/section-heading";
+import SectionHeading from "../../ui/section-heading";
 
 export default function ArtistsSection({
   artists,

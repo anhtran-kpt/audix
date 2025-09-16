@@ -1,7 +1,9 @@
+"use client";
+
 import { SearchIcon } from "lucide-react";
-import { IconButton } from "../ui/icon-button";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import { IconButton } from "../../ui/icon-button";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useRouter, useSearchParams } from "next/navigation";
