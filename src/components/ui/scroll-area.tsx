@@ -15,16 +15,22 @@ function ScrollArea({
   viewportId?: string;
   scrollBarClassName?: string;
 }) {
+  const [showTopShadow, setShowTopShadow] = React.useState(false);
+
   return (
     <ScrollAreaPrimitive.Root
       data-slot="scroll-area"
-      className={cn("relative", className)}
+      className={cn("relative", className, showTopShadow && "border-t")}
       {...props}
     >
       <ScrollAreaPrimitive.Viewport
         id={viewportId}
         data-slot="scroll-area-viewport"
         className="focus-visible:ring-ring/50 size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:outline-1 scroll-smooth"
+        onScroll={(e) => {
+          const target = e.currentTarget;
+          setShowTopShadow(target.scrollTop > 0);
+        }}
       >
         {children}
       </ScrollAreaPrimitive.Viewport>

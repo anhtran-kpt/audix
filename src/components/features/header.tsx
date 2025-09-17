@@ -1,6 +1,6 @@
 "use client";
 
-import { SettingsIcon } from "lucide-react";
+import { HomeIcon, SettingsIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { HeaderSearchBar } from "./search/header-search-bar";
 import { useEffect, useRef, useState } from "react";
@@ -8,6 +8,8 @@ import { cn } from "@/lib/utils";
 import { ModeToggle } from "./mode-toggle";
 import { AppNavigation } from "./app-navigation";
 import { UserProfile } from "./user-profile";
+import Link from "next/link";
+import { Button } from "../ui/button";
 
 export const Header = () => {
   const [isAtTop, setIsAtTop] = useState(true);
@@ -49,8 +51,13 @@ export const Header = () => {
         isVisible ? "translate-y-0" : "-translate-y-full pointer-events-none"
       )}
     >
-      <div className="flex items-center gap-8 grow">
-        <AppNavigation />
+      <AppNavigation />
+      <div className="flex items-center gap-4">
+        <Link href="/" className="flex items-center justify-center">
+          <Button className="bg-muted rounded-full size-9" variant="default">
+            <HomeIcon />
+          </Button>
+        </Link>
         <HeaderSearchBar />
       </div>
       <div className="flex gap-8 items-center">
