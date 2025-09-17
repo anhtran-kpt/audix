@@ -24,7 +24,6 @@ export const NewReleasesSection = ({ tracks }: NewReleasesSectionProps) => {
             isActive={false}
             playButton={
               <RowPlayButton
-                trackId={track.id}
                 context={{ type: "NEW_RELEASES", name: "New Releases" }}
               />
             }

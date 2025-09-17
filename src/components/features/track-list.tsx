@@ -4,18 +4,17 @@ import { cn } from "@/lib/utils";
 import { Clock3Icon, PlusCircleIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { formatDuration } from "@/lib/helpers/format-duration";
-import WaveForm from "../ui/wave-form";
 import {
   useIsPlaying,
   useNowPlayingRefId,
   usePlaybackContext,
 } from "@/hooks/use-audio-player";
-import { RowPlayButton } from "./row-play-button";
 import { TrackListItem } from "@/features/track/contracts/track-dto";
 import TrackItem from "./track-item";
 import { format } from "date-fns";
 import { NavLink } from "../ui/nav-link";
 import { TrackDropdown } from "./track-dropdown";
+import TrackIndexCell from "../shared/track-index-cell";
 
 type TrackListProps = {
   contextId: string;
@@ -27,10 +26,14 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
   const nowPlayingRefId = useNowPlayingRefId();
   const isPlaying = useIsPlaying();
   const playbackContext = usePlaybackContext();
-  const gridClass =
-    type === "PLAYLIST"
-      ? "grid-cols-[3rem_1fr_9rem_9rem_6rem_4rem_3rem] grid w-full items-center"
-      : "grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem] grid w-full items-center";
+
+  const gridCols: Record<TrackListProps["type"], string> = {
+    PLAYLIST: "grid-cols-[3rem_1fr_9rem_9rem_6rem_4rem_3rem]",
+    ALBUM: "grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]",
+    ARTIST: "grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]",
+  };
+
+  const gridClass = cn("grid w-full items-center", gridCols[type]);
 
   return (
     <div className="space-y-1 w-full">
@@ -53,7 +56,7 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
         <div className=""></div>
       </div>
 
-      {tracks && tracks.length > 0 ? (
+      {tracks.length > 0 ? (
         tracks.map((track, trackIndex) => {
           const isThisTrack =
             playbackContext?.type === type &&
@@ -69,40 +72,12 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
               )}
             >
               <div className="flex justify-center items-center text-base font-semibold group">
-                {isPlaying && isThisTrack ? (
-                  <>
-                    <div className="group-hover:hidden">
-                      <WaveForm />
-                    </div>
-
-                    <div className="hidden group-hover:block">
-                      <RowPlayButton
-                        context={{
-                          contextId,
-                          type,
-                        }}
-                        buttonType="outside"
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <span
-                      className={`group-hover:hidden ${
-                        isThisTrack ? "text-primary" : ""
-                      }`}
-                    >
-                      {trackIndex + 1}
-                    </span>
-                    <RowPlayButton
-                      context={{
-                        contextId,
-                        type,
-                      }}
-                      buttonType="outside"
-                    />
-                  </>
-                )}
+                <TrackIndexCell
+                  isPlaying={isPlaying}
+                  isThisTrack={isThisTrack}
+                  index={trackIndex}
+                  context={{ type, contextId }}
+                />
               </div>
 
               <TrackItem
@@ -124,9 +99,9 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
               )}
 
               <div className="text-right">
-                {type === "PLAYLIST"
-                  ? format(track.addedAt, "PP")
-                  : track.playCount.toLocaleString()}
+                {type === "PLAYLIST" && track.addedAt
+                  ? format(new Date(track.addedAt), "PP")
+                  : track.playCount?.toLocaleString() ?? "—"}
               </div>
 
               <div className="invisible group-hover:visible flex items-center justify-end">

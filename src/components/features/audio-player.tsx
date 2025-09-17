@@ -9,10 +9,6 @@ import {
   ListMusicIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import { NavLink } from "../ui/nav-link";
-import Explicit from "../ui/explicit";
-import { ItemTitle } from "../ui/item-title";
-import { CoverImage } from "../ui/cover-image";
 import PlayerControls from "./player-controls";
 import VolumeControl from "./volume-control";
 import ProgressBar from "./progress-bar";
@@ -61,7 +57,7 @@ function AudioPlayer() {
                 <TrackItem
                   track={nowPlayingTrack}
                   canHover={false}
-                  coverSize="lg"
+                  imageSize="large"
                 />
               </div>
               <IconButton

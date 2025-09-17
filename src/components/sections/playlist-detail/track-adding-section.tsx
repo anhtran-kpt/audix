@@ -81,7 +81,6 @@ export const TrackAddingSection = ({ playlistId }: TrackAddingSectionProps) => {
                 isActive={false}
                 playButton={
                   <RowPlayButton
-                    trackId={track.id}
                     context={{
                       name: track.title,
                       contextId: track.id,

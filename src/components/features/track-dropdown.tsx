@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -40,7 +42,6 @@ import { getApi } from "@/lib/http/request";
 import { UserPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { useOptimisticTrackRemove } from "@/hooks/use-optimistic-track-remove";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 type TrackDropdownProps = {
   track: RecommendedTrackItem;
@@ -55,8 +56,7 @@ export function TrackDropdown({
 }: TrackDropdownProps) {
   const removeTrackMutation = useOptimisticTrackRemove();
   const addTrackMutation = useOptimisticTrackAdd();
-  const [openConfirm, setOpenConfirm] = useState(false);
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const {
     data: playlists,
     status: queryStatus,
@@ -68,13 +68,6 @@ export function TrackDropdown({
   });
 
   const [open, setOpen] = useState(false);
-
-  const removeTrackFromPlaylist = (trackId: zCuidType) => {
-    if (playlistId) {
-      removeTrackMutation.mutate({ playlistId, trackId });
-    }
-    setOpenConfirm(false);
-  };
 
   if (queryStatus === "error") {
     return <div>Error: {error.message}</div>;

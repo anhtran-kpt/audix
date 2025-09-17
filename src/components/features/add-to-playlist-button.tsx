@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "../ui/button";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { RecommendedTrackItem } from "@/features/track/contracts/track-dto";

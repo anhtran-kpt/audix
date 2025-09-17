@@ -1,20 +1,17 @@
-"use client";
-
 import { ItemTitle } from "../ui/item-title";
-import { NavLink } from "../ui/nav-link";
-import Explicit from "../ui/explicit";
 import { CldImage } from "next-cloudinary";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { TrackItem as TrackItemType } from "@/features/track/contracts/track-dto";
 import { cn } from "@/lib/utils";
 import { FallbackCoverImage } from "./fallback-cover-image";
+import TrackArtists from "../shared/track-artists";
 
 export type TrackItemProps = {
   track: TrackItemType;
   playButton?: ReactNode;
   hasCover?: boolean;
   canHover?: boolean;
-  coverSize?: "md" | "lg";
+  imageSize?: "small" | "large";
   isActive?: boolean;
 };
 
@@ -22,10 +19,12 @@ export default function TrackItem({
   track,
   playButton,
   hasCover = true,
-  coverSize = "md",
+  imageSize = "small",
   isActive = false,
   canHover = true,
 }: TrackItemProps) {
+  const [isLoaded, setIsLoaded] = useState(false);
+
   return (
     <div
       className={cn(
@@ -37,7 +36,7 @@ export default function TrackItem({
         <div
           className={cn(
             "relative overflow-hidden rounded-sm aspect-square shrink-0",
-            coverSize === "md" ? "size-12" : "size-14"
+            imageSize === "small" ? "size-12" : "size-14"
           )}
         >
           {track.album.imageId === "placeholder" ? (
@@ -49,6 +48,8 @@ export default function TrackItem({
               }`}
               alt={track.title}
               src={track.album.imageId}
+              style={{ opacity: isLoaded ? 1 : 0 }}
+              onLoad={() => setIsLoaded(true)}
               fill
               sizes="48px"
             />
@@ -58,15 +59,10 @@ export default function TrackItem({
       )}
       <div className="flex flex-col gap-0.5 w-full overflow-hidden">
         <ItemTitle title={track.title} isActive={isActive} />
-        <div className="flex items-center text-sm gap-x-1 text-muted-foreground truncate">
-          {track.isExplicit && <Explicit />}
-          {track.artists.map(({ artist }, index, originalArr) => (
-            <span key={artist.id} className="truncate">
-              <NavLink href={`/artists/${artist.id}`}>{artist.name}</NavLink>
-              {index < originalArr.length - 1 && ", "}
-            </span>
-          ))}
-        </div>
+        <TrackArtists
+          isExplicit={track.isExplicit}
+          artists={track.artists.map((item) => item.artist)}
+        />
       </div>
     </div>
   );

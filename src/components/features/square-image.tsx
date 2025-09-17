@@ -47,7 +47,7 @@ export default function SquareImage({
   }
 
   return (
-    <div className="relative overflow-hidden rounded-sm aspect-square shrink-0 size-56">
+    <div className="relative overflow-hidden rounded-sm aspect-square shrink-0 w-full">
       <CldImage
         className={cn(
           "object-cover transition-opacity duration-400 group-hover/square-image:brightness-75"
@@ -64,7 +64,7 @@ export default function SquareImage({
           className={cn(
             "absolute bottom-2 right-2",
             "opacity-0 translate-y-2 scale-95",
-            "transition-all duration-300",
+            "transition-all duration-400",
             "group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
           )}
         />

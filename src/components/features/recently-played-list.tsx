@@ -1,3 +1,5 @@
+"use client";
+
 import TrackItem from "./track-item";
 import { RecentlyPlayedPlayButton } from "./recently-played-play-button";
 import { useRecentTracks } from "@/features/track/hooks/use-tracks";
