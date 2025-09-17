@@ -121,7 +121,7 @@ export default function NowPlayingRefView() {
           </div>
 
           <div className="bg-muted rounded-lg overflow-hidden relative">
-            <span className="absolute z-10 top-4 left-4 font-semibold text-[calc(15rem/16)] pointer-events-none">
+            <span className="absolute z-10 top-4 left-4 font-semibold text-15 pointer-events-none">
               About the artist
             </span>
             <div className="relative aspect-video">
@@ -146,7 +146,7 @@ export default function NowPlayingRefView() {
                 <FollowersBadge artistId={nowPlayingTrack.album.artist.id} />
                 <FollowButton artistId={nowPlayingTrack.album.artist.id} />
               </div>
-              <p className="text-[calc(13rem/16)] text-muted-foreground line-clamp-3">
+              <p className="text-13 text-muted-foreground line-clamp-3">
                 {nowPlayingTrack.album.artist.bio}
               </p>
             </div>
@@ -154,13 +154,11 @@ export default function NowPlayingRefView() {
 
           <div className="bg-muted rounded-lg p-4 space-y-4 w-full">
             <div className="flex justify-between items-center gap-6">
-              <span className="font-semibold text-[calc(15rem/16)]">
-                Credits
-              </span>
+              <span className="font-semibold text-15">Credits</span>
               <CreditDialog
                 trackId={nowPlayingTrack.id}
                 trigger={
-                  <span className="font-medium text-[calc(13rem/16)] text-muted-foreground hover:text-primary hover:underline underline-offset-2 cursor-pointer">
+                  <span className="font-medium text-13 text-muted-foreground hover:text-primary hover:underline underline-offset-2 cursor-pointer">
                     Show all
                   </span>
                 }
@@ -177,17 +175,15 @@ export default function NowPlayingRefView() {
                     <div>
                       <NavLink
                         href={`/artists/${credit.artistId}`}
-                        className="text-[calc(15rem/16)]"
+                        className="text-15"
                       >
                         {credit.displayName}
                       </NavLink>
                     </div>
                   ) : (
-                    <p className="text-[calc(15rem/16)] font-medium">
-                      {credit.displayName}
-                    </p>
+                    <p className="text-15 font-medium">{credit.displayName}</p>
                   )}
-                  <p className="text-muted-foreground text-[calc(13rem/16)] line-clamp-2">
+                  <p className="text-muted-foreground text-13 line-clamp-2">
                     {credit.roles.reduce((acc, role, index) => {
                       if (index < credit.roles.length - 1) {
                         return acc + role.label + ", ";

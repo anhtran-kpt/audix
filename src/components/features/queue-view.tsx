@@ -40,9 +40,7 @@ export default function QueueView() {
         >
           <div className="space-y-2">
             <div className="flex flex-col gap-2">
-              <p className="font-semibold text-[calc(15rem/16)] px-2">
-                Now playing
-              </p>
+              <p className="font-semibold text-15 px-2">Now playing</p>
 
               <TrackItem
                 track={nowPlayingTrack}
@@ -60,7 +58,7 @@ export default function QueueView() {
               />
             </div>
             <div className="flex flex-col gap-2">
-              <p className="font-semibold text-[calc(15rem/16)] px-2">
+              <p className="font-semibold text-15 px-2">
                 Next from: {nowPlayingTrack.title}
               </p>
               <UpNextList />

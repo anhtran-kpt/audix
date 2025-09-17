@@ -37,7 +37,7 @@ export const TrackAddingSection = ({ playlistId }: TrackAddingSectionProps) => {
       <h2 className="font-bold text-2xl select-none capitalize mb-2">
         Recommended
       </h2>
-      <p className="text-muted-foreground text-[calc(13rem/16)]">
+      <p className="text-muted-foreground text-13">
         Based on what&apos;s in this playlist
       </p>
 

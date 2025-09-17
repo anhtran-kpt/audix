@@ -3,7 +3,6 @@
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -60,40 +59,48 @@ export function AppSidebar({
 
   return (
     <Sidebar collapsible="icon" variant="inset" className="group">
-      <SidebarHeader>
-        <div className="flex items-center [--icon-w:1.25rem]">
-          <div className="w-0 overflow-hidden transition-[width] duration-300 group-hover:w-[var(--icon-w)] flex items-center">
-            <IconButton
-              icon={open ? PanelLeftCloseIcon : PanelRightCloseIcon}
-              className="w-[var(--icon-w)] h-[var(--icon-w)] -translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
-              aria-label="Close panel"
-              tooltipContent="Collapse your library"
-              onClick={toggleSidebar}
-            />
+      <SidebarHeader className="space-y-3 p-3">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center [--icon-w:1.25rem]">
+            {open ? (
+              <div className="w-0 overflow-hidden transition-[width] duration-300 group-hover:w-[var(--icon-w)] flex items-center">
+                <IconButton
+                  icon={PanelLeftCloseIcon}
+                  className="w-[var(--icon-w)] h-[var(--icon-w)] -translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
+                  aria-label="Close panel"
+                  tooltipContent="Collapse your library"
+                  onClick={toggleSidebar}
+                />
+              </div>
+            ) : (
+              <IconButton
+                icon={PanelRightCloseIcon}
+                aria-label="Expand panel"
+                tooltipContent="Expand your library"
+                onClick={toggleSidebar}
+              />
+            )}
+            {open && (
+              <span className="truncate duration-300 group-hover:ml-2 font-semibold">
+                Your Library
+              </span>
+            )}
           </div>
-          <span className="truncate duration-300 group-hover:ml-2 font-semibold">
-            Your Library
-          </span>
+          {open && <NewPlaylistDialog />}
         </div>
+
+        {open && (
+          <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
+            <TabsList className="w-full bg-sidebar p-0">
+              <TabsTrigger value="all">All</TabsTrigger>
+              <TabsTrigger value="playlists">Playlists</TabsTrigger>
+              <TabsTrigger value="artists">Artists</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        )}
       </SidebarHeader>
 
       <SidebarContent>
-        <div className="p-2">
-          <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
-            <TabsList className="w-full bg-sidebar">
-              <TabsTrigger value="all" className="flex-1">
-                All
-              </TabsTrigger>
-              <TabsTrigger value="playlists" className="flex-1">
-                Playlists
-              </TabsTrigger>
-              <TabsTrigger value="artists" className="flex-1">
-                Artists
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
-
         <ScrollArea className="h-full min-h-0" scrollBarClassName="w-2">
           <SidebarGroup className="h-full">
             <SidebarMenu>
@@ -113,10 +120,10 @@ export function AppSidebar({
                             size="sm"
                           />
                           <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-                            <p className="text-foreground font-medium text-[13px] truncate">
+                            <p className="text-foreground font-medium text-13 truncate">
                               {artist.name}
                             </p>
-                            <p className="text-[11px] text-muted-foreground truncate font-normal">
+                            <p className="text-11 text-muted-foreground truncate font-normal">
                               Artist
                             </p>
                           </div>
@@ -150,14 +157,14 @@ export function AppSidebar({
                             <FallbackCoverImage type="item" />
                           )}
                           <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-                            <p className="text-foreground font-medium text-[13px] truncate">
+                            <p className="text-foreground font-medium text-13 truncate">
                               {playlist.title}
                             </p>
-                            <div className="flex items-center text-[11px] gap-x-1 text-muted-foreground truncate">
+                            <div className="flex items-center text-11 gap-x-1 text-muted-foreground truncate">
                               <p>Playlist</p>
                               <Dot />
                               {playlist.user && (
-                                <span className="text-[11px]">
+                                <span className="text-11">
                                   {playlist.user.name}
                                 </span>
                               )}
@@ -176,10 +183,6 @@ export function AppSidebar({
           </SidebarGroup>
         </ScrollArea>
       </SidebarContent>
-
-      <SidebarFooter className="border-t px-4 py-2">
-        <NewPlaylistDialog />
-      </SidebarFooter>
     </Sidebar>
   );
 }

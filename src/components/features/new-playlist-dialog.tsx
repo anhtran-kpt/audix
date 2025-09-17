@@ -8,10 +8,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Button } from "../ui/button";
 import { useState } from "react";
 import { NewPlaylistForm } from "../forms/new-playlist-form";
 import { useRouter } from "next/navigation";
+import { IconButton } from "../ui/icon-button";
 
 export const NewPlaylistDialog = () => {
   const [open, setOpen] = useState(false);
@@ -20,10 +20,7 @@ export const NewPlaylistDialog = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <PlusIcon />
-          New playlist
-        </Button>
+        <IconButton icon={PlusIcon} tooltipContent="Create new playlist" />
       </DialogTrigger>
       <DialogContent aria-describedby={undefined}>
         <DialogHeader>

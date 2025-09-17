@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Clock3Icon, EllipsisIcon, PlusCircleIcon } from "lucide-react";
+import { Clock3Icon, PlusCircleIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { formatDuration } from "@/lib/helpers/format-duration";
 import WaveForm from "../ui/wave-form";
@@ -81,7 +81,6 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
                           contextId,
                           type,
                         }}
-                        trackId={track.id}
                         buttonType="outside"
                       />
                     </div>
@@ -100,7 +99,6 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
                         contextId,
                         type,
                       }}
-                      trackId={track.id}
                       buttonType="outside"
                     />
                   </>

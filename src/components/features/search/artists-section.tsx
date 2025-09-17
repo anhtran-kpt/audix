@@ -46,15 +46,10 @@ export default function ArtistsSection({
                 )}
               />
             </div>
-            <NavLink
-              href={`/artists/${artist.id}`}
-              className="text-[calc(15rem/16)]"
-            >
+            <NavLink href={`/artists/${artist.id}`} className="text-15">
               {artist.name}
             </NavLink>
-            <p className="text-muted-foreground text-[calc(13rem/16)]">
-              Artist
-            </p>
+            <p className="text-muted-foreground text-13">Artist</p>
           </div>
         ))}
       </GridWrapper>

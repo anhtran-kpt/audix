@@ -88,7 +88,7 @@ export default function TopResultSection({
               <span key={artist.id} className="truncate">
                 <Link
                   href={`/artists/${artist.id}`}
-                  className="text-[calc(13rem/16)] hover:text-primary hover:underline underline-offset-3 truncate font-medium"
+                  className="text-13 hover:text-primary hover:underline underline-offset-3 truncate font-medium"
                 >
                   {artist.name}
                 </Link>

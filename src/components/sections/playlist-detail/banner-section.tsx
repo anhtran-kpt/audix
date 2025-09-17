@@ -12,7 +12,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IconButton } from "@/components/ui/icon-button";
 import {
   DownloadIcon,
-  EditIcon,
   GlobeIcon,
   ListIcon,
   LockIcon,

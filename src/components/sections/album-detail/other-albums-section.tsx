@@ -53,14 +53,11 @@ export const OtherAlbumsSection = ({
                 )}
               />
             </div>
-            <NavLink
-              href={`/albums/${album.id}`}
-              className="text-[calc(15rem/16)]"
-            >
+            <NavLink href={`/albums/${album.id}`} className="text-15">
               {album.title}
             </NavLink>
             {album.releaseDate && (
-              <p className="text-muted-foreground text-[calc(13rem/16)]">
+              <p className="text-muted-foreground text-13">
                 {formatDate(album.releaseDate, "yyyy")}
               </p>
             )}

@@ -34,12 +34,12 @@ export default function PlaylistItem({
       <div className="flex flex-col items-start w-full min-w-0">
         <NavLink
           href={`/playlists/${playlist.id}`}
-          className="text-[calc(15rem/16)] truncate w-full"
+          className="text-15 truncate w-full"
         >
           {playlist.title}
         </NavLink>
         {playlist.user && (
-          <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+          <div className="flex text-13 text-muted-foreground items-center gap-1.5 mt-0.5">
             By {playlist.user.name}
           </div>
         )}

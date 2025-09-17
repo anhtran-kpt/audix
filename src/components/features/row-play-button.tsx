@@ -19,13 +19,11 @@ import {
 
 type RowPlayButtonProps = {
   context: { type: PlaybackContextType; contextId?: string; name?: string };
-  trackId: string;
   buttonType?: "inside" | "outside";
 };
 
 export function RowPlayButton({
   context,
-  trackId,
   buttonType = "inside",
 }: RowPlayButtonProps) {
   const isPlaying = useIsPlaying();
@@ -34,7 +32,7 @@ export function RowPlayButton({
   const isSameContext =
     currentCtx?.type === context.type &&
     currentCtx?.contextId === context.contextId;
-  const isThisTrack = isSameContext && nowPlayingRefId === trackId;
+  const isThisTrack = isSameContext && nowPlayingRefId === context.contextId;
 
   const { startFromContext, clearExplicit, play, pause } = useAudioStore(
     useShallow((s) => ({
@@ -57,7 +55,7 @@ export function RowPlayButton({
     >("/playback/snapshot", {
       type: context.type,
       contextId: context.contextId,
-      clickedTrackId: trackId,
+      clickedTrackId: context.contextId,
     });
 
     if (!trackRefs?.length) return;

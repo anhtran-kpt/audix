@@ -14,7 +14,7 @@ export function NavLink({ children, className, ...props }: NavLinkProps) {
     <Link
       {...props}
       className={cn(
-        "text-[calc(13rem/16)] hover:text-primary hover:underline underline-offset-3 truncate font-medium",
+        "text-13 hover:text-primary hover:underline underline-offset-3 truncate font-medium",
         className
       )}
     >

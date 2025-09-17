@@ -28,7 +28,7 @@ export const AboutSection = ({
           <div>
             <FollowersBadge artistId={id} />
           </div>
-          <div className="text-[calc(15rem/16)] text-white line-clamp-2 md:line-clamp-3 lg:line-clamp-4 xl:line-clamp-5">
+          <div className="text-15 text-white line-clamp-2 md:line-clamp-3 lg:line-clamp-4 xl:line-clamp-5">
             {bio}
           </div>
         </div>
