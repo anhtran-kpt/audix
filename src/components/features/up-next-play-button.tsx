@@ -24,7 +24,10 @@ export default function UpNextPlayButton({
     <IconButton
       icon={isPlaying && nowPlayingRefId === trackId ? PauseIcon : PlayIcon}
       size="sm"
-      onClick={() => skipToUpNextIndex(trackIndex)}
+      onClick={(e) => {
+        e.stopPropagation();
+        skipToUpNextIndex(trackIndex);
+      }}
       iconClassName="fill-foreground stroke-0 size-5"
       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
     />

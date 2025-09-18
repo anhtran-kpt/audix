@@ -69,7 +69,10 @@ export function ContextPlayButton({
   return (
     <IconButton
       icon={isPlaying && isSameContext ? PauseIcon : PlayIcon}
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       size="xl"
       className={cn("bg-primary p-3", className)}
       iconClassName="stroke-0 fill-white"

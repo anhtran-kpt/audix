@@ -44,7 +44,10 @@ export function RecentlyPlayedPlayButton({ trackId }: { trackId: zCuidType }) {
       aria-pressed={isThisTrack && isPlaying}
       icon={isThisTrack && isPlaying ? PauseIcon : PlayIcon}
       size="sm"
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       iconClassName="fill-foreground stroke-0"
       className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
     />

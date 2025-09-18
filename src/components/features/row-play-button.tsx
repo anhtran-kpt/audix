@@ -75,7 +75,10 @@ export function RowPlayButton({
       aria-pressed={isThisTrack && isPlaying}
       icon={isThisTrack && isPlaying ? PauseIcon : PlayIcon}
       size="sm"
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick();
+      }}
       iconClassName="fill-foreground stroke-0"
       className={cn(
         buttonType === "inside"

@@ -2,9 +2,9 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
-import { AlbumGrid } from "@/components/features/album-grid";
 import { AlbumItem } from "@/features/album/contracts/album-dto";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import AlbumGrid from "@/components/shared/album-grid";
 
 type DiscographySectionProps = {
   artistId: zCuidType;

@@ -1,7 +1,7 @@
 import { SearchResult } from "@/features/search/contracts/search-dtos";
 import SectionHeading from "../../ui/section-heading";
-import { AlbumGrid } from "../album-grid";
 import SeeAllButton from "./see-all-button";
+import AlbumGrid from "@/components/shared/album-grid";
 
 export default function AlbumsSection({
   albums,
