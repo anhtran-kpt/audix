@@ -1,3 +1,5 @@
+"use client";
+
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import {
@@ -6,10 +8,7 @@ import {
 } from "@/features/track/contracts/track-dto";
 import { getApi, postApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  PlaylistDetail,
-  UserPlaylist,
-} from "@/features/playlist/contracts/playlist-dto";
+import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { toast } from "sonner";
 
@@ -37,10 +36,12 @@ export function useOptimisticTrackAdd() {
     ["playlists", playlistId, "recommended"] as const;
 
   return useMutation({
-    mutationFn: ({ playlistId, track }: AddTrackToPlaylist) =>
-      postApi<TrackListItem>(`/playlists/${playlistId}/tracks`, {
+    mutationFn: ({ playlistId, track }: AddTrackToPlaylist) => {
+      const track = qc.ensureQueryData();
+      return postApi<TrackListItem>(`/playlists/${playlistId}/tracks`, {
         trackId: track.id,
-      }),
+      });
+    },
 
     onMutate: async ({ playlistId, track }) => {
       await qc.cancelQueries({ queryKey: playlistKeys.detail(playlistId) });
@@ -120,7 +121,7 @@ export function useOptimisticTrackAdd() {
       );
 
       qc.invalidateQueries({
-        queryKey: playlistKeys.playlistsWithoutTrack(newTrack.id),
+        queryKey: playlistKeys.userPlaylists(newTrack.id),
       });
 
       const rk = recommendedKey(playlistId);

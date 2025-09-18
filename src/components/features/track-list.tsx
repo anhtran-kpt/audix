@@ -122,7 +122,6 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
               <div className="invisible group-hover:visible flex items-center justify-end">
                 <TrackDropdown
                   track={track}
-                  title={track.title}
                   playlistId={type === "PLAYLIST" ? contextId : undefined}
                 />
               </div>

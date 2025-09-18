@@ -42,18 +42,14 @@ import { getApi } from "@/lib/http/request";
 import { UserPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { useOptimisticTrackRemove } from "@/hooks/use-optimistic-track-remove";
+import { useRouter } from "next/navigation";
 
 type TrackDropdownProps = {
   track: RecommendedTrackItem;
-  title: string;
   playlistId?: string;
 };
 
-export function TrackDropdown({
-  track,
-  title,
-  playlistId,
-}: TrackDropdownProps) {
+export function TrackDropdown({ track, playlistId }: TrackDropdownProps) {
   const removeTrackMutation = useOptimisticTrackRemove();
   const addTrackMutation = useOptimisticTrackAdd();
   const { status } = useSession();
@@ -68,6 +64,7 @@ export function TrackDropdown({
   });
 
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   if (queryStatus === "error") {
     return <div>Error: {error.message}</div>;
@@ -82,7 +79,7 @@ export function TrackDropdown({
             className="text-current"
             tooltipContent={
               <>
-                More options for <strong>{title}</strong>
+                More options for <strong>{track.title}</strong>
               </>
             }
           />
@@ -157,11 +154,27 @@ export function TrackDropdown({
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              <MicVocalIcon />
-              Go to artist
-            </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <MicVocalIcon />
+                Go to artist
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  {track.artists.map(({ artist }) => (
+                    <DropdownMenuItem
+                      key={artist.id}
+                      onClick={() => router.push(`/artists/${artist.id}`)}
+                    >
+                      {artist.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+            <DropdownMenuItem
+              onClick={() => router.push(`/albums/${track.album.id}`)}
+            >
               <Disc3Icon />
               Go to album
             </DropdownMenuItem>

@@ -31,7 +31,6 @@ export default async function ArtistDetail({
         imageId={artist.imageId}
         name={artist.name}
         isVerified={artist.isVerified}
-        genres={artist.genres}
         artistId={artistId}
       />
       <PopularTracksSection tracks={popularTracks} artistId={artistId} />

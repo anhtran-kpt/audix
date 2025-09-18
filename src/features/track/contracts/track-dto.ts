@@ -164,12 +164,21 @@ export const RecommendedTrackItemSchema = FullTrackSchema.pick({
   addedAt: zDateSchema,
 });
 
-const TrackCreditSchema = FullTrackSchema.pick({
+export const TrackCreditSchema = FullTrackSchema.pick({
   title: true,
   artists: true,
   credits: true,
 });
 
+export const MiniTrackItemSchema = FullTrackSchema.pick({
+  id: true,
+  title: true,
+  artists: true,
+  isExplicit: true,
+  album: true,
+});
+
+export type MiniTrackItem = z.infer<typeof MiniTrackItemSchema>;
 export type TrackCredit = z.infer<typeof TrackCreditSchema>;
 export type RecommendedTrackItem = z.infer<typeof RecommendedTrackItemSchema>;
 export type FullTrack = z.infer<typeof FullTrackSchema>;

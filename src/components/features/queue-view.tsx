@@ -3,21 +3,44 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
-import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
-import UpNextList from "./up-next-list";
+import {
+  useIsPlaying,
+  useNowPlayingRefId,
+  useQueue,
+} from "@/hooks/use-audio-player";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { useAudioStore } from "@/stores/use-audio-store";
 import { useShallow } from "zustand/react/shallow";
-import RecentlyPlayedList from "./recently-played-list";
-import { useTrack } from "@/features/track/hooks/use-tracks";
+import {
+  useRecentTracks,
+  useTrack,
+  useTracks,
+} from "@/features/track/hooks/use-tracks";
+import MiniTrackList from "../shared/mini-track-list";
+import { useMemo } from "react";
+import { useRecentPlay } from "@/hooks/use-recent-play";
+import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 export default function QueueView() {
   const nowPlayingRefId = useNowPlayingRefId();
   const isPlaying = useIsPlaying();
+  const { upNext, skipToUpNextIndex } = useQueue();
+  const trackIds = useMemo(() => upNext.map((ref) => ref.id), [upNext]);
+  const { data: queueTracks } = useTracks(trackIds);
+  const { data: recentTracks } = useRecentTracks();
 
   const { data: nowPlayingTrack, status, error } = useTrack(nowPlayingRefId);
   const togglePlay = useAudioStore(useShallow((state) => state.togglePlay));
+
+  const { handlePlay: handleRecentPlay } = useRecentPlay();
+
+  const handleQueuePlay = (trackId: zCuidType) => {
+    if (queueTracks) {
+      const index = queueTracks.findIndex((t) => t.id === trackId);
+      if (index !== -1) skipToUpNextIndex(index);
+    }
+  };
 
   if (status === "pending") {
     return null;
@@ -61,7 +84,12 @@ export default function QueueView() {
               <p className="font-semibold text-15 px-2">
                 Next from: {nowPlayingTrack.title}
               </p>
-              <UpNextList />
+              {queueTracks && (
+                <MiniTrackList
+                  tracks={queueTracks}
+                  handlePlay={handleQueuePlay}
+                />
+              )}
             </div>
           </div>
         </ScrollArea>
@@ -74,7 +102,12 @@ export default function QueueView() {
           className="min-h-0 size-full"
           scrollBarClassName="w-2 -mr-2"
         >
-          <RecentlyPlayedList />
+          {recentTracks && (
+            <MiniTrackList
+              tracks={recentTracks}
+              handlePlay={handleRecentPlay}
+            />
+          )}
         </ScrollArea>
       </TabsContent>
     </Tabs>
