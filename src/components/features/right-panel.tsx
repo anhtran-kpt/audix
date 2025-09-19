@@ -14,7 +14,7 @@ export default function RightPanel() {
       <SheetContent
         aria-describedby={undefined}
         side="right"
-        className="bg-sidebar group/np gap-0"
+        className="bg-sidebar group/np gap-0 py-2"
         style={{
           paddingBottom:
             "calc(env(safe-area-inset-bottom) + var(--player-offset, 0px))",

@@ -51,14 +51,14 @@ export default function QueueView() {
   }
 
   return (
-    <Tabs defaultValue="queue" className="size-full p-2">
+    <Tabs defaultValue="queue" className="size-full">
       <TabsList className="w-full">
         <TabsTrigger value="queue">Queue</TabsTrigger>
         <TabsTrigger value="recently-played">Recently played</TabsTrigger>
       </TabsList>
-      <TabsContent value="queue" className="flex flex-col gap-4 h-full">
+      <TabsContent value="queue" className="flex flex-col gap-4 h-full gap">
         <ScrollArea
-          className="min-h-0 size-full"
+          className="min-h-0 size-full px-2 py-4"
           scrollBarClassName="w-2 -mr-2"
         >
           <div className="space-y-2">
@@ -99,7 +99,7 @@ export default function QueueView() {
         className="flex flex-col gap-4 h-full"
       >
         <ScrollArea
-          className="min-h-0 size-full"
+          className="min-h-0 size-full px-2 py-4"
           scrollBarClassName="w-2 -mr-2"
         >
           {recentTracks && (
