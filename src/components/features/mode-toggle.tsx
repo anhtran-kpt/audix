@@ -3,44 +3,22 @@
 import * as React from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { HeaderButton } from "../shared/header-button";
 
 export const ModeToggle = () => {
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme();
 
   return (
     <DropdownMenu>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full text-muted-foreground transition-transform hover:text-foreground hover:scale-105 cursor-pointer hover:bg-transparent! size-fit"
-            >
-              <Sun
-                className="size-5
-                        scale-100 rotate-0 transition-all 
-                        dark:scale-0 dark:-rotate-90"
-              />
-              <Moon
-                className="absolute size-5
-                        scale-0 rotate-90 transition-all 
-                        dark:scale-100 dark:rotate-0"
-              />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-          </DropdownMenuTrigger>
-        </TooltipTrigger>
-        <TooltipContent>Light/dark mode</TooltipContent>
-      </Tooltip>
+      <DropdownMenuTrigger asChild>
+        <HeaderButton icon={theme === "light" ? Sun : Moon} />
+      </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
           Light

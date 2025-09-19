@@ -1,7 +1,6 @@
 "use client";
 
-import { HomeIcon, SettingsIcon } from "lucide-react";
-import { IconButton } from "../ui/icon-button";
+import { HomeIcon } from "lucide-react";
 import { HeaderSearchBar } from "./search/header-search-bar";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -9,7 +8,7 @@ import { ModeToggle } from "./mode-toggle";
 import { AppNavigation } from "./app-navigation";
 import { UserProfile } from "./user-profile";
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { HeaderButton } from "../shared/header-button";
 
 export const Header = () => {
   const [isAtTop, setIsAtTop] = useState(true);
@@ -54,15 +53,12 @@ export const Header = () => {
       <AppNavigation />
       <div className="flex items-center gap-4">
         <Link href="/" className="flex items-center justify-center">
-          <Button className="bg-muted rounded-full size-9" variant="default">
-            <HomeIcon />
-          </Button>
+          <HeaderButton icon={HomeIcon} />
         </Link>
         <HeaderSearchBar />
       </div>
-      <div className="flex gap-8 items-center">
+      <div className="flex gap-4 items-center">
         <ModeToggle />
-        <IconButton icon={SettingsIcon} tooltipContent="Settings" />
         <UserProfile />
       </div>
     </header>

@@ -37,7 +37,6 @@ export function useOptimisticTrackAdd() {
 
   return useMutation({
     mutationFn: ({ playlistId, track }: AddTrackToPlaylist) => {
-      const track = qc.ensureQueryData();
       return postApi<TrackListItem>(`/playlists/${playlistId}/tracks`, {
         trackId: track.id,
       });

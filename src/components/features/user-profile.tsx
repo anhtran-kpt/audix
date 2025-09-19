@@ -53,7 +53,7 @@ export const UserProfile = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar>
+        <Avatar className="size-9">
           <AvatarImage src={imageUrl as string} />
           <AvatarFallback>{name}</AvatarFallback>
         </Avatar>

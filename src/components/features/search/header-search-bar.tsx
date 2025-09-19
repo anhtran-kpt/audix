@@ -48,8 +48,10 @@ export const HeaderSearchBar = () => {
         type="search"
         id="header-search-bar"
         placeholder="What do you want to listen to?"
-        className="pl-10"
+        className="pl-10 rounded-full"
         value={value}
+        autoCorrect="off"
+        autoComplete="off"
         onChange={(e) => setValue(e.target.value)}
       />
     </div>
