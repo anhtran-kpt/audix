@@ -1,27 +1,23 @@
 "use client";
 
-import { PlusIcon } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { useState, ReactNode } from "react";
 import { NewPlaylistForm } from "../forms/new-playlist-form";
 import { useRouter } from "next/navigation";
-import { IconButton } from "../ui/icon-button";
 
-export const NewPlaylistDialog = () => {
+interface NewPlaylistDialogProps {
+  trigger: ReactNode;
+}
+
+export const NewPlaylistDialog = ({ trigger }: NewPlaylistDialogProps) => {
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <IconButton icon={PlusIcon} tooltipContent="Create new playlist" />
-      </DialogTrigger>
+      <div onClick={() => setOpen(true)} className="flex">
+        {trigger}
+      </div>
       <DialogContent aria-describedby={undefined}>
         <DialogHeader>
           <DialogTitle className="text-center">Create new playlist</DialogTitle>

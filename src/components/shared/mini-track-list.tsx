@@ -29,7 +29,7 @@ export default function MiniTrackList({
           key={track.id}
           className="group/mini-track hover:bg-muted rounded-md flex justify-between p-2 text-muted-foreground"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="relative overflow-hidden rounded-sm aspect-square shrink-0 size-12">
               <CoverImage
                 className="group-hover/mini-track:brightness-65"

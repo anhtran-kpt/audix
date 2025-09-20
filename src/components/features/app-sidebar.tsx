@@ -13,10 +13,8 @@ import {
 import Link from "next/link";
 import { NewPlaylistDialog } from "./new-playlist-dialog";
 import { usePathname } from "next/navigation";
-import { CoverImage } from "../ui/cover-image";
 import Dot from "../ui/dot";
 import { FallbackCoverImage } from "./fallback-cover-image";
-import { ArtistImage } from "../ui/artist-image";
 import { ScrollArea } from "../ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { SidebarArtist } from "@/features/artist/contracts/artist-dto";
@@ -26,9 +24,17 @@ import { sidebarArtistOptions } from "@/features/artist/query/artist-options";
 import { useIsPlaying, usePlaybackContext } from "@/hooks/use-audio-player";
 import WaveForm from "../ui/wave-form";
 import { IconButton } from "../ui/icon-button";
-import { PanelLeftCloseIcon, PanelRightCloseIcon } from "lucide-react";
+import {
+  PlusIcon,
+  PanelLeftCloseIcon,
+  PanelRightCloseIcon,
+  PlayIcon,
+} from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import CoverImage from "../shared/cover-image";
+import { useContextPlay } from "@/hooks/use-context-play";
+import { SidebarItemWrapper } from "../shared/sidebar-item-wrapper";
 
 export function AppSidebar({
   initialArtists,
@@ -54,49 +60,74 @@ export function AppSidebar({
 
   const playbackContext = usePlaybackContext();
   const isPlaying = useIsPlaying();
+  const { handleContextPlay } = useContextPlay();
 
   const [filter, setFilter] = useState<"all" | "artists" | "playlists">("all");
 
   return (
     <Sidebar collapsible="icon" variant="inset" className="group">
       <SidebarHeader className="space-y-3 p-3">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center [--icon-w:1.25rem]">
-            {open ? (
-              <div className="w-0 overflow-hidden transition-[width] duration-300 group-hover:w-[var(--icon-w)] flex items-center">
-                <IconButton
-                  icon={PanelLeftCloseIcon}
-                  className="w-[var(--icon-w)] h-[var(--icon-w)] -translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
-                  aria-label="Close panel"
-                  tooltipContent="Collapse your library"
-                  onClick={toggleSidebar}
-                />
+        {open ? (
+          <>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center [--icon-w:1.25rem]">
+                <div className="w-0 overflow-hidden transition-[width] duration-300 group-hover:w-[var(--icon-w)] flex items-center">
+                  <IconButton
+                    icon={PanelLeftCloseIcon}
+                    className="w-[var(--icon-w)] h-[var(--icon-w)] -translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
+                    aria-label="Close panel"
+                    tooltipContent="Collapse your library"
+                    onClick={toggleSidebar}
+                  />
+                </div>
+
+                <span className="truncate duration-300 group-hover:ml-2 font-semibold">
+                  Your Library
+                </span>
               </div>
-            ) : (
+              <NewPlaylistDialog
+                trigger={
+                  <IconButton
+                    icon={PlusIcon}
+                    aria-label="New playlist"
+                    tooltipContent="New playlist"
+                    iconClassName="size-6"
+                  />
+                }
+              />
+            </div>
+            <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
+              <TabsList className="w-full bg-sidebar p-0">
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="playlists">Playlists</TabsTrigger>
+                <TabsTrigger value="artists">Artists</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center justify-center">
               <IconButton
                 icon={PanelRightCloseIcon}
                 aria-label="Expand panel"
                 tooltipContent="Expand your library"
+                iconClassName="size-6"
                 onClick={toggleSidebar}
               />
-            )}
-            {open && (
-              <span className="truncate duration-300 group-hover:ml-2 font-semibold">
-                Your Library
-              </span>
-            )}
-          </div>
-          {open && <NewPlaylistDialog />}
-        </div>
-
-        {open && (
-          <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
-            <TabsList className="w-full bg-sidebar p-0">
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="playlists">Playlists</TabsTrigger>
-              <TabsTrigger value="artists">Artists</TabsTrigger>
-            </TabsList>
-          </Tabs>
+            </div>
+            <div className="flex items-center justify-center">
+              <NewPlaylistDialog
+                trigger={
+                  <IconButton
+                    icon={PlusIcon}
+                    aria-label="New playlist"
+                    tooltipContent="New playlist"
+                    iconClassName="size-6"
+                  />
+                }
+              />
+            </div>
+          </>
         )}
       </SidebarHeader>
 
@@ -113,25 +144,50 @@ export function AppSidebar({
                       isActive={pathname === `/artists/${artist.id}`}
                     >
                       <Link href={`/artists/${artist.id}`}>
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          <ArtistImage
-                            src={artist.imageId}
-                            alt={artist.name}
-                            size="sm"
-                          />
-                          <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-                            <p className="text-foreground font-medium text-13 truncate">
-                              {artist.name}
-                            </p>
-                            <p className="text-11 text-muted-foreground truncate font-normal">
-                              Artist
-                            </p>
-                          </div>
-                        </div>
-                        {isPlaying &&
-                          playbackContext?.contextId === artist.id && (
-                            <WaveForm />
-                          )}
+                        <SidebarItemWrapper
+                          open={open}
+                          image={
+                            <>
+                              <CoverImage
+                                fill
+                                sizes="36px"
+                                className="rounded-full group-hover/menu-item:brightness-65"
+                                alt={artist.name}
+                                src={artist.imageId}
+                                priority
+                              />
+                              <IconButton
+                                icon={PlayIcon}
+                                size="sm"
+                                onClick={() =>
+                                  handleContextPlay({
+                                    contextId: artist.id,
+                                    name: artist.name,
+                                    type: "ARTIST",
+                                  })
+                                }
+                                iconClassName="fill-foreground stroke-0"
+                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover/menu-item:visible"
+                              />
+                            </>
+                          }
+                          info={
+                            <>
+                              <p className="text-foreground font-medium text-13 truncate">
+                                {artist.name}
+                              </p>
+                              <p className="text-11 text-muted-foreground truncate font-normal">
+                                Artist
+                              </p>
+                            </>
+                          }
+                          right={
+                            isPlaying &&
+                            playbackContext?.contextId === artist.id && (
+                              <WaveForm />
+                            )
+                          }
+                        />
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -146,35 +202,60 @@ export function AppSidebar({
                       isActive={pathname === `/playlists/${playlist.id}`}
                     >
                       <Link href={`/playlists/${playlist.id}`}>
-                        <div className="flex items-center gap-2 flex-1 min-w-0">
-                          {playlist.imageId ? (
-                            <CoverImage
-                              src={playlist.imageId}
-                              alt={playlist.title}
-                              size="xs"
-                            />
-                          ) : (
-                            <FallbackCoverImage type="item" />
-                          )}
-                          <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-                            <p className="text-foreground font-medium text-13 truncate">
-                              {playlist.title}
-                            </p>
-                            <div className="flex items-center text-11 gap-x-1 text-muted-foreground truncate">
-                              <p>Playlist</p>
-                              <Dot />
-                              {playlist.user && (
-                                <span className="text-11">
-                                  {playlist.user.name}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        {isPlaying &&
-                          playbackContext?.contextId === playlist.id && (
-                            <WaveForm />
-                          )}
+                        <SidebarItemWrapper
+                          open={open}
+                          image={
+                            playlist.imageId ? (
+                              <>
+                                <CoverImage
+                                  fill
+                                  sizes="36px"
+                                  className="rounded-sm group-hover/menu-item:brightness-65"
+                                  alt={playlist.title}
+                                  src={playlist.imageId}
+                                  priority
+                                />
+                                <IconButton
+                                  icon={PlayIcon}
+                                  size="sm"
+                                  onClick={() =>
+                                    handleContextPlay({
+                                      contextId: playlist.id,
+                                      name: playlist.title,
+                                      type: "PLAYLIST",
+                                    })
+                                  }
+                                  iconClassName="fill-foreground stroke-0"
+                                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover/menu-item:visible"
+                                />
+                              </>
+                            ) : (
+                              <FallbackCoverImage type="item" />
+                            )
+                          }
+                          info={
+                            <>
+                              <p className="text-foreground font-medium text-13 truncate">
+                                {playlist.title}
+                              </p>
+                              <div className="flex items-center text-11 gap-x-1 text-muted-foreground truncate">
+                                <p>Playlist</p>
+                                <Dot />
+                                {playlist.user && (
+                                  <span className="text-11">
+                                    {playlist.user.name}
+                                  </span>
+                                )}
+                              </div>
+                            </>
+                          }
+                          right={
+                            isPlaying &&
+                            playbackContext?.contextId === playlist.id && (
+                              <WaveForm />
+                            )
+                          }
+                        />
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
