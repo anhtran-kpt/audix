@@ -50,7 +50,6 @@ model User {
   following               UserFollow[]              @relation("UserFollowing")
   playbackSession         PlaybackSession[]
   playbackContextSnapshot PlaybackContextSnapshot[]
-  playbackQueueItem       PlaybackQueueItem[]
 
   @@map("users")
 }
@@ -462,68 +461,68 @@ enum RepeatMode {
 }
 
 enum QueueItemKind {
-  NEXT // "Play next" (explicitNext)
-  LATER // "Add to queue" (explicitLater)
+  NEXT // "Play next" 
+  LATER // "Add to queue" 
 }
 
-model Device {
-  id         String   @id // deviceId (UUID) lưu trong cookie HttpOnly
-  userAgent  String?
-  createdAt  DateTime @default(now())
-  lastSeenAt DateTime @updatedAt
-
-  sessions   PlaybackSession[]
-  queueItems PlaybackQueueItem[]
-  snapshots  PlaybackContextSnapshot[]
-  history    PlayHistory[]
-
-  @@map("devices")
+enum PlaybackContextType {
+  PLAYLIST
+  ALBUM
+  ARTIST
+  HISTORY
+  SEARCH
 }
 
 model PlaybackSession {
-  id       String  @id @default(cuid())
-  deviceId String
-  userId   String?
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // Playback state
+  snapshotId            String
+  snapshot              PlaybackContextSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  contextIndex          Int                     @default(0)
+  currentTrackId        String
+  progressMs            Int                     @default(0)
+  isPlaying             Boolean                 @default(false)
+  lastPositionUpdatedAt DateTime?
+
+  // Options
   isShuffled Boolean    @default(false)
   repeatMode RepeatMode @default(OFF)
   volume     Int        @default(80)
   isMuted    Boolean    @default(false)
 
-  snapshotId   String? @unique // session trỏ tới 1 snapshot (hoặc null nếu ad-hoc)
-  contextIndex Int     @default(0)
+  queue PlaybackQueueItem[]
 
-  version   BigInt   @default(0)
+  // Device info
+  activeDeviceId String?
+
+  version BigInt @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  device   Device                   @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-  user     User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  snapshot PlaybackContextSnapshot? @relation(fields: [snapshotId], references: [id], onDelete: SetNull)
-
-  @@unique([deviceId])
-  @@index([userId, updatedAt])
+  @@unique([userId])
   @@map("playback_sessions")
 }
 
 model PlaybackContextSnapshot {
-  id        String              @id @default(cuid())
-  deviceId  String
-  userId    String?
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   type      PlaybackContextType
   contextId String?
   name      String?
   hash      String
   createdAt DateTime            @default(now())
 
-  device          Device                  @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-  user            User?                   @relation(fields: [userId], references: [id], onDelete: SetNull)
-  tracks          PlaybackSnapshotTrack[]
-  playbackSession PlaybackSession?
-  playHistory     PlayHistory[]
+  tracks           PlaybackSnapshotTrack[]
+  playbackSessions PlaybackSession[]
+  playHistory      PlayHistory[]
 
-  @@unique([deviceId, hash])
-  @@index([deviceId, createdAt])
+  @@unique([userId, hash])
   @@index([userId, createdAt])
   @@map("playback_snapshots")
 }
@@ -536,7 +535,7 @@ model PlaybackSnapshotTrack {
   snapshot PlaybackContextSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
   track    Track                   @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
-  @@id([snapshotId, index]) // order ổn định theo index
+  @@id([snapshotId, index])
   @@index([snapshotId, trackId])
   @@map("playback_snapshot_tracks")
 }
@@ -548,51 +547,34 @@ model PlayHistory {
   playbackContextType PlaybackContextType
   playbackContextId   String?
 
-  userId   String?
-  deviceId String
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   snapshotId String?
   snapshot   PlaybackContextSnapshot? @relation(fields: [snapshotId], references: [id], onDelete: SetNull)
 
-  user    User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
-  device  Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   trackId String
   track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
   @@index([userId, playbackContextType, playbackContextId, playedAt])
   @@index([userId, playedAt])
-  @@index([deviceId, playedAt])
   @@index([trackId, playedAt])
   @@map("play_history")
 }
 
-enum PlaybackContextType {
-  PLAYLIST
-  ALBUM
-  ARTIST
-  LIKED
-  QUEUE
-  NEW_RELEASES
-  SEARCH
-  TRACK
-}
-
 model PlaybackQueueItem {
-  id       String        @id @default(cuid())
-  deviceId String
-  userId   String?
+  id        String          @id @default(cuid())
+  sessionId String
+  session   PlaybackSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
   kind     QueueItemKind
-  position Int // thứ tự trong từng kind
+  position Int
   trackId  String
-  addedAt  DateTime      @default(now())
+  track    Track         @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
-  device Device @relation(fields: [deviceId], references: [id], onDelete: Cascade)
-  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
-  track  Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  addedAt DateTime @default(now())
 
-  @@unique([deviceId, kind, position]) // bảo toàn thứ tự trong mỗi danh sách
-  @@index([deviceId, kind, addedAt])
-  @@index([userId, addedAt])
+  @@index([sessionId, kind, position])
   @@map("playback_queue_items")
 }
 

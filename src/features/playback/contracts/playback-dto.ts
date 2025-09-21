@@ -69,3 +69,17 @@ export type HistoryEvent = z.infer<typeof HistoryEventSchema>;
 export type ContextFromHistoryOutput = z.infer<
   typeof ContextFromHistoryOutputSchema
 >;
+
+export const StartPlaybackInputSchema = z.object({
+  contextType: PlaybackContextTypeSchema,
+  contextIdOrQuery: z.string().nullable(),
+  startTrackId: z.cuid2().optional(),
+});
+
+export type StartPlaybackInput = z.infer<typeof StartPlaybackInputSchema>;
+
+export const SeekPlaybackInputSchema = z.object({
+  positionMs: z.number().int().min(0),
+});
+
+export type SeekPlaybackInput = z.infer<typeof SeekPlaybackInputSchema>;
