@@ -1,38 +1,42 @@
 "use client";
 
 import { Slider } from "@/components/ui/slider";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { useProgress } from "@/hooks/use-progress";
+import { formatTime } from "@/lib/helpers/format-time";
+import { usePlaybackStore } from "@/stores/use-playback-store";
 
-interface ProgressBarProps {
-  currentTime: number;
-  duration: number;
-  onSeek: (time: number) => void;
-  formatTime: (seconds: number) => string;
-  progress: number;
-}
+export const ProgressBar = () => {
+  const session = usePlaybackStore((s) => s.session);
+  const { audio, controls } = useAudioPlayer();
 
-export default function ProgressBar({
-  currentTime,
-  duration,
-  onSeek,
-  formatTime,
-  progress,
-}: ProgressBarProps) {
+  const progress = useProgress({
+    updateInterval: 1000,
+    audioRef: { current: audio },
+  });
+
+  if (!session?.currentTrack?.durationMs) return null;
+
+  const duration = session.currentTrack.durationMs;
+
   const handleSeek = (value: number[]) => {
-    const newTime = (value[0] / 100) * duration;
-    onSeek(newTime);
+    const newTimeMs = value[0];
+    controls.seek(newTimeMs);
   };
 
   return (
     <div className="flex items-center gap-4 text-sm text-muted-foreground w-full max-w-xl">
-      <span className="text-xs">{formatTime(currentTime)}</span>
+      <span className="text-xs">{formatTime(progress)}</span>
+
       <Slider
         value={[progress]}
-        onValueChange={handleSeek}
-        max={100}
-        step={0.1}
+        onValueCommit={handleSeek}
+        max={duration}
+        step={1000}
         className="flex-1"
       />
+
       <span className="text-xs text-right">{formatTime(duration)}</span>
     </div>
   );
-}
+};

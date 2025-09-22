@@ -4,8 +4,13 @@ import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { PlaybackContextType } from "@/features/shared/contracts/shared-enum";
 import { createHash } from "crypto";
 import { trackItemSelect } from "@/features/track/data-access/track-selects";
-import { StartPlaybackInput } from "../contracts/playback-dto";
+import {
+  RepeatPlaybackInput,
+  ShufflePlaybackInput,
+  StartPlaybackInput,
+} from "../contracts/playback-dto";
 import { NextResponse } from "next/server";
+import { playbackSessionSelect } from "./playback-selects";
 
 const createSnapshotFromPlaylist = async ({
   playlistId,
@@ -297,10 +302,13 @@ export const startPlaybackSession = async ({
       version: { increment: 1 },
       updatedAt: new Date(),
     },
-    include: {
-      snapshot: {
-        include: { tracks: { orderBy: { index: "asc" } } },
-      },
+    // include: {
+    //   snapshot: {
+    //     include: { tracks: { orderBy: { index: "asc" } } },
+    //   },
+    // },
+    select: {
+      ...playbackSessionSelect,
     },
   });
 
@@ -550,4 +558,54 @@ export const seekPlayback = async (userId: string, positionMs: number) => {
     success: true,
     state: updated,
   });
+};
+
+export const shufflePlayback = async (
+  userId: string,
+  input: ShufflePlaybackInput
+) => {
+  const { isShuffled } = input;
+
+  const session = await db.playbackSession.update({
+    where: { userId },
+    data: {
+      isShuffled,
+      version: { increment: 1 },
+      updatedAt: new Date(),
+    },
+    include: {
+      snapshot: {
+        include: { tracks: { orderBy: { index: "asc" } } },
+      },
+    },
+  });
+
+  return NextResponse.json(session);
+};
+
+export const repeatPlayback = async (
+  userId: string,
+  input: RepeatPlaybackInput
+) => {
+  const { repeatMode } = input;
+
+  if (!["OFF", "ONE", "ALL"].includes(repeatMode)) {
+    return NextResponse.json({ error: "Invalid repeat mode" }, { status: 400 });
+  }
+
+  const session = await db.playbackSession.update({
+    where: { userId },
+    data: {
+      repeatMode,
+      version: { increment: 1 },
+      updatedAt: new Date(),
+    },
+    include: {
+      snapshot: {
+        include: { tracks: { orderBy: { index: "asc" } } },
+      },
+    },
+  });
+
+  return NextResponse.json(session);
 };

@@ -1,0 +1,1 @@
+export const PROGRESS_UPDATE_INTERVAL = 1000;

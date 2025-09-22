@@ -21,7 +21,6 @@ import { SidebarArtist } from "@/features/artist/contracts/artist-dto";
 import { SidebarPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { sidebarPlaylistOptions } from "@/features/playlist/query/playlist-options";
 import { sidebarArtistOptions } from "@/features/artist/query/artist-options";
-import { useIsPlaying, usePlaybackContext } from "@/hooks/use-audio-player";
 import WaveForm from "../ui/wave-form";
 import { IconButton } from "../ui/icon-button";
 import {
@@ -33,8 +32,8 @@ import {
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import CoverImage from "../shared/cover-image";
-import { useContextPlay } from "@/hooks/use-context-play";
 import { SidebarItemWrapper } from "../shared/sidebar-item-wrapper";
+import { usePlaybackStore } from "@/stores/use-playback-store";
 
 export function AppSidebar({
   initialArtists,
@@ -58,9 +57,7 @@ export function AppSidebar({
     initialDataUpdatedAt: Date.now(),
   });
 
-  const playbackContext = usePlaybackContext();
-  const isPlaying = useIsPlaying();
-  const { handleContextPlay } = useContextPlay();
+  const session = usePlaybackStore((s) => s.session);
 
   const [filter, setFilter] = useState<"all" | "artists" | "playlists">("all");
 
@@ -159,12 +156,13 @@ export function AppSidebar({
                               <IconButton
                                 icon={PlayIcon}
                                 size="sm"
-                                onClick={() =>
-                                  handleContextPlay({
-                                    contextId: artist.id,
-                                    name: artist.name,
-                                    type: "ARTIST",
-                                  })
+                                onClick={
+                                  () => {}
+                                  // handleContextPlay({
+                                  //   contextId: artist.id,
+                                  //   name: artist.name,
+                                  //   type: "ARTIST",
+                                  // })
                                 }
                                 iconClassName="fill-foreground stroke-0"
                                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover/menu-item:visible"
@@ -182,8 +180,8 @@ export function AppSidebar({
                             </>
                           }
                           right={
-                            isPlaying &&
-                            playbackContext?.contextId === artist.id && (
+                            session?.isPlaying &&
+                            session?.snapshot?.contextId === artist.id && (
                               <WaveForm />
                             )
                           }
@@ -218,12 +216,13 @@ export function AppSidebar({
                                 <IconButton
                                   icon={PlayIcon}
                                   size="sm"
-                                  onClick={() =>
-                                    handleContextPlay({
-                                      contextId: playlist.id,
-                                      name: playlist.title,
-                                      type: "PLAYLIST",
-                                    })
+                                  onClick={
+                                    () => {}
+                                    // handleContextPlay({
+                                    //   contextId: playlist.id,
+                                    //   name: playlist.title,
+                                    //   type: "PLAYLIST",
+                                    // })
                                   }
                                   iconClassName="fill-foreground stroke-0"
                                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover/menu-item:visible"
@@ -250,8 +249,8 @@ export function AppSidebar({
                             </>
                           }
                           right={
-                            isPlaying &&
-                            playbackContext?.contextId === playlist.id && (
+                            session?.isPlaying &&
+                            session?.snapshot?.contextId === playlist.id && (
                               <WaveForm />
                             )
                           }

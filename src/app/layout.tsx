@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/features/app-sidebar";
 import { Header } from "@/components/features/header";
-import AudioPlayer from "@/components/features/audio-player";
 import { AuthProvider } from "@/providers/auth-provider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
@@ -16,6 +15,7 @@ import ReactQueryProvider from "@/providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { getSidebarArtists } from "@/features/artist/data-access/artist-repo";
 import { getSidebarPlaylists } from "@/features/playlist/data-access/playlist-repos";
+import AudioPlayer from "@/components/features/audio-player";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -84,7 +84,7 @@ export default async function RootLayout({
                     </div>
                   </ScrollArea>
                 </SidebarInset>
-                <RightPanel />
+                {/* <RightPanel /> */}
                 <AudioPlayer />
                 <Toaster />
               </SidebarProvider>

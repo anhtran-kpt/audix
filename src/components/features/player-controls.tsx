@@ -12,8 +12,6 @@ import {
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { cn } from "@/lib/utils";
-import { useAudioStore } from "@/stores/use-audio-store";
-import { useShallow } from "zustand/react/shallow";
 import { RepeatMode } from "@/features/shared/contracts/shared-enum";
 
 interface PlayerControlsProps {
@@ -26,8 +24,8 @@ interface PlayerControlsProps {
   onTogglePlay: () => void;
   onNext: () => void;
   onPrevious: () => void;
-  onToggleRepeat: () => void;
-  onToggleShuffle: () => void;
+  setRepeatMode: () => void;
+  setShuffle: () => void;
 }
 
 export default function PlayerControls({
@@ -40,21 +38,18 @@ export default function PlayerControls({
   onTogglePlay,
   onNext,
   onPrevious,
-  onToggleRepeat,
-  onToggleShuffle,
+  setRepeatMode,
+  setShuffle,
 }: PlayerControlsProps) {
-  const isDisabledShuffle = useAudioStore(
-    useShallow((s) => !!s.playbackContext)
-  );
   return (
     <div className="space-x-6 flex items-center">
       <IconButton
         icon={ShuffleIcon}
-        onClick={onToggleShuffle}
+        onClick={setShuffle}
         tooltipContent={isShuffled ? "Disable shuffle" : "Enable shuffle"}
         description={isShuffled ? "Disable shuffle" : "Enable shuffle"}
         iconClassName={isShuffled ? "stroke-primary" : ""}
-        disabled={isDisabledShuffle}
+        disabled={false}
       />
       <IconButton
         icon={SkipBackIcon}
@@ -99,7 +94,7 @@ export default function PlayerControls({
             ? "Enable repeat"
             : "Enable repeat one"
         }
-        onClick={onToggleRepeat}
+        onClick={setRepeatMode}
       />
     </div>
   );

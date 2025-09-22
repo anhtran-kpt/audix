@@ -1,19 +1,19 @@
 "use client";
 
-import { useNowPlayingRefId } from "@/hooks/use-audio-player";
+import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useLayoutEffect } from "react";
 
 export function PlayerOffsetSetter() {
-  const nowPlayingRefId = useNowPlayingRefId();
+  const session = usePlaybackStore((s) => !!s.session);
 
   useLayoutEffect(() => {
     const root = document.documentElement;
-    if (nowPlayingRefId) {
+    if (session) {
       root.style.setProperty("--player-offset", "84px");
     } else {
       root.style.removeProperty("--player-offset");
     }
-  }, [nowPlayingRefId]);
+  }, [session]);
 
   return null;
 }

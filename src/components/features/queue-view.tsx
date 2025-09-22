@@ -10,7 +10,6 @@ import {
 } from "@/hooks/use-audio-player";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import { useAudioStore } from "@/stores/use-audio-store";
 import { useShallow } from "zustand/react/shallow";
 import {
   useRecentTracks,

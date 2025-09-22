@@ -11,37 +11,23 @@ import {
 import { IconButton } from "../ui/icon-button";
 import PlayerControls from "./player-controls";
 import VolumeControl from "./volume-control";
-import ProgressBar from "./progress-bar";
-import {
-  useAudioKeyboardShortcuts,
-  useAudioPlayer,
-  useNowPlayingRefId,
-} from "@/hooks/use-audio-player";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { useScrobble } from "@/hooks/use-scrobble";
 import { useShallow } from "zustand/react/shallow";
 import { useTrack } from "@/features/track/hooks/use-tracks";
 import TrackItem from "./track-item";
+import { usePlaybackStore } from "@/stores/use-playback-store";
+import { ProgressBar } from "./progress-bar";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
 
-function AudioPlayer() {
-  const {
-    audioRef,
-    playback,
-    progress,
-    controls,
-    formatTime,
-    queue,
-    modes,
-    volume,
-  } = useAudioPlayer();
+export default function AudioPlayer() {
+  const { isLoading, session, setRepeatMode, setShuffle, next, previous } =
+    usePlaybackStore();
+  const { audioRef } = useAudioPlayer();
 
-  const nowPlayingRefId = useNowPlayingRefId();
+  const { data: currentTrack } = useTrack(session?.currentTrackId);
 
-  const { data: nowPlayingTrack } = useTrack(nowPlayingRefId);
-
-  useAudioKeyboardShortcuts();
-
-  useScrobble();
+  // useScrobble();
 
   const { toggle, active } = useRightPanel(
     useShallow((s) => ({ toggle: s.toggle, active: s.active }))
@@ -49,13 +35,13 @@ function AudioPlayer() {
 
   return (
     <>
-      {nowPlayingTrack && (
+      {session && currentTrack && (
         <div className="fixed bottom-0 left-0 right-0 bg-player border z-60 px-4 py-2">
           <div className="flex items-center justify-between gap-12">
             <div className="flex items-center">
               <div className="w-3xs">
                 <TrackItem
-                  track={nowPlayingTrack}
+                  track={currentTrack}
                   canHover={false}
                   imageSize="large"
                 />
@@ -72,27 +58,27 @@ function AudioPlayer() {
             </div>
             <div className="flex flex-col space-y-2 items-center grow">
               <PlayerControls
-                isPlaying={playback.isPlaying}
-                isLoading={playback.isLoading}
-                hasNext={queue.hasNext}
-                hasPrev={queue.hasPrev}
+                isPlaying={isPlaying}
+                isLoading={isLoading}
+                hasNext={false}
+                hasPrev={false}
                 onTogglePlay={controls.togglePlay}
-                onNext={controls.next}
-                onPrevious={controls.previous}
-                repeatMode={modes.repeatMode}
-                isShuffled={modes.isShuffled}
-                onToggleRepeat={modes.toggleRepeat}
-                onToggleShuffle={modes.toggleShuffle}
+                onNext={next}
+                onPrevious={previous}
+                repeatMode={session?.repeatMode}
+                isShuffled={session?.isShuffled}
+                setRepeatMode={setRepeatMode}
+                setShuffle={setShuffle}
               />
               <ProgressBar
                 progress={progress}
-                currentTime={playback.currentTime}
-                duration={playback.duration}
+                currentTime={currentTime}
+                duration={duration}
                 onSeek={controls.seek}
                 formatTime={formatTime}
               />
             </div>
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <div className="flex items-center space-x-5">
                 <IconButton
                   icon={SquarePlayIcon}
@@ -142,7 +128,7 @@ function AudioPlayer() {
                   onToggleMute={volume.toggleMute}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       )}
@@ -150,5 +136,3 @@ function AudioPlayer() {
     </>
   );
 }
-
-export default AudioPlayer;
