@@ -24,8 +24,8 @@ export default function AlbumGrid({ albums }: AlbumGridProps) {
             alt={album.title}
             src={album.imageId}
             context={{
-              type: "ALBUM",
-              contextId: album.id,
+              contextType: "ALBUM",
+              contextIdOrQuery: album.id,
             }}
           />
           <div className="flex flex-col items-start w-full min-w-0">

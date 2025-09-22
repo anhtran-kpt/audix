@@ -63,6 +63,7 @@ export const TrackItemSchema = FullTrackSchema.pick({
   id: true,
   title: true,
   isExplicit: true,
+  duration: true,
 }).extend({
   album: z.object({
     imageId: zCuidSchema,

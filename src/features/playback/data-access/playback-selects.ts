@@ -1,4 +1,5 @@
 import { Prisma } from "@/app/generated/prisma";
+import { trackDetailSelect } from "@/features/track/data-access/track-selects";
 
 export const playbackSessionSelect = {
   id: true,
@@ -13,12 +14,30 @@ export const playbackSessionSelect = {
   volume: true,
   isMuted: true,
   activeDeviceId: true,
-  version: true,
+  // version: true,
+  queue: {
+    select: {
+      track: {
+        select: trackDetailSelect,
+      },
+    },
+  },
   snapshot: {
     select: {
       type: true,
       contextId: true,
       name: true,
+      tracks: {
+        select: {
+          track: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+        orderBy: { index: "asc" },
+      },
     },
   },
 

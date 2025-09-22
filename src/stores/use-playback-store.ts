@@ -50,7 +50,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   async play(input) {
     set({ isLoading: true });
     try {
-      const data = await postApi<PlaybackSession>("/api/playback/start", input);
+      const data = await postApi<PlaybackSession>("/playback/start", input);
       set({ session: data, isLoading: false });
     } catch (err) {
       console.error("Error starting playback:", err);
@@ -71,7 +71,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     });
 
     try {
-      await postApi("/api/playback/pause");
+      await postApi("/playback/pause");
       await get().sync();
     } catch (err) {
       console.error("Pause failed:", err);
@@ -91,7 +91,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     });
 
     try {
-      await postApi("/api/playback/resume");
+      await postApi("/playback/resume");
       await get().sync();
     } catch (err) {
       console.error("Resume failed:", err);
@@ -111,7 +111,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     });
 
     try {
-      await postApi("/api/playback/seek", { positionMs });
+      await postApi("/playback/seek", { positionMs });
       await get().sync();
     } catch (err) {
       console.error("Seek failed:", err);
@@ -120,7 +120,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
 
   async next() {
     try {
-      await postApi<void>("/api/playback/next");
+      await postApi<void>("/playback/next");
       await get().sync();
     } catch (err) {
       console.error("Next failed:", err);
@@ -129,7 +129,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
 
   async previous() {
     try {
-      await postApi<void>("/api/playback/previous");
+      await postApi<void>("/playback/previous");
       await get().sync();
     } catch (err) {
       console.error("Previous failed:", err);
@@ -138,7 +138,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
 
   async setShuffle(isShuffled) {
     try {
-      await patchApi<void>("/api/playback/shuffle", { isShuffled });
+      await patchApi<void>("/playback/shuffle", { isShuffled });
       await get().sync();
     } catch (err) {
       console.error("Set shuffle failed:", err);
@@ -147,7 +147,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
 
   async setRepeatMode(repeatMode) {
     try {
-      await patchApi<void>("/api/playback/repeat", { repeatMode });
+      await patchApi<void>("/playback/repeat", { repeatMode });
       await get().sync();
     } catch (err) {
       console.error("Set repeat mode failed:", err);
@@ -156,7 +156,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
 
   async sync() {
     try {
-      const data = await getApi<PlaybackSession>("/api/playback/session");
+      const data = await getApi<PlaybackSession>("/playback/session");
       set({ session: data });
     } catch (err) {
       console.error("Sync failed:", err);

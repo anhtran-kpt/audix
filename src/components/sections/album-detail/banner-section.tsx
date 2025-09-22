@@ -3,6 +3,8 @@
 import {
   DownloadIcon,
   EllipsisIcon,
+  PauseIcon,
+  PlayIcon,
   PlusCircleIcon,
   ShuffleIcon,
 } from "lucide-react";
@@ -19,8 +21,9 @@ import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
 import { IconButton } from "@/components/ui/icon-button";
 import tinycolor from "tinycolor2";
-import { ContextPlayButton } from "@/components/features/context-play-button";
 import { FullAlbum } from "@/features/album/contracts/album-dto";
+import { Button } from "@/components/ui/button";
+import { usePlayTrackButton } from "@/hooks/use-play-track-button";
 
 type BannerSectionProps = Pick<
   FullAlbum,
@@ -44,6 +47,7 @@ export const BannerSection = ({
   duration,
   genres,
 }: BannerSectionProps) => {
+  const { handlePlay, isPlaying } = usePlayTrackButton();
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
 
@@ -108,9 +112,12 @@ export const BannerSection = ({
         </div>
       </div>
       <div className="flex items-center gap-6 px-12">
-        <ContextPlayButton
-          context={{ type: "ALBUM", contextId: "id", name: artist.name }}
-        />
+        <Button
+          onClick={() => handlePlay(context)}
+          className="absolute bottom-2 right-2 opacity-0 translate-y-2 scale-95 transition-all duration-400 group-hover/large-cover:opacity-100 group-hover/large-cover:translate-y-0 group-hover/large-cover:scale-100"
+        >
+          {isPlaying ? <PauseIcon /> : <PlayIcon />}
+        </Button>
         <IconButton
           icon={ShuffleIcon}
           size="xl"

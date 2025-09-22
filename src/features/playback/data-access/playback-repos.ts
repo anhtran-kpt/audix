@@ -3,7 +3,10 @@ import db from "@/lib/db";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { PlaybackContextType } from "@/features/shared/contracts/shared-enum";
 import { createHash } from "crypto";
-import { trackItemSelect } from "@/features/track/data-access/track-selects";
+import {
+  trackDetailSelect,
+  trackItemSelect,
+} from "@/features/track/data-access/track-selects";
 import {
   RepeatPlaybackInput,
   ShufflePlaybackInput,
@@ -126,6 +129,19 @@ const createSnapshotFromArtist = async ({
     .update(JSON.stringify(tracks.map((t) => t.id)))
     .digest("hex");
 
+  const existing = await db.playbackContextSnapshot.findUnique({
+    where: {
+      userId_hash: { userId, hash },
+    },
+    include: {
+      tracks: true,
+    },
+  });
+
+  if (existing) {
+    return existing;
+  }
+
   return db.playbackContextSnapshot.create({
     data: {
       userId,
@@ -141,6 +157,9 @@ const createSnapshotFromArtist = async ({
           })),
         },
       },
+    },
+    include: {
+      tracks: true,
     },
   });
 };
@@ -285,6 +304,13 @@ export const startPlaybackSession = async ({
 
   const currentTrackId = snapshotTracks[contextIndex].trackId;
 
+  const currentTrack = await db.track.findUniqueOrThrow({
+    where: {
+      id: currentTrackId,
+    },
+    select: trackDetailSelect,
+  });
+
   const session = await db.playbackSession.upsert({
     where: { userId },
     create: {
@@ -302,17 +328,14 @@ export const startPlaybackSession = async ({
       version: { increment: 1 },
       updatedAt: new Date(),
     },
-    // include: {
-    //   snapshot: {
-    //     include: { tracks: { orderBy: { index: "asc" } } },
-    //   },
-    // },
     select: {
       ...playbackSessionSelect,
     },
   });
 
-  return session;
+  console.log({ ...session, currentTrack });
+
+  return { ...session, currentTrack };
 };
 
 export const pausePlayback = async (userId: string) => {

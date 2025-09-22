@@ -4,17 +4,14 @@ import { cn } from "@/lib/utils";
 import { Clock3Icon, PlusCircleIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { formatDuration } from "@/lib/helpers/format-duration";
-import {
-  useIsPlaying,
-  useNowPlayingRefId,
-  usePlaybackContext,
-} from "@/hooks/use-audio-player";
 import { TrackListItem } from "@/features/track/contracts/track-dto";
 import TrackItem from "./track-item";
 import { format } from "date-fns";
 import { NavLink } from "../ui/nav-link";
 import { TrackDropdown } from "./track-dropdown";
 import TrackIndexCell from "../shared/track-index-cell";
+import { usePlaybackStore } from "@/stores/use-playback-store";
+import { useShallow } from "zustand/react/shallow";
 
 type TrackListProps = {
   contextId: string;
@@ -23,9 +20,12 @@ type TrackListProps = {
 };
 
 export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
-  const nowPlayingRefId = useNowPlayingRefId();
-  const isPlaying = useIsPlaying();
-  const playbackContext = usePlaybackContext();
+  const { isPlaying, session } = usePlaybackStore(
+    useShallow((s) => ({
+      isPlaying: s.isPlaying(),
+      session: s.session,
+    }))
+  );
 
   const gridCols: Record<TrackListProps["type"], string> = {
     PLAYLIST: "grid-cols-[3rem_1fr_9rem_9rem_6rem_4rem_3rem]",
@@ -59,9 +59,9 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
       {tracks.length > 0 ? (
         tracks.map((track, trackIndex) => {
           const isThisTrack =
-            playbackContext?.type === type &&
-            playbackContext?.contextId === contextId &&
-            nowPlayingRefId === track.id;
+            session?.snapshot.contextType === type &&
+            session?.snapshot.contextId === contextId &&
+            session.currentTrackId === track.id;
 
           return (
             <div

@@ -21,8 +21,8 @@ export default function ArtistGrid({ artists }: ArtistGridProps) {
             alt={artist.name}
             src={artist.imageId}
             context={{
-              type: "ARTIST",
-              contextId: artist.id,
+              contextType: "ARTIST",
+              contextIdOrQuery: artist.id,
             }}
           />
           <div className="flex flex-col items-start w-full min-w-0">

@@ -7,6 +7,14 @@ import {
   Minimize2Icon,
   SquarePlayIcon,
   ListMusicIcon,
+  ShuffleIcon,
+  SkipBackIcon,
+  Loader2Icon,
+  PauseIcon,
+  PlayIcon,
+  SkipForwardIcon,
+  Repeat1Icon,
+  RepeatIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import PlayerControls from "./player-controls";
@@ -19,10 +27,30 @@ import TrackItem from "./track-item";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { ProgressBar } from "./progress-bar";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { cn } from "@/lib/utils";
+import { formatTime } from "@/lib/helpers/format-time";
+import { Slider } from "../ui/slider";
 
 export default function AudioPlayer() {
-  const { isLoading, session, setRepeatMode, setShuffle, next, previous } =
-    usePlaybackStore();
+  const {
+    isLoading,
+    session,
+    setRepeatMode,
+    setShuffle,
+    next,
+    previous,
+    resume,
+  } = usePlaybackStore(
+    useShallow((s) => ({
+      isLoading: s.isLoading,
+      session: s.session,
+      setRepeatMode: s.setRepeatMode,
+      setShuffle: s.setShuffle,
+      next: s.next,
+      previous: s.previous,
+      resume: s.resume,
+    }))
+  );
   const { audioRef } = useAudioPlayer();
 
   const { data: currentTrack } = useTrack(session?.currentTrackId);
@@ -57,7 +85,89 @@ export default function AudioPlayer() {
               />
             </div>
             <div className="flex flex-col space-y-2 items-center grow">
-              <PlayerControls
+              <div className="space-x-6 flex items-center">
+                {/* <IconButton
+                  icon={ShuffleIcon}
+                  onClick={setShuffle}
+                  tooltipContent={
+                    isShuffled ? "Disable shuffle" : "Enable shuffle"
+                  }
+                  description={
+                    isShuffled ? "Disable shuffle" : "Enable shuffle"
+                  }
+                  iconClassName={isShuffled ? "stroke-primary" : ""}
+                  disabled={false}
+                /> */}
+                <IconButton
+                  icon={SkipBackIcon}
+                  onClick={previous}
+                  iconClassName="fill-current"
+                  tooltipContent="Previous"
+                />
+                <IconButton
+                  icon={
+                    isLoading
+                      ? Loader2Icon
+                      : session.isPlaying
+                      ? PauseIcon
+                      : PlayIcon
+                  }
+                  iconClassName={cn(
+                    "fill-current stroke-0 size-6",
+                    isLoading && "stroke-1.5 fill-none animate-spin"
+                  )}
+                  className="p-2.25 rounded-full bg-muted cursor-pointer"
+                  tooltipContent={session.isPlaying ? "Pause" : "Play"}
+                  description="Play/pause"
+                  disabled={isLoading}
+                  onClick={resume}
+                />
+                <IconButton
+                  icon={SkipForwardIcon}
+                  onClick={next}
+                  iconClassName="fill-current"
+                  tooltipContent="Next"
+                />
+                <IconButton
+                  icon={session.repeatMode === "ONE" ? Repeat1Icon : RepeatIcon}
+                  iconClassName={cn(
+                    session.repeatMode !== "OFF" && "stroke-primary"
+                  )}
+                  tooltipContent={
+                    session.repeatMode === "ONE"
+                      ? "Disable repeat"
+                      : session.repeatMode === "OFF"
+                      ? "Enable repeat"
+                      : "Enable repeat one"
+                  }
+                  description={
+                    session.repeatMode === "ONE"
+                      ? "Disable repeat"
+                      : session.repeatMode === "OFF"
+                      ? "Enable repeat"
+                      : "Enable repeat one"
+                  }
+                  // onClick={setRepeatMode}
+                />
+              </div>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground w-full max-w-xl">
+                <span className="text-xs">
+                  {formatTime(session.progressMs)}
+                </span>
+
+                <Slider
+                  value={[session.progressMs]}
+                  onValueCommit={() => handleSeek}
+                  max={currentTrack.duration}
+                  step={1000}
+                  className="flex-1"
+                />
+
+                <span className="text-xs text-right">
+                  {formatTime(currentTrack.duration)}
+                </span>
+              </div>
+              {/* <PlayerControls
                 isPlaying={isPlaying}
                 isLoading={isLoading}
                 hasNext={false}
@@ -76,7 +186,7 @@ export default function AudioPlayer() {
                 duration={duration}
                 onSeek={controls.seek}
                 formatTime={formatTime}
-              />
+              /> */}
             </div>
             {/* <div className="flex items-center">
               <div className="flex items-center space-x-5">
@@ -132,7 +242,7 @@ export default function AudioPlayer() {
           </div>
         </div>
       )}
-      <audio ref={audioRef} preload="metadata" />
+      <audio ref={audioRef} preload="metadata" className="hidden" />
     </>
   );
 }

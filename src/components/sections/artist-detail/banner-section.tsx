@@ -6,7 +6,6 @@ import { useState } from "react";
 import tinycolor from "tinycolor2";
 import { IconButton } from "@/components/ui/icon-button";
 import { FollowButton } from "@/components/features/follow-button";
-import { ContextPlayButton } from "@/components/features/context-play-button";
 import { FollowersBadge } from "@/components/features/follow-badge";
 import { FullArtist } from "@/features/artist/contracts/artist-dto";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
@@ -72,9 +71,9 @@ export const BannerSection = ({
         </div>
       </div>
       <div className="flex items-center gap-6 px-12">
-        <ContextPlayButton
+        {/* <ContextPlayButton
           context={{ contextId: artistId, type: "ARTIST", name }}
-        />
+        /> */}
         <IconButton
           icon={ShuffleIcon}
           size="xl"

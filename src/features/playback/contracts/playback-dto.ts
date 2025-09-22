@@ -32,7 +32,10 @@ export const PlaybackSessionSchema = z.object({
   volume: z.number().int().min(0).max(100),
   isMuted: zBoolSchema,
   currentTrackId: zCuidSchema,
-  currentTrackSrc: z.string().min(1),
+  currentTrack: z.object({
+    id: zCuidSchema,
+    audioId: z.string().min(1),
+  }),
   id: zCuidSchema,
   snapshot: z.object({
     contextType: PlaybackContextTypeSchema,
