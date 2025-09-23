@@ -8,10 +8,6 @@ import {
   PlusCircleIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import {
-  useNowPlayingRefId,
-  usePlaybackContext,
-} from "@/hooks/use-audio-player";
 import { NavLink } from "../ui/nav-link";
 import { FollowButton } from "./follow-button";
 import { buildCreditsByPerson } from "@/lib/helpers/build-credits-by-person";
@@ -22,13 +18,13 @@ import { cn } from "@/lib/utils";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { FollowersBadge } from "./follow-badge";
 import { useNowPlayingTrack } from "@/features/track/hooks/use-tracks";
+import { usePlaybackStore } from "@/stores/use-playback-store";
 
 export default function NowPlayingRefView() {
   const close = useRightPanel((s) => s.close);
 
-  const playbackContext = usePlaybackContext();
-  const nowPlayingRefId = useNowPlayingRefId();
-  const { data: nowPlayingTrack } = useNowPlayingTrack(nowPlayingRefId);
+  const session = usePlaybackStore((s) => s.session);
+  const { data: nowPlayingTrack } = useNowPlayingTrack(session?.currentTrackId);
 
   if (!nowPlayingTrack) {
     return null;
@@ -57,7 +53,7 @@ export default function NowPlayingRefView() {
             />
           </div>
           <span className="truncate duration-300 group-hover/np:ml-2 font-semibold">
-            {playbackContext?.name}
+            {session?.snapshot.name}
           </span>
         </div>
         <div className="flex items-center gap-4">

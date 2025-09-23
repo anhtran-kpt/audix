@@ -1,3 +1,4 @@
+// use-playback-store.ts
 "use client";
 
 import {
@@ -11,6 +12,10 @@ import { create } from "zustand";
 interface PlaybackState {
   session: PlaybackSession | null;
   isLoading: boolean;
+
+  // Local-only markers for seeks
+  lastLocalSeekAt: number | null; // timestamp ms when client last requested a seek
+  lastLocalSeekPositionMs: number | null;
 
   // Selectors
   getCurrentTrackId: () => string | undefined;
@@ -28,17 +33,25 @@ interface PlaybackState {
   seek: (positionMs: number) => Promise<void>;
   next: () => Promise<void>;
   previous: () => Promise<void>;
-  setShuffle: (isShuffled: boolean) => Promise<void>;
+  toggleMute: (isMuted: boolean) => Promise<void>;
+  toggleShuffle: (isShuffled: boolean) => Promise<void>;
   setRepeatMode: (repeatMode: RepeatMode) => Promise<void>;
   sync: () => Promise<void>;
 
   // Local-only update
   updateProgressLocal: (progressMs: number) => void;
+
+  // clear local seek marker (called by audio hook after it applied the seek)
+  clearLocalSeek: () => void;
 }
 
 export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   session: null,
   isLoading: false,
+
+  // local-only seek markers
+  lastLocalSeekAt: null,
+  lastLocalSeekPositionMs: null,
 
   // --- Selectors ---
   getCurrentTrackId: () => get().session?.currentTrackId,
@@ -74,7 +87,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     });
     try {
       await postApi("/playback/pause");
-      await get().sync();
+      // do not force sync() to avoid audio jank
     } catch (err) {
       console.error("Pause failed:", err);
     }
@@ -92,7 +105,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     });
     try {
       await postApi("/playback/resume");
-      await get().sync();
+      // do not sync immediately
     } catch (err) {
       console.error("Resume failed:", err);
     }
@@ -101,16 +114,23 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   async seek(positionMs) {
     const { session } = get();
     if (!session) return;
+
+    const now = Date.now();
     set({
       session: {
         ...session,
         progressMs: positionMs,
+        // if playing, we mark position updated now; if paused, it's still fine
         lastPositionUpdatedAt: new Date(),
       },
+      // local-only markers used to tell audio element to jump
+      lastLocalSeekAt: now,
+      lastLocalSeekPositionMs: positionMs,
     });
+
     try {
       await postApi("/playback/seek", { positionMs });
-      await get().sync();
+      // do NOT call sync() here — avoid overwriting local audio immediately
     } catch (err) {
       console.error("Seek failed:", err);
     }
@@ -119,6 +139,7 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   async next() {
     try {
       await postApi<void>("/playback/next");
+      // next changes track — doing a sync is OK here to get new session
       await get().sync();
     } catch (err) {
       console.error("Next failed:", err);
@@ -134,12 +155,21 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
     }
   },
 
-  async setShuffle(isShuffled) {
+  async toggleMute(isMuted) {
+    try {
+      await patchApi<void>("/playback/mute", { isMuted });
+      await get().sync();
+    } catch (err) {
+      console.error("Toggle mute failed:", err);
+    }
+  },
+
+  async toggleShuffle(isShuffled) {
     try {
       await patchApi<void>("/playback/shuffle", { isShuffled });
       await get().sync();
     } catch (err) {
-      console.error("Set shuffle failed:", err);
+      console.error("Toggle shuffle failed:", err);
     }
   },
 
@@ -173,14 +203,19 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
       },
     });
   },
+
+  clearLocalSeek() {
+    set({ lastLocalSeekAt: null, lastLocalSeekPositionMs: null });
+  },
 }));
 
-function calcProgress(session: PlaybackSession | null): number {
+export function calcProgress(session: PlaybackSession | null): number {
   if (!session) return 0;
   if (!session.isPlaying || !session.lastPositionUpdatedAt) {
     return session.progressMs;
   }
   const elapsed =
     Date.now() - new Date(session.lastPositionUpdatedAt).getTime();
+  // keep returned value as integer ms
   return session.progressMs + elapsed;
 }

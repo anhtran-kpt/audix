@@ -8,6 +8,7 @@ import {
   trackItemSelect,
 } from "@/features/track/data-access/track-selects";
 import {
+  MutePlaybackInput,
   RepeatPlaybackInput,
   ShufflePlaybackInput,
   StartPlaybackInput,
@@ -611,6 +612,25 @@ export const shufflePlayback = async (
     where: { userId },
     data: {
       isShuffled,
+      version: { increment: 1 },
+      updatedAt: new Date(),
+    },
+    select: {
+      ...playbackSessionSelect,
+    },
+  });
+};
+
+export const mutePlayback = async (
+  userId: string,
+  input: MutePlaybackInput
+) => {
+  const { isMuted } = input;
+
+  return await db.playbackSession.update({
+    where: { userId },
+    data: {
+      isMuted,
       version: { increment: 1 },
       updatedAt: new Date(),
     },

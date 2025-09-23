@@ -6,12 +6,25 @@ import { usePlaybackStore } from "@/stores/use-playback-store";
 import { formatTime } from "@/lib/helpers/format-time";
 
 export function ProgressBar() {
+  // select only the pieces we need (keeps rerenders reasonable)
   const session = usePlaybackStore((s) => s.session);
   const seek = usePlaybackStore((s) => s.seek);
 
   const [localValue, setLocalValue] = useState<number | null>(null);
 
-  const currentValue = localValue ?? session?.progressMs ?? 0;
+  // compute effective progress (ms)
+  function computeEffectiveProgress(): number {
+    if (localValue != null) return localValue;
+    if (!session) return 0;
+    if (!session.isPlaying || !session.lastPositionUpdatedAt) {
+      return session.progressMs;
+    }
+    const elapsed =
+      Date.now() - new Date(session.lastPositionUpdatedAt).getTime();
+    return session.progressMs + elapsed;
+  }
+
+  const currentValue = computeEffectiveProgress();
 
   if (!session?.currentTrack) return null;
 
@@ -27,6 +40,7 @@ export function ProgressBar() {
         onValueChange={(value) => setLocalValue(value[0])}
         onValueCommit={(value) => {
           const positionMs = value[0];
+          // call seek action — store will set local-seek marker and hook will apply to audio
           seek(positionMs);
           setLocalValue(null);
         }}

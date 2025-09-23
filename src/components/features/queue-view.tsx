@@ -3,11 +3,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import TrackItem from "./track-item";
-import {
-  useIsPlaying,
-  useNowPlayingRefId,
-  useQueue,
-} from "@/hooks/use-audio-player";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { useShallow } from "zustand/react/shallow";

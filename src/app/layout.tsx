@@ -84,7 +84,7 @@ export default async function RootLayout({
                     </div>
                   </ScrollArea>
                 </SidebarInset>
-                {/* <RightPanel /> */}
+                <RightPanel />
                 <AudioPlayer />
                 <Toaster />
               </SidebarProvider>

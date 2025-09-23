@@ -1,4 +1,4 @@
-// hooks/use-audio-player.tsx
+// use-audio-player.tsx
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -17,7 +17,7 @@ const PROGRESS_UPDATE_INTERVAL_MS = 1000; // throttle interval for updateProgres
 export function useAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Select only primitive fields we actually care about (avoid subscribing to session object)
+  // Select primitive fields only
   const currentTrackId = usePlaybackStore((s) => s.session?.currentTrackId);
   const currentTrackAudioId = usePlaybackStore(
     (s) => s.session?.currentTrack?.audioId
@@ -25,6 +25,13 @@ export function useAudioPlayer() {
   const isPlaying = usePlaybackStore((s) => !!s.session?.isPlaying);
   const volume = usePlaybackStore((s) => s.session?.volume ?? 80);
   const isMuted = usePlaybackStore((s) => !!s.session?.isMuted);
+
+  // local seek markers (subscribe to these so we can react when user seeks)
+  const lastLocalSeekAt = usePlaybackStore((s) => s.lastLocalSeekAt);
+  const lastLocalSeekPositionMs = usePlaybackStore(
+    (s) => s.lastLocalSeekPositionMs
+  );
+  const clearLocalSeek = usePlaybackStore((s) => s.clearLocalSeek);
 
   // actions (stable references from store)
   const pause = usePlaybackStore((s) => s.pause);
@@ -38,6 +45,7 @@ export function useAudioPlayer() {
   const lastVolumeRef = useRef<number | null>(null);
   const lastProgressUpdateAtRef = useRef<number>(0);
 
+  // 0) expose audioRef for top-level <audio> element usage (return it)
   // 1) Handle track change: set src + initial time only when trackId actually changes
   useEffect(() => {
     const audio = audioRef.current;
@@ -65,9 +73,8 @@ export function useAudioPlayer() {
     const expected = progressMs / 1000;
     if (
       Number.isFinite(expected) &&
-      Math.abs(audio.currentTime - expected) > 0.5
+      Math.abs(audio.currentTime - expected) > 1 // larger threshold for safety on track change
     ) {
-      // only jump if > 0.5s difference (avoid micro jumps)
       audio.currentTime = expected;
     }
 
@@ -79,6 +86,24 @@ export function useAudioPlayer() {
       });
     }
   }, [currentTrackId, currentTrackAudioId, isPlaying]);
+
+  // 1.5) react to local client seek events: set audio.currentTime immediately
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !lastLocalSeekAt || lastLocalSeekPositionMs == null) return;
+
+    try {
+      const sec = lastLocalSeekPositionMs / 1000;
+      // set currentTime directly
+      // note: setting currentTime triggers timeupdate events
+      audio.currentTime = sec;
+    } catch (err) {
+      console.warn("Failed setting audio.currentTime on local seek:", err);
+    } finally {
+      // clear local marker — audio element has been instructed
+      clearLocalSeek();
+    }
+  }, [lastLocalSeekAt, lastLocalSeekPositionMs, clearLocalSeek]);
 
   // 2) Toggle play/pause — only handle when isPlaying changes
   useEffect(() => {
@@ -124,8 +149,6 @@ export function useAudioPlayer() {
         lastProgressUpdateAtRef.current = now;
         updateProgressLocal(Math.floor(audio.currentTime * 1000));
       }
-      // Note: for super-smooth UI you can animate the progress in component with requestAnimationFrame
-      // between these store updates instead of relying on store updates every frame.
     };
 
     audio.addEventListener("timeupdate", onTimeUpdate);

@@ -17,17 +17,12 @@ import {
   RepeatIcon,
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import PlayerControls from "./player-controls";
 import VolumeControl from "./volume-control";
 import { useRightPanel } from "@/stores/use-right-panel";
-import { useScrobble } from "@/hooks/use-scrobble";
 import { useShallow } from "zustand/react/shallow";
-import { useTrack } from "@/features/track/hooks/use-tracks";
 import TrackItem from "./track-item";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { cn } from "@/lib/utils";
-import { formatTime } from "@/lib/helpers/format-time";
-import { Slider } from "../ui/slider";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { ProgressBar } from "../shared/progress-bar";
 
@@ -36,7 +31,7 @@ export default function AudioPlayer() {
     isLoading,
     session,
     setRepeatMode,
-    setShuffle,
+    toggleShuffle,
     next,
     previous,
     resume,
@@ -46,7 +41,7 @@ export default function AudioPlayer() {
       isLoading: s.isLoading,
       session: s.session,
       setRepeatMode: s.setRepeatMode,
-      setShuffle: s.setShuffle,
+      toggleShuffle: s.toggleShuffle,
       next: s.next,
       previous: s.previous,
       resume: s.resume,
@@ -61,7 +56,7 @@ export default function AudioPlayer() {
     useShallow((s) => ({ toggle: s.toggle, active: s.active }))
   );
 
-  console.log(session?.progressMs);
+  console.log(session);
 
   return (
     <>
@@ -88,23 +83,24 @@ export default function AudioPlayer() {
             </div>
             <div className="flex flex-col space-y-2 items-center grow">
               <div className="space-x-6 flex items-center">
-                {/* <IconButton
+                <IconButton
                   icon={ShuffleIcon}
-                  onClick={setShuffle}
+                  onClick={() => toggleShuffle(!session.isShuffled)}
                   tooltipContent={
-                    isShuffled ? "Disable shuffle" : "Enable shuffle"
+                    session.isShuffled ? "Disable shuffle" : "Enable shuffle"
                   }
                   description={
-                    isShuffled ? "Disable shuffle" : "Enable shuffle"
+                    session.isShuffled ? "Disable shuffle" : "Enable shuffle"
                   }
-                  iconClassName={isShuffled ? "stroke-primary" : ""}
+                  iconClassName={session.isShuffled ? "stroke-primary" : ""}
                   disabled={false}
-                /> */}
+                />
                 <IconButton
                   icon={SkipBackIcon}
                   onClick={previous}
                   iconClassName="fill-current"
                   tooltipContent="Previous"
+                  disabled={session.contextIndex === 0}
                 />
                 <IconButton
                   icon={
@@ -153,43 +149,6 @@ export default function AudioPlayer() {
                 />
               </div>
               <ProgressBar />
-              {/* <div className="flex items-center gap-4 text-sm text-muted-foreground w-full max-w-xl">
-                <span className="text-xs">
-                  {formatTime(session.progressMs)}
-                </span>
-
-                <Slider
-                  value={[session.progressMs]}
-                  onValueCommit={() => handleSeek}
-                  max={session.currentTrack.duration * 1000}
-                  step={1000}
-                  className="flex-1"
-                />
-
-                <span className="text-xs text-right">
-                  {formatTime(session.currentTrack.duration * 1000)}
-                </span>
-              </div> */}
-              {/* <PlayerControls
-                isPlaying={isPlaying}
-                isLoading={isLoading}
-                hasNext={false}
-                hasPrev={false}
-                onTogglePlay={controls.togglePlay}
-                onNext={next}
-                onPrevious={previous}
-                repeatMode={session?.repeatMode}
-                isShuffled={session?.isShuffled}
-                setRepeatMode={setRepeatMode}
-                setShuffle={setShuffle}
-              />
-              <ProgressBar
-                progress={progress}
-                currentTime={currentTime}
-                duration={duration}
-                onSeek={controls.seek}
-                formatTime={formatTime}
-              /> */}
             </div>
             <div className="flex items-center">
               <div className="flex items-center space-x-5">
@@ -234,12 +193,7 @@ export default function AudioPlayer() {
                   icon={Minimize2Icon}
                   tooltipContent="Open miniplayer"
                 />
-                <VolumeControl
-                  volume={session.volume}
-                  isMuted={session.isMuted}
-                  // onVolumeChange={session.s}
-                  // onToggleMute={volume.toggleMute}
-                />
+                <VolumeControl />
               </div>
             </div>
           </div>

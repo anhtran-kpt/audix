@@ -52,6 +52,12 @@ export const ShufflePlaybackInputSchema = z.object({
 
 export type ShufflePlaybackInput = z.infer<typeof ShufflePlaybackInputSchema>;
 
+export const MutePlaybackInputSchema = z.object({
+  isMuted: zBoolSchema,
+});
+
+export type MutePlaybackInput = z.infer<typeof MutePlaybackInputSchema>;
+
 export const RepeatPlaybackInputSchema = z.object({
   repeatMode: RepeatModeSchema,
 });

@@ -25,7 +25,7 @@ export default function RightPanel() {
           {active === "queue" && "Queue"}
         </SheetTitle>
         {active === "now-playing" && <NowPlaying />}
-        {active === "queue" && <QueueView />}
+        {/* {active === "queue" && <QueueView />} */}
       </SheetContent>
     </Sheet>
   );
