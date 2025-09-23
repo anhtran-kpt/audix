@@ -3,7 +3,7 @@
 
 import {
   PlaybackSession,
-  StartPlaybackInput,
+  PlaybackContextSnapshot,
 } from "@/features/playback/contracts/playback-dto";
 import { RepeatMode } from "@/features/shared/contracts/shared-enum";
 import { getApi, patchApi, postApi } from "@/lib/http/request";
@@ -27,7 +27,7 @@ interface PlaybackState {
   isShuffled: () => boolean;
 
   // Actions
-  play: (input: StartPlaybackInput) => Promise<void>;
+  play: (input: PlaybackContextSnapshot) => Promise<void>;
   pause: () => Promise<void>;
   resume: () => Promise<void>;
   seek: (positionMs: number) => Promise<void>;

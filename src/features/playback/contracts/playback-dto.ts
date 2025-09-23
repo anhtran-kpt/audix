@@ -10,13 +10,15 @@ import {
 import { TrackItemSchema } from "@/features/track/contracts/track-dto";
 import z from "zod";
 
-export const StartPlaybackInputSchema = z.object({
+export const PlaybackContextSnapshotSchema = z.object({
   contextType: PlaybackContextTypeSchema,
   contextIdOrQuery: z.string().nullable(),
   startTrackId: z.cuid2().optional(),
 });
 
-export type StartPlaybackInput = z.infer<typeof StartPlaybackInputSchema>;
+export type PlaybackContextSnapshot = z.infer<
+  typeof PlaybackContextSnapshotSchema
+>;
 
 export const SeekPlaybackInputSchema = z.object({
   positionMs: z.number().int().min(0),

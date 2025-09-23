@@ -11,7 +11,7 @@ import {
   MutePlaybackInput,
   RepeatPlaybackInput,
   ShufflePlaybackInput,
-  StartPlaybackInput,
+  PlaybackContextSnapshot,
 } from "../contracts/playback-dto";
 import { NextResponse } from "next/server";
 import { playbackSessionSelect } from "./playback-selects";
@@ -307,7 +307,7 @@ export const startPlaybackSession = async ({
   input,
 }: {
   userId: string;
-  input: StartPlaybackInput;
+  input: PlaybackContextSnapshot;
 }) => {
   const { contextType, contextIdOrQuery, startTrackId } = input;
 

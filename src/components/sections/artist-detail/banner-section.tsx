@@ -10,6 +10,7 @@ import { FollowersBadge } from "@/components/features/follow-badge";
 import { FullArtist } from "@/features/artist/contracts/artist-dto";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { CldImage } from "next-cloudinary";
+import { ContextPlayButton } from "@/components/shared/context-play-button";
 
 type BannerSectionProps = Pick<
   FullArtist,
@@ -71,9 +72,12 @@ export const BannerSection = ({
         </div>
       </div>
       <div className="flex items-center gap-6 px-12">
-        {/* <ContextPlayButton
-          context={{ contextId: artistId, type: "ARTIST", name }}
-        /> */}
+        <ContextPlayButton
+          context={{
+            contextType: "ARTIST",
+            contextIdOrQuery: artistId,
+          }}
+        />
         <IconButton
           icon={ShuffleIcon}
           size="xl"
