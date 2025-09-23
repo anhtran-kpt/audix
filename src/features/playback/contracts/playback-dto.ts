@@ -7,6 +7,7 @@ import {
   PlaybackContextTypeSchema,
   RepeatModeSchema,
 } from "@/features/shared/contracts/shared-enum";
+import { TrackItemSchema } from "@/features/track/contracts/track-dto";
 import z from "zod";
 
 export const StartPlaybackInputSchema = z.object({
@@ -32,9 +33,8 @@ export const PlaybackSessionSchema = z.object({
   volume: z.number().int().min(0).max(100),
   isMuted: zBoolSchema,
   currentTrackId: zCuidSchema,
-  currentTrack: z.object({
-    id: zCuidSchema,
-    audioId: z.string().min(1),
+  currentTrack: TrackItemSchema.extend({
+    audioId: z.string(),
   }),
   id: zCuidSchema,
   snapshot: z.object({

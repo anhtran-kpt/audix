@@ -15,6 +15,35 @@ import {
 import { NextResponse } from "next/server";
 import { playbackSessionSelect } from "./playback-selects";
 
+export const getPlaybackSession = async (userId: zCuidType) => {
+  const session = await db.playbackSession.findUniqueOrThrow({
+    where: { userId },
+    select: playbackSessionSelect,
+  });
+
+  const currentTrack = await db.track.findUniqueOrThrow({
+    where: { id: session.currentTrackId },
+    select: trackDetailSelect,
+  });
+
+  let newProgress = session.progressMs;
+
+  if (session.isPlaying && session.lastPositionUpdatedAt) {
+    const elapsed =
+      Date.now() - new Date(session.lastPositionUpdatedAt).getTime();
+    newProgress += elapsed;
+  }
+
+  newProgress = Math.min(newProgress, currentTrack.duration * 1000);
+
+  return {
+    ...session,
+    currentTrack,
+    progressMs: newProgress,
+    lastPositionUpdatedAt: new Date(),
+  };
+};
+
 const createSnapshotFromPlaylist = async ({
   playlistId,
   userId,
@@ -319,6 +348,8 @@ export const startPlaybackSession = async ({
       contextIndex,
       currentTrackId,
       progressMs: 0,
+      isPlaying: true,
+      lastPositionUpdatedAt: new Date(),
     },
     update: {
       snapshotId: snapshot.id,
@@ -327,13 +358,11 @@ export const startPlaybackSession = async ({
       progressMs: 0,
       version: { increment: 1 },
       updatedAt: new Date(),
+      isPlaying: true,
+      lastPositionUpdatedAt: new Date(),
     },
-    select: {
-      ...playbackSessionSelect,
-    },
+    select: playbackSessionSelect,
   });
-
-  console.log({ ...session, currentTrack });
 
   return { ...session, currentTrack };
 };
@@ -364,7 +393,7 @@ export const pausePlayback = async (userId: string) => {
     newProgress += elapsed;
   }
 
-  const updated = await db.playbackSession.update({
+  return await db.playbackSession.update({
     where: { id: session.id },
     data: {
       isPlaying: false,
@@ -372,17 +401,18 @@ export const pausePlayback = async (userId: string) => {
       lastPositionUpdatedAt: null,
       version: { increment: 1 },
     },
-  });
-
-  return NextResponse.json({
-    success: true,
-    state: updated,
+    select: {
+      ...playbackSessionSelect,
+    },
   });
 };
 
 export const resumePlayback = async (userId: string) => {
   const session = await db.playbackSession.findUnique({
     where: { userId },
+    select: {
+      ...playbackSessionSelect,
+    },
   });
 
   if (!session) {
@@ -393,24 +423,19 @@ export const resumePlayback = async (userId: string) => {
   }
 
   if (session.isPlaying) {
-    return NextResponse.json({
-      success: true,
-      state: session,
-    });
+    return session;
   }
 
-  const updated = await db.playbackSession.update({
+  return await db.playbackSession.update({
     where: { id: session.id },
     data: {
       isPlaying: true,
       lastPositionUpdatedAt: new Date(),
       version: { increment: 1 },
     },
-  });
-
-  return NextResponse.json({
-    success: true,
-    state: updated,
+    select: {
+      ...playbackSessionSelect,
+    },
   });
 };
 
@@ -472,8 +497,7 @@ export const skipToNext = async (userId: string) => {
     newTrackId = tracks[nextIndex].trackId;
   }
 
-  // Cập nhật session
-  const updated = await db.playbackSession.update({
+  return await db.playbackSession.update({
     where: { id: session.id },
     data: {
       currentTrackId: newTrackId!,
@@ -483,11 +507,9 @@ export const skipToNext = async (userId: string) => {
       isPlaying: true,
       version: { increment: 1 },
     },
-  });
-
-  return NextResponse.json({
-    success: true,
-    state: updated,
+    select: {
+      ...playbackSessionSelect,
+    },
   });
 };
 
@@ -537,7 +559,7 @@ export const skipToPrevious = async (userId: string) => {
     newTrackId = tracks[prevIndex].trackId;
   }
 
-  const updated = await db.playbackSession.update({
+  return await db.playbackSession.update({
     where: { id: session.id },
     data: {
       currentTrackId: newTrackId!,
@@ -547,11 +569,9 @@ export const skipToPrevious = async (userId: string) => {
       isPlaying: true,
       version: { increment: 1 },
     },
-  });
-
-  return NextResponse.json({
-    success: true,
-    state: updated,
+    select: {
+      ...playbackSessionSelect,
+    },
   });
 };
 
@@ -568,18 +588,16 @@ export const seekPlayback = async (userId: string, positionMs: number) => {
     );
   }
 
-  const updated = await db.playbackSession.update({
+  return await db.playbackSession.update({
     where: { id: session.id },
     data: {
       progressMs: positionMs,
       lastPositionUpdatedAt: new Date(),
       version: { increment: 1 },
     },
-  });
-
-  return NextResponse.json({
-    success: true,
-    state: updated,
+    select: {
+      ...playbackSessionSelect,
+    },
   });
 };
 
@@ -589,21 +607,17 @@ export const shufflePlayback = async (
 ) => {
   const { isShuffled } = input;
 
-  const session = await db.playbackSession.update({
+  return await db.playbackSession.update({
     where: { userId },
     data: {
       isShuffled,
       version: { increment: 1 },
       updatedAt: new Date(),
     },
-    include: {
-      snapshot: {
-        include: { tracks: { orderBy: { index: "asc" } } },
-      },
+    select: {
+      ...playbackSessionSelect,
     },
   });
-
-  return NextResponse.json(session);
 };
 
 export const repeatPlayback = async (
@@ -616,19 +630,15 @@ export const repeatPlayback = async (
     return NextResponse.json({ error: "Invalid repeat mode" }, { status: 400 });
   }
 
-  const session = await db.playbackSession.update({
+  return await db.playbackSession.update({
     where: { userId },
     data: {
       repeatMode,
       version: { increment: 1 },
       updatedAt: new Date(),
     },
-    include: {
-      snapshot: {
-        include: { tracks: { orderBy: { index: "asc" } } },
-      },
+    select: {
+      ...playbackSessionSelect,
     },
   });
-
-  return NextResponse.json(session);
 };

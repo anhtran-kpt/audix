@@ -1,101 +1,167 @@
+// hooks/use-audio-player.tsx
 "use client";
 
-import { getAudioUrl } from "@/lib/helpers/get-audio-url";
-import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useEffect, useRef } from "react";
+import { usePlaybackStore } from "@/stores/use-playback-store";
+import { getAudioUrl } from "@/lib/helpers/get-audio-url";
+
+/**
+ * Important:
+ * - Subscribe only to a few fields (so this hook doesn't rerender for every progressMs update).
+ * - Use usePlaybackStore.getState() to read progress once when needed (no subscription).
+ * - Throttle local -> store updates (PROGRESS_UPDATE_INTERVAL_MS).
+ */
+
+const PROGRESS_UPDATE_INTERVAL_MS = 1000; // throttle interval for updateProgressLocal
 
 export function useAudioPlayer() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { session, pause, resume, seek, next, sync } = usePlaybackStore();
 
+  // Select only primitive fields we actually care about (avoid subscribing to session object)
+  const currentTrackId = usePlaybackStore((s) => s.session?.currentTrackId);
+  const currentTrackAudioId = usePlaybackStore(
+    (s) => s.session?.currentTrack?.audioId
+  );
+  const isPlaying = usePlaybackStore((s) => !!s.session?.isPlaying);
+  const volume = usePlaybackStore((s) => s.session?.volume ?? 80);
+  const isMuted = usePlaybackStore((s) => !!s.session?.isMuted);
+
+  // actions (stable references from store)
+  const pause = usePlaybackStore((s) => s.pause);
+  const next = usePlaybackStore((s) => s.next);
+  const updateProgressLocal = usePlaybackStore((s) => s.updateProgressLocal);
+  const sync = usePlaybackStore((s) => s.sync);
+
+  // refs to remember last applied values (prevent redundant DOM ops)
+  const lastTrackIdRef = useRef<string | null>(null);
+  const lastIsPlayingRef = useRef<boolean | null>(null);
+  const lastVolumeRef = useRef<number | null>(null);
+  const lastProgressUpdateAtRef = useRef<number>(0);
+
+  // 1) Handle track change: set src + initial time only when trackId actually changes
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.preload = "auto";
+    const audio = audioRef.current;
+    if (!audio || !currentTrackId) return;
+
+    // if track did not change => do nothing here
+    if (lastTrackIdRef.current === currentTrackId) return;
+    lastTrackIdRef.current = currentTrackId;
+
+    // read progress once from store (no subscription)
+    const progressMs =
+      usePlaybackStore.getState().session?.progressMs ??
+      0; /* server progress at moment of track change */
+
+    const url = getAudioUrl(currentTrackAudioId ?? currentTrackId);
+
+    // set src (only when change)
+    // for safety set dataset trackId for quick identity
+    if (audio.dataset.trackId !== currentTrackId) {
+      audio.src = url;
+      audio.dataset.trackId = currentTrackId;
     }
-  }, []);
 
-  const audio = audioRef.current;
+    // set starting time if differs reasonably
+    const expected = progressMs / 1000;
+    if (
+      Number.isFinite(expected) &&
+      Math.abs(audio.currentTime - expected) > 0.5
+    ) {
+      // only jump if > 0.5s difference (avoid micro jumps)
+      audio.currentTime = expected;
+    }
 
-  useEffect(() => {
-    if (!audio || !session?.currentTrack.audioId) return;
-
-    audio.src = getAudioUrl(session.currentTrack.audioId);
-    audio.currentTime = (session.progressMs ?? 0) / 1000;
-    audio.load();
-
-    if (session.isPlaying) {
+    // play if needed (user-initiated play should have happened earlier)
+    if (isPlaying) {
       audio.play().catch((err) => {
-        console.error("Auto play failed:", err);
+        // autoplay can be blocked if no user gesture — ignore but log
+        console.warn("Audio play failed (maybe autoplay blocked):", err);
+      });
+    }
+  }, [currentTrackId, currentTrackAudioId, isPlaying]);
+
+  // 2) Toggle play/pause — only handle when isPlaying changes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (lastIsPlayingRef.current === isPlaying) return;
+    lastIsPlayingRef.current = isPlaying;
+
+    if (isPlaying) {
+      audio.play().catch((err) => {
+        console.warn("Play failed:", err);
       });
     } else {
       audio.pause();
     }
-  }, [session, audio]);
+  }, [isPlaying]);
 
+  // 3) Volume / mute updates
   useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    const v = isMuted ? 0 : (volume ?? 80) / 100;
+    if (lastVolumeRef.current === v) return;
+    lastVolumeRef.current = v;
+    audio.volume = v;
+  }, [volume, isMuted]);
+
+  // 4) timeupdate listener -> update local store, THROTTLED
+  useEffect(() => {
+    const audio = audioRef.current;
     if (!audio) return;
 
-    const handleTimeUpdate = () => {
-      usePlaybackStore.setState((state) => ({
-        session: state.session
-          ? {
-              ...state.session,
-              progressMs: audio.currentTime * 1000,
-              lastPositionUpdatedAt: new Date(),
-            }
-          : null,
-      }));
-    };
+    const onTimeUpdate = () => {
+      // if paused do nothing
+      if (audio.paused) return;
 
-    const handleEnded = () => {
-      if (session?.repeatMode === "ONE") {
-        audio.currentTime = 0;
-        audio.play();
-      } else {
-        next();
+      const now = Date.now();
+      if (
+        now - lastProgressUpdateAtRef.current >=
+        PROGRESS_UPDATE_INTERVAL_MS
+      ) {
+        lastProgressUpdateAtRef.current = now;
+        updateProgressLocal(Math.floor(audio.currentTime * 1000));
       }
+      // Note: for super-smooth UI you can animate the progress in component with requestAnimationFrame
+      // between these store updates instead of relying on store updates every frame.
     };
 
-    const handleError = (e: Event) => {
-      console.error("Audio error:", e);
-      sync();
-    };
-
-    audio.addEventListener("timeupdate", handleTimeUpdate);
-    audio.addEventListener("ended", handleEnded);
-    audio.addEventListener("error", handleError);
-
+    audio.addEventListener("timeupdate", onTimeUpdate);
     return () => {
-      audio.removeEventListener("timeupdate", handleTimeUpdate);
-      audio.removeEventListener("ended", handleEnded);
-      audio.removeEventListener("error", handleError);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
     };
-  }, [audio, session, next, sync]);
+  }, [updateProgressLocal]);
 
-  const controls = {
-    play: resume,
-    pause,
-    seek: (ms: number) => {
-      if (!audio) return;
-      audio.currentTime = ms / 1000;
-      seek(ms);
-    },
-    setVolume: (v: number) => {
-      if (!audio) return;
-      audio.volume = v / 100;
-      usePlaybackStore.setState((state) => ({
-        session: state.session ? { ...state.session, volume: v } : null,
-      }));
-    },
-    mute: (flag: boolean) => {
-      if (!audio) return;
-      audio.muted = flag;
-      usePlaybackStore.setState((state) => ({
-        session: state.session ? { ...state.session, isMuted: flag } : null,
-      }));
-    },
-  };
+  // 5) ended & error
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
 
-  return { audioRef, controls };
+    const onEnded = () => next();
+    const onError = (e: any) => {
+      console.error("Audio error:", e);
+      pause();
+    };
+
+    audio.addEventListener("ended", onEnded);
+    audio.addEventListener("error", onError);
+    return () => {
+      audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("error", onError);
+    };
+  }, [next, pause]);
+
+  // 6) periodic sync (server) — doesn't cause audio resets because above handlers guard by trackId/isPlaying
+  useEffect(() => {
+    sync();
+
+    const id = setInterval(() => {
+      sync();
+    }, 10000);
+    return () => clearInterval(id);
+  }, [sync]);
+
+  return { audioRef };
 }

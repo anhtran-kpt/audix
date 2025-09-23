@@ -31,6 +31,9 @@ interface PlaybackState {
   setShuffle: (isShuffled: boolean) => Promise<void>;
   setRepeatMode: (repeatMode: RepeatMode) => Promise<void>;
   sync: () => Promise<void>;
+
+  // Local-only update
+  updateProgressLocal: (progressMs: number) => void;
 }
 
 export const usePlaybackStore = create<PlaybackState>((set, get) => ({
@@ -61,15 +64,14 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   async pause() {
     const { session } = get();
     if (!session) return;
-
     set({
       session: {
         ...session,
         isPlaying: false,
         progressMs: calcProgress(session),
+        lastPositionUpdatedAt: null,
       },
     });
-
     try {
       await postApi("/playback/pause");
       await get().sync();
@@ -81,7 +83,6 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   async resume() {
     const { session } = get();
     if (!session) return;
-
     set({
       session: {
         ...session,
@@ -89,7 +90,6 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
         lastPositionUpdatedAt: new Date(),
       },
     });
-
     try {
       await postApi("/playback/resume");
       await get().sync();
@@ -101,7 +101,6 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
   async seek(positionMs) {
     const { session } = get();
     if (!session) return;
-
     set({
       session: {
         ...session,
@@ -109,7 +108,6 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
         lastPositionUpdatedAt: new Date(),
       },
     });
-
     try {
       await postApi("/playback/seek", { positionMs });
       await get().sync();
@@ -162,9 +160,21 @@ export const usePlaybackStore = create<PlaybackState>((set, get) => ({
       console.error("Sync failed:", err);
     }
   },
+
+  // --- Local only ---
+  updateProgressLocal(progressMs) {
+    const { session } = get();
+    if (!session) return;
+    set({
+      session: {
+        ...session,
+        progressMs,
+        lastPositionUpdatedAt: new Date(),
+      },
+    });
+  },
 }));
 
-// Helper: tính progress với elapsed time
 function calcProgress(session: PlaybackSession | null): number {
   if (!session) return 0;
   if (!session.isPlaying || !session.lastPositionUpdatedAt) {

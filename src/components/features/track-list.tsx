@@ -59,8 +59,8 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
       {tracks.length > 0 ? (
         tracks.map((track, trackIndex) => {
           const isThisTrack =
-            session?.snapshot.contextType === type &&
-            session?.snapshot.contextId === contextId &&
+            session?.snapshot?.contextType === type &&
+            session?.snapshot?.contextId === contextId &&
             session.currentTrackId === track.id;
 
           return (

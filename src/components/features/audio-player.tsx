@@ -25,11 +25,11 @@ import { useShallow } from "zustand/react/shallow";
 import { useTrack } from "@/features/track/hooks/use-tracks";
 import TrackItem from "./track-item";
 import { usePlaybackStore } from "@/stores/use-playback-store";
-import { ProgressBar } from "./progress-bar";
-import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { cn } from "@/lib/utils";
 import { formatTime } from "@/lib/helpers/format-time";
 import { Slider } from "../ui/slider";
+import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { ProgressBar } from "../shared/progress-bar";
 
 export default function AudioPlayer() {
   const {
@@ -40,6 +40,7 @@ export default function AudioPlayer() {
     next,
     previous,
     resume,
+    pause,
   } = usePlaybackStore(
     useShallow((s) => ({
       isLoading: s.isLoading,
@@ -49,11 +50,10 @@ export default function AudioPlayer() {
       next: s.next,
       previous: s.previous,
       resume: s.resume,
+      pause: s.pause,
     }))
   );
   const { audioRef } = useAudioPlayer();
-
-  const { data: currentTrack } = useTrack(session?.currentTrackId);
 
   // useScrobble();
 
@@ -61,15 +61,17 @@ export default function AudioPlayer() {
     useShallow((s) => ({ toggle: s.toggle, active: s.active }))
   );
 
+  console.log(session?.progressMs);
+
   return (
     <>
-      {session && currentTrack && (
+      {session && (
         <div className="fixed bottom-0 left-0 right-0 bg-player border z-60 px-4 py-2">
           <div className="flex items-center justify-between gap-12">
             <div className="flex items-center">
               <div className="w-3xs">
                 <TrackItem
-                  track={currentTrack}
+                  track={session.currentTrack}
                   canHover={false}
                   imageSize="large"
                 />
@@ -117,10 +119,10 @@ export default function AudioPlayer() {
                     isLoading && "stroke-1.5 fill-none animate-spin"
                   )}
                   className="p-2.25 rounded-full bg-muted cursor-pointer"
-                  tooltipContent={session.isPlaying ? "Pause" : "Play"}
-                  description="Play/pause"
+                  tooltipContent={session.isPlaying ? "Pause" : "Resume"}
+                  description="Toggle play"
                   disabled={isLoading}
-                  onClick={resume}
+                  onClick={session.isPlaying ? pause : resume}
                 />
                 <IconButton
                   icon={SkipForwardIcon}
@@ -150,7 +152,8 @@ export default function AudioPlayer() {
                   // onClick={setRepeatMode}
                 />
               </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground w-full max-w-xl">
+              <ProgressBar />
+              {/* <div className="flex items-center gap-4 text-sm text-muted-foreground w-full max-w-xl">
                 <span className="text-xs">
                   {formatTime(session.progressMs)}
                 </span>
@@ -158,15 +161,15 @@ export default function AudioPlayer() {
                 <Slider
                   value={[session.progressMs]}
                   onValueCommit={() => handleSeek}
-                  max={currentTrack.duration}
+                  max={session.currentTrack.duration * 1000}
                   step={1000}
                   className="flex-1"
                 />
 
                 <span className="text-xs text-right">
-                  {formatTime(currentTrack.duration)}
+                  {formatTime(session.currentTrack.duration * 1000)}
                 </span>
-              </div>
+              </div> */}
               {/* <PlayerControls
                 isPlaying={isPlaying}
                 isLoading={isLoading}
@@ -188,7 +191,7 @@ export default function AudioPlayer() {
                 formatTime={formatTime}
               /> */}
             </div>
-            {/* <div className="flex items-center">
+            <div className="flex items-center">
               <div className="flex items-center space-x-5">
                 <IconButton
                   icon={SquarePlayIcon}
@@ -232,17 +235,17 @@ export default function AudioPlayer() {
                   tooltipContent="Open miniplayer"
                 />
                 <VolumeControl
-                  volume={volume.volume}
-                  isMuted={volume.isMuted}
-                  onVolumeChange={volume.setVolume}
-                  onToggleMute={volume.toggleMute}
+                  volume={session.volume}
+                  isMuted={session.isMuted}
+                  // onVolumeChange={session.s}
+                  // onToggleMute={volume.toggleMute}
                 />
               </div>
-            </div> */}
+            </div>
           </div>
         </div>
       )}
-      <audio ref={audioRef} preload="metadata" className="hidden" />
+      <audio ref={audioRef} preload="auto" hidden />
     </>
   );
 }
