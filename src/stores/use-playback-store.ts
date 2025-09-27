@@ -1,221 +1,198 @@
-// use-playback-store.ts
 "use client";
 
 import {
-  PlaybackSession,
-  PlaybackContextSnapshot,
+  NextPlaybackOutput,
+  PlaybackSessionExtended,
+  PreviousPlaybackOutput,
+  ShufflePlaybackOutput,
+  StartPlaybackInput,
 } from "@/features/playback/contracts/playback-dto";
 import { RepeatMode } from "@/features/shared/contracts/shared-enum";
+
 import { getApi, patchApi, postApi } from "@/lib/http/request";
 import { create } from "zustand";
 
 interface PlaybackState {
-  session: PlaybackSession | null;
   isLoading: boolean;
+  session: PlaybackSessionExtended | null;
+  isPlaying: boolean;
+  progressMs: number;
+  volume: number;
+  isMuted: boolean;
 
-  // Local-only markers for seeks
-  lastLocalSeekAt: number | null; // timestamp ms when client last requested a seek
-  lastLocalSeekPositionMs: number | null;
-
-  // Selectors
-  getCurrentTrackId: () => string | undefined;
-  isPlaying: () => boolean;
-  getProgressMs: () => number;
-  getVolume: () => number;
-  isMuted: () => boolean;
-  repeatMode: () => RepeatMode;
-  isShuffled: () => boolean;
-
-  // Actions
-  play: (input: PlaybackContextSnapshot) => Promise<void>;
-  pause: () => Promise<void>;
-  resume: () => Promise<void>;
-  seek: (positionMs: number) => Promise<void>;
+  hydrate: () => Promise<void>;
+  start: (input: StartPlaybackInput) => Promise<void>;
+  pause: () => void;
+  resume: () => void;
+  seek: (positionMs: number) => void;
   next: () => Promise<void>;
   previous: () => Promise<void>;
-  toggleMute: (isMuted: boolean) => Promise<void>;
-  toggleShuffle: (isShuffled: boolean) => Promise<void>;
-  setRepeatMode: (repeatMode: RepeatMode) => Promise<void>;
-  sync: () => Promise<void>;
-
-  // Local-only update
-  updateProgressLocal: (progressMs: number) => void;
-
-  // clear local seek marker (called by audio hook after it applied the seek)
-  clearLocalSeek: () => void;
+  toggleMute: () => void;
+  toggleShuffle: () => Promise<void>;
+  cycleRepeatMode: (repeatMode: RepeatMode) => Promise<void>;
+  setVolume: (volume: number) => void;
 }
 
 export const usePlaybackStore = create<PlaybackState>((set, get) => ({
-  session: null,
   isLoading: false,
+  session: null,
+  isPlaying: false,
+  progressMs: 0,
+  volume: 1,
+  isMuted: false,
 
-  // local-only seek markers
-  lastLocalSeekAt: null,
-  lastLocalSeekPositionMs: null,
+  async hydrate() {
+    try {
+      const session = await getApi<PlaybackSessionExtended | null>(
+        "/playback/session"
+      );
 
-  // --- Selectors ---
-  getCurrentTrackId: () => get().session?.currentTrackId,
-  isPlaying: () => !!get().session?.isPlaying,
-  getProgressMs: () => calcProgress(get().session),
-  getVolume: () => get().session?.volume ?? 80,
-  isMuted: () => !!get().session?.isMuted,
-  repeatMode: () => get().session?.repeatMode ?? "OFF",
-  isShuffled: () => !!get().session?.isShuffled,
+      if (!session) {
+        return;
+      }
 
-  // --- Actions ---
-  async play(input) {
+      set({ session });
+    } catch (err) {
+      console.error("Failed to hydrate playback session:", err);
+    }
+  },
+
+  async start(input) {
     set({ isLoading: true });
     try {
-      const data = await postApi<PlaybackSession>("/playback/start", input);
-      set({ session: data, isLoading: false });
+      const session = await postApi<PlaybackSessionExtended>(
+        "/playback/start",
+        input
+      );
+
+      set({ session: session, isLoading: false, progressMs: 0 });
+      get().resume();
     } catch (err) {
       console.error("Error starting playback:", err);
       set({ isLoading: false });
     }
   },
 
-  async pause() {
-    const { session } = get();
-    if (!session) return;
-    set({
-      session: {
-        ...session,
-        isPlaying: false,
-        progressMs: calcProgress(session),
-        lastPositionUpdatedAt: null,
-      },
-    });
-    try {
-      await postApi("/playback/pause");
-      // do not force sync() to avoid audio jank
-    } catch (err) {
-      console.error("Pause failed:", err);
-    }
+  pause() {
+    set({ isPlaying: false });
   },
 
-  async resume() {
-    const { session } = get();
-    if (!session) return;
-    set({
-      session: {
-        ...session,
-        isPlaying: true,
-        lastPositionUpdatedAt: new Date(),
-      },
-    });
-    try {
-      await postApi("/playback/resume");
-      // do not sync immediately
-    } catch (err) {
-      console.error("Resume failed:", err);
-    }
+  resume() {
+    set({ isPlaying: true });
   },
 
-  async seek(positionMs) {
-    const { session } = get();
-    if (!session) return;
-
-    const now = Date.now();
-    set({
-      session: {
-        ...session,
-        progressMs: positionMs,
-        // if playing, we mark position updated now; if paused, it's still fine
-        lastPositionUpdatedAt: new Date(),
-      },
-      // local-only markers used to tell audio element to jump
-      lastLocalSeekAt: now,
-      lastLocalSeekPositionMs: positionMs,
-    });
-
-    try {
-      await postApi("/playback/seek", { positionMs });
-      // do NOT call sync() here — avoid overwriting local audio immediately
-    } catch (err) {
-      console.error("Seek failed:", err);
-    }
+  seek(positionMs) {
+    set({ progressMs: positionMs });
   },
 
   async next() {
+    set({ isLoading: true });
+    const { session } = get();
+
+    if (!session) {
+      return;
+    }
+
     try {
-      await postApi<void>("/playback/next");
-      // next changes track — doing a sync is OK here to get new session
-      await get().sync();
+      const response = await postApi<NextPlaybackOutput>("/playback/next");
+      set({
+        session: { ...session, ...response },
+        progressMs: 0,
+        isLoading: false,
+      });
     } catch (err) {
       console.error("Next failed:", err);
+      set({ isLoading: false });
     }
   },
 
   async previous() {
+    set({ isLoading: true });
+    const { session, progressMs } = get();
+
+    if (!session) {
+      return;
+    }
+
     try {
-      await postApi<void>("/playback/previous");
-      await get().sync();
+      const response = await postApi<PreviousPlaybackOutput>(
+        "/playback/previous",
+        {
+          positionMs: progressMs,
+        }
+      );
+      set({
+        session: { ...session, ...response },
+        progressMs: 0,
+        isLoading: false,
+      });
     } catch (err) {
       console.error("Previous failed:", err);
+      set({ isLoading: false });
     }
   },
 
-  async toggleMute(isMuted) {
-    try {
-      await patchApi<void>("/playback/mute", { isMuted });
-      await get().sync();
-    } catch (err) {
-      console.error("Toggle mute failed:", err);
-    }
+  toggleMute() {
+    set((s) => ({
+      ...s,
+      isMuted: !s.isMuted,
+    }));
   },
 
-  async toggleShuffle(isShuffled) {
-    try {
-      await patchApi<void>("/playback/shuffle", { isShuffled });
-      await get().sync();
-    } catch (err) {
-      console.error("Toggle shuffle failed:", err);
-    }
-  },
-
-  async setRepeatMode(repeatMode) {
-    try {
-      await patchApi<void>("/playback/repeat", { repeatMode });
-      await get().sync();
-    } catch (err) {
-      console.error("Set repeat mode failed:", err);
-    }
-  },
-
-  async sync() {
-    try {
-      const data = await getApi<PlaybackSession>("/playback/session");
-      set({ session: data });
-    } catch (err) {
-      console.error("Sync failed:", err);
-    }
-  },
-
-  // --- Local only ---
-  updateProgressLocal(progressMs) {
+  async toggleShuffle() {
     const { session } = get();
     if (!session) return;
-    set({
-      session: {
-        ...session,
-        progressMs,
-        lastPositionUpdatedAt: new Date(),
-      },
-    });
+
+    const prev = session.isShuffled;
+    const next = !prev;
+
+    set({ session: { ...session, isShuffled: next } });
+
+    try {
+      await patchApi<ShufflePlaybackOutput>("/playback/shuffle", {
+        isShuffled: next,
+      });
+    } catch (err) {
+      console.error("Toggle shuffle failed:", err);
+
+      set({ session: { ...session, isShuffled: prev } });
+    }
   },
 
-  clearLocalSeek() {
-    set({ lastLocalSeekAt: null, lastLocalSeekPositionMs: null });
+  async cycleRepeatMode() {
+    const { session } = get();
+    if (!session) return;
+
+    const prev = session.repeatMode;
+    const next = getNextRepeatMode(prev);
+
+    set({ session: { ...session, repeatMode: next } });
+
+    try {
+      await patchApi<NextPlaybackOutput>("/playback/repeat", {
+        repeatMode: next,
+      });
+    } catch (err) {
+      console.error("Set repeat mode failed:", err);
+
+      set({ session: { ...session, repeatMode: prev } });
+    }
+  },
+
+  setVolume(volume) {
+    set({ volume });
   },
 }));
 
-export function calcProgress(session: PlaybackSession | null): number {
-  if (!session) return 0;
-  if (!session.isPlaying || !session.lastPositionUpdatedAt) {
-    return session.progressMs;
+export function getNextRepeatMode(current: RepeatMode): RepeatMode {
+  switch (current) {
+    case "OFF":
+      return "ALL";
+    case "ALL":
+      return "ONE";
+    case "ONE":
+      return "OFF";
+    default:
+      return "OFF";
   }
-  const elapsed =
-    Date.now() - new Date(session.lastPositionUpdatedAt).getTime();
-  // keep returned value as integer ms
-  return session.progressMs + elapsed;
 }

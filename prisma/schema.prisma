@@ -463,6 +463,7 @@ enum RepeatMode {
 enum QueueItemKind {
   NEXT // "Play next" 
   LATER // "Add to queue" 
+  CONTEXT
 }
 
 enum PlaybackContextType {
@@ -479,19 +480,13 @@ model PlaybackSession {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Playback state
-  snapshotId            String
-  snapshot              PlaybackContextSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
-  contextIndex          Int                     @default(0)
-  currentTrackId        String
-  progressMs            Int                     @default(0)
-  isPlaying             Boolean                 @default(false)
-  lastPositionUpdatedAt DateTime?
+  snapshotId     String
+  snapshot       PlaybackContextSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  contextIndex   Int                     @default(0)
+  currentTrackId String
 
-  // Options
   isShuffled Boolean    @default(false)
   repeatMode RepeatMode @default(OFF)
-  volume     Int        @default(80)
-  isMuted    Boolean    @default(false)
 
   queue PlaybackQueueItem[]
 

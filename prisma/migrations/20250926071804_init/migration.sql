@@ -17,7 +17,7 @@ CREATE TYPE "public"."CreditRole" AS ENUM ('LEAD_VOCALS', 'BACKING_VOCALS', 'RAP
 CREATE TYPE "public"."RepeatMode" AS ENUM ('OFF', 'ONE', 'ALL');
 
 -- CreateEnum
-CREATE TYPE "public"."QueueItemKind" AS ENUM ('NEXT', 'LATER');
+CREATE TYPE "public"."QueueItemKind" AS ENUM ('NEXT', 'LATER', 'CONTEXT');
 
 -- CreateEnum
 CREATE TYPE "public"."PlaybackContextType" AS ENUM ('PLAYLIST', 'ALBUM', 'ARTIST', 'HISTORY', 'SEARCH');
@@ -278,13 +278,8 @@ CREATE TABLE "public"."playback_sessions" (
     "snapshotId" TEXT NOT NULL,
     "contextIndex" INTEGER NOT NULL DEFAULT 0,
     "currentTrackId" TEXT NOT NULL,
-    "progressMs" INTEGER NOT NULL DEFAULT 0,
-    "isPlaying" BOOLEAN NOT NULL DEFAULT false,
-    "lastPositionUpdatedAt" TIMESTAMP(3),
     "isShuffled" BOOLEAN NOT NULL DEFAULT false,
     "repeatMode" "public"."RepeatMode" NOT NULL DEFAULT 'OFF',
-    "volume" INTEGER NOT NULL DEFAULT 80,
-    "isMuted" BOOLEAN NOT NULL DEFAULT false,
     "activeDeviceId" TEXT,
     "version" BIGINT NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

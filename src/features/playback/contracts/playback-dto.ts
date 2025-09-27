@@ -1,14 +1,57 @@
 import {
   zBoolSchema,
   zCuidSchema,
-  zDateSchema,
 } from "@/features/shared/contracts/shared-dto";
 import {
   PlaybackContextTypeSchema,
+  QueueItemKindSchema,
   RepeatModeSchema,
 } from "@/features/shared/contracts/shared-enum";
-import { TrackItemSchema } from "@/features/track/contracts/track-dto";
+import { FullTrackSchema } from "@/features/track/contracts/track-dto";
 import z from "zod";
+
+export const PlaybackSessionSchema = z.object({
+  id: zCuidSchema,
+  isShuffled: zBoolSchema,
+  repeatMode: RepeatModeSchema,
+  currentTrackId: zCuidSchema,
+  snapshot: z.object({
+    type: PlaybackContextTypeSchema,
+    name: z.string().nullable(),
+    contextId: z.string().nullable(),
+    tracks: z
+      .object({
+        track: z.object({
+          id: zCuidSchema,
+        }),
+        index: z.number().int().nonnegative(),
+        trackId: zCuidSchema,
+      })
+      .array(),
+  }),
+  contextIndex: z.number().int().nonnegative(),
+  queue: z
+    .object({
+      track: z.object({
+        id: zCuidSchema,
+      }),
+      kind: QueueItemKindSchema,
+    })
+    .array(),
+  activeDeviceId: z.string().nullable(),
+});
+
+export type PlaybackSession = z.infer<typeof PlaybackSessionSchema>;
+
+export const PlaybackSessionExtendedSchema = PlaybackSessionSchema.extend({
+  currentTrack: FullTrackSchema,
+  hasNext: zBoolSchema,
+  hasPrevious: zBoolSchema,
+});
+
+export type PlaybackSessionExtended = z.infer<
+  typeof PlaybackSessionExtendedSchema
+>;
 
 export const PlaybackContextSnapshotSchema = z.object({
   contextType: PlaybackContextTypeSchema,
@@ -20,48 +63,68 @@ export type PlaybackContextSnapshot = z.infer<
   typeof PlaybackContextSnapshotSchema
 >;
 
-export const SeekPlaybackInputSchema = z.object({
-  positionMs: z.number().int().min(0),
+export const VolumePlaybackInputSchema = z.object({
+  volume: z.number(),
 });
 
-export type SeekPlaybackInput = z.infer<typeof SeekPlaybackInputSchema>;
+export type VolumePlaybackInput = z.infer<typeof VolumePlaybackInputSchema>;
 
-export const PlaybackSessionSchema = z.object({
-  isPlaying: zBoolSchema,
-  progressMs: z.number().int().min(0),
-  lastPositionUpdatedAt: zDateSchema.nullable(),
-  isShuffled: zBoolSchema,
-  repeatMode: RepeatModeSchema,
-  volume: z.number().int().min(0).max(100),
-  isMuted: zBoolSchema,
-  currentTrackId: zCuidSchema,
-  currentTrack: TrackItemSchema.extend({
-    audioId: z.string(),
-  }),
-  id: zCuidSchema,
-  snapshot: z.object({
-    contextType: PlaybackContextTypeSchema,
-    contextId: z.string(),
-    name: z.string().nullable(),
-  }),
+export const StartPlaybackInputSchema = z.object({
+  contextType: PlaybackContextTypeSchema,
+  contextId: z.string(),
+  startTrackId: zCuidSchema.optional(),
 });
 
-export type PlaybackSession = z.infer<typeof PlaybackSessionSchema>;
+export type StartPlaybackInput = z.infer<typeof StartPlaybackInputSchema>;
 
-export const ShufflePlaybackInputSchema = z.object({
-  isShuffled: zBoolSchema,
+export const NextPlaybackOutputSchema = PlaybackSessionExtendedSchema.pick({
+  currentTrackId: true,
+  contextIndex: true,
+  currentTrack: true,
+  hasNext: true,
+  hasPrevious: true,
+});
+
+export type NextPlaybackOutput = z.infer<typeof NextPlaybackOutputSchema>;
+
+export const PreviousPlaybackInputSchema = z.object({
+  positionMs: z.number().nonnegative(),
+});
+
+export type PreviousPlaybackInput = z.infer<typeof PreviousPlaybackInputSchema>;
+
+export const PreviousPlaybackOutputSchema = PlaybackSessionExtendedSchema.pick({
+  currentTrackId: true,
+  contextIndex: true,
+  currentTrack: true,
+  hasNext: true,
+  hasPrevious: true,
+});
+
+export type PreviousPlaybackOutput = z.infer<
+  typeof PreviousPlaybackOutputSchema
+>;
+
+export const ShufflePlaybackInputSchema = PlaybackSessionSchema.pick({
+  isShuffled: true,
 });
 
 export type ShufflePlaybackInput = z.infer<typeof ShufflePlaybackInputSchema>;
 
-export const MutePlaybackInputSchema = z.object({
-  isMuted: zBoolSchema,
+export const ShufflePlaybackOutputSchema = PlaybackSessionSchema.pick({
+  isShuffled: true,
 });
 
-export type MutePlaybackInput = z.infer<typeof MutePlaybackInputSchema>;
+export type ShufflePlaybackOutput = z.infer<typeof ShufflePlaybackOutputSchema>;
 
-export const RepeatPlaybackInputSchema = z.object({
-  repeatMode: RepeatModeSchema,
+export const RepeatPlaybackInputSchema = PlaybackSessionSchema.pick({
+  repeatMode: true,
 });
 
 export type RepeatPlaybackInput = z.infer<typeof RepeatPlaybackInputSchema>;
+
+export const RepeatPlaybackOutputSchema = PlaybackSessionSchema.pick({
+  repeatMode: true,
+});
+
+export type RepeatPlaybackOutput = z.infer<typeof RepeatPlaybackOutputSchema>;

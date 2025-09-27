@@ -28,24 +28,32 @@ import { ProgressBar } from "../shared/progress-bar";
 
 export default function AudioPlayer() {
   const {
-    isLoading,
     session,
-    setRepeatMode,
     toggleShuffle,
     next,
     previous,
     resume,
     pause,
+    isLoading,
+    currentTrack,
+    isPlaying,
+    hasPrevious,
+    hasNext,
+    cycleRepeatMode,
   } = usePlaybackStore(
     useShallow((s) => ({
-      isLoading: s.isLoading,
       session: s.session,
-      setRepeatMode: s.setRepeatMode,
       toggleShuffle: s.toggleShuffle,
       next: s.next,
       previous: s.previous,
       resume: s.resume,
       pause: s.pause,
+      hasPrevious: s.session?.hasPrevious,
+      hasNext: s.session?.hasNext,
+      isLoading: s.isLoading,
+      currentTrack: s.session?.currentTrack,
+      isPlaying: s.isPlaying,
+      cycleRepeatMode: s.cycleRepeatMode,
     }))
   );
   const { audioRef } = useAudioPlayer();
@@ -56,17 +64,15 @@ export default function AudioPlayer() {
     useShallow((s) => ({ toggle: s.toggle, active: s.active }))
   );
 
-  console.log(session);
-
   return (
     <>
-      {session && (
+      {currentTrack && session && (
         <div className="fixed bottom-0 left-0 right-0 bg-player border z-60 px-4 py-2">
           <div className="flex items-center justify-between gap-12">
             <div className="flex items-center">
               <div className="w-3xs">
                 <TrackItem
-                  track={session.currentTrack}
+                  track={currentTrack}
                   canHover={false}
                   imageSize="large"
                 />
@@ -85,7 +91,7 @@ export default function AudioPlayer() {
               <div className="space-x-6 flex items-center">
                 <IconButton
                   icon={ShuffleIcon}
-                  onClick={() => toggleShuffle(!session.isShuffled)}
+                  onClick={toggleShuffle}
                   tooltipContent={
                     session.isShuffled ? "Disable shuffle" : "Enable shuffle"
                   }
@@ -100,31 +106,28 @@ export default function AudioPlayer() {
                   onClick={previous}
                   iconClassName="fill-current"
                   tooltipContent="Previous"
-                  disabled={session.contextIndex === 0}
+                  disabled={!hasPrevious}
                 />
                 <IconButton
                   icon={
-                    isLoading
-                      ? Loader2Icon
-                      : session.isPlaying
-                      ? PauseIcon
-                      : PlayIcon
+                    isLoading ? Loader2Icon : isPlaying ? PauseIcon : PlayIcon
                   }
                   iconClassName={cn(
                     "fill-current stroke-0 size-6",
                     isLoading && "stroke-1.5 fill-none animate-spin"
                   )}
                   className="p-2.25 rounded-full bg-muted cursor-pointer"
-                  tooltipContent={session.isPlaying ? "Pause" : "Resume"}
+                  tooltipContent={isPlaying ? "Pause" : "Resume"}
                   description="Toggle play"
                   disabled={isLoading}
-                  onClick={session.isPlaying ? pause : resume}
+                  onClick={isPlaying ? pause : resume}
                 />
                 <IconButton
                   icon={SkipForwardIcon}
                   onClick={next}
                   iconClassName="fill-current"
                   tooltipContent="Next"
+                  disabled={!hasNext}
                 />
                 <IconButton
                   icon={session.repeatMode === "ONE" ? Repeat1Icon : RepeatIcon}
@@ -145,7 +148,7 @@ export default function AudioPlayer() {
                       ? "Enable repeat"
                       : "Enable repeat one"
                   }
-                  // onClick={setRepeatMode}
+                  onClick={() => cycleRepeatMode(session.repeatMode)}
                 />
               </div>
               <ProgressBar />

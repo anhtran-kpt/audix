@@ -20,10 +20,11 @@ type TrackListProps = {
 };
 
 export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
-  const { isPlaying, session } = usePlaybackStore(
+  const { isPlaying, snapshot, currentTrackId } = usePlaybackStore(
     useShallow((s) => ({
-      isPlaying: s.isPlaying(),
-      session: s.session,
+      isPlaying: s.session?.isPlaying ?? false,
+      currentTrackId: s.session?.currentTrackId,
+      snapshot: s.session?.snapshot,
     }))
   );
 
@@ -59,9 +60,9 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
       {tracks.length > 0 ? (
         tracks.map((track, trackIndex) => {
           const isThisTrack =
-            session?.snapshot?.contextType === type &&
-            session?.snapshot?.contextId === contextId &&
-            session.currentTrackId === track.id;
+            snapshot?.type === type &&
+            snapshot?.contextId === contextId &&
+            currentTrackId === track.id;
 
           return (
             <div
@@ -76,7 +77,11 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
                   isPlaying={isPlaying}
                   isThisTrack={isThisTrack}
                   index={trackIndex}
-                  context={{ type, contextId }}
+                  context={{
+                    contextType: type,
+                    contextIdOrQuery: contextId,
+                    startTrackId: track.id,
+                  }}
                 />
               </div>
 

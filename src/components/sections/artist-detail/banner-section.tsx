@@ -75,7 +75,7 @@ export const BannerSection = ({
         <ContextPlayButton
           context={{
             contextType: "ARTIST",
-            contextIdOrQuery: artistId,
+            contextId: artistId,
           }}
         />
         <IconButton

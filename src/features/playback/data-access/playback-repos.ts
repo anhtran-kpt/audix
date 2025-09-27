@@ -8,41 +8,89 @@ import {
   trackItemSelect,
 } from "@/features/track/data-access/track-selects";
 import {
-  MutePlaybackInput,
+  PlaybackSession,
   RepeatPlaybackInput,
   ShufflePlaybackInput,
-  PlaybackContextSnapshot,
+  StartPlaybackInput,
 } from "../contracts/playback-dto";
 import { NextResponse } from "next/server";
 import { playbackSessionSelect } from "./playback-selects";
 
-export const getPlaybackSession = async (userId: zCuidType) => {
-  const session = await db.playbackSession.findUniqueOrThrow({
+export const getPlaybackBoundaries = (session: PlaybackSession) => {
+  const { queue, snapshot, contextIndex, repeatMode } = session;
+
+  const hasNextInQueue = queue.some((q) => q.kind === "NEXT");
+
+  const hasNextInContext = contextIndex < snapshot.tracks.length - 1;
+
+  const hasNextInLater = queue.some((q) => q.kind === "LATER");
+
+  const hasNext =
+    hasNextInQueue ||
+    hasNextInContext ||
+    hasNextInLater ||
+    (repeatMode === "ALL" && snapshot.tracks.length > 0);
+
+  const hasPrevInContext = contextIndex > 0;
+
+  const hasPrevious =
+    hasPrevInContext || (repeatMode === "ALL" && snapshot.tracks.length > 0);
+
+  return { hasNext, hasPrevious };
+};
+
+function shuffleArray<T>(arr: T[]): T[] {
+  const result = [...arr];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+export async function rebuildContextQueue(session: PlaybackSession) {
+  const { contextIndex, isShuffled, snapshot } = session;
+
+  let contextTracks = snapshot.tracks
+    .filter((t) => t.index >= contextIndex + 1)
+    .map((t) => t.trackId);
+
+  if (isShuffled) {
+    contextTracks = shuffleArray(contextTracks);
+  }
+
+  await db.playbackQueueItem.deleteMany({
+    where: { sessionId: session.id, kind: "CONTEXT" },
+  });
+
+  if (contextTracks.length > 0) {
+    await db.playbackQueueItem.createMany({
+      data: contextTracks.map((trackId, i) => ({
+        sessionId: session.id,
+        kind: "CONTEXT",
+        position: i,
+        trackId,
+      })),
+    });
+  }
+}
+
+export const getPlaybackSession = async (userId: string) => {
+  const session = await db.playbackSession.findUnique({
     where: { userId },
     select: playbackSessionSelect,
   });
+
+  if (!session) return null;
 
   const currentTrack = await db.track.findUniqueOrThrow({
     where: { id: session.currentTrackId },
     select: trackDetailSelect,
   });
 
-  let newProgress = session.progressMs;
+  const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
 
-  if (session.isPlaying && session.lastPositionUpdatedAt) {
-    const elapsed =
-      Date.now() - new Date(session.lastPositionUpdatedAt).getTime();
-    newProgress += elapsed;
-  }
-
-  newProgress = Math.min(newProgress, currentTrack.duration * 1000);
-
-  return {
-    ...session,
-    currentTrack,
-    progressMs: newProgress,
-    lastPositionUpdatedAt: new Date(),
-  };
+  return { ...session, currentTrack, hasNext, hasPrevious };
 };
 
 const createSnapshotFromPlaylist = async ({
@@ -307,12 +355,11 @@ export const startPlaybackSession = async ({
   input,
 }: {
   userId: string;
-  input: PlaybackContextSnapshot;
+  input: StartPlaybackInput;
 }) => {
-  const { contextType, contextIdOrQuery, startTrackId } = input;
+  const { contextType, contextId, startTrackId } = input;
 
-  const snapshot = await createSnapshot(userId, contextType, contextIdOrQuery);
-
+  const snapshot = await createSnapshot(userId, contextType, contextId);
   const snapshotTracks = await db.playbackSnapshotTrack.findMany({
     where: { snapshotId: snapshot.id },
     orderBy: { index: "asc" },
@@ -334,13 +381,6 @@ export const startPlaybackSession = async ({
 
   const currentTrackId = snapshotTracks[contextIndex].trackId;
 
-  const currentTrack = await db.track.findUniqueOrThrow({
-    where: {
-      id: currentTrackId,
-    },
-    select: trackDetailSelect,
-  });
-
   const session = await db.playbackSession.upsert({
     where: { userId },
     create: {
@@ -348,258 +388,159 @@ export const startPlaybackSession = async ({
       snapshotId: snapshot.id,
       contextIndex,
       currentTrackId,
-      progressMs: 0,
-      isPlaying: true,
-      lastPositionUpdatedAt: new Date(),
     },
     update: {
       snapshotId: snapshot.id,
       contextIndex,
       currentTrackId,
-      progressMs: 0,
       version: { increment: 1 },
-      updatedAt: new Date(),
-      isPlaying: true,
-      lastPositionUpdatedAt: new Date(),
     },
     select: playbackSessionSelect,
   });
 
-  return { ...session, currentTrack };
-};
+  await rebuildContextQueue(session);
 
-export const pausePlayback = async (userId: string) => {
-  const session = await db.playbackSession.findUnique({
-    where: { userId },
+  const currentTrack = await db.track.findUniqueOrThrow({
+    where: { id: currentTrackId },
+    select: trackDetailSelect,
   });
 
-  if (!session) {
-    return NextResponse.json(
-      { error: "No active playback session" },
-      { status: 404 }
-    );
-  }
+  const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
 
-  if (!session.isPlaying) {
-    return NextResponse.json({
-      success: true,
-      state: session,
-    });
-  }
-
-  let newProgress = session.progressMs;
-  if (session.lastPositionUpdatedAt) {
-    const elapsed =
-      Date.now() - new Date(session.lastPositionUpdatedAt).getTime();
-    newProgress += elapsed;
-  }
-
-  return await db.playbackSession.update({
-    where: { id: session.id },
-    data: {
-      isPlaying: false,
-      progressMs: newProgress,
-      lastPositionUpdatedAt: null,
-      version: { increment: 1 },
-    },
-    select: {
-      ...playbackSessionSelect,
-    },
-  });
-};
-
-export const resumePlayback = async (userId: string) => {
-  const session = await db.playbackSession.findUnique({
-    where: { userId },
-    select: {
-      ...playbackSessionSelect,
-    },
-  });
-
-  if (!session) {
-    return NextResponse.json(
-      { error: "No active playback session" },
-      { status: 404 }
-    );
-  }
-
-  if (session.isPlaying) {
-    return session;
-  }
-
-  return await db.playbackSession.update({
-    where: { id: session.id },
-    data: {
-      isPlaying: true,
-      lastPositionUpdatedAt: new Date(),
-      version: { increment: 1 },
-    },
-    select: {
-      ...playbackSessionSelect,
-    },
-  });
+  return { ...session, currentTrack, hasNext, hasPrevious };
 };
 
 export const skipToNext = async (userId: string) => {
   const session = await db.playbackSession.findUnique({
     where: { userId },
     include: {
-      snapshot: {
-        include: { tracks: { orderBy: { index: "asc" } } },
-      },
+      snapshot: { include: { tracks: { orderBy: { index: "asc" } } } },
       queue: {
-        where: { kind: "NEXT" },
-        orderBy: { position: "asc" },
+        include: { track: true },
+        orderBy: [{ kind: "asc" }, { position: "asc" }],
       },
     },
   });
 
-  if (!session) {
-    return NextResponse.json(
-      { error: "No active playback session" },
-      { status: 404 }
-    );
-  }
+  if (!session) throw new Error("No active playback session");
 
-  let newTrackId: string | null = null;
-  let newIndex: number = session.contextIndex;
+  const [nextItem] = session.queue.filter((q) => q.kind === "NEXT");
 
-  if (session.queue.length > 0) {
-    const nextItem = session.queue[0];
+  let pickedTrackId: string | null = null;
+  let newIndex = session.contextIndex;
 
-    await db.playbackQueueItem.delete({
-      where: { id: nextItem.id },
-    });
-
-    newTrackId = nextItem.trackId;
+  if (nextItem) {
+    pickedTrackId = nextItem.trackId;
+    await db.playbackQueueItem.delete({ where: { id: nextItem.id } });
   } else {
     const tracks = session.snapshot.tracks;
-    if (!tracks || tracks.length === 0) {
-      return NextResponse.json(
-        { error: "No tracks in snapshot" },
-        { status: 400 }
-      );
-    }
-
-    let nextIndex = session.contextIndex + 1;
-
-    if (nextIndex >= tracks.length) {
-      if (session.repeatMode === "ALL") {
-        nextIndex = 0;
+    if (session.contextIndex + 1 < tracks.length) {
+      newIndex = session.contextIndex + 1;
+      pickedTrackId = tracks[newIndex].trackId;
+    } else {
+      const [laterItem] = session.queue.filter((q) => q.kind === "LATER");
+      if (laterItem) {
+        pickedTrackId = laterItem.trackId;
+        await db.playbackQueueItem.delete({ where: { id: laterItem.id } });
+      } else if (session.repeatMode === "ALL") {
+        newIndex = 0;
+        pickedTrackId = tracks[0].trackId;
+      } else if (session.repeatMode === "ONE") {
+        pickedTrackId = session.currentTrackId;
       } else {
-        return NextResponse.json({
-          success: true,
-          state: { ...session, isPlaying: false },
-        });
+        return null;
       }
     }
-
-    newIndex = nextIndex;
-    newTrackId = tracks[nextIndex].trackId;
   }
 
-  return await db.playbackSession.update({
+  if (!pickedTrackId) return null;
+
+  const newTrack = await db.track.findUniqueOrThrow({
+    where: { id: pickedTrackId },
+    select: trackDetailSelect,
+  });
+
+  const updated = await db.playbackSession.update({
     where: { id: session.id },
     data: {
-      currentTrackId: newTrackId!,
+      currentTrackId: pickedTrackId,
       contextIndex: newIndex,
-      progressMs: 0,
-      lastPositionUpdatedAt: new Date(),
-      isPlaying: true,
       version: { increment: 1 },
     },
-    select: {
-      ...playbackSessionSelect,
-    },
+    select: playbackSessionSelect,
   });
+
+  const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
+
+  return {
+    currentTrackId: updated.currentTrackId,
+    contextIndex: updated.contextIndex,
+    currentTrack: newTrack,
+    hasNext,
+    hasPrevious,
+  };
 };
 
-export const skipToPrevious = async (userId: string) => {
+export const skipToPrevious = async (userId: string, progressMs?: number) => {
   const session = await db.playbackSession.findUnique({
     where: { userId },
     include: {
-      snapshot: {
-        include: { tracks: { orderBy: { index: "asc" } } },
-      },
+      snapshot: { include: { tracks: { orderBy: { index: "asc" } } } },
     },
   });
 
   if (!session) {
-    return NextResponse.json(
-      { error: "No active playback session" },
-      { status: 404 }
-    );
+    throw new Error("No active playback session");
   }
 
-  let newTrackId: string | null = session.currentTrackId;
-  let newIndex: number = session.contextIndex;
+  const tracks = session.snapshot.tracks;
+  if (!tracks || tracks.length === 0) {
+    throw new Error("No tracks in snapshot");
+  }
 
-  if (session.progressMs > 3000) {
-    newTrackId = session.currentTrackId;
-    newIndex = session.contextIndex;
+  let newIndex = session.contextIndex;
+  let newTrackId = session.currentTrackId;
+
+  if (progressMs !== undefined && progressMs < 3000) {
+    if (session.contextIndex > 0) {
+      newIndex = session.contextIndex - 1;
+      newTrackId = tracks[newIndex].trackId;
+    } else if (session.contextIndex === 0 && session.repeatMode === "ALL") {
+      newIndex = tracks.length - 1;
+      newTrackId = tracks[newIndex].trackId;
+    } else {
+      newIndex = 0;
+      newTrackId = tracks[0].trackId;
+    }
   } else {
-    const tracks = session.snapshot.tracks;
-    if (!tracks || tracks.length === 0) {
-      return NextResponse.json(
-        { error: "No tracks in snapshot" },
-        { status: 400 }
-      );
-    }
-
-    let prevIndex = session.contextIndex - 1;
-
-    if (prevIndex < 0) {
-      if (session.repeatMode === "ALL") {
-        prevIndex = tracks.length - 1;
-      } else {
-        prevIndex = 0;
-      }
-    }
-
-    newIndex = prevIndex;
-    newTrackId = tracks[prevIndex].trackId;
+    newIndex = session.contextIndex;
+    newTrackId = tracks[newIndex].trackId;
   }
 
-  return await db.playbackSession.update({
+  const newTrack = await db.track.findUniqueOrThrow({
+    where: { id: newTrackId },
+    select: trackDetailSelect,
+  });
+
+  const updated = await db.playbackSession.update({
     where: { id: session.id },
     data: {
-      currentTrackId: newTrackId!,
+      currentTrackId: newTrackId,
       contextIndex: newIndex,
-      progressMs: 0,
-      lastPositionUpdatedAt: new Date(),
-      isPlaying: true,
       version: { increment: 1 },
     },
-    select: {
-      ...playbackSessionSelect,
-    },
-  });
-};
-
-export const seekPlayback = async (userId: string, positionMs: number) => {
-  const session = await db.playbackSession.findUnique({
-    where: { userId },
-    include: { snapshot: { include: { tracks: true } } },
+    select: playbackSessionSelect,
   });
 
-  if (!session) {
-    return NextResponse.json(
-      { error: "No active playback session" },
-      { status: 404 }
-    );
-  }
+  const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
 
-  return await db.playbackSession.update({
-    where: { id: session.id },
-    data: {
-      progressMs: positionMs,
-      lastPositionUpdatedAt: new Date(),
-      version: { increment: 1 },
-    },
-    select: {
-      ...playbackSessionSelect,
-    },
-  });
+  return {
+    currentTrackId: updated.currentTrackId,
+    contextIndex: updated.contextIndex,
+    currentTrack: newTrack,
+    hasNext,
+    hasPrevious,
+  };
 };
 
 export const shufflePlayback = async (
@@ -608,36 +549,18 @@ export const shufflePlayback = async (
 ) => {
   const { isShuffled } = input;
 
-  return await db.playbackSession.update({
+  const session = await db.playbackSession.update({
     where: { userId },
     data: {
       isShuffled,
       version: { increment: 1 },
-      updatedAt: new Date(),
     },
-    select: {
-      ...playbackSessionSelect,
-    },
+    select: playbackSessionSelect,
   });
-};
 
-export const mutePlayback = async (
-  userId: string,
-  input: MutePlaybackInput
-) => {
-  const { isMuted } = input;
+  await rebuildContextQueue(session);
 
-  return await db.playbackSession.update({
-    where: { userId },
-    data: {
-      isMuted,
-      version: { increment: 1 },
-      updatedAt: new Date(),
-    },
-    select: {
-      ...playbackSessionSelect,
-    },
-  });
+  return { isShuffled: session.isShuffled };
 };
 
 export const repeatPlayback = async (
@@ -654,11 +577,9 @@ export const repeatPlayback = async (
     where: { userId },
     data: {
       repeatMode,
-      version: { increment: 1 },
-      updatedAt: new Date(),
     },
     select: {
-      ...playbackSessionSelect,
+      repeatMode: true,
     },
   });
 };

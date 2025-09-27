@@ -1,9 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-
 import WaveForm from "../ui/wave-form";
-import { PlaybackContextType } from "@/features/shared/contracts/shared-enum";
+import { RowPlayButton } from "./row-play-button";
+import { PlaybackContextSnapshot } from "@/features/playback/contracts/playback-dto";
 
 export default function TrackIndexCell({
   isPlaying,
@@ -14,7 +14,7 @@ export default function TrackIndexCell({
   isPlaying: boolean;
   isThisTrack: boolean;
   index: number;
-  context: { type: PlaybackContextType; contextId?: string; name?: string };
+  context: PlaybackContextSnapshot;
 }) {
   if (isPlaying && isThisTrack) {
     return (
@@ -23,7 +23,10 @@ export default function TrackIndexCell({
           <WaveForm />
         </div>
         <div className="hidden group-hover:block">
-          {/* <RowPlayButton context={context} buttonType="outside" /> */}
+          <RowPlayButton
+            context={context}
+            className="hidden group-hover:block"
+          />
         </div>
       </>
     );
@@ -33,7 +36,7 @@ export default function TrackIndexCell({
       <span className={cn("group-hover:hidden", isThisTrack && "text-primary")}>
         {index + 1}
       </span>
-      {/* <RowPlayButton context={context} buttonType="outside" /> */}
+      <RowPlayButton context={context} className="hidden group-hover:block" />
     </>
   );
 }

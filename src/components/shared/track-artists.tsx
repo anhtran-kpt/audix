@@ -15,7 +15,7 @@ export default function TrackArtists({
   artists,
 }: TrackArtistsProps) {
   return (
-    <div className="flex items-center text-sm gap-x-1 text-muted-foreground truncate">
+    <div className="flex items-center text-sm gap-x-1.5 text-muted-foreground truncate">
       {isExplicit && <ExplicitIcon />}
       {artists.map((artist, index, originalArr) => (
         <span key={artist.id} className="truncate">

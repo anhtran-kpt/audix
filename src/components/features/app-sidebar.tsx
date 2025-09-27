@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import Link from "next/link";
 import { NewPlaylistDialog } from "./new-playlist-dialog";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Dot from "../ui/dot";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { ScrollArea } from "../ui/scroll-area";
@@ -34,6 +34,8 @@ import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import CoverImage from "../shared/cover-image";
 import { SidebarItemWrapper } from "../shared/sidebar-item-wrapper";
 import { usePlaybackStore } from "@/stores/use-playback-store";
+import { RowPlayButton } from "../shared/row-play-button";
+import { useShallow } from "zustand/react/shallow";
 
 export function AppSidebar({
   initialArtists,
@@ -44,6 +46,7 @@ export function AppSidebar({
 }) {
   const pathname = usePathname();
   const { toggleSidebar, open } = useSidebar();
+  const router = useRouter();
 
   const { data: playlists } = useQuery({
     ...sidebarPlaylistOptions(),
@@ -57,7 +60,12 @@ export function AppSidebar({
     initialDataUpdatedAt: Date.now(),
   });
 
-  const session = usePlaybackStore((s) => s.session);
+  const { isPlaying, contextId } = usePlaybackStore(
+    useShallow((s) => ({
+      isPlaying: s.isPlaying,
+      contextId: s.snapshot?.contextId,
+    }))
+  );
 
   const [filter, setFilter] = useState<"all" | "artists" | "playlists">("all");
 
@@ -140,7 +148,7 @@ export function AppSidebar({
                       asChild
                       isActive={pathname === `/artists/${artist.id}`}
                     >
-                      <Link href={`/artists/${artist.id}`}>
+                      <div onClick={() => router.push(`/artists/${artist.id}`)}>
                         <SidebarItemWrapper
                           open={open}
                           image={
@@ -153,18 +161,11 @@ export function AppSidebar({
                                 src={artist.imageId}
                                 priority
                               />
-                              <IconButton
-                                icon={PlayIcon}
-                                size="sm"
-                                onClick={
-                                  () => {}
-                                  // handleContextPlay({
-                                  //   contextId: artist.id,
-                                  //   name: artist.name,
-                                  //   type: "ARTIST",
-                                  // })
-                                }
-                                iconClassName="fill-foreground stroke-0"
+                              <RowPlayButton
+                                context={{
+                                  contextType: "ARTIST",
+                                  contextIdOrQuery: artist.id,
+                                }}
                                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover/menu-item:visible"
                               />
                             </>
@@ -180,13 +181,10 @@ export function AppSidebar({
                             </>
                           }
                           right={
-                            session?.isPlaying &&
-                            session?.snapshot?.contextId === artist.id && (
-                              <WaveForm />
-                            )
+                            isPlaying && contextId === artist.id && <WaveForm />
                           }
                         />
-                      </Link>
+                      </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
@@ -249,10 +247,8 @@ export function AppSidebar({
                             </>
                           }
                           right={
-                            session?.isPlaying &&
-                            session?.snapshot?.contextId === playlist.id && (
-                              <WaveForm />
-                            )
+                            isPlaying &&
+                            contextId === playlist.id && <WaveForm />
                           }
                         />
                       </Link>
