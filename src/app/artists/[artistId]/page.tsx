@@ -1,4 +1,3 @@
-import { BannerSection } from "@/components/sections/artist-detail";
 import { DiscographySection } from "./_sections/discography-section";
 import {
   getArtistDetailPage,
@@ -7,6 +6,7 @@ import {
 import { PopularTracksSection } from "./_sections/popular-tracks-section";
 import { AboutSection } from "./_sections/about-section";
 import { SuggestionSection } from "./_sections/suggestion-section";
+import { BannerSection } from "./_sections/banner-section";
 
 export default async function ArtistDetail({
   params,

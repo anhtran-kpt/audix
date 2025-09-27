@@ -12,6 +12,7 @@ import {
 import { Prisma } from "@/app/generated/prisma";
 import cloudinary from "@/lib/config/cloudinary";
 import { buildPlaylistCoverUrl } from "@/utils/string";
+import { AwaitedReturnType } from "@/utils/type";
 
 export const getSidebarPlaylists = async (userId: zCuidType) => {
   return await db.playlist.findMany({
@@ -269,6 +270,8 @@ export const getPlaylistDetail = async (playlistId: zCuidType) => {
       })),
     }));
 };
+
+export type PlaylistDetail = AwaitedReturnType<typeof getPlaylistDetail>;
 
 export const getRecommendedTracks = async (playlistId: zCuidType, take = 5) => {
   const playlist = await db.playlist.findUniqueOrThrow({

@@ -19,21 +19,20 @@ import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
 import { IconButton } from "@/components/ui/icon-button";
 import tinycolor from "tinycolor2";
-import { FullAlbum } from "@/features/album/contracts/album-dto";
 import { ContextPlayButton } from "@/components/shared/context-play-button";
+import { AlbumDetail } from "@/features/album/data-access/album-repo";
 
-type BannerSectionProps = Pick<
-  FullAlbum,
-  | "releaseDate"
-  | "imageId"
-  | "albumType"
-  | "artist"
-  | "title"
-  | "totalTracks"
-  | "duration"
-  | "genres"
-  | "id"
->;
+type BannerSectionProps = {
+  imageId: AlbumDetail["imageId"];
+  releaseDate: AlbumDetail["releaseDate"];
+  albumType: AlbumDetail["albumType"];
+  artist: AlbumDetail["artist"];
+  title: AlbumDetail["title"];
+  totalTracks: AlbumDetail["totalTracks"];
+  duration: AlbumDetail["duration"];
+  genres: AlbumDetail["genres"];
+  albumId: string;
+};
 
 export const BannerSection = ({
   imageId,
@@ -44,7 +43,7 @@ export const BannerSection = ({
   totalTracks,
   duration,
   genres,
-  id,
+  albumId,
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
@@ -113,7 +112,7 @@ export const BannerSection = ({
         <ContextPlayButton
           context={{
             contextType: "ALBUM",
-            contextId: id,
+            contextId: albumId,
           }}
         />
         <IconButton

@@ -1,11 +1,9 @@
-"use client";
-
 import AlbumGrid from "@/components/shared/album-grid";
 import SectionHeading from "@/components/ui/section-heading";
 import { AlbumBase } from "@/features/album/contracts/album-dto";
 import { ArtistBase } from "@/features/artist/contracts/artist-schema";
 
-interface OtherAlbumsSectionProps {
+interface SuggestionSectionProps {
   artist: Pick<ArtistBase, "id" | "name">;
   albums: Pick<
     AlbumBase,
@@ -13,10 +11,10 @@ interface OtherAlbumsSectionProps {
   >[];
 }
 
-export const OtherAlbumsSection = ({
+export const SuggestionSection = ({
   artist,
   albums,
-}: OtherAlbumsSectionProps) => {
+}: SuggestionSectionProps) => {
   return (
     <section>
       <SectionHeading

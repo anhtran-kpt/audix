@@ -115,7 +115,7 @@ export const PlaylistDetailSchema = PlaylistBaseSchema.extend({
     .nullable(),
 });
 
-const UserPlaylistSchema = FullPlaylistSchema.pick({
+export const UserPlaylistSchema = FullPlaylistSchema.pick({
   id: true,
   title: true,
 }).extend({

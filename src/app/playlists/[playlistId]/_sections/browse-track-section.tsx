@@ -1,8 +1,8 @@
 "use client";
 
 import AddToPlaylistButton from "@/components/features/add-to-playlist-button";
-import { RowPlayButton } from "@/components/features/row-play-button";
 import TrackItem from "@/components/features/track-item";
+import { RowPlayButton } from "@/components/shared/row-play-button";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
@@ -14,11 +14,11 @@ import { getApi } from "@/lib/http/request";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshCcwIcon, SearchIcon } from "lucide-react";
 
-type TrackAddingSectionProps = {
+type BrowseTrackSectionProps = {
   playlistId: zCuidType;
 };
 
-export const TrackAddingSection = ({ playlistId }: TrackAddingSectionProps) => {
+export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
   const {
     data: recommendedTracks,
     refetch,
@@ -82,9 +82,8 @@ export const TrackAddingSection = ({ playlistId }: TrackAddingSectionProps) => {
                 playButton={
                   <RowPlayButton
                     context={{
-                      name: track.title,
                       contextId: track.id,
-                      type: "TRACK",
+                      contextType: "ARTIST",
                     }}
                   />
                 }

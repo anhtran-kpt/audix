@@ -2,7 +2,7 @@ import "server-only";
 import db from "@/lib/db";
 import { SearchQuery } from "../contracts/search-dtos";
 import { trackItemSelect } from "@/features/track/data-access/track-selects";
-import { albumItemSelect } from "@/features/album/data-access/album-selects";
+import { albumItemSelect } from "@/features/album/data-access/album-select";
 import stringSimilarity from "string-similarity";
 
 export const search = async (query: SearchQuery) => {

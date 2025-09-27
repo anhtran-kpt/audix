@@ -21,13 +21,13 @@ import {
   UserPlus2Icon,
 } from "lucide-react";
 import tinycolor from "tinycolor2";
-import { ContextPlayButton } from "@/components/features/context-play-button";
-import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
 import { useQuery } from "@tanstack/react-query";
 import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
 import EditPlaylistDetails from "@/components/features/edit-playlist-details";
+import { ContextPlayButton } from "@/components/shared/context-play-button";
+import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 
 type BannerSectionProps = {
   initialData: PlaylistDetail;
@@ -149,9 +149,8 @@ export const BannerSection = ({
             <>
               <ContextPlayButton
                 context={{
-                  type: "PLAYLIST",
+                  contextType: "PLAYLIST",
                   contextId: playlist.id,
-                  name: playlist.title,
                 }}
               />
               <IconButton

@@ -1,8 +1,9 @@
 import { getApi } from "@/lib/http/request";
-import { PlaylistDetail, SidebarPlaylist } from "../contracts/playlist-dto";
+import { SidebarPlaylist } from "../contracts/playlist-dto";
 import { queryOptions } from "@tanstack/react-query";
 import { playlistKeys } from "./playlist-keys";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import { PlaylistDetail } from "../data-access/playlist-repo";
 
 export const sidebarPlaylistOptions = () => {
   return queryOptions({

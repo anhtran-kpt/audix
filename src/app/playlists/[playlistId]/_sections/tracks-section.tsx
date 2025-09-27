@@ -1,7 +1,7 @@
 "use client";
 
 import { TrackList } from "@/components/features/track-list";
-import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
+import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
 import { useQuery } from "@tanstack/react-query";
 
@@ -22,7 +22,11 @@ export const TracksSection = ({
 
   return (
     <section>
-      <TrackList contextId={playlistId} tracks={tracks} type="PLAYLIST" />
+      <TrackList
+        contextId={playlistId}
+        tracks={tracks}
+        contextType="PLAYLIST"
+      />
     </section>
   );
 };

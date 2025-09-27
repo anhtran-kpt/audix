@@ -1,9 +1,7 @@
-import {
-  BannerSection,
-  TrackAddingSection,
-  TracksSection,
-} from "@/components/sections/playlist-detail";
 import { getPlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
+import { BannerSection } from "./_sections/banner-section";
+import { TracksSection } from "./_sections/tracks-section";
+import { BrowseTrackSection } from "./_sections/browse-track-section";
 
 export default async function PlaylistDetailPage({
   params,
@@ -18,7 +16,7 @@ export default async function PlaylistDetailPage({
     <>
       <BannerSection playlistId={playlistId} initialData={playlist} />
       <TracksSection playlistId={playlistId} initialData={playlist} />
-      <TrackAddingSection playlistId={playlistId} />
+      <BrowseTrackSection playlistId={playlistId} />
     </>
   );
 }
