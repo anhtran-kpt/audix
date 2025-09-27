@@ -1,4 +1,4 @@
-import { removeTrackFromPlaylist } from "@/features/playlist/data-access/playlist-repos";
+import { removeTrackFromPlaylist } from "@/features/playlist/data-access/playlist-repo";
 import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
 import { makeDELETE } from "@/lib/route-factory";
 import { object } from "zod";

@@ -36,7 +36,7 @@ import {
 import { NewPlaylistDialog } from "./new-playlist-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { RecommendedTrackItem } from "@/features/track/contracts/track-dto";
+import { TrackListItem } from "@/features/track/contracts/track-dto";
 import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
 import { getApi } from "@/lib/http/request";
 import { UserPlaylist } from "@/features/playlist/contracts/playlist-dto";
@@ -45,7 +45,7 @@ import { useOptimisticTrackRemove } from "@/hooks/use-optimistic-track-remove";
 import { useRouter } from "next/navigation";
 
 type TrackDropdownProps = {
-  track: RecommendedTrackItem;
+  track: TrackListItem;
   playlistId?: string;
 };
 
@@ -100,7 +100,16 @@ export function TrackDropdown({ track, playlistId }: TrackDropdownProps) {
                         autoFocus={true}
                         className="h-9"
                       />
-                      <NewPlaylistDialog />
+                      <NewPlaylistDialog
+                        trigger={
+                          <IconButton
+                            icon={PlusIcon}
+                            aria-label="New playlist"
+                            tooltipContent="New playlist"
+                            iconClassName="size-6"
+                          />
+                        }
+                      />
                       <DropdownMenuSeparator />
                       <CommandList>
                         <CommandEmpty>No playlist found.</CommandEmpty>

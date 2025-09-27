@@ -4,10 +4,10 @@ import { SearchResult } from "@/features/search/contracts/search-dtos";
 import { GridWrapper } from "../../ui/grid-wrapper";
 import { cn } from "@/lib/utils";
 import { NavLink } from "../../ui/nav-link";
-import { ContextPlayButton } from "../context-play-button";
 import { CldImage } from "next-cloudinary";
 import SectionHeading from "../../ui/section-heading";
 import SeeAllButton from "./see-all-button";
+import { ContextPlayButton } from "@/components/shared/context-play-button";
 
 export default function ArtistsSection({
   artists,
@@ -35,7 +35,7 @@ export default function ArtistsSection({
               />
               <ContextPlayButton
                 context={{
-                  type: "ARTIST",
+                  contextType: "ARTIST",
                   contextId: artist.id,
                 }}
                 className={cn(

@@ -7,15 +7,16 @@ import tinycolor from "tinycolor2";
 import { IconButton } from "@/components/ui/icon-button";
 import { FollowButton } from "@/components/features/follow-button";
 import { FollowersBadge } from "@/components/features/follow-badge";
-import { FullArtist } from "@/features/artist/contracts/artist-dto";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { CldImage } from "next-cloudinary";
 import { ContextPlayButton } from "@/components/shared/context-play-button";
+import { ArtistDetailPage } from "@/features/artist/data-access/artist-repo";
 
-type BannerSectionProps = Pick<
-  FullArtist,
-  "name" | "imageId" | "isVerified"
-> & { artistId: zCuidType };
+type BannerSectionProps = {
+  imageId: ArtistDetailPage["artist"]["imageId"];
+  isVerified: ArtistDetailPage["artist"]["isVerified"];
+  name: ArtistDetailPage["artist"]["name"];
+  artistId: string;
+};
 
 export const BannerSection = ({
   imageId,

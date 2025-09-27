@@ -2,9 +2,9 @@
 
 import { Slider } from "@/components/ui/slider";
 import { usePlaybackStore } from "@/stores/use-playback-store";
-import { formatTime } from "@/lib/helpers/format-time";
 import { useShallow } from "zustand/react/shallow";
 import { useState } from "react";
+import { formatTime } from "@/utils/date";
 
 export function ProgressBar() {
   const { duration, seek, progressMs } = usePlaybackStore(

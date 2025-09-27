@@ -3,7 +3,7 @@
 import AlbumGrid from "@/components/shared/album-grid";
 import SectionHeading from "@/components/ui/section-heading";
 import { AlbumBase } from "@/features/album/contracts/album-dto";
-import { ArtistBase } from "@/features/artist/contracts/artist-dto";
+import { ArtistBase } from "@/features/artist/contracts/artist-schema";
 
 interface OtherAlbumsSectionProps {
   artist: Pick<ArtistBase, "id" | "name">;

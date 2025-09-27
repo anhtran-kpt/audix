@@ -1,5 +1,5 @@
 import { FullAlbumSchema } from "@/features/album/contracts/album-dto";
-import { FullArtistSchema } from "@/features/artist/contracts/artist-dto";
+import { FullArtistSchema } from "@/features/artist/contracts/artist-schema";
 import { FullPlaylistSchema } from "@/features/playlist/contracts/playlist-dto";
 import { FullTrackSchema } from "@/features/track/contracts/track-dto";
 import z from "zod";

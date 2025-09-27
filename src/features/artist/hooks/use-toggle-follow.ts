@@ -2,7 +2,7 @@
 
 import { deleteApi, postApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FollowStatus } from "../contracts/artist-dto";
+import { FollowStatus } from "../contracts/artist-schema";
 import { artistKeys } from "../query/artist-keys";
 
 export function useToggleFollow(artistId: string) {

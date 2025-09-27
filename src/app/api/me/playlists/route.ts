@@ -1,4 +1,4 @@
-import { getUserPlaylists } from "@/features/playlist/data-access/playlist-repos";
+import { getUserPlaylists } from "@/features/playlist/data-access/playlist-repo";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

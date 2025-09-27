@@ -3,12 +3,12 @@
 import { CldImageProps } from "next-cloudinary";
 import { cn } from "@/lib/utils";
 import CoverImage from "./cover-image";
-import { PlaybackContextSnapshot } from "@/features/playback/contracts/playback-dto";
+import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 import { ContextPlayButton } from "./context-play-button";
 import { useRouter } from "next/navigation";
 
 interface LargeMediaCoverProps extends CldImageProps {
-  context: PlaybackContextSnapshot;
+  context: StartPlaybackInput;
 }
 
 export default function LargeMediaCover({
@@ -24,7 +24,7 @@ export default function LargeMediaCover({
       className="relative aspect-square shrink-0 w-full cursor-pointer group/large-cover"
       onClick={() =>
         router.push(
-          `/${context.contextType.toLowerCase()}s/${context.contextIdOrQuery}`
+          `/${context.contextType.toLowerCase()}s/${context.contextId}`
         )
       }
     >

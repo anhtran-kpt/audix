@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
-import { getAudioUrl } from "@/lib/helpers/get-audio-url";
+import { getAudioUrl } from "@/utils/string";
 
 export const useAudioPlayer = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);

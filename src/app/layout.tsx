@@ -14,7 +14,7 @@ import RightPanel from "@/components/features/right-panel";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { getSidebarArtists } from "@/features/artist/data-access/artist-repo";
-import { getSidebarPlaylists } from "@/features/playlist/data-access/playlist-repos";
+import { getSidebarPlaylists } from "@/features/playlist/data-access/playlist-repo";
 import AudioPlayer from "@/components/features/audio-player";
 
 const lexendSans = Lexend({

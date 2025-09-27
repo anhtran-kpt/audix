@@ -1,4 +1,4 @@
-import { buildCreditSections } from "@/lib/helpers/build-credit-sections";
+import { buildCreditSections } from "@/utils/credit-sections";
 import {
   Dialog,
   DialogContent,

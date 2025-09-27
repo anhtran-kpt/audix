@@ -1,3 +1,7 @@
+export const getAudioUrl = (publicId: string): string => {
+  return `https://res.cloudinary.com/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/video/upload/${publicId}.mp3`;
+};
+
 export const buildPlaylistCoverUrl = (publicIds: string[]) => {
   if (!publicIds || publicIds.length !== 4) {
     throw new Error("");
@@ -29,3 +33,5 @@ export const buildPlaylistCoverUrl = (publicIds: string[]) => {
 
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transformations}/v1/${publicIds[0]}`;
 };
+
+export const norm = (s: string) => s.trim().toLowerCase();

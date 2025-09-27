@@ -9,7 +9,7 @@ import { CldImage } from "next-cloudinary";
 import { BadgeCheckIcon } from "lucide-react";
 import { FollowersBadge } from "../follow-badge";
 import { Badge } from "../../ui/badge";
-import { ContextPlayButton } from "../context-play-button";
+import { ContextPlayButton } from "@/components/shared/context-play-button";
 
 export default function TopResultSection({
   topResult,
@@ -30,7 +30,7 @@ export default function TopResultSection({
           />
           <ContextPlayButton
             context={{
-              type: "ARTIST",
+              contextType: "ARTIST",
               contextId: topResult.item.id,
             }}
             className="absolute bottom-0 right-5 opacity-0 translate-y-2 scale-95 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"

@@ -1,12 +1,10 @@
-"use client";
-
 import { GridWrapper } from "../ui/grid-wrapper";
 import LargeMediaCover from "./large-media-cover";
 import { NavLink } from "../ui/nav-link";
-import { ArtistBase } from "@/features/artist/contracts/artist-dto";
+import { ArtistGridItem } from "@/features/artist/contracts/artist-schema";
 
 type ArtistGridProps = {
-  artists: Pick<ArtistBase, "name" | "imageId" | "id">[];
+  artists: ArtistGridItem[];
 };
 
 export default function ArtistGrid({ artists }: ArtistGridProps) {
@@ -22,7 +20,7 @@ export default function ArtistGrid({ artists }: ArtistGridProps) {
             src={artist.imageId}
             context={{
               contextType: "ARTIST",
-              contextIdOrQuery: artist.id,
+              contextId: artist.id,
             }}
           />
           <div className="flex flex-col items-start w-full min-w-0">

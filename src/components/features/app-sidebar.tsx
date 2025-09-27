@@ -17,7 +17,7 @@ import Dot from "../ui/dot";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { ScrollArea } from "../ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
-import { SidebarArtist } from "@/features/artist/contracts/artist-dto";
+import { SidebarArtist } from "@/features/artist/contracts/artist-schema";
 import { SidebarPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { sidebarPlaylistOptions } from "@/features/playlist/query/playlist-options";
 import { sidebarArtistOptions } from "@/features/artist/query/artist-options";
@@ -63,7 +63,7 @@ export function AppSidebar({
   const { isPlaying, contextId } = usePlaybackStore(
     useShallow((s) => ({
       isPlaying: s.isPlaying,
-      contextId: s.snapshot?.contextId,
+      contextId: s.session?.snapshot.contextId,
     }))
   );
 
@@ -164,7 +164,7 @@ export function AppSidebar({
                               <RowPlayButton
                                 context={{
                                   contextType: "ARTIST",
-                                  contextIdOrQuery: artist.id,
+                                  contextId: artist.id,
                                 }}
                                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover/menu-item:visible"
                               />

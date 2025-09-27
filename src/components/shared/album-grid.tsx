@@ -1,15 +1,13 @@
-"use client";
-
-import { AlbumItem } from "@/features/album/contracts/album-dto";
 import { GridWrapper } from "../ui/grid-wrapper";
 import LargeMediaCover from "./large-media-cover";
 import { NavLink } from "../ui/nav-link";
 import Dot from "../ui/dot";
 import { formatDate } from "date-fns/format";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
+import { AlbumGridItem } from "@/features/album/contracts/album-dto";
 
 type AlbumGridProps = {
-  albums: AlbumItem[];
+  albums: AlbumGridItem[];
 };
 
 export default function AlbumGrid({ albums }: AlbumGridProps) {
@@ -25,7 +23,7 @@ export default function AlbumGrid({ albums }: AlbumGridProps) {
             src={album.imageId}
             context={{
               contextType: "ALBUM",
-              contextIdOrQuery: album.id,
+              contextId: album.id,
             }}
           />
           <div className="flex flex-col items-start w-full min-w-0">

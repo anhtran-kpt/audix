@@ -2,6 +2,7 @@ import "server-only";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { trackDetailSelect } from "@/features/track/data-access/track-selects";
 import db from "@/lib/db";
+import { AwaitedReturnType } from "@/utils/type";
 
 export const getSidebarArtists = async (userId: zCuidType) => {
   return await db.userFollowedArtist
@@ -172,6 +173,8 @@ export const getArtistDetailPage = async (artistId: zCuidType) => {
   };
 };
 
+export type ArtistDetailPage = AwaitedReturnType<typeof getArtistDetailPage>;
+
 export const getArtistReleases = async (artistId: string, take = 12) => {
   return db.$transaction(async (tx) => {
     const [popular, albums, singlesAndEps] = await Promise.all([
@@ -223,3 +226,5 @@ export const getArtistReleases = async (artistId: string, take = 12) => {
     return { popular, albums, singlesAndEps };
   });
 };
+
+export type ArtistReleases = AwaitedReturnType<typeof getArtistReleases>;

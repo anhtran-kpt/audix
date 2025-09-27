@@ -1,6 +1,6 @@
-import { ROLE_META } from "../constants/credit-role-meta";
+import { norm } from "@/utils/string";
+import { ROLE_META } from "../lib/constants/credit-role-meta";
 import { Credit, type TA } from "@/types/credit";
-import { norm } from "./norm";
 
 type HeadlineRole = "MAIN_ARTIST" | "FEATURED_ARTIST" | "REMIX_ARTIST";
 

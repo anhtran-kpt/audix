@@ -1,14 +1,12 @@
-import {
-  AboutSection,
-  BannerSection,
-  DiscographySection,
-  OtherArtistsSection,
-  PopularTracksSection,
-} from "@/components/sections/artist-detail";
+import { BannerSection } from "@/components/sections/artist-detail";
+import { DiscographySection } from "./_sections/discography-section";
 import {
   getArtistDetailPage,
   getArtistReleases,
 } from "@/features/artist/data-access/artist-repo";
+import { PopularTracksSection } from "./_sections/popular-tracks-section";
+import { AboutSection } from "./_sections/about-section";
+import { SuggestionSection } from "./_sections/suggestion-section";
 
 export default async function ArtistDetail({
   params,
@@ -42,11 +40,11 @@ export default async function ArtistDetail({
       />
       <AboutSection
         bio={artist.bio}
-        id={artistId}
+        artistId={artistId}
         name={artist.name}
         bannerId={artist.bannerId}
       />
-      <OtherArtistsSection suggestions={suggestions} />
+      <SuggestionSection artists={suggestions} />
     </>
   );
 }

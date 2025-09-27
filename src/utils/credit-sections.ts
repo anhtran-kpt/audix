@@ -3,7 +3,7 @@ import {
   ROLE_META,
 } from "@/lib/constants/credit-role-meta";
 import { Credit, CreditGroupId, type TA } from "@/types/credit";
-import { norm } from "./norm";
+import { norm } from "@/utils/string";
 
 export type CreditSection = {
   id: CreditGroupId;

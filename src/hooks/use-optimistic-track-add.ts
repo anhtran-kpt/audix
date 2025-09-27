@@ -53,7 +53,7 @@ export function useOptimisticTrackAdd() {
 
       const optimistic: RecommendedTrackItemWithOptimistic = {
         ...track,
-        addedAt: new Date(track.addedAt),
+        addedAt: track.addedAt ? new Date(track.addedAt) : new Date(),
         optimistic: true,
       };
 

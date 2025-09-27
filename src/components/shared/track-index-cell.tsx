@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import WaveForm from "../ui/wave-form";
 import { RowPlayButton } from "./row-play-button";
-import { PlaybackContextSnapshot } from "@/features/playback/contracts/playback-dto";
+import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 
 export default function TrackIndexCell({
   isPlaying,
@@ -14,7 +14,7 @@ export default function TrackIndexCell({
   isPlaying: boolean;
   isThisTrack: boolean;
   index: number;
-  context: PlaybackContextSnapshot;
+  context: StartPlaybackInput;
 }) {
   if (isPlaying && isThisTrack) {
     return (

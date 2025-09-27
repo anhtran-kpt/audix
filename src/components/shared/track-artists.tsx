@@ -1,4 +1,4 @@
-import { ArtistBase } from "@/features/artist/contracts/artist-dto";
+import { ArtistBase } from "@/features/artist/contracts/artist-schema";
 import ExplicitIcon from "../ui/explicit-icon";
 import { NavLink } from "../ui/nav-link";
 

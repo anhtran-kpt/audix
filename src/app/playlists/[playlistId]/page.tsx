@@ -3,7 +3,7 @@ import {
   TrackAddingSection,
   TracksSection,
 } from "@/components/sections/playlist-detail";
-import { getPlaylistDetail } from "@/features/playlist/data-access/playlist-repos";
+import { getPlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 
 export default async function PlaylistDetailPage({
   params,

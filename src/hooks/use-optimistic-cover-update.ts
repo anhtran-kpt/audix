@@ -3,8 +3,8 @@ import {
   SidebarPlaylist,
 } from "@/features/playlist/contracts/playlist-dto";
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
-import { buildPlaylistCoverUrl } from "@/lib/helpers/build-playlist-cover-url";
 import { postApi } from "@/lib/http/request";
+import { buildPlaylistCoverUrl } from "@/utils/string";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const useOptimisticCoverUpdate = () => {

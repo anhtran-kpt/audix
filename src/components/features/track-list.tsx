@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import { Clock3Icon, PlusCircleIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import { formatDuration } from "@/lib/helpers/format-duration";
 import { TrackListItem } from "@/features/track/contracts/track-dto";
 import TrackItem from "./track-item";
 import { format } from "date-fns";
@@ -12,29 +11,34 @@ import { TrackDropdown } from "./track-dropdown";
 import TrackIndexCell from "../shared/track-index-cell";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
+import { formatDuration } from "@/utils/date";
 
 type TrackListProps = {
   contextId: string;
-  type: "ALBUM" | "PLAYLIST" | "ARTIST";
+  contextType: "ALBUM" | "PLAYLIST" | "ARTIST";
   tracks: TrackListItem[];
 };
 
-export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
+export const TrackList = ({
+  contextId,
+  contextType,
+  tracks,
+}: TrackListProps) => {
   const { isPlaying, snapshot, currentTrackId } = usePlaybackStore(
     useShallow((s) => ({
-      isPlaying: s.session?.isPlaying ?? false,
+      isPlaying: s.isPlaying,
       currentTrackId: s.session?.currentTrackId,
       snapshot: s.session?.snapshot,
     }))
   );
 
-  const gridCols: Record<TrackListProps["type"], string> = {
+  const gridCols: Record<TrackListProps["contextType"], string> = {
     PLAYLIST: "grid-cols-[3rem_1fr_9rem_9rem_6rem_4rem_3rem]",
     ALBUM: "grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]",
     ARTIST: "grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]",
   };
 
-  const gridClass = cn("grid w-full items-center", gridCols[type]);
+  const gridClass = cn("grid w-full items-center", gridCols[contextType]);
 
   return (
     <div className="space-y-1 w-full">
@@ -46,9 +50,9 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
       >
         <div className="text-center">#</div>
         <div className="text-left">Title</div>
-        {type === "PLAYLIST" && <div className="text-left">Album</div>}
+        {contextType === "PLAYLIST" && <div className="text-left">Album</div>}
         <div className="text-right">
-          {type === "PLAYLIST" ? "Date added" : "Plays"}
+          {contextType === "PLAYLIST" ? "Date added" : "Plays"}
         </div>
         <div className="text-right"></div>
         <div className="flex justify-end">
@@ -60,7 +64,7 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
       {tracks.length > 0 ? (
         tracks.map((track, trackIndex) => {
           const isThisTrack =
-            snapshot?.type === type &&
+            snapshot?.type === contextType &&
             snapshot?.contextId === contextId &&
             currentTrackId === track.id;
 
@@ -78,8 +82,8 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
                   isThisTrack={isThisTrack}
                   index={trackIndex}
                   context={{
-                    contextType: type,
-                    contextIdOrQuery: contextId,
+                    contextType,
+                    contextId,
                     startTrackId: track.id,
                   }}
                 />
@@ -87,12 +91,12 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
 
               <TrackItem
                 track={track}
-                hasCover={type !== "ALBUM"}
+                hasCover={contextType !== "ALBUM"}
                 canHover={false}
                 isActive={isThisTrack}
               />
 
-              {type === "PLAYLIST" && (
+              {contextType === "PLAYLIST" && (
                 <div>
                   <NavLink
                     href={`/albums/${track.album.id}`}
@@ -104,7 +108,7 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
               )}
 
               <div className="text-right">
-                {type === "PLAYLIST" && track.addedAt
+                {contextType === "PLAYLIST" && track.addedAt
                   ? format(new Date(track.addedAt), "PP")
                   : track.playCount?.toLocaleString() ?? "—"}
               </div>
@@ -127,7 +131,9 @@ export const TrackList = ({ contextId, type, tracks }: TrackListProps) => {
               <div className="invisible group-hover:visible flex items-center justify-end">
                 <TrackDropdown
                   track={track}
-                  playlistId={type === "PLAYLIST" ? contextId : undefined}
+                  playlistId={
+                    contextType === "PLAYLIST" ? contextId : undefined
+                  }
                 />
               </div>
             </div>

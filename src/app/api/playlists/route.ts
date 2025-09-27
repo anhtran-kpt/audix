@@ -2,7 +2,7 @@ import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlis
 import {
   createPlaylist,
   getUserPlaylistsWithoutTrack,
-} from "@/features/playlist/data-access/playlist-repos";
+} from "@/features/playlist/data-access/playlist-repo";
 import { makeGET, makePOST } from "@/lib/route-factory";
 
 export const POST = makePOST({

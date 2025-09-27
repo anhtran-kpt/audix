@@ -10,7 +10,7 @@ import {
 import { IconButton } from "../ui/icon-button";
 import { NavLink } from "../ui/nav-link";
 import { FollowButton } from "./follow-button";
-import { buildCreditsByPerson } from "@/lib/helpers/build-credits-by-person";
+import { buildCreditsByPerson } from "@/utils/credits-by-person";
 import { ScrollArea } from "../ui/scroll-area";
 import CreditDialog from "./credits-dialog";
 import { CldImage } from "next-cloudinary";

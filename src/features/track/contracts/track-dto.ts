@@ -139,7 +139,7 @@ export const TrackListItemSchema = FullTrackSchema.pick({
       }),
     })
     .array(),
-  addedAt: zDateSchema,
+  addedAt: zDateSchema.optional(),
 });
 
 export const RecommendedTrackItemSchema = FullTrackSchema.pick({
@@ -162,7 +162,7 @@ export const RecommendedTrackItemSchema = FullTrackSchema.pick({
       }),
     })
     .array(),
-  addedAt: zDateSchema,
+  addedAt: zDateSchema.optional(),
 });
 
 export const TrackCreditSchema = FullTrackSchema.pick({

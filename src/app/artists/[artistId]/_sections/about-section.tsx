@@ -3,13 +3,18 @@
 import { CldImage } from "next-cloudinary";
 import SectionHeading from "@/components/ui/section-heading";
 import { FollowersBadge } from "@/components/features/follow-badge";
-import { ArtistBase } from "@/features/artist/contracts/artist-dto";
+import { ArtistDetailPage } from "@/features/artist/data-access/artist-repo";
 
-type AboutSectionProps = Pick<ArtistBase, "bio" | "name" | "bannerId" | "id">;
+type AboutSectionProps = {
+  bio: ArtistDetailPage["artist"]["bio"];
+  artistId: string;
+  name: ArtistDetailPage["artist"]["name"];
+  bannerId: ArtistDetailPage["artist"]["bannerId"];
+};
 
 export const AboutSection = ({
   bio,
-  id,
+  artistId,
   name,
   bannerId,
 }: AboutSectionProps) => {
@@ -26,7 +31,7 @@ export const AboutSection = ({
         />
         <div className="absolute bottom-6 md:bottom-8 lg:bottom-10 xl:bottom-12 left-6 md:left-8 lg:left-10 xl:left-12 space-y-3 w-4/5">
           <div>
-            <FollowersBadge artistId={id} />
+            <FollowersBadge artistId={artistId} />
           </div>
           <div className="text-15 text-white line-clamp-2 md:line-clamp-3 lg:line-clamp-4 xl:line-clamp-5">
             {bio}

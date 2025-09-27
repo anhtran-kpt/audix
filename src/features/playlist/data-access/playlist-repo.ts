@@ -11,7 +11,7 @@ import {
 } from "@/features/track/data-access/track-selects";
 import { Prisma } from "@/app/generated/prisma";
 import cloudinary from "@/lib/config/cloudinary";
-import { buildPlaylistCoverUrl } from "@/lib/helpers/build-playlist-cover-url";
+import { buildPlaylistCoverUrl } from "@/utils/string";
 
 export const getSidebarPlaylists = async (userId: zCuidType) => {
   return await db.playlist.findMany({

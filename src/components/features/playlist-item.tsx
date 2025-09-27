@@ -1,9 +1,9 @@
 import { NavLink } from "../ui/nav-link";
 import { cn } from "@/lib/utils";
-import { ContextPlayButton } from "./context-play-button";
 import { PlaylistItem as PlaylistItemType } from "@/features/playlist/contracts/playlist-dto";
 import { CoverImage } from "../ui/cover-image";
 import { FallbackCoverImage } from "./fallback-cover-image";
+import { ContextPlayButton } from "../shared/context-play-button";
 
 export default function PlaylistItem({
   playlist,
@@ -20,7 +20,7 @@ export default function PlaylistItem({
         )}
         <ContextPlayButton
           context={{
-            type: "ALBUM",
+            contextType: "ALBUM",
             contextId: playlist.id,
           }}
           className={cn(

@@ -96,7 +96,7 @@ export const NewPlaylistForm = ({
         }
       );
 
-      qc.setQueryData<UserPlaylist[]>(playlistKeys.list(), (old) => {
+      qc.setQueryData<UserPlaylist[]>(playlistKeys.userPlaylists(), (old) => {
         if (!old) return old;
 
         return [res, ...old];

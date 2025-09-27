@@ -3,7 +3,7 @@ import {
   deletePlaylist,
   getPlaylistDetail,
   updatePlaylistInfo,
-} from "@/features/playlist/data-access/playlist-repos";
+} from "@/features/playlist/data-access/playlist-repo";
 import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
 import { makeDELETE, makeGET, makePATCH } from "@/lib/route-factory";
 import { object } from "zod";

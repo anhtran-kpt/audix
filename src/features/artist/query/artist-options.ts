@@ -1,6 +1,6 @@
 import { getApi } from "@/lib/http/request";
 import { queryOptions } from "@tanstack/react-query";
-import { FollowStatus, SidebarArtist } from "../contracts/artist-dto";
+import { FollowStatus, SidebarArtist } from "../contracts/artist-schema";
 import { artistKeys } from "./artist-keys";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 

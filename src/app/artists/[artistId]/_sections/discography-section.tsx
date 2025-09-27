@@ -1,16 +1,13 @@
-"use client";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
-import { AlbumItem } from "@/features/album/contracts/album-dto";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import AlbumGrid from "@/components/shared/album-grid";
+import { AlbumGridItem } from "@/features/album/contracts/album-dto";
 
 type DiscographySectionProps = {
-  artistId: zCuidType;
-  popular: AlbumItem[];
-  albums: AlbumItem[];
-  singlesAndEps: AlbumItem[];
+  artistId: string;
+  popular: AlbumGridItem[];
+  albums: AlbumGridItem[];
+  singlesAndEps: AlbumGridItem[];
 };
 
 export const DiscographySection = ({

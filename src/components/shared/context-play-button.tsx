@@ -1,9 +1,8 @@
 "use client";
 
-import { usePlaybackStore } from "@/stores/use-playback-store";
 import { Button } from "../ui/button";
 import { PauseIcon, PlayIcon } from "lucide-react";
-import { usePlayContextButton } from "@/hooks/use-play-context-button";
+import { usePlayButton } from "@/hooks/use-play-button";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 import { cn } from "@/lib/utils";
 
@@ -16,8 +15,7 @@ export const ContextPlayButton = ({
   context,
   className,
 }: ContextPlayButtonProps) => {
-  const session = usePlaybackStore((s) => s.session);
-  const { handlePlay, isThisContext } = usePlayContextButton(context);
+  const { handlePlay, isThisContext, isPlaying } = usePlayButton(context);
 
   return (
     <Button
@@ -28,7 +26,7 @@ export const ContextPlayButton = ({
       }}
       className={cn("size-14 rounded-full", className)}
     >
-      {isThisContext && session?.isPlaying ? (
+      {isThisContext && isPlaying ? (
         <PauseIcon className="size-7 fill-current stroke-0" />
       ) : (
         <PlayIcon className="size-7 fill-current stroke-0" />
