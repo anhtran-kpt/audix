@@ -19,6 +19,9 @@ export const getSidebarArtists = async (userId: zCuidType) => {
           },
         },
       },
+      orderBy: {
+        likedAt: "desc",
+      },
     })
     .then((data) => data.map((item) => item.artist));
 };

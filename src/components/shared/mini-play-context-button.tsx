@@ -5,14 +5,16 @@ import { usePlayButton } from "@/hooks/use-play-button";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 import { cn } from "@/lib/utils";
 
-type RowPlayButtonProps = {
+type MiniPlayContextButtonProps = {
   context: StartPlaybackInput;
   className?: string;
 };
 
-export const RowPlayButton = ({ context, className }: RowPlayButtonProps) => {
-  const { handlePlay, isThisTrack, isThisContext, isPlaying } =
-    usePlayButton(context);
+export const MiniPlayContextButton = ({
+  context,
+  className,
+}: MiniPlayContextButtonProps) => {
+  const { handlePlay, isThisContext, isPlaying } = usePlayButton(context);
 
   return (
     <button
@@ -22,7 +24,7 @@ export const RowPlayButton = ({ context, className }: RowPlayButtonProps) => {
       }}
       className={cn("cursor-pointer", className)}
     >
-      {isThisContext && isThisTrack && isPlaying ? (
+      {isThisContext && isPlaying ? (
         <PauseIcon className="size-4 fill-foreground stroke-0" />
       ) : (
         <PlayIcon className="size-4 fill-foreground stroke-0" />

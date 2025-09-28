@@ -6,9 +6,9 @@ import { ItemTitle } from "../ui/item-title";
 import CoverImage from "./cover-image";
 import { TrackDropdown } from "../features/track-dropdown";
 import { IconButton } from "../ui/icon-button";
-import { useIsPlaying, useNowPlayingRefId } from "@/hooks/use-audio-player";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import { usePlayButton } from "@/hooks/use-play-button";
 
 type MiniTrackListProps = {
   tracks: MiniTrackItem[];
@@ -19,9 +19,6 @@ export default function MiniTrackList({
   tracks,
   handlePlay,
 }: MiniTrackListProps) {
-  const isPlaying = useIsPlaying();
-  const nowPlayingRefId = useNowPlayingRefId();
-
   return (
     <ol role="list" className="flex flex-col">
       {tracks.map((track) => (
@@ -38,7 +35,7 @@ export default function MiniTrackList({
                 fill
                 sizes="48px"
               />
-              <IconButton
+              {/* <IconButton
                 aria-pressed={nowPlayingRefId === track.id && isPlaying}
                 icon={
                   nowPlayingRefId === track.id && isPlaying
@@ -52,13 +49,13 @@ export default function MiniTrackList({
                 }}
                 iconClassName="fill-foreground stroke-0"
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover/mini-track:visible"
-              />
+              /> */}
             </div>
             <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-              <ItemTitle
+              {/* <ItemTitle
                 title={track.title}
                 isActive={nowPlayingRefId === track.id}
-              />
+              /> */}
               <TrackArtists
                 isExplicit={track.isExplicit}
                 artists={track.artists.map((item) => item.artist)}

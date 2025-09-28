@@ -22,7 +22,7 @@ export default function PlaylistList({ playlists }: PlaylistListProps) {
               alt={playlist.title}
               src={playlist.imageId}
               context={{
-                type: "PLAYLIST",
+                contextType: "PLAYLIST",
                 contextId: playlist.id,
               }}
             />

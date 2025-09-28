@@ -29,7 +29,7 @@ export function SidebarItemWrapper({
 
       <div
         className={cn(
-          "flex flex-col gap-0.5 overflow-hidden transition-[opacity,max-width,margin] duration-200",
+          "flex grow flex-col gap-0.5 overflow-hidden transition-[opacity,max-width,margin] duration-200",
           open ? "opacity-100 max-w-full ml-0" : "opacity-0 max-w-0 ml-0"
         )}
         aria-hidden={!open}

@@ -10,7 +10,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
 import { NewPlaylistDialog } from "./new-playlist-dialog";
 import { usePathname, useRouter } from "next/navigation";
 import Dot from "../ui/dot";
@@ -27,7 +26,6 @@ import {
   PlusIcon,
   PanelLeftCloseIcon,
   PanelRightCloseIcon,
-  PlayIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
@@ -36,6 +34,8 @@ import { SidebarItemWrapper } from "../shared/sidebar-item-wrapper";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { RowPlayButton } from "../shared/row-play-button";
 import { useShallow } from "zustand/react/shallow";
+import { VolumeIcon } from "../shared/volume-icon";
+import { MiniPlayContextButton } from "../shared/mini-play-context-button";
 
 export function AppSidebar({
   initialArtists,
@@ -181,7 +181,8 @@ export function AppSidebar({
                             </>
                           }
                           right={
-                            isPlaying && contextId === artist.id && <WaveForm />
+                            isPlaying &&
+                            contextId === artist.id && <VolumeIcon />
                           }
                         />
                       </div>
@@ -197,7 +198,9 @@ export function AppSidebar({
                       asChild
                       isActive={pathname === `/playlists/${playlist.id}`}
                     >
-                      <Link href={`/playlists/${playlist.id}`}>
+                      <div
+                        onClick={() => router.push(`/playlists/${playlist.id}`)}
+                      >
                         <SidebarItemWrapper
                           open={open}
                           image={
@@ -211,20 +214,20 @@ export function AppSidebar({
                                   src={playlist.imageId}
                                   priority
                                 />
-                                <IconButton
-                                  icon={PlayIcon}
-                                  size="sm"
-                                  onClick={
-                                    () => {}
-                                    // handleContextPlay({
-                                    //   contextId: playlist.id,
-                                    //   name: playlist.title,
-                                    //   type: "PLAYLIST",
-                                    // })
-                                  }
-                                  iconClassName="fill-foreground stroke-0"
-                                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover/menu-item:visible"
+                                <MiniPlayContextButton
+                                  context={{
+                                    contextType: "PLAYLIST",
+                                    contextId: playlist.id,
+                                  }}
+                                  className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                                 />
+                                {/* <RowPlayButton
+                                  context={{
+                                    contextId: playlist.id,
+                                    contextType: "PLAYLIST",
+                                  }}
+                                  className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                                /> */}
                               </>
                             ) : (
                               <FallbackCoverImage type="item" />
@@ -251,7 +254,7 @@ export function AppSidebar({
                             contextId === playlist.id && <WaveForm />
                           }
                         />
-                      </Link>
+                      </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
