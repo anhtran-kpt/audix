@@ -148,7 +148,10 @@ export function AppSidebar({
                       asChild
                       isActive={pathname === `/artists/${artist.id}`}
                     >
-                      <div onClick={() => router.push(`/artists/${artist.id}`)}>
+                      <div
+                        onClick={() => router.push(`/artists/${artist.id}`)}
+                        className="cursor-pointer"
+                      >
                         <SidebarItemWrapper
                           open={open}
                           image={
@@ -200,6 +203,7 @@ export function AppSidebar({
                     >
                       <div
                         onClick={() => router.push(`/playlists/${playlist.id}`)}
+                        className="cursor-pointer"
                       >
                         <SidebarItemWrapper
                           open={open}

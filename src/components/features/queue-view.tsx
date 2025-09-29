@@ -2,19 +2,16 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
-import TrackItem from "./track-item";
-import { PauseIcon, PlayIcon } from "lucide-react";
-import { IconButton } from "../ui/icon-button";
 import { useShallow } from "zustand/react/shallow";
 import { useRecentTracks, useTracks } from "@/features/track/hooks/use-tracks";
-import MiniTrackList from "../shared/mini-track-list";
 import { usePlaybackStore } from "@/stores/use-playback-store";
+import { TrackItemCompact } from "../shared/track-item-compact";
 
 export default function QueueView() {
-  const { isPlaying, queue, currentTrack } = usePlaybackStore(
+  const { queue, currentTrack, snapshot } = usePlaybackStore(
     useShallow((s) => ({
-      isPlaying: s.isPlaying,
       queue: s.session?.queue,
+      snapshot: s.session?.snapshot,
       currentTrack: s.session?.currentTrack,
     }))
   );
@@ -25,8 +22,6 @@ export default function QueueView() {
   if (!currentTrack) {
     return null;
   }
-
-  console.log(queueTracks);
 
   return (
     <Tabs defaultValue="queue" className="size-full">
@@ -42,19 +37,19 @@ export default function QueueView() {
           <div className="space-y-2">
             <div className="flex flex-col gap-2">
               <p className="font-semibold text-15 px-2">Now playing</p>
-
-              <TrackItem
-                track={currentTrack}
-                isActive
-                playButton={
-                  <IconButton
-                    aria-pressed={isPlaying}
-                    icon={isPlaying ? PauseIcon : PlayIcon}
-                    size="sm"
-                    // onClick={togglePlay}
-                    iconClassName="fill-foreground stroke-0"
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
-                  />
+              <TrackItemCompact
+                track={{
+                  ...currentTrack,
+                  artists: currentTrack.artists.map((item) => item.artist),
+                }}
+                context={
+                  snapshot
+                    ? {
+                        contextType: snapshot.type,
+                        contextId: snapshot.contextId,
+                        startTrackId: currentTrack.id,
+                      }
+                    : undefined
                 }
               />
             </div>
@@ -63,10 +58,26 @@ export default function QueueView() {
                 Next from: {currentTrack.title}
               </p>
               {queueTracks && (
-                <MiniTrackList
-                  tracks={queueTracks}
-                  // handlePlay={handleQueuePlay}
-                />
+                <div className="flex flex-col">
+                  {queueTracks.map((track) => (
+                    <TrackItemCompact
+                      key={track.id}
+                      track={{
+                        ...track,
+                        artists: track.artists.map((item) => item.artist),
+                      }}
+                      context={
+                        snapshot
+                          ? {
+                              contextType: snapshot.type,
+                              contextId: snapshot.contextId,
+                              startTrackId: track.id,
+                            }
+                          : undefined
+                      }
+                    />
+                  ))}
+                </div>
               )}
             </div>
           </div>
@@ -81,10 +92,17 @@ export default function QueueView() {
           scrollBarClassName="w-2 -mr-2"
         >
           {recentTracks && (
-            <MiniTrackList
-              tracks={recentTracks}
-              // handlePlay={handleRecentPlay}
-            />
+            <div className="flex flex-col">
+              {recentTracks.map((track) => (
+                <TrackItemCompact
+                  key={track.id}
+                  track={{
+                    ...track,
+                    artists: track.artists.map((item) => item.artist),
+                  }}
+                />
+              ))}
+            </div>
           )}
         </ScrollArea>
       </TabsContent>

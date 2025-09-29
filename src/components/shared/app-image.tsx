@@ -22,11 +22,16 @@ export function AppImage({
   };
 
   return (
-    <div className={cn("relative aspect-square", containerClassName)}>
+    <div
+      className={cn(
+        "relative aspect-square overflow-hidden rounded-sm shrink-0",
+        containerClassName
+      )}
+    >
       <CldImage
         fill
         className={cn(
-          "object-cover rounded-sm duration-400 transition-opacity shrink-0",
+          "object-cover rounded-sm duration-400 transition-opacity",
           className
         )}
         quality="auto"

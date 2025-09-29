@@ -16,7 +16,7 @@ export const TrackItemInfo = ({
   isActive,
 }: TrackInfoProps) => {
   return (
-    <div className="flex flex-col gap-0.5 w-full overflow-hidden">
+    <div className="flex flex-col gap-0.5 flex-1 min-w-0 overflow-hidden">
       <p
         className={cn(
           "font-medium truncate text-foreground text-sm select-none",

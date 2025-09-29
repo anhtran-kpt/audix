@@ -1,8 +1,6 @@
-"use client";
-
 import ArtistGrid from "@/components/shared/artist-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { ArtistGridItem } from "@/features/artist/contracts/artist-schema";
+import { ArtistGridItem } from "@/features/artist/contracts/artist-dto";
 
 type SuggestionSectionProps = {
   artists: ArtistGridItem[];

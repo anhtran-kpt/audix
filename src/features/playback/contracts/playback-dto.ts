@@ -17,8 +17,8 @@ export const PlaybackSessionSchema = z.object({
   currentTrackId: zCuidSchema,
   snapshot: z.object({
     type: PlaybackContextTypeSchema,
-    name: z.string().nullable(),
-    contextId: z.string().nullable(),
+    name: z.string(),
+    contextId: z.string(),
     tracks: z
       .object({
         track: z.object({

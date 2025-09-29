@@ -1,15 +1,16 @@
 import { GridWrapper } from "../ui/grid-wrapper";
-import LargeMediaCover from "./large-media-cover";
 import { NavLink } from "../ui/nav-link";
 import Dot from "../ui/dot";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { FallbackCoverImage } from "../features/fallback-cover-image";
+import { AppImage } from "./app-image";
+import { ContextPlayButton } from "./context-play-button";
 
-type PlaylistListProps = {
+type PlaylistGridProps = {
   playlists: PlaylistItem[];
 };
 
-export default function PlaylistList({ playlists }: PlaylistListProps) {
+export default function PlaylistGrid({ playlists }: PlaylistGridProps) {
   return (
     <GridWrapper>
       {playlists.map((playlist) => (
@@ -18,14 +19,18 @@ export default function PlaylistList({ playlists }: PlaylistListProps) {
           className="flex flex-col group gap-2 overflow-hidden"
         >
           {playlist.imageId ? (
-            <LargeMediaCover
-              alt={playlist.title}
-              src={playlist.imageId}
-              context={{
-                contextType: "PLAYLIST",
-                contextId: playlist.id,
-              }}
-            />
+            <div className="relative">
+              <AppImage
+                alt={playlist.title}
+                src={playlist.imageId}
+                className="rounded-full group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
+                sizes="20vw"
+              />
+              <ContextPlayButton
+                context={{ contextType: "PLAYLIST", contextId: playlist.id }}
+                className="absolute opacity-0 bottom-2 right-2 translate-y-2 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
+              />
+            </div>
           ) : (
             <FallbackCoverImage type="detail" />
           )}
