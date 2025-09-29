@@ -20,11 +20,11 @@ import { IconButton } from "../ui/icon-button";
 import VolumeControl from "./volume-control";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { useShallow } from "zustand/react/shallow";
-import TrackItem from "./track-item";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { cn } from "@/lib/utils";
 import { useAudioPlayer } from "@/hooks/use-audio-player";
 import { ProgressBar } from "../shared/progress-bar";
+import { TrackItemCompact } from "../shared/track-item-compact";
 
 export default function AudioPlayer() {
   const {
@@ -71,10 +71,13 @@ export default function AudioPlayer() {
           <div className="flex items-center justify-between gap-12">
             <div className="flex items-center">
               <div className="w-3xs">
-                <TrackItem
-                  track={currentTrack}
+                <TrackItemCompact
+                  track={{
+                    ...currentTrack,
+                    artists: currentTrack.artists.map((item) => item.artist),
+                  }}
                   canHover={false}
-                  imageSize="large"
+                  hasMoreDetails={false}
                 />
               </div>
               <IconButton

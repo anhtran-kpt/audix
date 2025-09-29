@@ -17,7 +17,6 @@ export const TrackItemCompact = ({
   track,
   hasCover = true,
 }: TrackItemCompactProps) => {
-  console.log(track);
   return (
     <li
       className={cn(
@@ -26,7 +25,14 @@ export const TrackItemCompact = ({
       )}
     >
       <div className="flex items-center gap-3">
-        {hasCover && <AppImage src={track.album.imageId} alt={track.title} />}
+        {hasCover && (
+          <AppImage
+            src={track.album.imageId}
+            alt={track.title}
+            containerClassName="size-12"
+            sizes="48px"
+          />
+        )}
         <TrackItemInfo
           title={track.title}
           isExplicit={track.isExplicit}

@@ -11,7 +11,6 @@ export default function TrackArtists({
   isExplicit,
   artists,
 }: TrackArtistsProps) {
-  console.log(artists);
   return (
     <div className="flex items-center text-sm gap-x-1.5 text-muted-foreground truncate">
       {isExplicit && <ExplicitIcon />}

@@ -9,7 +9,6 @@ import {
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { CoverImage } from "@/components/ui/cover-image";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { ArtistImage } from "@/components/ui/artist-image";
 import { NavLink } from "@/components/ui/nav-link";
@@ -21,6 +20,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import tinycolor from "tinycolor2";
 import { ContextPlayButton } from "@/components/shared/context-play-button";
 import { AlbumDetail } from "@/features/album/data-access/album-repo";
+import { AppImage } from "@/components/shared/app-image";
 
 type BannerSectionProps = {
   imageId: AlbumDetail["imageId"];
@@ -65,10 +65,11 @@ export const BannerSection = ({
     >
       <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
-          <CoverImage
+          <AppImage
             alt={title}
             src={imageId}
-            size="xl"
+            containerClassName="size-56"
+            sizes="(max-width: 768px) 50vw, 224px"
             onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
             priority
           />

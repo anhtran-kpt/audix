@@ -7,9 +7,9 @@ import tinycolor from "tinycolor2";
 import { IconButton } from "@/components/ui/icon-button";
 import { FollowButton } from "@/components/features/follow-button";
 import { FollowersBadge } from "@/components/features/follow-badge";
-import { CldImage } from "next-cloudinary";
 import { ContextPlayButton } from "@/components/shared/context-play-button";
 import { ArtistDetailPage } from "@/features/artist/data-access/artist-repo";
+import { AppImage } from "@/components/shared/app-image";
 
 type BannerSectionProps = {
   imageId: ArtistDetailPage["artist"]["imageId"];
@@ -26,7 +26,6 @@ export const BannerSection = ({
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
-  const [isLoaded, setIsLoaded] = useState(false);
 
   const from = gradient?.from ?? "transparent";
   const via = gradient?.via ?? from;
@@ -45,21 +44,17 @@ export const BannerSection = ({
     >
       <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
-          <div className="relative overflow-hidden rounded-full aspect-square shrink-0 size-56">
-            <CldImage
-              className="object-cover duration-400 transition-opacity"
-              fill
-              sizes="224px"
-              priority
-              alt={name}
-              src={imageId}
-              style={{ opacity: isLoaded ? 1 : 0 }}
-              onLoad={(e) => {
-                setImageUrl((e.target as HTMLImageElement).src);
-                setIsLoaded(true);
-              }}
-            />
-          </div>
+          <AppImage
+            priority
+            alt={name}
+            src={imageId}
+            containerClassName="size-56"
+            className="rounded-full"
+            sizes="(max-width: 768px) 50vw, 224px"
+            onLoad={(e) => {
+              setImageUrl((e.target as HTMLImageElement).src);
+            }}
+          />
           <div className="flex flex-col gap-3">
             {isVerified && (
               <div className="flex gap-2 items-center">

@@ -2,7 +2,6 @@
 
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
-import { CoverImage } from "@/components/ui/cover-image";
 import { NavLink } from "@/components/ui/nav-link";
 import Dot from "@/components/ui/dot";
 import prettyMilliseconds from "pretty-ms";
@@ -28,6 +27,7 @@ import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dr
 import EditPlaylistDetails from "@/components/features/edit-playlist-details";
 import { ContextPlayButton } from "@/components/shared/context-play-button";
 import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
+import { AppImage } from "@/components/shared/app-image";
 
 type BannerSectionProps = {
   initialData: PlaylistDetail;
@@ -74,12 +74,13 @@ export const BannerSection = ({
       <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
           {playlist.imageId ? (
-            <CoverImage
+            <AppImage
               alt={playlist.title}
               src={playlist.imageId}
-              size="xl"
               onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
               priority
+              containerClassName="size-56"
+              sizes="(max-width: 768px) 50vw, 224px"
             />
           ) : (
             <FallbackCoverImage type="detail" />

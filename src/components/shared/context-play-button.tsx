@@ -2,9 +2,9 @@
 
 import { Button } from "../ui/button";
 import { PauseIcon, PlayIcon } from "lucide-react";
-import { usePlayButton } from "@/hooks/use-play-button";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 import { cn } from "@/lib/utils";
+import { usePlayContext } from "@/hooks/use-play-context";
 
 type ContextPlayButtonProps = {
   context: StartPlaybackInput;
@@ -15,7 +15,7 @@ export const ContextPlayButton = ({
   context,
   className,
 }: ContextPlayButtonProps) => {
-  const { handlePlay, isThisContext, isPlaying } = usePlayButton(context);
+  const { handlePlay, isThisContext, isPlaying } = usePlayContext(context);
 
   return (
     <Button
@@ -24,12 +24,12 @@ export const ContextPlayButton = ({
         e.stopPropagation();
         handlePlay();
       }}
-      className={cn("size-14 rounded-full", className)}
+      className={cn("size-12 rounded-full", className)}
     >
       {isThisContext && isPlaying ? (
-        <PauseIcon className="size-7 fill-current stroke-0" />
+        <PauseIcon className="size-6 fill-current stroke-0" />
       ) : (
-        <PlayIcon className="size-7 fill-current stroke-0" />
+        <PlayIcon className="size-6 fill-current stroke-0" />
       )}
     </Button>
   );

@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Clock3Icon, PlusCircleIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import { TrackItemDetailed } from "@/features/track/contracts/track-dto";
+import { TrackListItem } from "@/features/track/contracts/track-dto";
 import { format } from "date-fns";
 import { NavLink } from "../ui/nav-link";
 import TrackIndexCell from "../shared/track-index-cell";
@@ -16,7 +16,7 @@ import { TrackItemCompact } from "../shared/track-item-compact";
 type TrackListProps = {
   contextId: string;
   contextType: "ALBUM" | "PLAYLIST" | "ARTIST";
-  tracks: TrackItemDetailed[];
+  tracks: TrackListItem[];
 };
 
 export const TrackList = ({
@@ -39,6 +39,8 @@ export const TrackList = ({
   };
 
   const gridClass = cn("grid w-full items-center", gridCols[contextType]);
+
+  console.log(tracks);
 
   return (
     <div className="space-y-1 w-full">
@@ -90,7 +92,10 @@ export const TrackList = ({
               </div>
 
               <TrackItemCompact
-                track={track}
+                track={{
+                  ...track,
+                  artists: track.artists.map((item) => item.artist),
+                }}
                 canHover={false}
                 hasCover={contextType !== "ALBUM"}
                 hasMoreDetails={false}

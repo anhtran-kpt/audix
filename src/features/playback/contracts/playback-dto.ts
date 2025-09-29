@@ -7,7 +7,7 @@ import {
   QueueItemKindSchema,
   RepeatModeSchema,
 } from "@/features/shared/contracts/shared-enum";
-import { FullTrackSchema } from "@/features/track/contracts/track-dto";
+import { FullTrackSchema } from "@/features/track/contracts/track-schema";
 import z from "zod";
 
 export const PlaybackSessionSchema = z.object({

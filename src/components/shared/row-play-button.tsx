@@ -1,9 +1,10 @@
 "use client";
 
 import { PauseIcon, PlayIcon } from "lucide-react";
-import { usePlayButton } from "@/hooks/use-play-button";
+
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 import { cn } from "@/lib/utils";
+import { usePlayContext } from "@/hooks/use-play-context";
 
 type RowPlayButtonProps = {
   context: StartPlaybackInput;
@@ -12,7 +13,7 @@ type RowPlayButtonProps = {
 
 export const RowPlayButton = ({ context, className }: RowPlayButtonProps) => {
   const { handlePlay, isThisTrack, isThisContext, isPlaying } =
-    usePlayButton(context);
+    usePlayContext(context);
 
   return (
     <button

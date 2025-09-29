@@ -1,9 +1,9 @@
 "use client";
 
 import { PauseIcon, PlayIcon } from "lucide-react";
-import { usePlayButton } from "@/hooks/use-play-button";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 import { cn } from "@/lib/utils";
+import { usePlayContext } from "@/hooks/use-play-context";
 
 type MiniPlayContextButtonProps = {
   context: StartPlaybackInput;
@@ -14,7 +14,7 @@ export const MiniPlayContextButton = ({
   context,
   className,
 }: MiniPlayContextButtonProps) => {
-  const { handlePlay, isThisContext, isPlaying } = usePlayButton(context);
+  const { handlePlay, isThisContext, isPlaying } = usePlayContext(context);
 
   return (
     <button

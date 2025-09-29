@@ -16,7 +16,6 @@ import Dot from "../ui/dot";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { ScrollArea } from "../ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
-import { SidebarArtist } from "@/features/artist/contracts/artist-schema";
 import { SidebarPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { sidebarPlaylistOptions } from "@/features/playlist/query/playlist-options";
 import { sidebarArtistOptions } from "@/features/artist/query/artist-options";
@@ -29,13 +28,14 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
-import CoverImage from "../shared/cover-image";
 import { SidebarItemWrapper } from "../shared/sidebar-item-wrapper";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { RowPlayButton } from "../shared/row-play-button";
 import { useShallow } from "zustand/react/shallow";
 import { VolumeIcon } from "../shared/volume-icon";
 import { MiniPlayContextButton } from "../shared/mini-play-context-button";
+import { SidebarArtist } from "@/features/artist/contracts/artist-dto";
+import { AppImage } from "../shared/app-image";
 
 export function AppSidebar({
   initialArtists,
@@ -153,13 +153,13 @@ export function AppSidebar({
                           open={open}
                           image={
                             <>
-                              <CoverImage
+                              <AppImage
                                 fill
-                                sizes="36px"
+                                sizes="40px"
                                 className="rounded-full group-hover/menu-item:brightness-65"
                                 alt={artist.name}
                                 src={artist.imageId}
-                                priority
+                                containerClassName="size-10"
                               />
                               <RowPlayButton
                                 context={{
@@ -206,13 +206,13 @@ export function AppSidebar({
                           image={
                             playlist.imageId ? (
                               <>
-                                <CoverImage
+                                <AppImage
                                   fill
-                                  sizes="36px"
-                                  className="rounded-sm group-hover/menu-item:brightness-65"
+                                  sizes="40px"
+                                  className="group-hover/menu-item:brightness-65"
                                   alt={playlist.title}
                                   src={playlist.imageId}
-                                  priority
+                                  containerClassName="size-10"
                                 />
                                 <MiniPlayContextButton
                                   context={{
@@ -221,13 +221,6 @@ export function AppSidebar({
                                   }}
                                   className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                                 />
-                                {/* <RowPlayButton
-                                  context={{
-                                    contextId: playlist.id,
-                                    contextType: "PLAYLIST",
-                                  }}
-                                  className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                /> */}
                               </>
                             ) : (
                               <FallbackCoverImage type="item" />

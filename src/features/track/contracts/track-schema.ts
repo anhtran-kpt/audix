@@ -138,6 +138,8 @@ export const TrackListItemSchema = FullTrackSchema.pick({
         id: zCuidSchema,
         name: z.string(),
       }),
+      role: ArtistRoleSchema,
+      order: z.number().int().nonnegative(),
     })
     .array(),
   addedAt: zDateSchema.optional(),

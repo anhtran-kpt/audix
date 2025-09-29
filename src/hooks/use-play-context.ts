@@ -4,7 +4,7 @@ import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
 
-export function usePlayButton(context: StartPlaybackInput) {
+export function usePlayContext(context: StartPlaybackInput) {
   const { isPlaying, start, pause, resume, contextId, currentTrackId } =
     usePlaybackStore(
       useShallow((s) => ({
