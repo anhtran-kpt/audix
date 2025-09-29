@@ -2,13 +2,10 @@
 
 import { MiniTrackItem } from "@/features/track/contracts/track-dto";
 import TrackArtists from "./track-artists";
-import { ItemTitle } from "../ui/item-title";
 import CoverImage from "./cover-image";
-import { TrackDropdown } from "../features/track-dropdown";
-import { IconButton } from "../ui/icon-button";
-import { PauseIcon, PlayIcon } from "lucide-react";
+import { TrackDetails } from "../features/track-details";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
-import { usePlayButton } from "@/hooks/use-play-button";
+import { ItemTitle } from "../ui/item-title";
 
 type MiniTrackListProps = {
   tracks: MiniTrackItem[];
@@ -52,10 +49,10 @@ export default function MiniTrackList({
               /> */}
             </div>
             <div className="flex flex-col gap-0.5 w-full overflow-hidden">
-              {/* <ItemTitle
+              <ItemTitle
                 title={track.title}
                 isActive={nowPlayingRefId === track.id}
-              /> */}
+              />
               <TrackArtists
                 isExplicit={track.isExplicit}
                 artists={track.artists.map((item) => item.artist)}
@@ -63,7 +60,7 @@ export default function MiniTrackList({
             </div>
           </div>
           <div className="flex items-center justify-center opacity-0 select-none group-hover/mini-track:opacity-100 group-hover/mini-track:select-auto transition-opacity">
-            <TrackDropdown track={track} />
+            <TrackDetails track={track} />
           </div>
         </li>
       ))}

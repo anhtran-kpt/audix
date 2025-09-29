@@ -72,9 +72,7 @@ export const ArtistGridItemSchema = ArtistBaseSchema.pick({
   imageId: true,
 });
 
-export type ArtistGridItem = z.infer<typeof ArtistGridItemSchema>;
-
-export type SidebarArtist = z.infer<typeof SidebarArtistSchema>;
-export type ArtistBase = z.infer<typeof ArtistBaseSchema>;
-export type FullArtist = z.infer<typeof FullArtistSchema>;
-export type FollowStatus = z.infer<typeof FollowStatusSchema>;
+export const TrackArtistSchema = ArtistBaseSchema.pick({
+  id: true,
+  name: true,
+});

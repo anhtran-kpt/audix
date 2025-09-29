@@ -3,20 +3,20 @@
 import { cn } from "@/lib/utils";
 import { Clock3Icon, PlusCircleIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
-import { TrackListItem } from "@/features/track/contracts/track-dto";
-import TrackItem from "./track-item";
+import { TrackItemDetailed } from "@/features/track/contracts/track-dto";
 import { format } from "date-fns";
 import { NavLink } from "../ui/nav-link";
-import { TrackDropdown } from "./track-dropdown";
 import TrackIndexCell from "../shared/track-index-cell";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
 import { formatDuration } from "@/utils/date";
+import { TrackDetails } from "./track-details";
+import { TrackItemCompact } from "../shared/track-item-compact";
 
 type TrackListProps = {
   contextId: string;
   contextType: "ALBUM" | "PLAYLIST" | "ARTIST";
-  tracks: TrackListItem[];
+  tracks: TrackItemDetailed[];
 };
 
 export const TrackList = ({
@@ -89,11 +89,11 @@ export const TrackList = ({
                 />
               </div>
 
-              <TrackItem
+              <TrackItemCompact
                 track={track}
-                hasCover={contextType !== "ALBUM"}
                 canHover={false}
-                isActive={isThisTrack}
+                hasCover={contextType !== "ALBUM"}
+                hasMoreDetails={false}
               />
 
               {contextType === "PLAYLIST" && (
@@ -129,7 +129,7 @@ export const TrackList = ({
               <div className="text-right">{formatDuration(track.duration)}</div>
 
               <div className="invisible group-hover:visible flex items-center justify-end">
-                <TrackDropdown
+                <TrackDetails
                   track={track}
                   playlistId={
                     contextType === "PLAYLIST" ? contextId : undefined

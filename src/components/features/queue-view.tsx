@@ -6,43 +6,27 @@ import TrackItem from "./track-item";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { useShallow } from "zustand/react/shallow";
-import {
-  useRecentTracks,
-  useTrack,
-  useTracks,
-} from "@/features/track/hooks/use-tracks";
+import { useRecentTracks, useTracks } from "@/features/track/hooks/use-tracks";
 import MiniTrackList from "../shared/mini-track-list";
-import { useMemo } from "react";
-import { useRecentPlay } from "@/hooks/use-recent-play";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
+import { usePlaybackStore } from "@/stores/use-playback-store";
 
 export default function QueueView() {
-  const nowPlayingRefId = useNowPlayingRefId();
-  const isPlaying = useIsPlaying();
-  const { upNext, skipToUpNextIndex } = useQueue();
-  const trackIds = useMemo(() => upNext.map((ref) => ref.id), [upNext]);
-  const { data: queueTracks } = useTracks(trackIds);
+  const { isPlaying, queue, currentTrack } = usePlaybackStore(
+    useShallow((s) => ({
+      isPlaying: s.isPlaying,
+      queue: s.session?.queue,
+      currentTrack: s.session?.currentTrack,
+    }))
+  );
+
+  const { data: queueTracks } = useTracks(queue?.map((item) => item.track.id));
   const { data: recentTracks } = useRecentTracks();
 
-  const { data: nowPlayingTrack, status, error } = useTrack(nowPlayingRefId);
-  const togglePlay = useAudioStore(useShallow((state) => state.togglePlay));
-
-  const { handlePlay: handleRecentPlay } = useRecentPlay();
-
-  const handleQueuePlay = (trackId: zCuidType) => {
-    if (queueTracks) {
-      const index = queueTracks.findIndex((t) => t.id === trackId);
-      if (index !== -1) skipToUpNextIndex(index);
-    }
-  };
-
-  if (status === "pending") {
+  if (!currentTrack) {
     return null;
   }
 
-  if (status === "error") {
-    return <span>Error {error.message}</span>;
-  }
+  console.log(queueTracks);
 
   return (
     <Tabs defaultValue="queue" className="size-full">
@@ -60,14 +44,14 @@ export default function QueueView() {
               <p className="font-semibold text-15 px-2">Now playing</p>
 
               <TrackItem
-                track={nowPlayingTrack}
+                track={currentTrack}
                 isActive
                 playButton={
                   <IconButton
                     aria-pressed={isPlaying}
                     icon={isPlaying ? PauseIcon : PlayIcon}
                     size="sm"
-                    onClick={togglePlay}
+                    // onClick={togglePlay}
                     iconClassName="fill-foreground stroke-0"
                     className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover:visible"
                   />
@@ -76,12 +60,12 @@ export default function QueueView() {
             </div>
             <div className="flex flex-col gap-2">
               <p className="font-semibold text-15 px-2">
-                Next from: {nowPlayingTrack.title}
+                Next from: {currentTrack.title}
               </p>
               {queueTracks && (
                 <MiniTrackList
                   tracks={queueTracks}
-                  handlePlay={handleQueuePlay}
+                  // handlePlay={handleQueuePlay}
                 />
               )}
             </div>
@@ -99,7 +83,7 @@ export default function QueueView() {
           {recentTracks && (
             <MiniTrackList
               tracks={recentTracks}
-              handlePlay={handleRecentPlay}
+              // handlePlay={handleRecentPlay}
             />
           )}
         </ScrollArea>

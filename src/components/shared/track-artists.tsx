@@ -1,19 +1,17 @@
-import { ArtistBase } from "@/features/artist/contracts/artist-schema";
 import ExplicitIcon from "../ui/explicit-icon";
 import { NavLink } from "../ui/nav-link";
+import { TrackArtist } from "@/features/artist/contracts/artist-dto";
 
 type TrackArtistsProps = {
   isExplicit?: boolean;
-  artists: {
-    name: ArtistBase["name"];
-    id: ArtistBase["id"];
-  }[];
+  artists: TrackArtist[];
 };
 
 export default function TrackArtists({
   isExplicit,
   artists,
 }: TrackArtistsProps) {
+  console.log(artists);
   return (
     <div className="flex items-center text-sm gap-x-1.5 text-muted-foreground truncate">
       {isExplicit && <ExplicitIcon />}

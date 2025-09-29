@@ -14,7 +14,7 @@ export default function RightPanel() {
       <SheetContent
         aria-describedby={undefined}
         side="right"
-        className="bg-sidebar group/np gap-0 py-2"
+        className="bg-sidebar group/np gap-0"
         style={{
           paddingBottom:
             "calc(env(safe-area-inset-bottom) + var(--player-offset, 0px))",
@@ -25,7 +25,7 @@ export default function RightPanel() {
           {active === "queue" && "Queue"}
         </SheetTitle>
         {active === "now-playing" && <NowPlaying />}
-        {/* {active === "queue" && <QueueView />} */}
+        {active === "queue" && <QueueView />}
       </SheetContent>
     </Sheet>
   );

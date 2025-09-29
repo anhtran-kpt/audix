@@ -36,7 +36,7 @@ import {
 import { NewPlaylistDialog } from "./new-playlist-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { TrackListItem } from "@/features/track/contracts/track-dto";
+import { TrackItemCompact } from "@/features/track/contracts/track-dto";
 import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
 import { getApi } from "@/lib/http/request";
 import { UserPlaylist } from "@/features/playlist/contracts/playlist-dto";
@@ -44,12 +44,12 @@ import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { useOptimisticTrackRemove } from "@/hooks/use-optimistic-track-remove";
 import { useRouter } from "next/navigation";
 
-type TrackDropdownProps = {
-  track: TrackListItem;
+type TrackDetailsProps = {
+  track: TrackItemCompact;
   playlistId?: string;
 };
 
-export function TrackDropdown({ track, playlistId }: TrackDropdownProps) {
+export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
   const removeTrackMutation = useOptimisticTrackRemove();
   const addTrackMutation = useOptimisticTrackAdd();
   const { status } = useSession();
@@ -153,7 +153,10 @@ export function TrackDropdown({ track, playlistId }: TrackDropdownProps) {
             {playlistId && (
               <DropdownMenuItem
                 onClick={() =>
-                  removeTrackMutation.mutate({ playlistId, trackId: track.id })
+                  removeTrackMutation.mutate({
+                    playlistId,
+                    trackId: track.id,
+                  })
                 }
               >
                 <TrashIcon />
@@ -170,7 +173,7 @@ export function TrackDropdown({ track, playlistId }: TrackDropdownProps) {
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
-                  {track.artists.map(({ artist }) => (
+                  {track.artists.map((artist) => (
                     <DropdownMenuItem
                       key={artist.id}
                       onClick={() => router.push(`/artists/${artist.id}`)}

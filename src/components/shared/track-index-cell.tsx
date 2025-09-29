@@ -31,6 +31,7 @@ export default function TrackIndexCell({
       </>
     );
   }
+
   return (
     <>
       <span className={cn("group-hover:hidden", isThisTrack && "text-primary")}>
