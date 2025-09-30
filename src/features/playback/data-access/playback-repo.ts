@@ -83,14 +83,9 @@ export const getPlaybackSession = async (userId: string) => {
 
   if (!session) return null;
 
-  const currentTrack = await db.track.findUniqueOrThrow({
-    where: { id: session.currentTrackId },
-    select: trackDetailSelect,
-  });
-
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
 
-  return { ...session, currentTrack, hasNext, hasPrevious };
+  return { ...session, hasNext, hasPrevious };
 };
 
 const createSnapshotFromPlaylist = async ({
@@ -189,11 +184,12 @@ const createSnapshotFromArtist = async ({
   userId: zCuidType;
 }) => {
   const artist = await db.artist
-    .findUnique({
+    .findUniqueOrThrow({
       where: {
         id: artistId,
       },
       select: {
+        name: true,
         tracks: {
           select: {
             track: {
@@ -203,15 +199,12 @@ const createSnapshotFromArtist = async ({
             },
           },
         },
-        name: true,
       },
     })
     .then((data) => ({
       ...data,
       tracks: data?.tracks.map((item) => item.track),
     }));
-
-  if (!artist) throw new Error("Artist not found");
 
   const { name, tracks } = artist;
 
@@ -256,7 +249,13 @@ const createSnapshotFromArtist = async ({
   });
 };
 
-const createSnapshotFromHistory = async (userId: string, historyId: string) => {
+const resumeSnapshotFromHistory = async ({
+  userId,
+  historyId,
+}: {
+  userId: string;
+  historyId: string;
+}) => {
   const history = await db.playHistory.findUnique({
     where: { id: historyId },
     select: {
@@ -270,30 +269,20 @@ const createSnapshotFromHistory = async (userId: string, historyId: string) => {
 
   if (!history) throw new Error("No history");
 
-  let snapshot = history.snapshot;
-
-  if (!snapshot) {
-    snapshot = await createSnapshot(
-      userId,
-      history.playbackContextType,
-      history.playbackContextId ?? undefined
-    );
-  }
-
   const hash = createHash("sha256")
-    .update(JSON.stringify(history.map((h) => h.trackId)))
+    .update(JSON.stringify(history.snapshot.tracks.map((h) => h.trackId)))
     .digest("hex");
 
   return db.playbackContextSnapshot.create({
     data: {
       userId,
       contextType: "HISTORY",
-      contextId: null,
+      contextId: historyId,
       name: "Recently Played",
       hash,
       tracks: {
         createMany: {
-          data: history.map((h, index) => ({
+          data: history.snapshot.tracks.map((h, index) => ({
             trackId: h.trackId,
             index,
           })),
@@ -348,29 +337,29 @@ const createSnapshotFromSearch = async ({
 const createSnapshot = (
   userId: string,
   contextType: PlaybackContextType,
-  contextId: string | undefined
+  contextId: string
 ) => {
   switch (contextType) {
     case "PLAYLIST":
       return createSnapshotFromPlaylist({
-        playlistId: contextId!,
+        playlistId: contextId,
         userId,
       });
     case "ALBUM":
       return createSnapshotFromAlbum({
-        albumId: contextId!,
+        albumId: contextId,
         userId,
       });
     case "ARTIST":
       return createSnapshotFromArtist({
-        artistId: contextId!,
+        artistId: contextId,
         userId,
       });
     case "HISTORY":
-      return createSnapshotFromHistory(userId);
+      return resumeSnapshotFromHistory({ userId, historyId: contextId });
     case "SEARCH":
       return createSnapshotFromSearch({
-        query: contextId!,
+        query: contextId,
         userId,
       });
     default:
@@ -380,12 +369,12 @@ const createSnapshot = (
 
 export const startPlaybackSession = async ({
   userId,
-  input,
+  context,
 }: {
   userId: string;
-  input: StartPlaybackInput;
+  context: StartPlaybackInput;
 }) => {
-  const { contextType, contextId, startTrackId } = input;
+  const { contextType, contextId, startTrackId } = context;
 
   const snapshot = await createSnapshot(userId, contextType, contextId);
   const snapshotTracks = await db.playbackSnapshotTrack.findMany({
@@ -426,22 +415,20 @@ export const startPlaybackSession = async ({
     select: playbackSessionSelect,
   });
 
-
-
   await rebuildContextQueue(session);
-
-  const currentTrack = await db.track.findUniqueOrThrow({
-    where: { id: currentTrackId },
-    select: trackDetailSelect,
-  });
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
 
   await db.playHistory.create({
-    data: 
-  })
+    data: {
+      snapshotId: snapshot.id,
+      trackId: currentTrackId,
+      userId: userId,
+      listenedSec: 0,
+    },
+  });
 
-  return { ...session, currentTrack, hasNext, hasPrevious };
+  return { ...session, hasNext, hasPrevious };
 };
 
 export const skipToNext = async (userId: string) => {
@@ -489,7 +476,7 @@ export const skipToNext = async (userId: string) => {
 
   if (!pickedTrackId) return null;
 
-  const newTrack = await db.track.findUniqueOrThrow({
+  const nextTrack = await db.track.findUniqueOrThrow({
     where: { id: pickedTrackId },
     select: trackDetailSelect,
   });
@@ -506,10 +493,19 @@ export const skipToNext = async (userId: string) => {
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
 
+  await db.playHistory.create({
+    data: {
+      snapshotId: session.snapshot.id,
+      trackId: nextTrack.id,
+      userId: userId,
+      listenedSec: 0,
+    },
+  });
+
   return {
     currentTrackId: updated.currentTrackId,
     contextIndex: updated.contextIndex,
-    currentTrack: newTrack,
+    currentTrack: nextTrack,
     hasNext,
     hasPrevious,
   };
@@ -567,6 +563,15 @@ export const skipToPrevious = async (userId: string, progressMs?: number) => {
   });
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
+
+  await db.playHistory.create({
+    data: {
+      snapshotId: session.snapshot.id,
+      trackId: newTrack.id,
+      userId: userId,
+      listenedSec: 0,
+    },
+  });
 
   return {
     currentTrackId: updated.currentTrackId,

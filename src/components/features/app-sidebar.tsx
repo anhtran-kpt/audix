@@ -63,7 +63,7 @@ export function AppSidebar({
   const { isPlaying, contextId } = usePlaybackStore(
     useShallow((s) => ({
       isPlaying: s.isPlaying,
-      contextId: s.session?.snapshot.contextId,
+      contextId: s.session?.snapshot?.contextId,
     }))
   );
 

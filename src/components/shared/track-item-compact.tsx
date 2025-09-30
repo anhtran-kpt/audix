@@ -33,7 +33,7 @@ export const TrackItemCompact = ({
   );
 
   const isActiveTrack =
-    context?.contextType === snapshot?.type &&
+    context?.contextType === snapshot?.contextType &&
     context?.contextId === snapshot?.contextId &&
     currentTrackId === track.id;
 

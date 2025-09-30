@@ -1,9 +1,9 @@
-import { getRecentTracks } from "@/features/track/data-access/track-repos";
+import { getRecentlyPlayedTracks } from "@/features/track/data-access/track-repos";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({
   auth: "required",
   handler: async ({ userId }) => {
-    return getRecentTracks(userId!);
+    return getRecentlyPlayedTracks(userId!);
   },
 });

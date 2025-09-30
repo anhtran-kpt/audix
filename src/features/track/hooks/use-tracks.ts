@@ -21,8 +21,8 @@ export const useTracks = (trackIds?: string[]) => {
 
 export const useRecentTracks = () => {
   return useQuery({
-    queryKey: ["tracks", "recently"],
-    queryFn: () => getApi<TrackItem[]>(`/tracks/recently`),
+    queryKey: ["tracks", "history"],
+    queryFn: () => getApi<TrackItem[]>(`/tracks/history`),
   });
 };
 

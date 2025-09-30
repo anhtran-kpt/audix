@@ -205,6 +205,7 @@ model Track {
   playHistory           PlayHistory[]
   playbackSnapshotTrack PlaybackSnapshotTrack[]
   playbackQueueItem     PlaybackQueueItem[]
+  playbackSessions      PlaybackSession[]
 
   @@map("tracks")
 }
@@ -484,16 +485,16 @@ model PlaybackSession {
   snapshot       PlaybackContextSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
   contextIndex   Int                     @default(0)
   currentTrackId String
+  currentTrack   Track                   @relation(fields: [currentTrackId], references: [id], onDelete: Cascade)
 
   isShuffled Boolean    @default(false)
   repeatMode RepeatMode @default(OFF)
 
   queue PlaybackQueueItem[]
 
-  // Device info
   activeDeviceId String?
 
-  version BigInt @default(0)
+  version Int @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -508,8 +509,8 @@ model PlaybackContextSnapshot {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   contextType PlaybackContextType
-  contextId   String?
-  name        String?
+  contextId   String
+  name        String
   hash        String
   createdAt   DateTime            @default(now())
 
@@ -536,22 +537,19 @@ model PlaybackSnapshotTrack {
 }
 
 model PlayHistory {
-  id                  String              @id @default(cuid())
-  playedAt            DateTime            @default(now())
-  listenedSec         Int
-  playbackContextType PlaybackContextType
-  playbackContextId   String?
+  id          String   @id @default(cuid())
+  playedAt    DateTime @default(now())
+  listenedSec Int
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  snapshotId String?
-  snapshot   PlaybackContextSnapshot? @relation(fields: [snapshotId], references: [id], onDelete: SetNull)
+  snapshotId String
+  snapshot   PlaybackContextSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
 
   trackId String
   track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
 
-  @@index([userId, playbackContextType, playbackContextId, playedAt])
   @@index([userId, playedAt])
   @@index([trackId, playedAt])
   @@map("play_history")

@@ -12,7 +12,7 @@ export function usePlayContext(context: StartPlaybackInput) {
         pause: s.pause,
         resume: s.resume,
         isPlaying: s.isPlaying,
-        contextId: s.session?.snapshot.contextId,
+        contextId: s.session?.snapshot?.contextId,
         currentTrackId: s.session?.currentTrackId,
       }))
     );

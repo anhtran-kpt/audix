@@ -40,8 +40,6 @@ export const TrackList = ({
 
   const gridClass = cn("grid w-full items-center", gridCols[contextType]);
 
-  console.log(tracks);
-
   return (
     <div className="space-y-1 w-full">
       <div

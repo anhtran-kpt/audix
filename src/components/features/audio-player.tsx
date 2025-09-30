@@ -61,6 +61,8 @@ export default function AudioPlayer() {
     useShallow((s) => ({ toggle: s.toggle, active: s.active }))
   );
 
+  console.log(session);
+
   return (
     <>
       {currentTrack && session && (

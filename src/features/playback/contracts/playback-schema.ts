@@ -10,14 +10,15 @@ import {
 import { FullTrackSchema } from "@/features/track/contracts/track-schema";
 import z from "zod";
 
-export const PlaybackSessionSchema = z.object({
+export const FullPlaybackSessionSchema = z.object({
   id: zCuidSchema,
   isShuffled: zBoolSchema,
   repeatMode: RepeatModeSchema,
   currentTrackId: zCuidSchema,
+  currentTrack: FullTrackSchema,
   snapshot: z.object({
     contextType: PlaybackContextTypeSchema,
-    contextId: z.string().optional(),
+    contextId: z.string(),
     name: z.string(),
     tracks: z
       .object({
@@ -39,11 +40,21 @@ export const PlaybackSessionSchema = z.object({
     })
     .array(),
   activeDeviceId: z.string().nullable(),
-  version: z.number().int().nonnegative(),
+  version: z.bigint(),
+});
+
+export const PlaybackSessionSchema = FullPlaybackSessionSchema.pick({
+  id: true,
+  isShuffled: true,
+  repeatMode: true,
+  currentTrack: true,
+  currentTrackId: true,
+  snapshot: true,
+  contextIndex: true,
+  queue: true,
 });
 
 export const PlaybackSessionExtendedSchema = PlaybackSessionSchema.extend({
-  currentTrack: FullTrackSchema,
   hasNext: zBoolSchema,
   hasPrevious: zBoolSchema,
 });
@@ -54,7 +65,7 @@ export const VolumePlaybackInputSchema = z.object({
 
 export const StartPlaybackInputSchema = z.object({
   contextType: PlaybackContextTypeSchema,
-  contextId: z.string().optional(),
+  contextId: z.string(),
   startTrackId: zCuidSchema.optional(),
 });
 

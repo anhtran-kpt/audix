@@ -6,6 +6,6 @@ export const POST = makePOST({
   auth: "required",
   body: StartPlaybackInputSchema,
   handler: async ({ body, userId }) => {
-    return startPlaybackSession({ input: body, userId: userId! });
+    return startPlaybackSession({ context: body, userId: userId! });
   },
 });

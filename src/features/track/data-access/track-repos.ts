@@ -30,25 +30,31 @@ export const getTrackListByIds = async (trackIds: string[]) => {
     .filter((x): x is (typeof rows)[number] => !!x);
 };
 
-export const getRecentTracks = async (userId: string) => {
-  const rows = await db.playHistory.groupBy({
-    by: ["trackId"],
-    where: { userId },
-    _max: { playedAt: true },
-    orderBy: { _max: { playedAt: "desc" } },
-    take: 20,
-  });
-
-  const ids = rows.map((r) => r.trackId);
-  if (ids.length === 0) return [];
-
-  const tracks = await db.track.findMany({
-    where: { id: { in: ids } },
-    select: trackDetailSelect,
-  });
-
-  const lastMap = new Map(rows.map((r) => [r.trackId, r._max.playedAt!]));
-  return tracks.sort((a, b) => +lastMap.get(b.id)! - +lastMap.get(a.id)!);
+export const getRecentlyPlayedTracks = async (userId: string) => {
+  return db.playHistory
+    .findMany({
+      where: {
+        userId,
+      },
+      orderBy: {
+        playedAt: "desc",
+      },
+      select: {
+        id: true,
+        track: {
+          select: trackItemSelect,
+        },
+      },
+    })
+    .then((data) =>
+      data.map((item) => ({
+        ...item,
+        track: {
+          ...item.track,
+          artists: item.track.artists.map((a) => a.artist),
+        },
+      }))
+    );
 };
 
 export const getNewReleases = async () => {

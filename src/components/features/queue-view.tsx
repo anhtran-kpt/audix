@@ -47,7 +47,7 @@ export default function QueueView() {
                 context={
                   snapshot
                     ? {
-                        contextType: snapshot.type,
+                        contextType: snapshot.contextType,
                         contextId: snapshot.contextId,
                         startTrackId: currentTrack.id,
                       }
@@ -71,7 +71,7 @@ export default function QueueView() {
                       context={
                         snapshot
                           ? {
-                              contextType: snapshot.type,
+                              contextType: snapshot.contextType,
                               contextId: snapshot.contextId,
                               startTrackId: track.id,
                             }
@@ -95,12 +95,14 @@ export default function QueueView() {
         >
           {recentTracks && (
             <div className="flex flex-col gap-1">
-              {recentTracks.map((track) => (
+              {recentTracks.map(({ id, track }) => (
                 <TrackItemCompact
                   key={track.id}
-                  track={{
-                    ...track,
-                    artists: track.artists.map((item) => item.artist),
+                  track={track}
+                  context={{
+                    contextType: "HISTORY",
+                    contextId: id,
+                    startTrackId: track.id,
                   }}
                 />
               ))}
