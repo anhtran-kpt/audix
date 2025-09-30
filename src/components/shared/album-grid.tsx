@@ -1,3 +1,5 @@
+"use client";
+
 import { GridWrapper } from "../ui/grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import Dot from "../ui/dot";
@@ -6,12 +8,14 @@ import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { AlbumGridItem } from "@/features/album/contracts/album-dto";
 import { AppImage } from "./app-image";
 import { ContextPlayButton } from "./context-play-button";
+import { useRouter } from "next/navigation";
 
 type AlbumGridProps = {
   albums: AlbumGridItem[];
 };
 
 export default function AlbumGrid({ albums }: AlbumGridProps) {
+  const router = useRouter();
   return (
     <GridWrapper>
       {albums.map((album) => (
@@ -19,7 +23,10 @@ export default function AlbumGrid({ albums }: AlbumGridProps) {
           key={album.id}
           className="flex flex-col group gap-2 overflow-hidden"
         >
-          <div className="relative">
+          <div
+            className="relative cursor-pointer"
+            onClick={() => router.push(`/albums/${album.id}`)}
+          >
             <AppImage
               alt={album.title}
               src={album.imageId}

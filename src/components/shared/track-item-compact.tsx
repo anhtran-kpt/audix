@@ -53,7 +53,9 @@ export const TrackItemCompact = ({
               containerClassName="size-12"
               sizes="48px"
               className={cn(
-                canPlay && "group-hover:brightness-65 transition-[brightness]"
+                canPlay &&
+                  canHover &&
+                  "group-hover:brightness-65 transition-[brightness]"
               )}
             />
           )}

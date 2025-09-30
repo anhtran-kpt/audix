@@ -190,6 +190,7 @@ export const usePlaybackStore = create<PlaybackState>()(
       partialize: (state) => ({
         volume: state.volume,
         isMuted: state.isMuted,
+        progressMs: state.progressMs,
       }),
     }
   )

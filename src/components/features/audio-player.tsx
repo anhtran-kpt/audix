@@ -1,10 +1,7 @@
 "use client";
 
 import {
-  MicVocalIcon,
   PlusCircleIcon,
-  MonitorSpeakerIcon,
-  Minimize2Icon,
   SquarePlayIcon,
   ListMusicIcon,
   ShuffleIcon,
@@ -189,15 +186,6 @@ export default function AudioPlayer() {
                   }
                   onClick={() => toggle("queue")}
                   iconClassName={active === "queue" ? "text-primary" : ""}
-                />
-                <IconButton icon={MicVocalIcon} tooltipContent="Lyrics" />
-                <IconButton
-                  icon={MonitorSpeakerIcon}
-                  tooltipContent="Connect to a device"
-                />
-                <IconButton
-                  icon={Minimize2Icon}
-                  tooltipContent="Open miniplayer"
                 />
                 <VolumeControl />
               </div>

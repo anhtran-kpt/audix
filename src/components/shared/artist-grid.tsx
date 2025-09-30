@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { GridWrapper } from "../ui/grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import { AppImage } from "./app-image";
@@ -9,6 +12,7 @@ type ArtistGridProps = {
 };
 
 export default function ArtistGrid({ artists }: ArtistGridProps) {
+  const router = useRouter();
   return (
     <GridWrapper>
       {artists.map((artist) => (
@@ -16,7 +20,10 @@ export default function ArtistGrid({ artists }: ArtistGridProps) {
           key={artist.id}
           className="flex flex-col group gap-2 overflow-hidden"
         >
-          <div className="relative">
+          <div
+            className="relative cursor-pointer"
+            onClick={() => router.push(`/artists/${artist.id}`)}
+          >
             <AppImage
               alt={artist.name}
               src={artist.imageId}

@@ -52,8 +52,10 @@ export function SearchResults({ q, type }: Props) {
   if (type === "all") {
     return (
       <div className="space-y-8">
-        <div className="grid md:grid-cols-2 gap-6">
-          {data.topResult && <TopResultSection topResult={data.topResult} />}
+        <div className="grid sm:grid-cols-2 gap-6">
+          {data.topResult && (
+            <TopResultSection topResult={data.topResult} q={q} />
+          )}
           {data.tracks?.length > 0 && (
             <TracksSection tracks={data.tracks} q={q} />
           )}

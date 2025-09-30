@@ -1,8 +1,5 @@
-"use client";
-
 import { SearchResult } from "@/features/search/contracts/search-dtos";
 import SectionHeading from "../../ui/section-heading";
-import { CoverImage } from "../../ui/cover-image";
 import Link from "next/link";
 import Dot from "../../ui/dot";
 import { CldImage } from "next-cloudinary";
@@ -10,12 +7,17 @@ import { BadgeCheckIcon } from "lucide-react";
 import { FollowersBadge } from "../follow-badge";
 import { Badge } from "../../ui/badge";
 import { ContextPlayButton } from "@/components/shared/context-play-button";
+import { AppImage } from "@/components/shared/app-image";
+
+type TopResultSectionProps = {
+  topResult: SearchResult["topResult"];
+  q: string;
+};
 
 export default function TopResultSection({
   topResult,
-}: {
-  topResult: SearchResult["topResult"];
-}) {
+  q,
+}: TopResultSectionProps) {
   if (topResult?.type === "artist") {
     return (
       <section>
@@ -71,10 +73,11 @@ export default function TopResultSection({
   return (
     <section>
       <SectionHeading title="Top Result" />
-      <div className="bg-muted/60 rounded-lg group hover:bg-muted transition-colors duration-500 p-5 h-full">
-        <CoverImage
+      <div className="relative bg-muted/60 rounded-lg group hover:bg-muted transition-colors duration-400 p-5 flex flex-col gap-6">
+        <AppImage
           alt={topResult?.item.title}
           src={topResult?.item.album.imageId}
+          containerClassName="size-40"
         />
         <div className="space-y-3 flex-1 flex flex-col justify-between">
           <h3 className="font-semibold text-2xl">{topResult?.item.title}</h3>
@@ -96,6 +99,10 @@ export default function TopResultSection({
             ))}
           </div>
         </div>
+        <ContextPlayButton
+          context={{ contextType: "SEARCH", contextId: q }}
+          className="absolute opacity-0 bottom-5 right-5 translate-y-5 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
+        />
       </div>
     </section>
   );

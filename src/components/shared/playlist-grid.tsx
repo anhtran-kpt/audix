@@ -1,3 +1,5 @@
+"use client";
+
 import { GridWrapper } from "../ui/grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import Dot from "../ui/dot";
@@ -5,12 +7,15 @@ import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { FallbackCoverImage } from "../features/fallback-cover-image";
 import { AppImage } from "./app-image";
 import { ContextPlayButton } from "./context-play-button";
+import { useRouter } from "next/navigation";
 
 type PlaylistGridProps = {
   playlists: PlaylistItem[];
 };
 
 export default function PlaylistGrid({ playlists }: PlaylistGridProps) {
+  const router = useRouter();
+
   return (
     <GridWrapper>
       {playlists.map((playlist) => (
@@ -19,7 +24,10 @@ export default function PlaylistGrid({ playlists }: PlaylistGridProps) {
           className="flex flex-col group gap-2 overflow-hidden"
         >
           {playlist.imageId ? (
-            <div className="relative">
+            <div
+              className="relative cursor-pointer"
+              onClick={() => router.push(`/playlists/${playlist.id}`)}
+            >
               <AppImage
                 alt={playlist.title}
                 src={playlist.imageId}

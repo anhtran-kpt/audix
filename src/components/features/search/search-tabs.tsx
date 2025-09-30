@@ -49,15 +49,11 @@ export function SearchTabs() {
       <Tabs
         value={activeTab}
         onValueChange={handleChange}
-        className="w-full space-y-6"
+        className="w-full gap-6"
       >
-        <TabsList className="grid grid-cols-6 bg-background">
+        <TabsList>
           {SEARCH_TABS.map((tab) => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="rounded-full"
-            >
+            <TabsTrigger key={tab.value} value={tab.value}>
               {tab.label}
             </TabsTrigger>
           ))}
