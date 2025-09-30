@@ -5,11 +5,14 @@ import { TrackItemInfo } from "./track-item-info";
 import { TrackDetails } from "../features/track-details";
 import { RowPlayButton } from "./row-play-button";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
+import { usePlaybackStore } from "@/stores/use-playback-store";
+import { useShallow } from "zustand/react/shallow";
 
 type TrackItemCompactProps = {
   hasMoreDetails?: boolean;
   hasCover?: boolean;
   canHover?: boolean;
+  canPlay?: boolean;
   track: TrackItemCompactType;
   context?: StartPlaybackInput;
 };
@@ -20,15 +23,28 @@ export const TrackItemCompact = ({
   track,
   hasCover = true,
   context,
+  canPlay = true,
 }: TrackItemCompactProps) => {
+  const { snapshot, currentTrackId } = usePlaybackStore(
+    useShallow((s) => ({
+      snapshot: s.session?.snapshot,
+      currentTrackId: s.session?.currentTrackId,
+    }))
+  );
+
+  const isActiveTrack =
+    context?.contextType === snapshot?.type &&
+    context?.contextId === snapshot?.contextId &&
+    currentTrackId === track.id;
+
   return (
     <div
       className={cn(
-        "group flex items-center justify-between gap-3 min-w-0 w-full",
+        "group flex items-center justify-between gap-4 min-w-0 w-full",
         canHover && "p-2 group hover:bg-muted rounded-md"
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
         <div className="relative">
           {hasCover && (
             <AppImage
@@ -37,11 +53,11 @@ export const TrackItemCompact = ({
               containerClassName="size-12"
               sizes="48px"
               className={cn(
-                context && "group-hover:brightness-65 transition-[brightness]"
+                canPlay && "group-hover:brightness-65 transition-[brightness]"
               )}
             />
           )}
-          {context && (
+          {context && canPlay && (
             <RowPlayButton
               context={context}
               className="absolute top-1/2 left-1/2 -translate-1/2 opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity"
@@ -51,7 +67,7 @@ export const TrackItemCompact = ({
         <TrackItemInfo
           title={track.title}
           isExplicit={track.isExplicit}
-          isActive={false}
+          isActiveTrack={isActiveTrack}
           artists={track.artists}
         />
       </div>

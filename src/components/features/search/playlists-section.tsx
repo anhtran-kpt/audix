@@ -1,8 +1,7 @@
 import { SearchResult } from "@/features/search/contracts/search-dtos";
 import SectionHeading from "../../ui/section-heading";
-import { GridWrapper } from "../../ui/grid-wrapper";
-import PlaylistItem from "../playlist-item";
 import SeeAllButton from "./see-all-button";
+import PlaylistGrid from "@/components/shared/playlist-grid";
 
 export default function PlaylistsSection({
   playlists,
@@ -21,11 +20,7 @@ export default function PlaylistsSection({
         title="Playlists"
         seeAllBtn={q && <SeeAllButton q={q} targetType="playlists" />}
       />
-      <GridWrapper>
-        {playlists.map((playlist) => (
-          <PlaylistItem key={playlist.id} playlist={playlist} />
-        ))}
-      </GridWrapper>
+      <PlaylistGrid playlists={playlists} />
     </section>
   );
 }

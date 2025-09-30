@@ -1,6 +1,3 @@
-"use client";
-
-import { cn } from "@/lib/utils";
 import WaveForm from "../ui/wave-form";
 import { RowPlayButton } from "./row-play-button";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
@@ -34,9 +31,7 @@ export default function TrackIndexCell({
 
   return (
     <>
-      <span className={cn("group-hover:hidden", isThisTrack && "text-primary")}>
-        {index + 1}
-      </span>
+      <span className="group-hover:hidden">{index + 1}</span>
       <RowPlayButton context={context} className="hidden group-hover:block" />
     </>
   );

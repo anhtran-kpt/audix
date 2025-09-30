@@ -52,10 +52,12 @@ export function SearchResults({ q, type }: Props) {
   if (type === "all") {
     return (
       <div className="space-y-8">
-        {data.topResult && <TopResultSection topResult={data.topResult} />}
-        {data.tracks?.length > 0 && (
-          <TracksSection tracks={data.tracks} q={q} />
-        )}
+        <div className="grid md:grid-cols-2 gap-6">
+          {data.topResult && <TopResultSection topResult={data.topResult} />}
+          {data.tracks?.length > 0 && (
+            <TracksSection tracks={data.tracks} q={q} />
+          )}
+        </div>
         {data.artists?.length > 0 && (
           <ArtistsSection artists={data.artists} q={q} />
         )}

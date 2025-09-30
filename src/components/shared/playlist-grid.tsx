@@ -23,7 +23,7 @@ export default function PlaylistGrid({ playlists }: PlaylistGridProps) {
               <AppImage
                 alt={playlist.title}
                 src={playlist.imageId}
-                className="rounded-full group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
+                className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
                 sizes="20vw"
               />
               <ContextPlayButton
@@ -46,10 +46,12 @@ export default function PlaylistGrid({ playlists }: PlaylistGridProps) {
               {playlist.user && (
                 <>
                   <Dot />
-                  <span>By</span>
-                  <NavLink href={`users/${playlist.user.id}`}>
-                    {playlist.user.name}
-                  </NavLink>
+                  <div className="space-x-1">
+                    <span>By</span>
+                    <NavLink href={`users/${playlist.user.id}`}>
+                      {playlist.user.name}
+                    </NavLink>
+                  </div>
                 </>
               )}
             </div>

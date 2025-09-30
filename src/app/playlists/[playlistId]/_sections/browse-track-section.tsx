@@ -1,8 +1,7 @@
 "use client";
 
 import AddToPlaylistButton from "@/components/features/add-to-playlist-button";
-import TrackItem from "@/components/features/track-item";
-import { RowPlayButton } from "@/components/shared/row-play-button";
+import { TrackItemCompact } from "@/components/shared/track-item-compact";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
@@ -75,18 +74,17 @@ export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
                 "p-2 items-center group hover:bg-muted rounded-md text-muted-foreground hover:text-foreground grid w-full grid-cols-[1fr_1fr_4rem]"
               }
             >
-              <TrackItem
-                track={track}
+              <TrackItemCompact
+                track={{
+                  ...track,
+                  artists: track.artists.map((item) => item.artist),
+                }}
+                context={{
+                  contextType: "ALBUM",
+                  contextId: track.album.id,
+                }}
+                hasMoreDetails={false}
                 canHover={false}
-                isActive={false}
-                playButton={
-                  <RowPlayButton
-                    context={{
-                      contextId: track.id,
-                      contextType: "ARTIST",
-                    }}
-                  />
-                }
               />
 
               <div>

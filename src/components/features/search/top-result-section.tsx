@@ -16,12 +16,11 @@ export default function TopResultSection({
 }: {
   topResult: SearchResult["topResult"];
 }) {
-  console.log(topResult);
   if (topResult?.type === "artist") {
     return (
       <section>
         <SectionHeading title="Top Result" />
-        <div className="relative overflow-hidden bg-muted/60 rounded-lg group p-5 space-y-5 aspect-video">
+        <div className="relative overflow-hidden bg-muted/60 rounded-lg group p-5 space-y-5">
           <CldImage
             alt={topResult?.item.name}
             src={topResult?.item.bannerId}
@@ -72,12 +71,12 @@ export default function TopResultSection({
   return (
     <section>
       <SectionHeading title="Top Result" />
-      <div className="bg-muted/60 rounded-lg group hover:bg-muted transition-colors duration-500 p-5 space-y-5">
+      <div className="bg-muted/60 rounded-lg group hover:bg-muted transition-colors duration-500 p-5 h-full">
         <CoverImage
           alt={topResult?.item.title}
           src={topResult?.item.album.imageId}
         />
-        <div className="space-y-3">
+        <div className="space-y-3 flex-1 flex flex-col justify-between">
           <h3 className="font-semibold text-2xl">{topResult?.item.title}</h3>
           <div className="flex items-center gap-1.5">
             <span className="capitalize text-muted-foreground">

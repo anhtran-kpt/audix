@@ -75,7 +75,8 @@ export const TrackList = ({
               key={track.id}
               className={cn(
                 gridClass,
-                "py-2 pr-6 group hover:bg-muted rounded-sm text-muted-foreground hover:text-foreground"
+                "py-2 pr-6 group hover:bg-muted rounded-sm text-muted-foreground hover:text-foreground",
+                isThisTrack && "bg-muted text-foreground"
               )}
             >
               <div className="flex justify-center items-center text-base font-semibold group">
@@ -99,6 +100,11 @@ export const TrackList = ({
                 canHover={false}
                 hasCover={contextType !== "ALBUM"}
                 hasMoreDetails={false}
+                context={{
+                  contextId,
+                  contextType,
+                }}
+                canPlay={false}
               />
 
               {contextType === "PLAYLIST" && (

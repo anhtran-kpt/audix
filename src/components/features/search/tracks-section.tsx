@@ -1,9 +1,7 @@
-"use client";
-
 import { SearchResult } from "@/features/search/contracts/search-dtos";
-import TrackItem from "../track-item";
 import SectionHeading from "../../ui/section-heading";
 import SeeAllButton from "./see-all-button";
+import { TrackItemCompact } from "@/components/shared/track-item-compact";
 
 export default function TracksSection({
   tracks,
@@ -18,13 +16,21 @@ export default function TracksSection({
         title="Tracks"
         seeAllBtn={q && <SeeAllButton q={q} targetType="tracks" />}
       />
-      <ul className="space-y-1">
+      <div className="flex flex-col gap-1">
         {tracks.map((track) => (
-          <li key={track.id}>
-            <TrackItem track={track} />
-          </li>
+          <TrackItemCompact
+            key={track.id}
+            track={{
+              ...track,
+              artists: track.artists.map((item) => item.artist),
+            }}
+            context={{
+              contextId: q!,
+              contextType: "SEARCH",
+            }}
+          />
         ))}
-      </ul>
+      </div>
     </section>
   );
 }

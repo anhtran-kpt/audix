@@ -23,6 +23,8 @@ export default function QueueView() {
     return null;
   }
 
+  console.log(queueTracks);
+
   return (
     <Tabs defaultValue="queue" className="size-full">
       <TabsList className="w-full">
@@ -58,7 +60,7 @@ export default function QueueView() {
                 Next from: {currentTrack.title}
               </p>
               {queueTracks && (
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-1">
                   {queueTracks.map((track) => (
                     <TrackItemCompact
                       key={track.id}
@@ -92,7 +94,7 @@ export default function QueueView() {
           scrollBarClassName="w-2 -mr-2"
         >
           {recentTracks && (
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-1">
               {recentTracks.map((track) => (
                 <TrackItemCompact
                   key={track.id}
