@@ -14,7 +14,7 @@ import {
   StartPlaybackInput,
 } from "../contracts/playback-dto";
 import { NextResponse } from "next/server";
-import { playbackSessionSelect } from "./playback-selects";
+import { playbackSessionSelect } from "./playback-select";
 
 export const getPlaybackBoundaries = (session: PlaybackSession) => {
   const { queue, snapshot, contextIndex, repeatMode } = session;
@@ -102,7 +102,14 @@ const createSnapshotFromPlaylist = async ({
 }) => {
   const playlist = await db.playlist.findUnique({
     where: { id: playlistId },
-    include: { tracks: { orderBy: { position: "asc" } } },
+    select: {
+      title: true,
+      tracks: {
+        orderBy: {
+          position: "asc",
+        },
+      },
+    },
   });
 
   if (!playlist) throw new Error("Playlist not found");
@@ -114,7 +121,7 @@ const createSnapshotFromPlaylist = async ({
   return db.playbackContextSnapshot.create({
     data: {
       userId,
-      type: "PLAYLIST",
+      contextType: "PLAYLIST",
       contextId: playlistId,
       name: playlist.title,
       hash,
@@ -139,7 +146,14 @@ const createSnapshotFromAlbum = async ({
 }) => {
   const album = await db.album.findUnique({
     where: { id: albumId },
-    include: { tracks: { orderBy: { trackNumber: "asc" } } },
+    select: {
+      title: true,
+      tracks: {
+        orderBy: {
+          trackNumber: "asc",
+        },
+      },
+    },
   });
 
   if (!album) throw new Error("Album not found");
@@ -151,7 +165,7 @@ const createSnapshotFromAlbum = async ({
   return db.playbackContextSnapshot.create({
     data: {
       userId,
-      type: "ALBUM",
+      contextType: "ALBUM",
       contextId: albumId,
       name: album.title,
       hash,
@@ -223,7 +237,7 @@ const createSnapshotFromArtist = async ({
   return db.playbackContextSnapshot.create({
     data: {
       userId,
-      type: "ARTIST",
+      contextType: "ARTIST",
       contextId: artistId,
       name,
       hash,
@@ -242,15 +256,29 @@ const createSnapshotFromArtist = async ({
   });
 };
 
-const createSnapshotFromHistory = async (userId: string) => {
-  const history = await db.playHistory.findMany({
-    where: { userId },
-    orderBy: { playedAt: "desc" },
-    take: 50,
-    include: { track: true },
+const createSnapshotFromHistory = async (userId: string, historyId: string) => {
+  const history = await db.playHistory.findUnique({
+    where: { id: historyId },
+    select: {
+      snapshot: {
+        select: {
+          tracks: true,
+        },
+      },
+    },
   });
 
-  if (history.length === 0) throw new Error("No history");
+  if (!history) throw new Error("No history");
+
+  let snapshot = history.snapshot;
+
+  if (!snapshot) {
+    snapshot = await createSnapshot(
+      userId,
+      history.playbackContextType,
+      history.playbackContextId ?? undefined
+    );
+  }
 
   const hash = createHash("sha256")
     .update(JSON.stringify(history.map((h) => h.trackId)))
@@ -259,7 +287,7 @@ const createSnapshotFromHistory = async (userId: string) => {
   return db.playbackContextSnapshot.create({
     data: {
       userId,
-      type: "HISTORY",
+      contextType: "HISTORY",
       contextId: null,
       name: "Recently Played",
       hash,
@@ -301,7 +329,7 @@ const createSnapshotFromSearch = async ({
   return db.playbackContextSnapshot.create({
     data: {
       userId,
-      type: "SEARCH",
+      contextType: "SEARCH",
       contextId: query,
       name: `Search: ${query}`,
       hash,
@@ -320,29 +348,29 @@ const createSnapshotFromSearch = async ({
 const createSnapshot = (
   userId: string,
   contextType: PlaybackContextType,
-  contextIdOrQuery: string | null
+  contextId: string | undefined
 ) => {
   switch (contextType) {
     case "PLAYLIST":
       return createSnapshotFromPlaylist({
-        playlistId: contextIdOrQuery!,
+        playlistId: contextId!,
         userId,
       });
     case "ALBUM":
       return createSnapshotFromAlbum({
-        albumId: contextIdOrQuery!,
+        albumId: contextId!,
         userId,
       });
     case "ARTIST":
       return createSnapshotFromArtist({
-        artistId: contextIdOrQuery!,
+        artistId: contextId!,
         userId,
       });
     case "HISTORY":
       return createSnapshotFromHistory(userId);
     case "SEARCH":
       return createSnapshotFromSearch({
-        query: contextIdOrQuery!,
+        query: contextId!,
         userId,
       });
     default:
@@ -398,6 +426,8 @@ export const startPlaybackSession = async ({
     select: playbackSessionSelect,
   });
 
+
+
   await rebuildContextQueue(session);
 
   const currentTrack = await db.track.findUniqueOrThrow({
@@ -406,6 +436,10 @@ export const startPlaybackSession = async ({
   });
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
+
+  await db.playHistory.create({
+    data: 
+  })
 
   return { ...session, currentTrack, hasNext, hasPrevious };
 };

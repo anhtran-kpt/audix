@@ -1,4 +1,4 @@
-import { getPlaybackSession } from "@/features/playback/data-access/playback-repos";
+import { getPlaybackSession } from "@/features/playback/data-access/playback-repo";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

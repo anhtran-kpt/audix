@@ -507,11 +507,11 @@ model PlaybackContextSnapshot {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  type      PlaybackContextType
-  contextId String?
-  name      String?
-  hash      String
-  createdAt DateTime            @default(now())
+  contextType PlaybackContextType
+  contextId   String?
+  name        String?
+  hash        String
+  createdAt   DateTime            @default(now())
 
   tracks           PlaybackSnapshotTrack[]
   playbackSessions PlaybackSession[]

@@ -7,7 +7,7 @@ export const playbackSessionSelect = {
   isShuffled: true,
   repeatMode: true,
   activeDeviceId: true,
-  // version: true,
+  version: true,
   queue: {
     select: {
       track: {
@@ -20,7 +20,7 @@ export const playbackSessionSelect = {
   },
   snapshot: {
     select: {
-      type: true,
+      contextType: true,
       contextId: true,
       name: true,
       tracks: {

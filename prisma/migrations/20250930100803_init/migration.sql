@@ -292,7 +292,7 @@ CREATE TABLE "public"."playback_sessions" (
 CREATE TABLE "public"."playback_snapshots" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "type" "public"."PlaybackContextType" NOT NULL,
+    "contextType" "public"."PlaybackContextType" NOT NULL,
     "contextId" TEXT,
     "name" TEXT,
     "hash" TEXT NOT NULL,
