@@ -1,7 +1,7 @@
 import "server-only";
 import db from "@/lib/db";
 import { AppError } from "@/lib/errors";
-import { trackDetailSelect, trackItemSelect } from "./track-selects";
+import { trackDetailSelect, trackItemSelect } from "./track-select";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 export const getTrackOrThrow = async (trackId: string) => {

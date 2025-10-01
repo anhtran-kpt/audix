@@ -8,7 +8,7 @@ import {
   recommendedTrackItemSelect,
   trackDetailSelect,
   trackItemSelect,
-} from "@/features/track/data-access/track-selects";
+} from "@/features/track/data-access/track-select";
 import { Prisma } from "@/app/generated/prisma";
 import cloudinary from "@/lib/config/cloudinary";
 import { buildPlaylistCoverUrl } from "@/utils/string";

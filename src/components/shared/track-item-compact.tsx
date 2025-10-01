@@ -9,20 +9,20 @@ import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
 
 type TrackItemCompactProps = {
+  track: TrackItemCompactType;
   hasMoreDetails?: boolean;
   hasCover?: boolean;
   canHover?: boolean;
   canPlay?: boolean;
-  track: TrackItemCompactType;
   context?: StartPlaybackInput;
 };
 
 export const TrackItemCompact = ({
+  track,
+  context,
   hasMoreDetails = true,
   canHover = true,
-  track,
   hasCover = true,
-  context,
   canPlay = true,
 }: TrackItemCompactProps) => {
   const { snapshot, currentTrackId } = usePlaybackStore(
@@ -69,8 +69,8 @@ export const TrackItemCompact = ({
         <TrackItemInfo
           title={track.title}
           isExplicit={track.isExplicit}
-          isActiveTrack={isActiveTrack}
           artists={track.artists}
+          isActiveTrack={isActiveTrack}
         />
       </div>
       {hasMoreDetails && (

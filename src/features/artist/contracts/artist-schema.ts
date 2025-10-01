@@ -1,78 +1,51 @@
 import z from "zod";
 import {
+  zBoolSchema,
   zCuidSchema,
+  zIntSchema,
   zPublicIdSchema,
+  zStringSchema,
   zTimeStamps,
-} from "@/features/shared/contracts/shared-dto";
-import { CreditRoleSchema } from "@/features/shared/contracts/shared-enum";
+} from "@/features/shared/contracts/shared-schema";
+import { BaseAlbumSchema } from "@/features/album/contracts/album-schema";
+import {
+  ArtistGenreSchema,
+  TrackArtistSchema,
+  TrackCreditSchema,
+} from "@/features/shared/contracts/shared-relation";
 
-export const ArtistBaseSchema = z.object({
+export const BaseArtistSchema = z.object({
   id: zCuidSchema,
-  name: z.string().min(1),
-  bio: z.string().nullish(),
+  name: zStringSchema,
+  bio: zStringSchema.nullish(),
   imageId: zPublicIdSchema,
   bannerId: zPublicIdSchema,
-  isVerified: z.boolean().optional(),
-  followersCount: z.number().int().nonnegative(),
+  isVerified: zBoolSchema.nullish(),
+  followersCount: zIntSchema,
   ...zTimeStamps,
 });
 
-export const FullArtistSchema = ArtistBaseSchema.extend({
-  album: z.object({
-    id: zCuidSchema,
-    imageId: zPublicIdSchema,
-    title: z.string().min(1),
-    artist: z.object({
-      id: zCuidSchema,
-      name: z.string().min(1),
-      bannerId: zPublicIdSchema,
-      bio: z.string().nullish(),
-    }),
-    _count: z.object({
-      likedBy: z.number().int().nonnegative(),
-    }),
-  }),
-  genres: z
-    .object({
-      id: zCuidSchema,
-      name: z.string().min(1),
-      color: z.string().min(1),
-    })
-    .array(),
-  credits: z.array(
-    z.object({
-      id: zCuidSchema,
-      name: z.string().min(1),
-      order: z.number().int().nonnegative(),
-      role: CreditRoleSchema,
-      details: z.string().nullish(),
-      artist: z.object({
-        id: zCuidSchema,
-        name: z.string().min(1),
-      }),
-    })
-  ),
+export const FullArtistSchema = BaseArtistSchema.extend({
+  albums: BaseAlbumSchema.array(),
+  tracks: TrackArtistSchema.array(),
+  genres: ArtistGenreSchema.array(),
+  credits: TrackCreditSchema.array(),
 });
 
-export const SidebarArtistSchema = ArtistBaseSchema.pick({
+export const SidebarArtistSchema = BaseArtistSchema.pick({
   id: true,
   name: true,
   imageId: true,
 });
 
-export const FollowStatusSchema = ArtistBaseSchema.pick({
+export const FollowStatusSchema = BaseArtistSchema.pick({
   followersCount: true,
 }).extend({
-  isFollowing: z.boolean(),
+  isFollowing: zBoolSchema,
 });
 
-export const ArtistGridItemSchema = ArtistBaseSchema.pick({
+export const ArtistGridItemSchema = BaseArtistSchema.pick({
   id: true,
   name: true,
   imageId: true,
-});
-
-export const TrackArtistSchema = ArtistBaseSchema.pick({
-  id: true,
-  name: true,
 });

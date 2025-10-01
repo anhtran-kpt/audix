@@ -1,11 +1,12 @@
-import { TrackArtist } from "@/features/artist/contracts/artist-dto";
 import { cn } from "@/lib/utils";
-import TrackArtists from "./track-artists";
+import ExplicitIcon from "../ui/explicit-icon";
+import { NavLink } from "../ui/nav-link";
+import { TrackItemCompact } from "@/features/track/contracts/track-dto";
 
 type TrackInfoProps = {
   title: string;
   isExplicit?: boolean;
-  artists: TrackArtist[];
+  artists: TrackItemCompact["artists"];
   isActiveTrack: boolean;
 };
 
@@ -25,7 +26,15 @@ export const TrackItemInfo = ({
       >
         {title}
       </p>
-      <TrackArtists isExplicit={isExplicit} artists={artists} />
+      <div className="flex items-center text-sm gap-x-1.5 text-muted-foreground truncate">
+        {isExplicit && <ExplicitIcon />}
+        {artists.map((artist, index, originalArr) => (
+          <span key={artist.id} className="truncate">
+            <NavLink href={`/artists/${artist.id}`}>{artist.name}</NavLink>
+            {index < originalArr.length - 1 && ", "}
+          </span>
+        ))}
+      </div>
     </div>
   );
 };

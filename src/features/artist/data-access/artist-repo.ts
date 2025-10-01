@@ -1,6 +1,6 @@
 import "server-only";
 import { zCuidType } from "@/features/shared/contracts/shared-dto";
-import { trackDetailSelect } from "@/features/track/data-access/track-selects";
+import { trackDetailSelect } from "@/features/track/data-access/track-select";
 import db from "@/lib/db";
 import { AwaitedReturnType } from "@/utils/type";
 

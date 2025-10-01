@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { getApi } from "@/lib/http/request";
-import { SearchResult } from "../contracts/search-dtos";
+import { SearchResult } from "../contracts/search-dto";
 
 export const searchOptions = (
   q: string,

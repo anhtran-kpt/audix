@@ -1,7 +1,7 @@
 import "server-only";
 import db from "@/lib/db";
-import { SearchQuery } from "../contracts/search-dtos";
-import { trackItemSelect } from "@/features/track/data-access/track-selects";
+import { SearchQuery } from "../contracts/search-dto";
+import { trackItemSelect } from "@/features/track/data-access/track-select";
 import { albumItemSelect } from "@/features/album/data-access/album-select";
 import stringSimilarity from "string-similarity";
 

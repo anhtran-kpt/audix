@@ -6,7 +6,7 @@ import { createHash } from "crypto";
 import {
   trackDetailSelect,
   trackItemSelect,
-} from "@/features/track/data-access/track-selects";
+} from "@/features/track/data-access/track-select";
 import {
   PlaybackSession,
   RepeatPlaybackInput,

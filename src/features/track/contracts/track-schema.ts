@@ -1,63 +1,43 @@
-import { TrackArtistSchema } from "@/features/artist/contracts/artist-schema";
-import {
-  zCuidSchema,
-  zDateSchema,
-  zPublicIdSchema,
-  zTimeStamps,
-} from "@/features/shared/contracts/shared-dto";
 import {
   ArtistRoleSchema,
   CreditRoleSchema,
 } from "@/features/shared/contracts/shared-enum";
+import {
+  TrackArtistSchema,
+  TrackCreditSchema,
+  TrackGenreSchema,
+} from "@/features/shared/contracts/shared-relation";
+import {
+  zBoolSchema,
+  zCuidSchema,
+  zDateSchema,
+  zIntSchema,
+  zPublicIdSchema,
+  zStringSchema,
+  zTimeStamps,
+} from "@/features/shared/contracts/shared-schema";
+import { BaseAlbumSchema } from "@/features/album/contracts/album-schema";
 import z from "zod";
+import { BaseArtistSchema } from "@/features/artist/contracts/artist-schema";
 
-export const TrackBaseSchema = z.object({
+export const BaseTrackSchema = z.object({
   id: zCuidSchema,
-  title: z.string().min(1),
+  title: zStringSchema,
   audioId: zPublicIdSchema,
-  duration: z.number().int().nonnegative(),
-  trackNumber: z.number().int().nonnegative(),
-  lyrics: z.string().nullish(),
-  isExplicit: z.boolean().optional(),
-  playCount: z.number().int().nonnegative(),
+  duration: zIntSchema,
+  trackNumber: zIntSchema,
+  lyrics: zStringSchema.nullish(),
+  isExplicit: zBoolSchema,
+  playCount: zIntSchema,
+  albumId: zCuidSchema,
   ...zTimeStamps,
 });
 
-export const FullTrackSchema = TrackBaseSchema.extend({
-  album: z.object({
-    id: zCuidSchema,
-    imageId: zPublicIdSchema,
-    title: z.string().min(1),
-    artist: z.object({
-      id: zCuidSchema,
-      name: z.string().min(1),
-      bannerId: zPublicIdSchema,
-      bio: z.string().nullish(),
-    }),
-    _count: z.object({
-      likedBy: z.number().int().nonnegative(),
-    }),
-  }),
-  artists: z.array(
-    z.object({
-      role: ArtistRoleSchema,
-      order: z.number().int().nonnegative(),
-      artist: z.object({ id: zCuidSchema, name: z.string().min(1) }),
-    })
-  ),
-  credits: z.array(
-    z.object({
-      id: zCuidSchema,
-      name: z.string().min(1),
-      order: z.number().int().nonnegative(),
-      role: CreditRoleSchema,
-      details: z.string().nullable(),
-      artist: z.object({
-        id: zCuidSchema,
-        name: z.string().min(1),
-      }),
-    })
-  ),
+export const FullTrackSchema = BaseTrackSchema.extend({
+  album: BaseAlbumSchema,
+  artists: TrackArtistSchema.array(),
+  credits: TrackCreditSchema.array(),
+  genres: TrackGenreSchema.array(),
 });
 
 export const TrackItemSchema = FullTrackSchema.pick({
@@ -96,7 +76,7 @@ export const NowPlayingTrackSchema = FullTrackSchema.pick({
   artists: z
     .object({
       role: ArtistRoleSchema,
-      order: z.number().int().nonnegative(),
+      order: zIntSchema,
       artist: z.object({
         id: zCuidSchema,
         name: z.string(),
@@ -109,7 +89,7 @@ export const NowPlayingTrackSchema = FullTrackSchema.pick({
       name: z.string(),
       role: CreditRoleSchema,
       details: z.string().nullable(),
-      order: z.number().int().nonnegative(),
+      order: zIntSchema,
       artist: z
         .object({
           name: z.string(),
@@ -139,7 +119,7 @@ export const TrackListItemSchema = FullTrackSchema.pick({
         name: z.string(),
       }),
       role: ArtistRoleSchema,
-      order: z.number().int().nonnegative(),
+      order: zIntSchema,
     })
     .array(),
   addedAt: zDateSchema.optional(),
@@ -168,12 +148,6 @@ export const RecommendedTrackItemSchema = FullTrackSchema.pick({
   addedAt: zDateSchema.optional(),
 });
 
-export const TrackCreditSchema = FullTrackSchema.pick({
-  title: true,
-  artists: true,
-  credits: true,
-});
-
 export const MiniTrackItemSchema = FullTrackSchema.pick({
   id: true,
   title: true,
@@ -186,13 +160,20 @@ export const TrackItemCompactSchema = FullTrackSchema.pick({
   id: true,
   title: true,
   isExplicit: true,
-  album: true,
 }).extend({
-  artists: TrackArtistSchema.array(),
+  album: BaseAlbumSchema.pick({
+    id: true,
+    title: true,
+    imageId: true,
+  }),
+  artists: BaseArtistSchema.pick({
+    id: true,
+    name: true,
+  }).array(),
 });
 
 export const TrackItemDetailedSchema = TrackItemCompactSchema.extend(
-  TrackBaseSchema.pick({
+  FullTrackSchema.pick({
     duration: true,
     playCount: true,
   }).shape

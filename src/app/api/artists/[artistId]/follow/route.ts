@@ -3,7 +3,7 @@ import {
   getFollowStatus,
   unfollowArtist,
 } from "@/features/artist/data-access/artist-repo";
-import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
+import { zCuidSchema } from "@/features/shared/contracts/shared-schema";
 import { makeDELETE, makeGET, makePOST } from "@/lib/route-factory";
 import { object } from "zod";
 

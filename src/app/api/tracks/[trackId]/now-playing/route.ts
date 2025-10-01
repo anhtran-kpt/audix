@@ -1,5 +1,5 @@
 import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
-import { getNowPlayingTrack } from "@/features/track/data-access/track-repos";
+import { getNowPlayingTrack } from "@/features/track/data-access/track-repo";
 import { makeGET } from "@/lib/route-factory";
 import { object } from "zod";
 

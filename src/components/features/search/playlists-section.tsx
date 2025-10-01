@@ -1,4 +1,4 @@
-import { SearchResult } from "@/features/search/contracts/search-dtos";
+import { SearchResult } from "@/features/search/contracts/search-dto";
 import SectionHeading from "../../ui/section-heading";
 import SeeAllButton from "./see-all-button";
 import PlaylistGrid from "@/components/shared/playlist-grid";

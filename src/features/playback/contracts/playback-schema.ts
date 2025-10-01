@@ -1,21 +1,40 @@
 import {
-  zBoolSchema,
-  zCuidSchema,
-  zDateSchema,
-} from "@/features/shared/contracts/shared-dto";
-import {
   PlaybackContextTypeSchema,
   QueueItemKindSchema,
   RepeatModeSchema,
 } from "@/features/shared/contracts/shared-enum";
+import {
+  zBoolSchema,
+  zCuidSchema,
+  zDateSchema,
+  zIntSchema,
+  zStringSchema,
+} from "@/features/shared/contracts/shared-schema";
 import { FullTrackSchema } from "@/features/track/contracts/track-schema";
 import z from "zod";
 
-export const FullPlaybackSessionSchema = z.object({
+export const BasePlaybackSessionSchema = z.object({
   id: zCuidSchema,
   isShuffled: zBoolSchema,
   repeatMode: RepeatModeSchema,
   currentTrackId: zCuidSchema,
+  contextIndex: zIntSchema,
+  activeDeviceId: zStringSchema.nullish(),
+  version: z.bigint(),
+});
+
+export const FullPlaybackQueueItemSchema = z.object({
+  id: zCuidSchema,
+  sessionId: zCuidSchema,
+  session: BasePlaybackSessionSchema,
+  kind: QueueItemKindSchema,
+  position: zIntSchema,
+  trackId: zCuidSchema,
+  track: FullTrackSchema,
+  addedAt: zDateSchema,
+});
+
+export const FullPlaybackSessionSchema = BasePlaybackSessionSchema.extend({
   currentTrack: FullTrackSchema,
   snapshot: z.object({
     contextType: PlaybackContextTypeSchema,
@@ -31,29 +50,7 @@ export const FullPlaybackSessionSchema = z.object({
       })
       .array(),
   }),
-  contextIndex: z.number().int().nonnegative(),
-  queue: z
-    .object({
-      track: z.object({
-        id: zCuidSchema,
-      }),
-      kind: QueueItemKindSchema,
-      position: z.number().int().nonnegative(),
-    })
-    .array(),
-  activeDeviceId: z.string().nullable(),
-  version: z.bigint(),
-});
-
-export const FullPlaybackQueueItemSchema = z.object({
-  id: zCuidSchema,
-  sessionId: zCuidSchema,
-  session: FullPlaybackSessionSchema,
-  kind: QueueItemKindSchema,
-  position: z.number().int().nonnegative(),
-  trackId: zCuidSchema,
-  track: FullTrackSchema,
-  addedAt: zDateSchema,
+  queue: FullPlaybackQueueItemSchema.array(),
 });
 
 export const PlaybackSessionSchema = FullPlaybackSessionSchema.pick({

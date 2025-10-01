@@ -1,4 +1,4 @@
-import { getRecentlyPlayedTracks } from "@/features/track/data-access/track-repos";
+import { getRecentlyPlayedTracks } from "@/features/track/data-access/track-repo";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

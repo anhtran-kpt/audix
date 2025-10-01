@@ -20,7 +20,3 @@ export const SubscriptionTypeSchema = z.enum(SubscriptionType);
 export const SubscriptionStatusSchema = z.enum(SubscriptionStatus);
 export const RepeatModeSchema = z.enum(RepeatModeEnum);
 export const QueueItemKindSchema = z.enum(QueueItemKindEnum);
-
-export type PlaybackContextType = z.infer<typeof PlaybackContextTypeSchema>;
-export type RepeatMode = z.infer<typeof RepeatModeSchema>;
-export type QueueItemKind = z.infer<typeof QueueItemKindSchema>;

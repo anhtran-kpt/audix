@@ -20,13 +20,13 @@ import { postApi } from "@/lib/http/request";
 import { toast } from "sonner";
 import {
   CreatePlaylistInput,
-  CreatePlaylistInputSchema,
   CreatePlaylistOutput,
   SidebarPlaylist,
   UserPlaylist,
 } from "@/features/playlist/contracts/playlist-dto";
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { useSession } from "next-auth/react";
+import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
 
 export const NewPlaylistForm = ({
   onSuccess,

@@ -1,4 +1,4 @@
-import { getTrackOrThrow } from "@/features/track/data-access/track-repos";
+import { getTrackOrThrow } from "@/features/track/data-access/track-repo";
 import { makeGET } from "@/lib/route-factory";
 import { cuid2, object } from "zod";
 

@@ -1,6 +1,6 @@
-import { FullAlbumSchema } from "@/features/album/contracts/album-dto";
+import { FullAlbumSchema } from "@/features/album/contracts/album-schema";
 import { FullArtistSchema } from "@/features/artist/contracts/artist-schema";
-import { FullPlaylistSchema } from "@/features/playlist/contracts/playlist-dto";
+import { FullPlaylistSchema } from "@/features/playlist/contracts/playlist-schema";
 import { FullTrackSchema } from "@/features/track/contracts/track-schema";
 import z from "zod";
 
@@ -56,6 +56,3 @@ export const searchResult = z.object({
     })
     .array(),
 });
-
-export type SearchQuery = z.infer<typeof searchQuerySchema>;
-export type SearchResult = z.infer<typeof searchResult>;

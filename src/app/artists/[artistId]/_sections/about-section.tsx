@@ -1,9 +1,7 @@
-"use client";
-
-import { CldImage } from "next-cloudinary";
 import SectionHeading from "@/components/ui/section-heading";
 import { FollowersBadge } from "@/components/features/follow-badge";
 import { ArtistDetailPage } from "@/features/artist/data-access/artist-repo";
+import { AppImage } from "@/components/shared/app-image";
 
 type AboutSectionProps = {
   bio: ArtistDetailPage["artist"]["bio"];
@@ -22,12 +20,11 @@ export const AboutSection = ({
     <section>
       <SectionHeading title="About" />
       <div className="rounded-lg flex items-center justify-between gap-12 px-12 py-8 relative overflow-hidden aspect-video group">
-        <CldImage
+        <AppImage
           src={bannerId}
           alt={name}
-          fill
           sizes="100vw"
-          className="object-cover hover:scale-105 transition-transform duration-500 brightness-65"
+          className="object-cover hover:scale-105 transition-transform duration-400 brightness-65"
         />
         <div className="absolute bottom-6 md:bottom-8 lg:bottom-10 xl:bottom-12 left-6 md:left-8 lg:left-10 xl:left-12 space-y-3 w-4/5">
           <div>

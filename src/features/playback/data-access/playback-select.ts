@@ -1,5 +1,5 @@
 import { Prisma } from "@/app/generated/prisma";
-import { trackDetailSelect } from "@/features/track/data-access/track-selects";
+import { trackDetailSelect } from "@/features/track/data-access/track-select";
 
 export const playbackSessionSelect = {
   id: true,
