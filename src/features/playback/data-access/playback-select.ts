@@ -16,7 +16,9 @@ export const playbackSessionSelect = {
         },
       },
       kind: true,
+      position: true,
     },
+    orderBy: [{ kind: "asc" }, { position: "asc" }],
   },
   snapshot: {
     select: {

@@ -464,7 +464,6 @@ enum RepeatMode {
 enum QueueItemKind {
   NEXT // "Play next" 
   LATER // "Add to queue" 
-  CONTEXT
 }
 
 enum PlaybackContextType {

@@ -17,7 +17,7 @@ CREATE TYPE "public"."CreditRole" AS ENUM ('LEAD_VOCALS', 'BACKING_VOCALS', 'RAP
 CREATE TYPE "public"."RepeatMode" AS ENUM ('OFF', 'ONE', 'ALL');
 
 -- CreateEnum
-CREATE TYPE "public"."QueueItemKind" AS ENUM ('NEXT', 'LATER', 'CONTEXT');
+CREATE TYPE "public"."QueueItemKind" AS ENUM ('NEXT', 'LATER');
 
 -- CreateEnum
 CREATE TYPE "public"."PlaybackContextType" AS ENUM ('PLAYLIST', 'ALBUM', 'ARTIST', 'HISTORY', 'SEARCH');

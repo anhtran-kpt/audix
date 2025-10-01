@@ -1,6 +1,7 @@
 import {
   zBoolSchema,
   zCuidSchema,
+  zDateSchema,
 } from "@/features/shared/contracts/shared-dto";
 import {
   PlaybackContextTypeSchema,
@@ -37,10 +38,22 @@ export const FullPlaybackSessionSchema = z.object({
         id: zCuidSchema,
       }),
       kind: QueueItemKindSchema,
+      position: z.number().int().nonnegative(),
     })
     .array(),
   activeDeviceId: z.string().nullable(),
   version: z.bigint(),
+});
+
+export const FullPlaybackQueueItemSchema = z.object({
+  id: zCuidSchema,
+  sessionId: zCuidSchema,
+  session: FullPlaybackSessionSchema,
+  kind: QueueItemKindSchema,
+  position: z.number().int().nonnegative(),
+  trackId: zCuidSchema,
+  track: FullTrackSchema,
+  addedAt: zDateSchema,
 });
 
 export const PlaybackSessionSchema = FullPlaybackSessionSchema.pick({
@@ -54,9 +67,20 @@ export const PlaybackSessionSchema = FullPlaybackSessionSchema.pick({
   queue: true,
 });
 
-export const PlaybackSessionExtendedSchema = PlaybackSessionSchema.extend({
+export const ClientPlaybackSessionSchema = PlaybackSessionSchema.extend({
   hasNext: zBoolSchema,
   hasPrevious: zBoolSchema,
+  queue: z.object({
+    next: FullPlaybackQueueItemSchema.pick({
+      id: true,
+    }).array(),
+    context: FullPlaybackQueueItemSchema.pick({
+      id: true,
+    }).array(),
+    later: FullPlaybackQueueItemSchema.pick({
+      id: true,
+    }).array(),
+  }),
 });
 
 export const VolumePlaybackInputSchema = z.object({
@@ -69,7 +93,7 @@ export const StartPlaybackInputSchema = z.object({
   startTrackId: zCuidSchema.optional(),
 });
 
-export const NextPlaybackOutputSchema = PlaybackSessionExtendedSchema.pick({
+export const NextPlaybackOutputSchema = ClientPlaybackSessionSchema.pick({
   currentTrackId: true,
   contextIndex: true,
   currentTrack: true,
@@ -81,7 +105,7 @@ export const PreviousPlaybackInputSchema = z.object({
   positionMs: z.number().nonnegative(),
 });
 
-export const PreviousPlaybackOutputSchema = PlaybackSessionExtendedSchema.pick({
+export const PreviousPlaybackOutputSchema = ClientPlaybackSessionSchema.pick({
   currentTrackId: true,
   contextIndex: true,
   currentTrack: true,

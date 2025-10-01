@@ -16,14 +16,17 @@ export default function QueueView() {
     }))
   );
 
-  const { data: queueTracks } = useTracks(queue?.map((item) => item.track.id));
+  const { data: queueNext } = useTracks(queue?.next.map((item) => item.id));
+  const { data: queueContext } = useTracks(
+    queue?.context.map((item) => item.id)
+  );
+  const { data: queueLater } = useTracks(queue?.later.map((item) => item.id));
+
   const { data: recentTracks } = useRecentTracks();
 
   if (!currentTrack) {
     return null;
   }
-
-  console.log(queueTracks);
 
   return (
     <Tabs defaultValue="queue" className="size-full">
@@ -55,13 +58,12 @@ export default function QueueView() {
                 }
               />
             </div>
-            <div className="flex flex-col gap-2">
-              <p className="font-semibold text-15 px-2">
-                Next from: {currentTrack.title}
-              </p>
-              {queueTracks && (
+            {queueNext && (
+              <div className="flex flex-col gap-2">
+                <p className="font-semibold text-15 px-2">Next in queue:</p>
+
                 <div className="flex flex-col gap-1">
-                  {queueTracks.map((track) => (
+                  {queueNext.map((track) => (
                     <TrackItemCompact
                       key={track.id}
                       track={{
@@ -80,8 +82,62 @@ export default function QueueView() {
                     />
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+            {queueContext && (
+              <div className="flex flex-col gap-2">
+                <p className="font-semibold text-15 px-2">
+                  Next from: {currentTrack.title}
+                </p>
+
+                <div className="flex flex-col gap-1">
+                  {queueContext.map((track) => (
+                    <TrackItemCompact
+                      key={track.id}
+                      track={{
+                        ...track,
+                        artists: track.artists.map((item) => item.artist),
+                      }}
+                      context={
+                        snapshot
+                          ? {
+                              contextType: snapshot.contextType,
+                              contextId: snapshot.contextId,
+                              startTrackId: track.id,
+                            }
+                          : undefined
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+            {queueLater && (
+              <div className="flex flex-col gap-2">
+                <p className="font-semibold text-15 px-2">Later in queue:</p>
+
+                <div className="flex flex-col gap-1">
+                  {queueLater.map((track) => (
+                    <TrackItemCompact
+                      key={track.id}
+                      track={{
+                        ...track,
+                        artists: track.artists.map((item) => item.artist),
+                      }}
+                      context={
+                        snapshot
+                          ? {
+                              contextType: snapshot.contextType,
+                              contextId: snapshot.contextId,
+                              startTrackId: track.id,
+                            }
+                          : undefined
+                      }
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </ScrollArea>
       </TabsContent>

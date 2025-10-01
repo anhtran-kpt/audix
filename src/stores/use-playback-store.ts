@@ -2,7 +2,7 @@
 
 import {
   NextPlaybackOutput,
-  PlaybackSessionExtended,
+  ClientPlaybackSession,
   PreviousPlaybackOutput,
   RepeatPlaybackOutput,
   ShufflePlaybackOutput,
@@ -15,7 +15,7 @@ import { persist } from "zustand/middleware";
 
 interface PlaybackState {
   isLoading: boolean;
-  session: PlaybackSessionExtended | null;
+  session: ClientPlaybackSession | null;
   isPlaying: boolean;
   progressMs: number;
   volume: number;
@@ -46,7 +46,7 @@ export const usePlaybackStore = create<PlaybackState>()(
 
       async hydrate() {
         try {
-          const session = await getApi<PlaybackSessionExtended | null>(
+          const session = await getApi<ClientPlaybackSession | null>(
             "/playback/session"
           );
 
@@ -63,7 +63,7 @@ export const usePlaybackStore = create<PlaybackState>()(
       async start(input) {
         set({ isLoading: true });
         try {
-          const session = await postApi<PlaybackSessionExtended>(
+          const session = await postApi<ClientPlaybackSession>(
             "/playback/start",
             input
           );

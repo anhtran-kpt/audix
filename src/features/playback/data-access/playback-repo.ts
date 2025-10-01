@@ -16,12 +16,54 @@ import {
 import { NextResponse } from "next/server";
 import { playbackSessionSelect } from "./playback-select";
 
-export const getPlaybackBoundaries = (session: PlaybackSession) => {
-  const { queue, snapshot, contextIndex, repeatMode } = session;
+export const buildClientQueue = ({
+  snapshot,
+  contextIndex,
+  queue,
+  isShuffled,
+}: Pick<
+  PlaybackSession,
+  "snapshot" | "contextIndex" | "queue" | "isShuffled"
+>) => {
+  const nextQueue = queue
+    .filter((q) => q.kind === "NEXT")
+    .sort((a, b) => a.position - b.position)
+    .map((q) => q.track);
+
+  let contextQueue = snapshot.tracks
+    .filter((t) => t.index > contextIndex)
+    .map((t) => t.track);
+
+  if (isShuffled) {
+    contextQueue = shuffleArray(contextQueue);
+  }
+
+  const laterQueue = queue
+    .filter((q) => q.kind === "LATER")
+    .sort((a, b) => a.position - b.position)
+    .map((q) => q.track);
+
+  return {
+    next: nextQueue,
+    context: contextQueue,
+    later: laterQueue,
+  };
+};
+
+export const getPlaybackBoundaries = ({
+  snapshot,
+  contextIndex,
+  queue,
+  repeatMode,
+}: Pick<
+  PlaybackSession,
+  "snapshot" | "contextIndex" | "queue" | "repeatMode"
+>) => {
+  const tracks = snapshot.tracks;
 
   const hasNextInQueue = queue.some((q) => q.kind === "NEXT");
 
-  const hasNextInContext = contextIndex < snapshot.tracks.length - 1;
+  const hasNextInContext = contextIndex < tracks.length - 1;
 
   const hasNextInLater = queue.some((q) => q.kind === "LATER");
 
@@ -29,12 +71,12 @@ export const getPlaybackBoundaries = (session: PlaybackSession) => {
     hasNextInQueue ||
     hasNextInContext ||
     hasNextInLater ||
-    (repeatMode === "ALL" && snapshot.tracks.length > 0);
+    (repeatMode === "ALL" && tracks.length > 0);
 
   const hasPrevInContext = contextIndex > 0;
 
   const hasPrevious =
-    hasPrevInContext || (repeatMode === "ALL" && snapshot.tracks.length > 0);
+    hasPrevInContext || (repeatMode === "ALL" && tracks.length > 0);
 
   return { hasNext, hasPrevious };
 };
@@ -48,33 +90,6 @@ function shuffleArray<T>(arr: T[]): T[] {
   return result;
 }
 
-export async function rebuildContextQueue(session: PlaybackSession) {
-  const { contextIndex, isShuffled, snapshot } = session;
-
-  let contextTracks = snapshot.tracks
-    .filter((t) => t.index >= contextIndex + 1)
-    .map((t) => t.trackId);
-
-  if (isShuffled) {
-    contextTracks = shuffleArray(contextTracks);
-  }
-
-  await db.playbackQueueItem.deleteMany({
-    where: { sessionId: session.id, kind: "CONTEXT" },
-  });
-
-  if (contextTracks.length > 0) {
-    await db.playbackQueueItem.createMany({
-      data: contextTracks.map((trackId, i) => ({
-        sessionId: session.id,
-        kind: "CONTEXT",
-        position: i,
-        trackId,
-      })),
-    });
-  }
-}
-
 export const getPlaybackSession = async (userId: string) => {
   const session = await db.playbackSession.findUnique({
     where: { userId },
@@ -85,7 +100,9 @@ export const getPlaybackSession = async (userId: string) => {
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
 
-  return { ...session, hasNext, hasPrevious };
+  const queue = buildClientQueue(session);
+
+  return { ...session, hasNext, hasPrevious, queue };
 };
 
 const createSnapshotFromPlaylist = async ({
@@ -250,7 +267,6 @@ const createSnapshotFromArtist = async ({
 };
 
 const resumeSnapshotFromHistory = async ({
-  userId,
   historyId,
 }: {
   userId: string;
@@ -258,38 +274,16 @@ const resumeSnapshotFromHistory = async ({
 }) => {
   const history = await db.playHistory.findUnique({
     where: { id: historyId },
-    select: {
+    include: {
       snapshot: {
-        select: {
-          tracks: true,
-        },
+        include: { tracks: true },
       },
     },
   });
 
   if (!history) throw new Error("No history");
 
-  const hash = createHash("sha256")
-    .update(JSON.stringify(history.snapshot.tracks.map((h) => h.trackId)))
-    .digest("hex");
-
-  return db.playbackContextSnapshot.create({
-    data: {
-      userId,
-      contextType: "HISTORY",
-      contextId: historyId,
-      name: "Recently Played",
-      hash,
-      tracks: {
-        createMany: {
-          data: history.snapshot.tracks.map((h, index) => ({
-            trackId: h.trackId,
-            index,
-          })),
-        },
-      },
-    },
-  });
+  return history.snapshot;
 };
 
 const createSnapshotFromSearch = async ({
@@ -300,13 +294,8 @@ const createSnapshotFromSearch = async ({
   query: string;
 }) => {
   const results = await db.track.findMany({
-    where: {
-      OR: [
-        { title: { contains: query, mode: "insensitive" } },
-        { artist: { name: { contains: query, mode: "insensitive" } } },
-      ],
-    },
-    take: 50,
+    where: { title: { contains: query, mode: "insensitive" } },
+    select: trackItemSelect,
   });
 
   if (results.length === 0) throw new Error("No search results");
@@ -415,9 +404,9 @@ export const startPlaybackSession = async ({
     select: playbackSessionSelect,
   });
 
-  await rebuildContextQueue(session);
-
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
+
+  const queue = buildClientQueue(session);
 
   await db.playHistory.create({
     data: {
@@ -428,7 +417,7 @@ export const startPlaybackSession = async ({
     },
   });
 
-  return { ...session, hasNext, hasPrevious };
+  return { ...session, hasNext, hasPrevious, queue };
 };
 
 export const skipToNext = async (userId: string) => {
@@ -493,6 +482,8 @@ export const skipToNext = async (userId: string) => {
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
 
+  const queue = buildClientQueue(updated);
+
   await db.playHistory.create({
     data: {
       snapshotId: session.snapshot.id,
@@ -508,6 +499,7 @@ export const skipToNext = async (userId: string) => {
     currentTrack: nextTrack,
     hasNext,
     hasPrevious,
+    queue,
   };
 };
 
@@ -564,6 +556,8 @@ export const skipToPrevious = async (userId: string, progressMs?: number) => {
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
 
+  const queue = buildClientQueue(updated);
+
   await db.playHistory.create({
     data: {
       snapshotId: session.snapshot.id,
@@ -579,6 +573,7 @@ export const skipToPrevious = async (userId: string, progressMs?: number) => {
     currentTrack: newTrack,
     hasNext,
     hasPrevious,
+    queue,
   };
 };
 
@@ -597,9 +592,9 @@ export const shufflePlayback = async (
     select: playbackSessionSelect,
   });
 
-  await rebuildContextQueue(session);
+  const queue = buildClientQueue(session);
 
-  return { isShuffled: session.isShuffled };
+  return { isShuffled: session.isShuffled, queue };
 };
 
 export const repeatPlayback = async (
