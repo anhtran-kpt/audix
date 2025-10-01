@@ -26,10 +26,10 @@ export const BaseArtistSchema = z.object({
 });
 
 export const FullArtistSchema = BaseArtistSchema.extend({
-  albums: BaseAlbumSchema.array(),
-  tracks: TrackArtistSchema.array(),
-  genres: ArtistGenreSchema.array(),
-  credits: TrackCreditSchema.array(),
+  albums: z.lazy(() => BaseAlbumSchema.array()),
+  tracks: z.lazy(() => TrackArtistSchema.array()),
+  genres: z.lazy(() => ArtistGenreSchema.array()),
+  credits: z.lazy(() => TrackCreditSchema.array()),
 });
 
 export const SidebarArtistSchema = BaseArtistSchema.pick({

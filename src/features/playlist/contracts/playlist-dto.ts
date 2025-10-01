@@ -1,9 +1,9 @@
 import z from "zod";
 import {
+  BasePlaylistSchema,
   CreatePlaylistInputSchema,
   CreatePlaylistOutputSchema,
   FullPlaylistSchema,
-  PlaylistBaseSchema,
   PlaylistDetailSchema,
   PlaylistItemSchema,
   SidebarPlaylistSchema,
@@ -20,5 +20,5 @@ export type PlaylistDetail = z.infer<typeof PlaylistDetailSchema>;
 export type SidebarPlaylist = z.infer<typeof SidebarPlaylistSchema>;
 export type CreatePlaylistInput = z.infer<typeof CreatePlaylistInputSchema>;
 export type CreatePlaylistOutput = z.infer<typeof CreatePlaylistOutputSchema>;
-export type PlaylistBase = z.infer<typeof PlaylistBaseSchema>;
+export type BasePlaylist = z.infer<typeof BasePlaylistSchema>;
 export type FullPlaylist = z.infer<typeof FullPlaylistSchema>;

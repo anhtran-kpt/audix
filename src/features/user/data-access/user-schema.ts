@@ -1,4 +1,4 @@
-import { BasePlaylistSchema } from "@/features/playlist/contracts/playlist-schema";
+import { FullPlaylistSchema } from "@/features/playlist/contracts/playlist-schema";
 import {
   zCuidSchema,
   zDateSchema,
@@ -17,5 +17,5 @@ export const BaseUserSchema = z.object({
 });
 
 export const FullUserSchema = BaseUserSchema.extend({
-  playlists: BasePlaylistSchema.array(),
+  playlists: z.lazy(() => FullPlaylistSchema.array()),
 });

@@ -10,7 +10,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { NewPlaylistDialog } from "./new-playlist-dialog";
 import { usePathname, useRouter } from "next/navigation";
 import Dot from "../ui/dot";
 import { FallbackCoverImage } from "./fallback-cover-image";
@@ -36,6 +35,7 @@ import { VolumeIcon } from "../shared/volume-icon";
 import { MiniPlayContextButton } from "../shared/mini-play-context-button";
 import { SidebarArtist } from "@/features/artist/contracts/artist-dto";
 import { AppImage } from "../shared/app-image";
+import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 
 export function AppSidebar({
   initialArtists,
@@ -45,6 +45,7 @@ export function AppSidebar({
   initialPlaylists: SidebarPlaylist[];
 }) {
   const pathname = usePathname();
+  const { openDialog } = useNewPlaylistDialog();
   const { toggleSidebar, open } = useSidebar();
   const router = useRouter();
 
@@ -90,15 +91,13 @@ export function AppSidebar({
                   Your Library
                 </span>
               </div>
-              <NewPlaylistDialog
-                trigger={
-                  <IconButton
-                    icon={PlusIcon}
-                    aria-label="New playlist"
-                    tooltipContent="New playlist"
-                    iconClassName="size-6"
-                  />
-                }
+
+              <IconButton
+                icon={PlusIcon}
+                aria-label="New playlist"
+                tooltipContent="New playlist"
+                iconClassName="size-6"
+                onClick={openDialog}
               />
             </div>
             <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
@@ -121,15 +120,12 @@ export function AppSidebar({
               />
             </div>
             <div className="flex items-center justify-center">
-              <NewPlaylistDialog
-                trigger={
-                  <IconButton
-                    icon={PlusIcon}
-                    aria-label="New playlist"
-                    tooltipContent="New playlist"
-                    iconClassName="size-6"
-                  />
-                }
+              <IconButton
+                icon={PlusIcon}
+                aria-label="New playlist"
+                tooltipContent="New playlist"
+                iconClassName="size-6"
+                onClick={openDialog}
               />
             </div>
           </>

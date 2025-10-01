@@ -1,5 +1,5 @@
 import { getRecommendedTracks } from "@/features/playlist/data-access/playlist-repo";
-import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
+import { zCuidSchema } from "@/features/shared/contracts/shared-schema";
 import { makeGET } from "@/lib/route-factory";
 import { object } from "zod";
 

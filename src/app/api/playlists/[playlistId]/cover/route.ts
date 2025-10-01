@@ -1,5 +1,5 @@
 import { uploadPlaylistCover } from "@/features/playlist/data-access/playlist-repo";
-import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
+import { zCuidSchema } from "@/features/shared/contracts/shared-schema";
 import { makePOST } from "@/lib/route-factory";
 import z, { object } from "zod";
 

@@ -34,10 +34,10 @@ export const BaseTrackSchema = z.object({
 });
 
 export const FullTrackSchema = BaseTrackSchema.extend({
-  album: BaseAlbumSchema,
-  artists: TrackArtistSchema.array(),
-  credits: TrackCreditSchema.array(),
-  genres: TrackGenreSchema.array(),
+  album: z.lazy(() => BaseAlbumSchema),
+  artists: z.lazy(() => TrackArtistSchema.array()),
+  credits: z.lazy(() => TrackCreditSchema.array()),
+  genres: z.lazy(() => TrackGenreSchema.array()),
 });
 
 export const TrackItemSchema = FullTrackSchema.pick({

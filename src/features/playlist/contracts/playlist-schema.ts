@@ -24,8 +24,8 @@ export const BasePlaylistSchema = z.object({
 });
 
 export const FullPlaylistSchema = BasePlaylistSchema.extend({
-  user: BaseUserSchema.nullish(),
-  tracks: PlaylistTrackSchema.array(),
+  user: z.lazy(() => BaseUserSchema.nullish()),
+  tracks: z.lazy(() => PlaylistTrackSchema.array()),
 });
 
 export const CreatePlaylistInputSchema = FullPlaylistSchema.pick({

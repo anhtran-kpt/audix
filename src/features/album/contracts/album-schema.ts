@@ -24,8 +24,8 @@ export const BaseAlbumSchema = z.object({
 });
 
 export const FullAlbumSchema = BaseAlbumSchema.extend({
-  artist: BaseArtistSchema,
-  genres: BaseGenreSchema.array(),
+  artist: z.lazy(() => BaseArtistSchema),
+  genres: z.lazy(() => BaseGenreSchema.array()),
 });
 
 export const AlbumGridItemSchema = BaseAlbumSchema.pick({

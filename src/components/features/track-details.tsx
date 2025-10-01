@@ -33,7 +33,6 @@ import {
   CommandItem,
   CommandList,
 } from "../ui/command";
-import { NewPlaylistDialog } from "./new-playlist-dialog";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { TrackItemCompact } from "@/features/track/contracts/track-dto";
@@ -43,6 +42,7 @@ import { UserPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { useOptimisticTrackRemove } from "@/hooks/use-optimistic-track-remove";
 import { useRouter } from "next/navigation";
+import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 
 type TrackDetailsProps = {
   track: TrackItemCompact;
@@ -52,6 +52,7 @@ type TrackDetailsProps = {
 export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
   const removeTrackMutation = useOptimisticTrackRemove();
   const addTrackMutation = useOptimisticTrackAdd();
+  const { openDialog } = useNewPlaylistDialog();
   const { status } = useSession();
   const {
     data: playlists,
@@ -100,16 +101,15 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
                         autoFocus={true}
                         className="h-9"
                       />
-                      <NewPlaylistDialog
-                        trigger={
-                          <IconButton
-                            icon={PlusIcon}
-                            aria-label="New playlist"
-                            tooltipContent="New playlist"
-                            iconClassName="size-6"
-                          />
-                        }
+
+                      <IconButton
+                        icon={PlusIcon}
+                        aria-label="New playlist"
+                        tooltipContent="New playlist"
+                        iconClassName="size-6"
+                        onClick={openDialog}
                       />
+
                       <DropdownMenuSeparator />
                       <CommandList>
                         <CommandEmpty>No playlist found.</CommandEmpty>

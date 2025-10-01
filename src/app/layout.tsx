@@ -16,6 +16,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { getSidebarArtists } from "@/features/artist/data-access/artist-repo";
 import { getSidebarPlaylists } from "@/features/playlist/data-access/playlist-repo";
 import AudioPlayer from "@/components/features/audio-player";
+import { NewPlaylistDialog } from "@/components/shared/new-playlist-dialog";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -87,6 +88,7 @@ export default async function RootLayout({
                 <RightPanel />
                 <AudioPlayer />
                 <Toaster />
+                <NewPlaylistDialog />
               </SidebarProvider>
             </AuthProvider>
           </ReactQueryProvider>

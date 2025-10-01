@@ -1,4 +1,4 @@
-import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-dto";
+import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
 import {
   createPlaylist,
   getUserPlaylistsWithoutTrack,

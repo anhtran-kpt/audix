@@ -17,8 +17,8 @@ export const TrackArtistSchema = z.object({
   artistId: zCuidSchema,
   role: ArtistRoleSchema,
   order: zIntSchema,
-  track: BaseTrackSchema,
-  artist: BaseArtistSchema,
+  track: z.lazy(() => BaseTrackSchema),
+  artist: z.lazy(() => BaseArtistSchema),
 });
 
 export const TrackCreditSchema = z.object({
@@ -29,22 +29,22 @@ export const TrackCreditSchema = z.object({
   role: CreditRoleSchema,
   details: zStringSchema.nullish(),
   order: zIntSchema,
-  track: BaseTrackSchema,
-  artist: BaseArtistSchema.nullish(),
+  track: z.lazy(() => BaseTrackSchema),
+  artist: z.lazy(() => BaseArtistSchema.nullish()),
 });
 
 export const ArtistGenreSchema = z.object({
   artistId: zCuidSchema,
   genreId: zCuidSchema,
-  artist: BaseArtistSchema,
-  genre: BaseGenreSchema,
+  artist: z.lazy(() => BaseArtistSchema),
+  genre: z.lazy(() => BaseGenreSchema),
 });
 
 export const TrackGenreSchema = z.object({
   trackId: zCuidSchema,
   genreId: zCuidSchema,
-  track: BaseTrackSchema,
-  genre: BaseGenreSchema,
+  track: z.lazy(() => BaseTrackSchema),
+  genre: z.lazy(() => BaseGenreSchema),
 });
 
 export const PlaylistTrackSchema = z.object({
@@ -53,6 +53,6 @@ export const PlaylistTrackSchema = z.object({
   addedAt: zDateSchema,
   playlistId: zCuidSchema,
   trackId: zCuidSchema,
-  playlist: BasePlaylistSchema,
-  track: BaseTrackSchema,
+  playlist: z.lazy(() => BasePlaylistSchema),
+  track: z.lazy(() => BaseTrackSchema),
 });

@@ -35,3 +35,11 @@ export const buildPlaylistCoverUrl = (publicIds: string[]) => {
 };
 
 export const norm = (s: string) => s.trim().toLowerCase();
+
+export const nullishToStr = (value: string | null | undefined) => {
+  return value ?? "";
+};
+
+export const emptyStrToNullish = (value: string | undefined | null) => {
+  return value && value.trim() !== "" ? value : null;
+};

@@ -1,10 +1,10 @@
-import { UpdatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-dto";
+import { UpdatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
 import {
   deletePlaylist,
   getPlaylistDetail,
   updatePlaylistInfo,
 } from "@/features/playlist/data-access/playlist-repo";
-import { zCuidSchema } from "@/features/shared/contracts/shared-dto";
+import { zCuidSchema } from "@/features/shared/contracts/shared-schema";
 import { makeDELETE, makeGET, makePATCH } from "@/lib/route-factory";
 import { object } from "zod";
 
