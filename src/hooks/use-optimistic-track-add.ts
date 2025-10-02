@@ -1,11 +1,12 @@
 "use client";
 
-import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { TrackListItem } from "@/features/track/contracts/track-dto";
 import { getApi, postApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { toast } from "sonner";
+import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
+import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 
 type RecommendedTrackItem = TrackListItem & {
   optimistic?: boolean;
@@ -115,7 +116,7 @@ export function useOptimisticTrackAdd() {
       );
 
       qc.invalidateQueries({
-        queryKey: playlistKeys.userPlaylists(newTrack.id),
+        queryKey: playlistKeys.list(),
       });
 
       const rk = recommendedKey(playlistId);

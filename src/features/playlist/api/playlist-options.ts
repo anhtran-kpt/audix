@@ -2,11 +2,13 @@ import { getApi } from "@/lib/http/request";
 import { queryOptions } from "@tanstack/react-query";
 import { playlistKeys } from "./playlist-keys";
 import { PlaylistDetail } from "../data-access/playlist-repo";
+import { PlaylistItem } from "../contracts/playlist-dto";
+import { playlistEndpoints } from "./playlist-endpoints";
 
-export const sidebarPlaylistOptions = () => {
+export const playlistsListOption = () => {
   return queryOptions({
-    queryKey: playlistKeys.sidebarPlaylists(),
-    queryFn: () => getApi<SidebarPlaylist[]>("/me/sidebar/playlists"),
+    queryKey: playlistKeys.list(),
+    queryFn: () => getApi<PlaylistItem[]>(playlistEndpoints.list()),
   });
 };
 

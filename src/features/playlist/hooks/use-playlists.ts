@@ -1,10 +1,8 @@
-import { getApi } from "@/lib/http/request";
 import { useQuery } from "@tanstack/react-query";
+import { playlistsListOption } from "../api/playlist-options";
 
-export const usePlaylist = (playlistId?: string) => {
+export const usePlaylistsList = () => {
   return useQuery({
-    enabled: !!playlistId,
-    queryKey: ["playlists", playlistId],
-    queryFn: () => getApi<FullPlaylist>(`/playlists/${playlistId}`),
+    ...playlistsListOption(),
   });
 };

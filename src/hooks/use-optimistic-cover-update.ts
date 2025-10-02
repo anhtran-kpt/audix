@@ -1,8 +1,6 @@
-import {
-  PlaylistDetail,
-  SidebarPlaylist,
-} from "@/features/playlist/contracts/playlist-dto";
-import { playlistKeys } from "@/features/playlist/query/playlist-keys";
+import { playlistKeys } from "@/features/playlist/api/playlist-keys";
+import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
+import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 import { postApi } from "@/lib/http/request";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -36,16 +34,12 @@ export const useOptimisticCoverUpdate = () => {
         prev ? { ...prev, imageId: optimisticImageId } : prev
       );
 
-      qc.setQueryData<SidebarPlaylist[]>(
-        playlistKeys.sidebarPlaylists(),
-        (prev) =>
-          prev
-            ? prev.map((pl) =>
-                pl.id === playlistId
-                  ? { ...pl, imageId: optimisticImageId }
-                  : pl
-              )
-            : prev
+      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (prev) =>
+        prev
+          ? prev.map((pl) =>
+              pl.id === playlistId ? { ...pl, imageId: optimisticImageId } : pl
+            )
+          : prev
       );
 
       return { prev };
@@ -62,12 +56,10 @@ export const useOptimisticCoverUpdate = () => {
         prev ? { ...prev, imageId } : prev
       );
 
-      qc.setQueryData<SidebarPlaylist[]>(
-        playlistKeys.sidebarPlaylists(),
-        (prev) =>
-          prev
-            ? prev.map((pl) => (pl.id === playlistId ? { ...pl, imageId } : pl))
-            : prev
+      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (prev) =>
+        prev
+          ? prev.map((pl) => (pl.id === playlistId ? { ...pl, imageId } : pl))
+          : prev
       );
     },
   });

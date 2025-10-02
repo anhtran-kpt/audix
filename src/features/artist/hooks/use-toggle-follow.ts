@@ -2,8 +2,8 @@
 
 import { deleteApi, postApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { FollowStatus } from "../contracts/artist-schema";
-import { artistKeys } from "../query/artist-keys";
+import { FollowStatus } from "../data-access/artist-repo";
+import { artistKeys } from "../api/artist-keys";
 
 export function useToggleFollow(artistId: string) {
   const qc = useQueryClient();
@@ -50,7 +50,7 @@ export function useToggleFollow(artistId: string) {
 
     onSettled: () => {
       qc.invalidateQueries({ queryKey: artistKeys.followStatus(artistId) });
-      qc.invalidateQueries({ queryKey: artistKeys.sidebarArtists() });
+      qc.invalidateQueries({ queryKey: artistKeys.list() });
     },
   });
 }

@@ -37,12 +37,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { TrackListItem } from "@/features/track/contracts/track-dto";
 import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
-import { getApi } from "@/lib/http/request";
-import { UserPlaylist } from "@/features/playlist/contracts/playlist-dto";
-import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { useOptimisticTrackRemove } from "@/hooks/use-optimistic-track-remove";
 import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
+import { playlistsListOption } from "@/features/playlist/api/playlist-options";
 
 type TrackDetailsProps = {
   track: TrackListItem;
@@ -59,9 +57,7 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
     status: queryStatus,
     error,
   } = useQuery({
-    enabled: !!track.id,
-    queryKey: playlistKeys.userPlaylists(track.id),
-    queryFn: () => getApi<UserPlaylist[]>(`/me/playlists?trackId=${track.id}`),
+    ...playlistsListOption()
   });
 
   const [open, setOpen] = useState(false);
@@ -121,7 +117,7 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
                               <CommandItem
                                 key={playlist.id}
                                 value={playlist.id}
-                                disabled={playlist.hasTrack}
+                                
                                 onSelect={(value) => {
                                   addTrackMutation.mutate({
                                     playlistId: value,
@@ -130,8 +126,7 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
                                   setOpen(false);
                                 }}
                               >
-                                {playlist.title}{" "}
-                                {playlist.hasTrack && "(already added)"}
+                                {playlist.title}
                               </CommandItem>
                             ))
                           )}

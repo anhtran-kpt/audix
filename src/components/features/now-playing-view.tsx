@@ -17,7 +17,6 @@ import { CldImage } from "next-cloudinary";
 import { cn } from "@/lib/utils";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { FollowersBadge } from "./follow-badge";
-import { useNowPlayingTrack } from "@/features/track/hooks/use-tracks";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 
 export default function NowPlayingRefView() {

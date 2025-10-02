@@ -1,6 +1,6 @@
 "use client";
 
-import { followStatusOptions } from "@/features/artist/query/artist-options";
+import { followStatusOptions } from "@/features/artist/api/artist-options";
 import { useQuery } from "@tanstack/react-query";
 import pluralize from "pluralize";
 

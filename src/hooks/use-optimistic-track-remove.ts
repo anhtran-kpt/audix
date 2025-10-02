@@ -1,8 +1,8 @@
-import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { deleteApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
-import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
+import { playlistKeys } from "@/features/playlist/api/playlist-keys";
+import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 
 type RemoveTrackInput = {
   playlistId: string;
@@ -60,7 +60,7 @@ export function useOptimisticTrackRemove() {
     },
     onSuccess: (_, { trackId }) => {
       qc.invalidateQueries({
-        queryKey: playlistKeys.playlistsWithoutTrack(trackId),
+        queryKey: playlistKeys.detail(trackId),
       });
     },
   });

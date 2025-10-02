@@ -16,8 +16,6 @@ import { FallbackCoverImage } from "./fallback-cover-image";
 import { ScrollArea } from "../ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
-import { sidebarPlaylistOptions } from "@/features/playlist/query/playlist-options";
-import { sidebarArtistOptions } from "@/features/artist/query/artist-options";
 import WaveForm from "../ui/wave-form";
 import { IconButton } from "../ui/icon-button";
 import {
@@ -36,6 +34,8 @@ import { MiniPlayContextButton } from "../shared/mini-play-context-button";
 import { AppImage } from "../shared/app-image";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 import { ArtistItem } from "@/features/artist/contracts/artist-dto";
+import { playlistsListOption } from "@/features/playlist/api/playlist-options";
+import { artistsListOptions } from "@/features/artist/api/artist-options";
 
 export function AppSidebar({
   initialArtists,
@@ -50,13 +50,13 @@ export function AppSidebar({
   const router = useRouter();
 
   const { data: playlists } = useQuery({
-    ...sidebarPlaylistOptions(),
+    ...playlistsListOption(),
     initialData: initialPlaylists,
     initialDataUpdatedAt: Date.now(),
   });
 
   const { data: artists } = useQuery({
-    ...sidebarArtistOptions(),
+    ...artistsListOptions(),
     initialData: initialArtists,
     initialDataUpdatedAt: Date.now(),
   });

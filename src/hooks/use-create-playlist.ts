@@ -9,12 +9,10 @@ import { useSession } from "next-auth/react";
 import {
   CreatePlaylistInput,
   CreatePlaylistOutput,
-  SidebarPlaylist,
-  UserPlaylist,
+  PlaylistItem,
 } from "@/features/playlist/contracts/playlist-dto";
 import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
-import { playlistKeys } from "@/features/playlist/query/playlist-keys";
-import { emptyStrToNullish } from "@/utils/string";
+import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 
 export function useCreatePlaylist(
   onSuccess?: (res: CreatePlaylistOutput) => void
@@ -34,18 +32,15 @@ export function useCreatePlaylist(
 
   const mutation = useMutation({
     mutationFn: (data: CreatePlaylistInput) =>
-      postApi<CreatePlaylistOutput>("/playlists", {
-        ...data,
-        description: emptyStrToNullish(data.description),
-      }),
+      postApi<CreatePlaylistOutput>("/playlists", data),
     onMutate: async (vars) => {
-      await qc.cancelQueries({ queryKey: playlistKeys.sidebarPlaylists() });
+      await qc.cancelQueries({ queryKey: playlistKeys.list() });
 
-      const previousPlaylists = qc.getQueryData<SidebarPlaylist[]>(
-        playlistKeys.sidebarPlaylists()
+      const previousPlaylists = qc.getQueryData<PlaylistItem[]>(
+        playlistKeys.list()
       );
 
-      const optimistic: SidebarPlaylist = {
+      const optimistic: PlaylistItem = {
         id: `optimistic-${Date.now()}`,
         title: vars.title,
         imageId: null,
@@ -55,32 +50,24 @@ export function useCreatePlaylist(
         },
       };
 
-      qc.setQueryData<SidebarPlaylist[]>(
-        playlistKeys.sidebarPlaylists(),
-        (old) => (old ? [optimistic, ...old] : [optimistic])
+      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (old) =>
+        old ? [optimistic, ...old] : [optimistic]
       );
 
       return { previousPlaylists };
     },
     onError: (err, _, ctx) => {
       if (ctx?.previousPlaylists) {
-        qc.setQueryData(playlistKeys.sidebarPlaylists(), ctx.previousPlaylists);
+        qc.setQueryData(playlistKeys.list(), ctx.previousPlaylists);
       }
       toast.error(err.message);
     },
     onSuccess: (res) => {
-      qc.setQueryData<SidebarPlaylist[]>(
-        playlistKeys.sidebarPlaylists(),
-        (old) => {
-          if (!old) return [res];
-          const filtered = old.filter((pl) => !pl.id.startsWith("optimistic-"));
-          return [res, ...filtered];
-        }
-      );
-
-      qc.setQueryData<UserPlaylist[]>(playlistKeys.userPlaylists(), (old) =>
-        old ? [res, ...old] : old
-      );
+      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (old) => {
+        if (!old) return [res];
+        const filtered = old.filter((pl) => !pl.id.startsWith("optimistic-"));
+        return [res, ...filtered];
+      });
 
       onSuccess?.(res);
       form.reset();

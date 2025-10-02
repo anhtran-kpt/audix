@@ -4,7 +4,7 @@ import { Button } from "../ui/button";
 import { Loader2Icon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { followStatusOptions } from "@/features/artist/query/artist-options";
+import { followStatusOptions } from "@/features/artist/api/artist-options";
 import { useToggleFollow } from "@/features/artist/hooks/use-toggle-follow";
 
 export const FollowButton = ({ artistId }: { artistId: string }) => {

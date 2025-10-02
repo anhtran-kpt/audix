@@ -39,6 +39,8 @@ export const getFollowStatus = async (userId: string, artistId: string) => {
   return { isFollowing: !!link, followersCount: artist?.followersCount ?? 0 };
 };
 
+export type FollowStatus = AwaitedReturnType<typeof getFollowStatus>;
+
 export const followArtist = async (userId: string, artistId: string) => {
   return await db.$transaction(async (tx) => {
     const created = await tx.userFollowedArtist
