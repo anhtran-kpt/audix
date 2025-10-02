@@ -1,8 +1,8 @@
 "use client";
 
 import { TrackList } from "@/components/features/track-list";
+import { playlistDetailOption } from "@/features/playlist/api/playlist-options";
 import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
-import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
 import { useQuery } from "@tanstack/react-query";
 
 type TracksSectionProps = {

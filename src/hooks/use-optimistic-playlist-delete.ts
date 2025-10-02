@@ -1,7 +1,7 @@
-import { playlistKeys } from "@/features/playlist/query/playlist-keys";
+import { playlistKeys } from "@/features/playlist/api/playlist-keys";
+import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { deleteApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { SidebarPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -20,19 +20,11 @@ export function useOptimisticPlaylistDelete() {
 
     onMutate: async ({ playlistId }) => {
       await qc.cancelQueries({ queryKey: playlistKeys.detail(playlistId) });
-      await qc.cancelQueries({ queryKey: playlistKeys.sidebarPlaylists() });
       await qc.cancelQueries({ queryKey: playlistKeys.list() });
 
-      const prevLists = qc.getQueryData<SidebarPlaylist[]>(
-        playlistKeys.sidebarPlaylists()
-      );
+      const prevLists = qc.getQueryData<PlaylistItem[]>(playlistKeys.list());
 
-      qc.setQueryData<SidebarPlaylist[]>(
-        playlistKeys.sidebarPlaylists(),
-        (old = []) => old.filter((pl) => pl.id !== playlistId)
-      );
-
-      qc.setQueryData<SidebarPlaylist[]>(playlistKeys.list(), (old = []) =>
+      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (old = []) =>
         old.filter((pl) => pl.id !== playlistId)
       );
 
@@ -43,13 +35,11 @@ export function useOptimisticPlaylistDelete() {
 
     onError: (_, __, ctx) => {
       if (ctx?.prevLists) {
-        qc.setQueryData(playlistKeys.sidebarPlaylists(), ctx.prevLists);
         qc.setQueryData(playlistKeys.list(), ctx.prevLists);
       }
     },
 
     onSuccess: async (_, { playlistId }) => {
-      qc.invalidateQueries({ queryKey: playlistKeys.sidebarPlaylists() });
       qc.invalidateQueries({ queryKey: playlistKeys.list() });
 
       toast.success("Playlist deleted.");

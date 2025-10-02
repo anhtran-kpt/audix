@@ -14,9 +14,7 @@ import { IconButton } from "../ui/icon-button";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
 import { Textarea } from "../ui/textarea";
-import { CoverImage } from "../ui/cover-image";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { useOptimisticPlaylistUpdate } from "@/hooks/use-optimistic-playlist-update";
 import { useForm } from "react-hook-form";
@@ -32,6 +30,8 @@ import {
 } from "../ui/form";
 import { useEffect, useState } from "react";
 import { UpdatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
+import { playlistDetailOption } from "@/features/playlist/api/playlist-options";
+import { AppImage } from "../shared/app-image";
 
 export default function EditPlaylistDetails({
   playlistId,
@@ -108,10 +108,11 @@ export default function EditPlaylistDetails({
             <div className="flex items-stretch gap-4">
               <div className="flex-shrink-0">
                 {playlist.imageId ? (
-                  <CoverImage
+                  <AppImage
                     alt={playlist.title}
                     src={playlist.imageId}
-                    size="xl"
+                    sizes="224px"
+                    containerClassName="size-56"
                   />
                 ) : (
                   <FallbackCoverImage type="detail" />

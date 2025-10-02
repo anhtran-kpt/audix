@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { GridWrapper } from "../ui/grid-wrapper";
+import { GridWrapper } from "./grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import { AppImage } from "./app-image";
 import { ContextPlayButton } from "./context-play-button";

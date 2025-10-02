@@ -1,21 +1,13 @@
 import { withAuth } from "next-auth/middleware";
 
-export default withAuth(function middleware() {}, {
+export default withAuth({
   callbacks: {
-    authorized: ({ token, req }) => {
-      if (req.nextUrl.pathname.startsWith("/library")) {
-        return !!token;
-      }
-
-      if (req.nextUrl.pathname.startsWith("/premium")) {
-        return token?.subscription === "PREMIUM";
-      }
-
-      return true;
+    authorized: ({ token }) => {
+      return !!token;
     },
   },
 });
 
 export const config = {
-  matcher: ["/library/:path*", "/premium/:path*", "/api/protected/:path*"],
+  matcher: ["/((?!api/auth|auth|_next|static|favicon.ico).*)"],
 };

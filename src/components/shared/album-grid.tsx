@@ -1,6 +1,6 @@
 "use client";
 
-import { GridWrapper } from "../ui/grid-wrapper";
+import { GridWrapper } from "./grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import Dot from "../ui/dot";
 import { formatDate } from "date-fns/format";

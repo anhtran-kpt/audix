@@ -179,7 +179,7 @@ export const NowPlayingView = () => {
                     <div>
                       <NavLink
                         href={`/artists/${credit.artistId}`}
-                        className="text-15"
+                        className="text-base"
                       >
                         {credit.displayName}
                       </NavLink>

@@ -1,9 +1,10 @@
+import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 import {
   PlaylistItem,
   UpdatePlaylistInput,
   UpdatePlaylistOutput,
 } from "@/features/playlist/contracts/playlist-dto";
-import { playlistKeys } from "@/features/playlist/query/playlist-keys";
+import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 import { patchApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -37,7 +38,7 @@ export const useOptimisticPlaylistUpdate = () => {
           : prev
       );
 
-      qc.setQueryData<PlaylistItem[]>(playlistKeys.sidebarPlaylists(), (prev) =>
+      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (prev) =>
         prev
           ? prev.map((pl) =>
               pl.id === playlistId
@@ -71,7 +72,7 @@ export const useOptimisticPlaylistUpdate = () => {
           : prev
       );
 
-      qc.setQueryData<PlaylistItem[]>(playlistKeys.sidebarPlaylists(), (prev) =>
+      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (prev) =>
         prev
           ? prev.map((pl) =>
               pl.id === playlistId

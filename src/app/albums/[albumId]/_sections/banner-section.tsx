@@ -10,7 +10,6 @@ import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
-import { ArtistImage } from "@/components/ui/artist-image";
 import { NavLink } from "@/components/ui/nav-link";
 import Dot from "@/components/ui/dot";
 import { formatDate } from "date-fns/format";
@@ -84,7 +83,12 @@ export const BannerSection = ({
               ))}
             </div>
             <div className="inline-flex items-center gap-2">
-              <ArtistImage alt={artist.name} src={artist.imageId} size="xs" />
+              <AppImage
+                alt={artist.name}
+                src={artist.imageId}
+                sizes="48px"
+                containerClassName="size-7 rounded-full"
+              />
               <NavLink href={`/artists/${artist.id}`} className="text-sm">
                 {artist.name}
               </NavLink>

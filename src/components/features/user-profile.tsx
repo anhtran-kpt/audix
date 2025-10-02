@@ -81,7 +81,7 @@ export const UserProfile = () => {
         <DropdownMenuItem
           onSelect={(e) => {
             e.preventDefault();
-            router.push("/profile");
+            router.push("/me");
           }}
         >
           Profile
