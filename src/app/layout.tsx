@@ -14,9 +14,9 @@ import RightPanel from "@/components/features/right-panel";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { getSidebarArtists } from "@/features/artist/data-access/artist-repo";
-import { getSidebarPlaylists } from "@/features/playlist/data-access/playlist-repo";
 import AudioPlayer from "@/components/features/audio-player";
 import { NewPlaylistDialog } from "@/components/shared/new-playlist-dialog";
+import { getUserPlaylists } from "@/features/playlist/data-access/playlist-repo";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -38,7 +38,7 @@ export default async function RootLayout({
 
   const [artists, playlists] = await Promise.all([
     getSidebarArtists(userId!),
-    getSidebarPlaylists(userId!),
+    getUserPlaylists(userId!),
   ]);
 
   return (

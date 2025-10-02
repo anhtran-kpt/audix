@@ -1,4 +1,3 @@
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import db from "@/lib/db";
 import {
   CreatePlaylistInput,
@@ -14,7 +13,7 @@ import cloudinary from "@/lib/config/cloudinary";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { AwaitedReturnType } from "@/utils/type";
 
-export const getSidebarPlaylists = async (userId: zCuidType) => {
+export const getUserPlaylists = async (userId: string) => {
   return await db.playlist.findMany({
     where: {
       userId,
@@ -37,13 +36,12 @@ export const getSidebarPlaylists = async (userId: zCuidType) => {
 };
 
 export const createPlaylist = async (
-  userId: zCuidType,
+  userId: string,
   input: CreatePlaylistInput
 ) => {
   return await db.playlist.create({
     data: {
       userId,
-      description: input.description ?? null,
       ...input,
     },
     select: {
@@ -61,8 +59,8 @@ export const createPlaylist = async (
 };
 
 export const addTrackToPlaylist = async (
-  playlistId: zCuidType,
-  trackId: zCuidType
+  playlistId: string,
+  trackId: string
 ) => {
   const track = await db.$transaction(async (tx) => {
     const t = await tx.track.findUniqueOrThrow({
@@ -189,7 +187,7 @@ export const removeTrackFromPlaylist = async ({
   });
 };
 
-export const getPlaylistTracks = async (playlistId: zCuidType) => {
+export const getPlaylistTracks = async (playlistId: string) => {
   return await db.playlist
     .findUniqueOrThrow({
       where: {
@@ -208,7 +206,7 @@ export const getPlaylistTracks = async (playlistId: zCuidType) => {
     .then((data) => data.tracks.map((item) => item.track));
 };
 
-export const getPlaylistDetail = async (playlistId: zCuidType) => {
+export const getPlaylistDetail = async (playlistId: string) => {
   return await db.playlist
     .findUniqueOrThrow({
       where: {
@@ -273,7 +271,7 @@ export const getPlaylistDetail = async (playlistId: zCuidType) => {
 
 export type PlaylistDetail = AwaitedReturnType<typeof getPlaylistDetail>;
 
-export const getRecommendedTracks = async (playlistId: zCuidType, take = 5) => {
+export const getRecommendedTracks = async (playlistId: string, take = 5) => {
   const playlist = await db.playlist.findUniqueOrThrow({
     where: { id: playlistId },
     select: {
@@ -372,7 +370,7 @@ export const getRecommendedTracks = async (playlistId: zCuidType, take = 5) => {
 };
 
 export const uploadPlaylistCover = async (
-  playlistId: zCuidType,
+  playlistId: string,
   imageIds: string[]
 ) => {
   try {
@@ -429,8 +427,8 @@ export const deletePlaylist = async ({
   playlistId,
   userId,
 }: {
-  playlistId: zCuidType;
-  userId: zCuidType;
+  playlistId: string;
+  userId: string;
 }) => {
   return db.$transaction(async (tx) => {
     const playlist = await tx.playlist.findUnique({
@@ -472,8 +470,8 @@ export const deletePlaylist = async ({
 };
 
 export const getUserPlaylistsWithoutTrack = async (
-  userId: zCuidType,
-  trackId: zCuidType
+  userId: string,
+  trackId: string
 ) => {
   return await db.playlist.findMany({
     where: {
@@ -491,31 +489,8 @@ export const getUserPlaylistsWithoutTrack = async (
   });
 };
 
-export const getUserPlaylists = async (
-  userId: zCuidType,
-  trackId: zCuidType
-) => {
-  const playlists = await db.playlist.findMany({
-    where: { userId },
-    select: {
-      id: true,
-      title: true,
-      tracks: {
-        where: { trackId },
-        select: { trackId: true },
-      },
-    },
-  });
-
-  return playlists.map((pl) => ({
-    id: pl.id,
-    title: pl.title,
-    hasTrack: pl.tracks.length > 0,
-  }));
-};
-
 export const updatePlaylistInfo = async (
-  playlistId: zCuidType,
+  playlistId: string,
   input: UpdatePlaylistInput
 ) => {
   return await db.playlist.update({

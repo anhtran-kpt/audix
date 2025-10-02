@@ -15,17 +15,13 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { Textarea } from "../ui/textarea";
 import { CoverImage } from "../ui/cover-image";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { useOptimisticPlaylistUpdate } from "@/hooks/use-optimistic-playlist-update";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  UpdatePlaylistInput,
-  UpdatePlaylistInputSchema,
-} from "@/features/playlist/contracts/playlist-dto";
+import { UpdatePlaylistInput } from "@/features/playlist/contracts/playlist-dto";
 import {
   Form,
   FormControl,
@@ -35,11 +31,12 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useEffect, useState } from "react";
+import { UpdatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
 
 export default function EditPlaylistDetails({
   playlistId,
 }: {
-  playlistId: zCuidType;
+  playlistId: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -146,6 +143,7 @@ export default function EditPlaylistDetails({
                         <Textarea
                           className="flex-1 resize-none"
                           placeholder="Add an optional description"
+                          value={field.value ?? ""}
                           {...field}
                         />
                       </FormControl>

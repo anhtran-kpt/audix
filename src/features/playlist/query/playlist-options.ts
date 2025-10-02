@@ -1,8 +1,6 @@
 import { getApi } from "@/lib/http/request";
-import { SidebarPlaylist } from "../contracts/playlist-dto";
 import { queryOptions } from "@tanstack/react-query";
 import { playlistKeys } from "./playlist-keys";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { PlaylistDetail } from "../data-access/playlist-repo";
 
 export const sidebarPlaylistOptions = () => {
@@ -12,7 +10,7 @@ export const sidebarPlaylistOptions = () => {
   });
 };
 
-export const playlistDetailOption = (playlistId: zCuidType) => {
+export const playlistDetailOption = (playlistId: string) => {
   return queryOptions({
     enabled: !!playlistId,
     queryKey: playlistKeys.detail(playlistId),

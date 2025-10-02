@@ -1,7 +1,5 @@
 import "server-only";
 import db from "@/lib/db";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
-import { PlaybackContextType } from "@/features/shared/contracts/shared-enum";
 import { createHash } from "crypto";
 import {
   trackDetailSelect,
@@ -109,8 +107,8 @@ const createSnapshotFromPlaylist = async ({
   playlistId,
   userId,
 }: {
-  playlistId: zCuidType;
-  userId: zCuidType;
+  playlistId: string;
+  userId: string;
 }) => {
   const playlist = await db.playlist.findUnique({
     where: { id: playlistId },
@@ -153,8 +151,8 @@ const createSnapshotFromAlbum = async ({
   albumId,
   userId,
 }: {
-  albumId: zCuidType;
-  userId: zCuidType;
+  albumId: string;
+  userId: string;
 }) => {
   const album = await db.album.findUnique({
     where: { id: albumId },
@@ -197,8 +195,8 @@ const createSnapshotFromArtist = async ({
   artistId,
   userId,
 }: {
-  artistId: zCuidType;
-  userId: zCuidType;
+  artistId: string;
+  userId: string;
 }) => {
   const artist = await db.artist
     .findUniqueOrThrow({
@@ -290,7 +288,7 @@ const createSnapshotFromSearch = async ({
   userId,
   query,
 }: {
-  userId: zCuidType;
+  userId: string;
   query: string;
 }) => {
   const results = await db.track.findMany({

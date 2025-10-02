@@ -1,8 +1,6 @@
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
-
 export const playlistKeys = {
-  detail: (playlistId: zCuidType) => ["playlists", playlistId] as const,
+  detail: (playlistId: string) => ["playlists", playlistId] as const,
   sidebarPlaylists: () => ["me", "sidebar", "playlists"] as const,
-  userPlaylists: (trackId: zCuidType) =>
+  userPlaylists: (trackId: string) =>
     ["playlists", "trackInclude", trackId] as const,
 } as const;

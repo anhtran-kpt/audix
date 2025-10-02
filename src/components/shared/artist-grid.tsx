@@ -5,10 +5,10 @@ import { GridWrapper } from "../ui/grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import { AppImage } from "./app-image";
 import { ContextPlayButton } from "./context-play-button";
-import { ArtistGridItem } from "@/features/artist/contracts/artist-dto";
+import { ArtistItem } from "@/features/artist/contracts/artist-dto";
 
 type ArtistGridProps = {
-  artists: ArtistGridItem[];
+  artists: ArtistItem[];
 };
 
 export default function ArtistGrid({ artists }: ArtistGridProps) {

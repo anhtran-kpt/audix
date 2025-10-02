@@ -3,11 +3,10 @@ import {
   getFollowStatus,
   unfollowArtist,
 } from "@/features/artist/data-access/artist-repo";
-import { zCuidSchema } from "@/features/shared/contracts/shared-schema";
 import { makeDELETE, makeGET, makePOST } from "@/lib/route-factory";
-import { object } from "zod";
+import z, { object } from "zod";
 
-const FollowParamsSchema = object({ artistId: zCuidSchema });
+const FollowParamsSchema = object({ artistId: z.cuid2() });
 
 export const GET = makeGET({
   auth: "required",

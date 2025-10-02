@@ -1,13 +1,12 @@
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
 import { deleteApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { SidebarPlaylist } from "@/features/playlist/contracts/playlist-dto";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 type DeletePlaylistInput = {
-  playlistId: zCuidType;
+  playlistId: string;
 };
 
 export function useOptimisticPlaylistDelete() {

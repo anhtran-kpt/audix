@@ -1,9 +1,8 @@
 import "server-only";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import db from "@/lib/db";
 import { AwaitedReturnType } from "@/utils/type";
 
-export const getAlbumDetail = async (albumId: zCuidType) => {
+export const getAlbumDetail = async (albumId: string) => {
   return await db.album.findUniqueOrThrow({
     where: {
       id: albumId,
@@ -65,8 +64,8 @@ export const getSuggestionAlbums = async ({
   artistId,
   albumId,
 }: {
-  artistId: zCuidType;
-  albumId: zCuidType;
+  artistId: string;
+  albumId: string;
 }) => {
   return await db.album.findMany({
     where: {

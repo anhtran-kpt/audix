@@ -16,26 +16,13 @@ export const CreatePlaylistOutputSchema = PlaylistSchema.pick({
   user: MiniUserSchema.nullable(),
 });
 
-export const SidebarPlaylistSchema = FullPlaylistSchema.pick({
-  id: true,
-  title: true,
-  imageId: true,
-}).extend({
-  user: z
-    .object({
-      name: zStringSchema.nullish(),
-      id: zCuidSchema,
-    })
-    .nullish(),
-});
-
 export const AddTrackToPlaylistInputSchema = z.object({
-  trackId: zCuidSchema,
+  trackId: z.cuid2(),
 });
 
 export const RemoveTrackFromPlaylistSchema = z.object({
-  playlistId: zCuidSchema,
-  trackId: zCuidSchema,
+  playlistId: z.cuid2(),
+  trackId: z.cuid2(),
 });
 
 export type AddTrackToPlaylistInput = z.infer<
@@ -46,13 +33,6 @@ export type RemoveTrackFromPlaylistInput = z.infer<
   typeof RemoveTrackFromPlaylistSchema
 >;
 
-export const UserPlaylistSchema = FullPlaylistSchema.pick({
-  id: true,
-  title: true,
-}).extend({
-  hasTrack: zBoolSchema,
-});
-
 export const UpdatePlaylistInputSchema = CreatePlaylistInputSchema.partial();
 export const UpdatePlaylistOutputSchema = CreatePlaylistInputSchema.partial();
 
@@ -61,5 +41,5 @@ export const PlaylistItemSchema = PlaylistSchema.pick({
   title: true,
   imageId: true,
 }).extend({
-  user: MiniUserSchema,
+  user: MiniUserSchema.nullable(),
 });

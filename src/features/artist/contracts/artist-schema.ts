@@ -5,7 +5,7 @@ export const MiniArtistSchema = ArtistSchema.pick({
   name: true,
 });
 
-export const ArtistGridItemSchema = ArtistSchema.pick({
+export const ArtistItemSchema = ArtistSchema.pick({
   id: true,
   name: true,
   imageId: true,

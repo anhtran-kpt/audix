@@ -19,12 +19,14 @@ export const AboutSection = ({
   return (
     <section>
       <SectionHeading title="About" />
-      <div className="rounded-lg flex items-center justify-between gap-12 px-12 py-8 relative overflow-hidden aspect-video group">
+      <div className="relative group">
         <AppImage
           src={bannerId}
           alt={name}
           sizes="100vw"
-          className="object-cover hover:scale-105 transition-transform duration-400 brightness-65"
+          className="object-cover group-hover:scale-105 transition-transform duration-400 brightness-65"
+          containerClassName="rounded-lg relative overflow-hidden aspect-[2/1] w-full"
+          quality={100}
         />
         <div className="absolute bottom-6 md:bottom-8 lg:bottom-10 xl:bottom-12 left-6 md:left-8 lg:left-10 xl:left-12 space-y-3 w-4/5">
           <div>

@@ -2,7 +2,6 @@ import "server-only";
 import db from "@/lib/db";
 import { AppError } from "@/lib/errors";
 import { trackDetailSelect, trackItemSelect } from "./track-select";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 export const getTrackOrThrow = async (trackId: string) => {
   const track = await db.track.findUnique({
@@ -67,7 +66,7 @@ export const getNewReleases = async () => {
   });
 };
 
-export const getNowPlayingTrack = async (trackId: zCuidType) => {
+export const getNowPlayingTrack = async (trackId: string) => {
   const track = await db.track.findUniqueOrThrow({
     where: {
       id: trackId,
@@ -124,7 +123,7 @@ export const getNowPlayingTrack = async (trackId: zCuidType) => {
   return track;
 };
 
-export const getAlbumTracks = async (albumId: zCuidType) => {
+export const getAlbumTracks = async (albumId: string) => {
   const album = await db.album.findUniqueOrThrow({
     where: { id: albumId },
     select: {
@@ -135,7 +134,7 @@ export const getAlbumTracks = async (albumId: zCuidType) => {
   return album.tracks;
 };
 
-export const getCredits = async (trackId: zCuidType) => {
+export const getCredits = async (trackId: string) => {
   return await db.track.findUniqueOrThrow({
     where: { id: trackId },
     select: {

@@ -10,10 +10,9 @@ import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon, ListPlusIcon, TrashIcon } from "lucide-react";
 import { useOptimisticPlaylistDelete } from "@/hooks/use-optimistic-playlist-delete";
 import { ConfirmDialog } from "./confirm-dialog";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 
 type SidebarPlaylistDropdownProps = {
-  playlistId: zCuidType;
+  playlistId: string;
   title: string;
 };
 

@@ -1,10 +1,9 @@
 import "server-only";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { trackDetailSelect } from "@/features/track/data-access/track-select";
 import db from "@/lib/db";
 import { AwaitedReturnType } from "@/utils/type";
 
-export const getSidebarArtists = async (userId: zCuidType) => {
+export const getSidebarArtists = async (userId: string) => {
   return await db.userFollowedArtist
     .findMany({
       where: {
@@ -26,10 +25,7 @@ export const getSidebarArtists = async (userId: zCuidType) => {
     .then((data) => data.map((item) => item.artist));
 };
 
-export const getFollowStatus = async (
-  userId: zCuidType,
-  artistId: zCuidType
-) => {
+export const getFollowStatus = async (userId: string, artistId: string) => {
   const [artist, link] = await Promise.all([
     db.artist.findUnique({
       where: { id: artistId },
@@ -43,7 +39,7 @@ export const getFollowStatus = async (
   return { isFollowing: !!link, followersCount: artist?.followersCount ?? 0 };
 };
 
-export const followArtist = async (userId: zCuidType, artistId: zCuidType) => {
+export const followArtist = async (userId: string, artistId: string) => {
   return await db.$transaction(async (tx) => {
     const created = await tx.userFollowedArtist
       .create({ data: { userId, artistId } })
@@ -66,10 +62,7 @@ export const followArtist = async (userId: zCuidType, artistId: zCuidType) => {
   });
 };
 
-export const unfollowArtist = async (
-  userId: zCuidType,
-  artistId: zCuidType
-) => {
+export const unfollowArtist = async (userId: string, artistId: string) => {
   return await db.$transaction(async (tx) => {
     const del = await tx.userFollowedArtist.deleteMany({
       where: { userId, artistId },
@@ -91,7 +84,7 @@ export const unfollowArtist = async (
   });
 };
 
-export const getArtistDetailPage = async (artistId: zCuidType) => {
+export const getArtistDetailPage = async (artistId: string) => {
   const artist = await db.artist
     .findUniqueOrThrow({
       where: {
@@ -117,9 +110,9 @@ export const getArtistDetailPage = async (artistId: zCuidType) => {
         },
       },
     })
-    .then((artist) => ({
-      ...artist,
-      genres: artist.genres.map((data) => data.genre),
+    .then((data) => ({
+      ...data,
+      genres: data.genres.map((data) => data.genre),
     }));
 
   const popularTracks = await db.trackArtist
@@ -138,7 +131,12 @@ export const getArtistDetailPage = async (artistId: zCuidType) => {
         },
       },
     })
-    .then((tracks) => tracks.map((item) => item.track));
+    .then((tracks) =>
+      tracks.map((item) => ({
+        ...item.track,
+        artists: item.track.artists.map((a) => a.artist),
+      }))
+    );
 
   const genreIds = artist.genres.map((genre) => genre.id);
 

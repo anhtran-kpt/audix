@@ -22,7 +22,6 @@ import {
 import tinycolor from "tinycolor2";
 import { useQuery } from "@tanstack/react-query";
 import { playlistDetailOption } from "@/features/playlist/query/playlist-options";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
 import EditPlaylistDetails from "@/components/features/edit-playlist-details";
 import { ContextPlayButton } from "@/components/shared/context-play-button";
@@ -31,7 +30,7 @@ import { AppImage } from "@/components/shared/app-image";
 
 type BannerSectionProps = {
   initialData: PlaylistDetail;
-  playlistId: zCuidType;
+  playlistId: string;
 };
 
 export const BannerSection = ({

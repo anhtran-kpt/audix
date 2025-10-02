@@ -7,14 +7,13 @@ import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NavLink } from "@/components/ui/nav-link";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
-import { RecommendedTrackItem } from "@/features/track/contracts/track-dto";
+import { TrackListItem } from "@/features/track/contracts/track-dto";
 import { getApi } from "@/lib/http/request";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshCcwIcon, SearchIcon } from "lucide-react";
 
 type BrowseTrackSectionProps = {
-  playlistId: zCuidType;
+  playlistId: string;
 };
 
 export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
@@ -26,9 +25,7 @@ export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
     enabled: !!playlistId,
     queryKey: ["playlists", playlistId, "recommended"],
     queryFn: () =>
-      getApi<RecommendedTrackItem[]>(
-        `/playlists/${playlistId}/recommended?take=5`
-      ),
+      getApi<TrackListItem[]>(`/playlists/${playlistId}/recommended?take=5`),
   });
 
   return (
@@ -75,10 +72,7 @@ export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
               }
             >
               <TrackItemCompact
-                track={{
-                  ...track,
-                  artists: track.artists.map((item) => item.artist),
-                }}
+                track={track}
                 context={{
                   contextType: "ALBUM",
                   contextId: track.album.id,

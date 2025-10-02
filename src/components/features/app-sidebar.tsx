@@ -15,7 +15,7 @@ import Dot from "../ui/dot";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { ScrollArea } from "../ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
-import { SidebarPlaylist } from "@/features/playlist/contracts/playlist-dto";
+import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { sidebarPlaylistOptions } from "@/features/playlist/query/playlist-options";
 import { sidebarArtistOptions } from "@/features/artist/query/artist-options";
 import WaveForm from "../ui/wave-form";
@@ -33,16 +33,16 @@ import { RowPlayButton } from "../shared/row-play-button";
 import { useShallow } from "zustand/react/shallow";
 import { VolumeIcon } from "../shared/volume-icon";
 import { MiniPlayContextButton } from "../shared/mini-play-context-button";
-import { SidebarArtist } from "@/features/artist/contracts/artist-dto";
 import { AppImage } from "../shared/app-image";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
+import { ArtistItem } from "@/features/artist/contracts/artist-dto";
 
 export function AppSidebar({
   initialArtists,
   initialPlaylists,
 }: {
-  initialArtists: SidebarArtist[];
-  initialPlaylists: SidebarPlaylist[];
+  initialArtists: ArtistItem[];
+  initialPlaylists: PlaylistItem[];
 }) {
   const pathname = usePathname();
   const { openDialog } = useNewPlaylistDialog();

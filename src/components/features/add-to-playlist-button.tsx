@@ -1,13 +1,12 @@
 "use client";
 
+import { TrackListItem } from "@/features/track/contracts/track-dto";
 import { Button } from "../ui/button";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
-import { RecommendedTrackItem } from "@/features/track/contracts/track-dto";
 import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
 
 type AddToPlaylistButtonProps = {
-  track: RecommendedTrackItem;
-  playlistId: zCuidType;
+  track: TrackListItem;
+  playlistId: string;
 };
 
 export default function AddToPlaylistButton({

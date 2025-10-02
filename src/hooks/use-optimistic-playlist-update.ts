@@ -1,12 +1,9 @@
 import {
-  PlaylistDetail,
-  SidebarPlaylist,
+  PlaylistItem,
   UpdatePlaylistInput,
   UpdatePlaylistOutput,
-  UserPlaylist,
 } from "@/features/playlist/contracts/playlist-dto";
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
 import { patchApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -19,7 +16,7 @@ export const useOptimisticPlaylistUpdate = () => {
       playlistId,
       input,
     }: {
-      playlistId: zCuidType;
+      playlistId: string;
       input: UpdatePlaylistInput;
     }) => patchApi<UpdatePlaylistOutput>(`/playlists/${playlistId}`, input),
 
@@ -40,19 +37,17 @@ export const useOptimisticPlaylistUpdate = () => {
           : prev
       );
 
-      qc.setQueryData<SidebarPlaylist[]>(
-        playlistKeys.sidebarPlaylists(),
-        (prev) =>
-          prev
-            ? prev.map((pl) =>
-                pl.id === playlistId
-                  ? {
-                      ...pl,
-                      title: input.title ?? pl.title,
-                    }
-                  : pl
-              )
-            : prev
+      qc.setQueryData<PlaylistItem[]>(playlistKeys.sidebarPlaylists(), (prev) =>
+        prev
+          ? prev.map((pl) =>
+              pl.id === playlistId
+                ? {
+                    ...pl,
+                    title: input.title ?? pl.title,
+                  }
+                : pl
+            )
+          : prev
       );
 
       return { prev };
@@ -76,34 +71,17 @@ export const useOptimisticPlaylistUpdate = () => {
           : prev
       );
 
-      qc.setQueryData<SidebarPlaylist[]>(
-        playlistKeys.sidebarPlaylists(),
-        (prev) =>
-          prev
-            ? prev.map((pl) =>
-                pl.id === playlistId
-                  ? {
-                      ...pl,
-                      title: updatedPlaylist.title ?? pl.title,
-                    }
-                  : pl
-              )
-            : prev
-      );
-
-      qc.setQueryData<UserPlaylist[]>(
-        playlistKeys.userPlaylists(playlistId),
-        (prev) =>
-          prev
-            ? prev.map((pl) =>
-                pl.id === playlistId
-                  ? {
-                      ...pl,
-                      title: updatedPlaylist.title ?? pl.title,
-                    }
-                  : pl
-              )
-            : prev
+      qc.setQueryData<PlaylistItem[]>(playlistKeys.sidebarPlaylists(), (prev) =>
+        prev
+          ? prev.map((pl) =>
+              pl.id === playlistId
+                ? {
+                    ...pl,
+                    title: updatedPlaylist.title ?? pl.title,
+                  }
+                : pl
+            )
+          : prev
       );
     },
   });
