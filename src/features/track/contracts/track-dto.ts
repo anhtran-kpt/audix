@@ -1,4 +1,4 @@
 import z from "zod";
-import { TrackListItemSchema } from "./track-schema";
+import { TrackItemSchema } from "./track-schema";
 
-export type TrackListItem = z.infer<typeof TrackListItemSchema>;
+export type TrackItem = z.infer<typeof TrackItemSchema>;

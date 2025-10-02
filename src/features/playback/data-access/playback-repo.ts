@@ -1,12 +1,8 @@
 import "server-only";
 import db from "@/lib/db";
 import { createHash } from "crypto";
+import { trackItemSelect } from "@/features/track/data-access/track-select";
 import {
-  trackDetailSelect,
-  trackItemSelect,
-} from "@/features/track/data-access/track-select";
-import {
-  PlaybackSession,
   RepeatPlaybackInput,
   ShufflePlaybackInput,
   StartPlaybackInput,

@@ -53,6 +53,8 @@ export function buildCreditSections(input: {
     {} as Record<CreditGroupId, CreditSection>
   );
 
+  console.log(input);
+
   // Headline "Performed by" from TrackArtist (badges + order/weight)
   for (const a of input.artists) {
     const key = `a:${a.artist.id}`;

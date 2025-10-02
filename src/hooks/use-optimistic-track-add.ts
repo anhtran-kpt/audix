@@ -1,6 +1,6 @@
 "use client";
 
-import { TrackListItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/contracts/track-dto";
 import { getApi, postApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 
-type RecommendedTrackItem = TrackListItem & {
+type RecommendedTrackItem = TrackItem & {
   optimistic?: boolean;
 };
 
@@ -16,12 +16,12 @@ type PlaylistDetailWithOptimistic = Omit<
   PlaylistDetail,
   "tracks" | "imageUrl"
 > & {
-  tracks: TrackListItem[];
+  tracks: TrackItem[];
 };
 
 type AddTrackToPlaylist = {
   playlistId: string;
-  track: TrackListItem;
+  track: TrackItem;
 };
 
 export function useOptimisticTrackAdd() {
@@ -33,7 +33,7 @@ export function useOptimisticTrackAdd() {
 
   return useMutation({
     mutationFn: ({ playlistId, track }: AddTrackToPlaylist) => {
-      return postApi<TrackListItem>(`/playlists/${playlistId}/tracks`, {
+      return postApi<TrackItem>(`/playlists/${playlistId}/tracks`, {
         trackId: track.id,
       });
     },

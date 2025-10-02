@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 import ExplicitIcon from "../ui/explicit-icon";
 import { NavLink } from "../ui/nav-link";
-import { TrackListItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/contracts/track-dto";
 
 type TrackInfoProps = {
   title: string;
   isExplicit?: boolean;
-  artists: TrackListItem["artists"];
+  artists: TrackItem["artists"];
   isActiveTrack: boolean;
 };
 

@@ -18,21 +18,29 @@ import { cn } from "@/lib/utils";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { FollowersBadge } from "./follow-badge";
 import { usePlaybackStore } from "@/stores/use-playback-store";
+import { useQuery } from "@tanstack/react-query";
+import { trackCreditsOptions } from "@/features/track/api/track-options";
+import { useShallow } from "zustand/react/shallow";
+import { AppImage } from "../shared/app-image";
 
-export default function NowPlayingRefView() {
+export const NowPlayingView = () => {
   const close = useRightPanel((s) => s.close);
+  const { currentTrack, snapshot } = usePlaybackStore(
+    useShallow((s) => ({
+      currentTrack: s.session?.currentTrack,
+      snapshot: s.session?.snapshot,
+    }))
+  );
 
-  const session = usePlaybackStore((s) => s.session);
-  const { data: nowPlayingTrack } = useNowPlayingTrack(session?.currentTrackId);
+  const { data } = useQuery({
+    ...trackCreditsOptions(currentTrack?.id),
+  });
 
-  if (!nowPlayingTrack) {
+  if (!currentTrack || !snapshot || !data) {
     return null;
   }
 
-  const creditByPerson = buildCreditsByPerson({
-    artists: nowPlayingTrack.artists,
-    credits: nowPlayingTrack.credits,
-  });
+  const creditByPerson = buildCreditsByPerson(data.credits);
 
   return (
     <>
@@ -52,7 +60,7 @@ export default function NowPlayingRefView() {
             />
           </div>
           <span className="truncate duration-300 group-hover/np:ml-2 font-semibold">
-            {session?.snapshot.name}
+            {snapshot.name}
           </span>
         </div>
         <div className="flex items-center gap-4">
@@ -60,7 +68,7 @@ export default function NowPlayingRefView() {
             icon={EllipsisIcon}
             tooltipContent={
               <>
-                More options for <strong>{nowPlayingTrack.title}</strong>
+                More options for <strong>{currentTrack.title}</strong>
               </>
             }
             className="opacity-0 pointer-events-none transition-opacity duration-300 group-hover/np:opacity-100 group-hover/np:pointer-events-auto"
@@ -74,19 +82,19 @@ export default function NowPlayingRefView() {
       </header>
       <ScrollArea className="min-h-0 h-full">
         <div className="flex flex-col gap-5 p-4 pt-0">
-          <div className="relative overflow-hidden rounded-md aspect-square shrink-0">
-            <CldImage
-              className="object-cover"
-              alt={nowPlayingTrack.title}
-              src={nowPlayingTrack.album.imageId}
-              fill
-              sizes="256px"
-            />
-          </div>
+          <AppImage
+            className="object-cover"
+            alt={currentTrack.title}
+            src={currentTrack.album.imageId}
+            fill
+            sizes="256px"
+            containerClassName=""
+          />
+
           <div className="flex items-center justify-between gap-4">
-            <div>
-              <p className="font-semibold text-xl">{nowPlayingTrack.title}</p>
-              {nowPlayingTrack.artists.map(({ artist }, index, originalArr) => (
+            <div className="space-y-1">
+              <p className="font-semibold text-xl">{currentTrack.title}</p>
+              {currentTrack.artists.map(({ artist }, index, originalArr) => (
                 <span key={artist.id} className="text-muted-foreground">
                   <NavLink
                     href={`/artists/${artist.id}`}
@@ -119,30 +127,31 @@ export default function NowPlayingRefView() {
             <span className="absolute z-10 top-4 left-4 font-semibold text-15 pointer-events-none">
               About the artist
             </span>
-            <div className="relative aspect-video">
-              <CldImage
-                fill
-                className="object-cover brightness-65"
-                alt={nowPlayingTrack.album.artist.name}
-                src={nowPlayingTrack.album.artist.bannerId}
-                sizes="(min-width: 768px) 768px, 100vw"
-              />
-            </div>
+
+            <AppImage
+              fill
+              className="object-cover brightness-65"
+              alt={data.artist.name}
+              src={data.artist.bannerId}
+              sizes="200px"
+              containerClassName="aspect-video"
+            />
+
             <div className="p-4 space-y-3">
               <div>
                 <NavLink
-                  href={`/artists/${nowPlayingTrack.album.artist.id}`}
-                  className="font-semibold text-base"
+                  href={`/artists/${data.artist.id}`}
+                  className="font-semibold text-15"
                 >
-                  {nowPlayingTrack.album.artist.name}
+                  {data.artist.name}
                 </NavLink>
               </div>
               <div className="flex items-center gap-4 justify-between">
-                <FollowersBadge artistId={nowPlayingTrack.album.artist.id} />
-                <FollowButton artistId={nowPlayingTrack.album.artist.id} />
+                <FollowersBadge artistId={data.artist.id} />
+                <FollowButton artistId={data.artist.id} />
               </div>
               <p className="text-13 text-muted-foreground line-clamp-3">
-                {nowPlayingTrack.album.artist.bio}
+                {data.artist.bio}
               </p>
             </div>
           </div>
@@ -151,7 +160,7 @@ export default function NowPlayingRefView() {
             <div className="flex justify-between items-center gap-6">
               <span className="font-semibold text-15">Credits</span>
               <CreditDialog
-                trackId={nowPlayingTrack.id}
+                trackId={currentTrack.id}
                 trigger={
                   <span className="font-medium text-13 text-muted-foreground hover:text-primary hover:underline underline-offset-2 cursor-pointer">
                     Show all
@@ -195,4 +204,4 @@ export default function NowPlayingRefView() {
       </ScrollArea>
     </>
   );
-}
+};

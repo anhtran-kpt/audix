@@ -8,9 +8,8 @@ import {
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import { useQuery } from "@tanstack/react-query";
-import { TrackCredit } from "@/features/track/contracts/track-dto";
 import { ReactNode } from "react";
-import { getApi } from "@/lib/http/request";
+import { trackCreditsOptions } from "@/features/track/api/track-options";
 
 type CreditsDialogProps = {
   trackId: string;
@@ -21,14 +20,8 @@ export default function CreditsDialog({
   trackId,
   trigger,
 }: CreditsDialogProps) {
-  const {
-    data: track,
-    status,
-    error,
-  } = useQuery({
-    queryKey: ["tracks", trackId, "credits"],
-    queryFn: () => getApi<TrackCredit>(`/tracks/${trackId}/credits`),
-    enabled: !!trackId,
+  const { data, status, error } = useQuery({
+    ...trackCreditsOptions(trackId),
   });
 
   if (status === "error") {
@@ -44,12 +37,9 @@ export default function CreditsDialog({
     );
   }
 
-  const { title, artists, credits } = track;
+  const { title, credits } = data;
 
-  const creditSections = buildCreditSections({
-    artists,
-    credits,
-  });
+  const creditSections = buildCreditSections(credits);
 
   return (
     <Dialog>

@@ -7,7 +7,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NavLink } from "@/components/ui/nav-link";
-import { TrackListItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/contracts/track-dto";
 import { getApi } from "@/lib/http/request";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshCcwIcon, SearchIcon } from "lucide-react";
@@ -25,7 +25,7 @@ export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
     enabled: !!playlistId,
     queryKey: ["playlists", playlistId, "recommended"],
     queryFn: () =>
-      getApi<TrackListItem[]>(`/playlists/${playlistId}/recommended?take=5`),
+      getApi<TrackItem[]>(`/playlists/${playlistId}/recommended?take=5`),
   });
 
   return (

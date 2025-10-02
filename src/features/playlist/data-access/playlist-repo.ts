@@ -3,11 +3,7 @@ import {
   CreatePlaylistInput,
   UpdatePlaylistInput,
 } from "@/features/playlist/contracts/playlist-dto";
-import {
-  recommendedTrackItemSelect,
-  trackDetailSelect,
-  trackItemSelect,
-} from "@/features/track/data-access/track-select";
+import { trackItemSelect } from "@/features/track/data-access/track-select";
 import { Prisma } from "@/app/generated/prisma";
 import cloudinary from "@/lib/config/cloudinary";
 import { buildPlaylistCoverUrl } from "@/utils/string";
@@ -94,7 +90,7 @@ export const addTrackToPlaylist = async (
 
   const addedTrack = await db.track.findUnique({
     where: { id: track.trackId },
-    select: { ...trackDetailSelect },
+    select: { ...trackItemSelect },
   });
 
   return { ...addedTrack, addedAt: new Date() };
@@ -336,7 +332,7 @@ export const getRecommendedTracks = async (playlistId: string, take = 5) => {
 
   let tracks = await db.track.findMany({
     where: { id: { in: candidateIds.map((r) => r.id) } },
-    select: recommendedTrackItemSelect,
+    select: trackItemSelect,
   });
 
   if (tracks.length < take) {
@@ -356,7 +352,7 @@ export const getRecommendedTracks = async (playlistId: string, take = 5) => {
     if (moreIds.length > 0) {
       const moreTracks = await db.track.findMany({
         where: { id: { in: moreIds.map((r) => r.id) } },
-        select: recommendedTrackItemSelect,
+        select: trackItemSelect,
       });
 
       tracks = [...tracks, ...moreTracks];

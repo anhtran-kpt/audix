@@ -1,11 +1,11 @@
 "use client";
 
-import { TrackListItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/contracts/track-dto";
 import { Button } from "../ui/button";
 import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
 
 type AddToPlaylistButtonProps = {
-  track: TrackListItem;
+  track: TrackItem;
   playlistId: string;
 };
 

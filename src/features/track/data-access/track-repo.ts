@@ -1,14 +1,15 @@
 import "server-only";
 import db from "@/lib/db";
 import { AppError } from "@/lib/errors";
-import { trackDetailSelect, trackItemSelect } from "./track-select";
+import { trackItemSelect } from "./track-select";
+import { AwaitedReturnType } from "@/utils/type";
 
 export const getTrackOrThrow = async (trackId: string) => {
   const track = await db.track.findUnique({
     where: {
       id: trackId,
     },
-    select: trackDetailSelect,
+    select: trackItemSelect,
   });
 
   if (!track) throw new AppError("NOT_FOUND", "Track not found");
@@ -19,7 +20,7 @@ export const getTrackOrThrow = async (trackId: string) => {
 export const getTrackListByIds = async (trackIds: string[]) => {
   const rows = await db.track.findMany({
     where: { id: { in: trackIds } },
-    select: trackDetailSelect,
+    select: trackItemSelect,
   });
 
   const byId = new Map(rows.map((t) => [t.id, t]));
@@ -134,11 +135,23 @@ export const getAlbumTracks = async (albumId: string) => {
   return album.tracks;
 };
 
-export const getCredits = async (trackId: string) => {
-  return await db.track.findUniqueOrThrow({
+export const getTrackCredits = async (trackId: string) => {
+  const track = await db.track.findUniqueOrThrow({
     where: { id: trackId },
     select: {
       title: true,
+      album: {
+        select: {
+          artist: {
+            select: {
+              id: true,
+              name: true,
+              bannerId: true,
+              bio: true,
+            },
+          },
+        },
+      },
       artists: {
         select: {
           role: true,
@@ -168,4 +181,12 @@ export const getCredits = async (trackId: string) => {
       },
     },
   });
+
+  return {
+    title: track.title,
+    artist: track.album.artist,
+    credits: { artists: track.artists, credits: track.credits },
+  };
 };
+
+export type TrackCredits = AwaitedReturnType<typeof getTrackCredits>;

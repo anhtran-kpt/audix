@@ -1,7 +1,7 @@
 import "server-only";
-import { trackDetailSelect } from "@/features/track/data-access/track-select";
 import db from "@/lib/db";
 import { AwaitedReturnType } from "@/utils/type";
+import { trackItemSelect } from "@/features/track/data-access/track-select";
 
 export const getSidebarArtists = async (userId: string) => {
   return await db.userFollowedArtist
@@ -124,7 +124,7 @@ export const getArtistDetailPage = async (artistId: string) => {
       },
       select: {
         track: {
-          select: trackDetailSelect,
+          select: trackItemSelect,
         },
       },
       orderBy: {

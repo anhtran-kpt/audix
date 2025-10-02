@@ -1,12 +1,12 @@
 import { TrackList } from "@/components/features/track-list";
-import { TrackListItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/contracts/track-dto";
 
 export const PopularTracksSection = ({
   artistId,
   tracks,
 }: {
   artistId: string;
-  tracks: TrackListItem[];
+  tracks: TrackItem[];
 }) => {
   return (
     <section>

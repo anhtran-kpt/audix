@@ -3,7 +3,7 @@ import { MiniAlbumSchema } from "@/features/album/contracts/album-schema";
 import { MiniArtistSchema } from "@/features/artist/contracts/artist-schema";
 import z from "zod";
 
-export const TrackListItemSchema = TrackSchema.pick({
+export const TrackItemSchema = TrackSchema.pick({
   id: true,
   title: true,
   isExplicit: true,

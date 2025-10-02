@@ -3,23 +3,25 @@ import {
   PlaybackQueueItemSchema,
   PlaybackSessionSchema,
 } from "@/app/generated/zod";
+import { TrackItemSchema } from "@/features/track/contracts/track-schema";
 import z from "zod";
 
 export const MiniPlaybackContextSnapshotSchema =
   PlaybackContextSnapshotSchema.pick({
     contextType: true,
     contextId: true,
+    name: true,
   });
 
 export const ClientPlaybackSessionSchema = PlaybackSessionSchema.pick({
   id: true,
   isShuffled: true,
   repeatMode: true,
-  currentTrack: true,
   currentTrackId: true,
   contextIndex: true,
   queue: true,
 }).extend({
+  currentTrack: TrackItemSchema,
   snapshot: MiniPlaybackContextSnapshotSchema,
   hasNext: z.boolean(),
   hasPrevious: z.boolean(),
