@@ -2,7 +2,6 @@ import z from "zod";
 import {
   NextPlaybackOutputSchema,
   ClientPlaybackSessionSchema,
-  PlaybackSessionSchema,
   PreviousPlaybackInputSchema,
   PreviousPlaybackOutputSchema,
   RepeatPlaybackInputSchema,
@@ -13,7 +12,6 @@ import {
   VolumePlaybackInputSchema,
 } from "./playback-schema";
 
-export type PlaybackSession = z.infer<typeof PlaybackSessionSchema>;
 export type ClientPlaybackSession = z.infer<typeof ClientPlaybackSessionSchema>;
 export type VolumePlaybackInput = z.infer<typeof VolumePlaybackInputSchema>;
 export type StartPlaybackInput = z.infer<typeof StartPlaybackInputSchema>;

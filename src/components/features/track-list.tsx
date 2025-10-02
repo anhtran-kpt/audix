@@ -91,10 +91,7 @@ export const TrackList = ({
               </div>
 
               <TrackItemCompact
-                track={{
-                  ...track,
-                  artists: track.artists.map((item) => item.artist),
-                }}
+                track={track}
                 canHover={false}
                 hasCover={contextType !== "ALBUM"}
                 hasMoreDetails={false}
@@ -119,7 +116,7 @@ export const TrackList = ({
               <div className="text-right">
                 {contextType === "PLAYLIST" && track.addedAt
                   ? format(new Date(track.addedAt), "PP")
-                  : track.playCount?.toLocaleString() ?? "—"}
+                  : (track.playCount?.toLocaleString() ?? "—")}
               </div>
 
               <div className="invisible group-hover:visible flex items-center justify-end">

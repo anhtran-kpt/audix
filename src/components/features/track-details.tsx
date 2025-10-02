@@ -35,7 +35,7 @@ import {
 } from "../ui/command";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { TrackItemCompact } from "@/features/track/contracts/track-dto";
+import { TrackListItem } from "@/features/track/contracts/track-dto";
 import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
 import { getApi } from "@/lib/http/request";
 import { UserPlaylist } from "@/features/playlist/contracts/playlist-dto";
@@ -45,7 +45,7 @@ import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 
 type TrackDetailsProps = {
-  track: TrackItemCompact;
+  track: TrackListItem;
   playlistId?: string;
 };
 

@@ -1,10 +1,5 @@
 import z from "zod";
-import {
-  AlbumBaseSchema,
-  AlbumGridItemSchema,
-  FullAlbumSchema,
-} from "./album-schema";
+import { AlbumGridItemSchema, MiniAlbumSchema } from "./album-schema";
 
-export type AlbumBase = z.infer<typeof AlbumBaseSchema>;
-export type FullAlbum = z.infer<typeof FullAlbumSchema>;
+export type MiniAlbum = z.infer<typeof MiniAlbumSchema>;
 export type AlbumGridItem = z.infer<typeof AlbumGridItemSchema>;

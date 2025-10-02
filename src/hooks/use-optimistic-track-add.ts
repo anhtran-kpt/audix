@@ -1,18 +1,13 @@
 "use client";
 
 import { playlistKeys } from "@/features/playlist/query/playlist-keys";
-import { zCuidType } from "@/features/shared/contracts/shared-dto";
-import {
-  RecommendedTrackItem,
-  TrackListItem,
-} from "@/features/track/contracts/track-dto";
+import { TrackListItem } from "@/features/track/contracts/track-dto";
 import { getApi, postApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { PlaylistDetail } from "@/features/playlist/contracts/playlist-dto";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { toast } from "sonner";
 
-type RecommendedTrackItemWithOptimistic = RecommendedTrackItem & {
+type RecommendedTrackItem = TrackListItem & {
   optimistic?: boolean;
 };
 
@@ -20,12 +15,12 @@ type PlaylistDetailWithOptimistic = Omit<
   PlaylistDetail,
   "tracks" | "imageUrl"
 > & {
-  tracks: RecommendedTrackItemWithOptimistic[];
+  tracks: TrackListItem[];
 };
 
 type AddTrackToPlaylist = {
-  playlistId: zCuidType;
-  track: RecommendedTrackItem;
+  playlistId: string;
+  track: TrackListItem;
 };
 
 export function useOptimisticTrackAdd() {
@@ -51,7 +46,7 @@ export function useOptimisticTrackAdd() {
 
       if (!prev) return null;
 
-      const optimistic: RecommendedTrackItemWithOptimistic = {
+      const optimistic: RecommendedTrackItem = {
         ...track,
         addedAt: track.addedAt ? new Date(track.addedAt) : new Date(),
         optimistic: true,

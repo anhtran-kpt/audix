@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { AppImage } from "./app-image";
-import { TrackItemCompact as TrackItemCompactType } from "@/features/track/contracts/track-dto";
+import { TrackListItem } from "@/features/track/contracts/track-dto";
 import { TrackItemInfo } from "./track-item-info";
 import { TrackDetails } from "../features/track-details";
 import { RowPlayButton } from "./row-play-button";
@@ -9,7 +9,7 @@ import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
 
 type TrackItemCompactProps = {
-  track: TrackItemCompactType;
+  track: TrackListItem;
   hasMoreDetails?: boolean;
   hasCover?: boolean;
   canHover?: boolean;

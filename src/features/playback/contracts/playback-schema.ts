@@ -1,93 +1,50 @@
 import {
-  PlaybackContextTypeSchema,
-  QueueItemKindSchema,
-  RepeatModeSchema,
-} from "@/features/shared/contracts/shared-enum";
-import {
-  zBoolSchema,
-  zCuidSchema,
-  zDateSchema,
-  zIntSchema,
-  zStringSchema,
-} from "@/features/shared/contracts/shared-schema";
-import { FullTrackSchema } from "@/features/track/contracts/track-schema";
+  PlaybackContextSnapshotSchema,
+  PlaybackQueueItemSchema,
+  PlaybackSessionSchema,
+} from "@/app/generated/zod";
 import z from "zod";
 
-export const BasePlaybackSessionSchema = z.object({
-  id: zCuidSchema,
-  isShuffled: zBoolSchema,
-  repeatMode: RepeatModeSchema,
-  currentTrackId: zCuidSchema,
-  contextIndex: zIntSchema,
-  activeDeviceId: zStringSchema.nullish(),
-  version: z.bigint(),
-});
+export const MiniPlaybackContextSnapshotSchema =
+  PlaybackContextSnapshotSchema.pick({
+    contextType: true,
+    contextId: true,
+  });
 
-export const FullPlaybackQueueItemSchema = z.object({
-  id: zCuidSchema,
-  sessionId: zCuidSchema,
-  session: BasePlaybackSessionSchema,
-  kind: QueueItemKindSchema,
-  position: zIntSchema,
-  trackId: zCuidSchema,
-  track: FullTrackSchema,
-  addedAt: zDateSchema,
-});
-
-export const FullPlaybackSessionSchema = BasePlaybackSessionSchema.extend({
-  currentTrack: FullTrackSchema,
-  snapshot: z.object({
-    contextType: PlaybackContextTypeSchema,
-    contextId: z.string(),
-    name: z.string(),
-    tracks: z
-      .object({
-        track: z.object({
-          id: zCuidSchema,
-        }),
-        index: z.number().int().nonnegative(),
-        trackId: zCuidSchema,
-      })
-      .array(),
-  }),
-  queue: FullPlaybackQueueItemSchema.array(),
-});
-
-export const PlaybackSessionSchema = FullPlaybackSessionSchema.pick({
+export const ClientPlaybackSessionSchema = PlaybackSessionSchema.pick({
   id: true,
   isShuffled: true,
   repeatMode: true,
   currentTrack: true,
   currentTrackId: true,
-  snapshot: true,
   contextIndex: true,
   queue: true,
-});
-
-export const ClientPlaybackSessionSchema = PlaybackSessionSchema.extend({
-  hasNext: zBoolSchema,
-  hasPrevious: zBoolSchema,
+}).extend({
+  snapshot: MiniPlaybackContextSnapshotSchema,
+  hasNext: z.boolean(),
+  hasPrevious: z.boolean(),
   queue: z.object({
-    next: FullPlaybackQueueItemSchema.pick({
+    next: PlaybackQueueItemSchema.pick({
       id: true,
     }).array(),
-    context: FullPlaybackQueueItemSchema.pick({
+    context: PlaybackQueueItemSchema.pick({
       id: true,
     }).array(),
-    later: FullPlaybackQueueItemSchema.pick({
+    later: PlaybackQueueItemSchema.pick({
       id: true,
     }).array(),
   }),
 });
 
-export const VolumePlaybackInputSchema = z.object({
-  volume: z.number(),
+export const StartPlaybackInputSchema = PlaybackContextSnapshotSchema.pick({
+  contextType: true,
+  contextId: true,
+}).extend({
+  startTrackId: z.cuid2().optional(),
 });
 
-export const StartPlaybackInputSchema = z.object({
-  contextType: PlaybackContextTypeSchema,
-  contextId: z.string(),
-  startTrackId: zCuidSchema.optional(),
+export const VolumePlaybackInputSchema = z.object({
+  volume: z.number(),
 });
 
 export const NextPlaybackOutputSchema = ClientPlaybackSessionSchema.pick({

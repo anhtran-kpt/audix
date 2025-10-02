@@ -1,5 +1,6 @@
 "use client";
 
+import { RepeatMode } from "@/app/generated/prisma";
 import {
   NextPlaybackOutput,
   ClientPlaybackSession,
@@ -8,7 +9,6 @@ import {
   ShufflePlaybackOutput,
   StartPlaybackInput,
 } from "@/features/playback/contracts/playback-dto";
-import { RepeatMode } from "@/features/shared/contracts/shared-enum";
 import { getApi, patchApi, postApi } from "@/lib/http/request";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";

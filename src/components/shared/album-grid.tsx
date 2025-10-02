@@ -5,10 +5,10 @@ import { NavLink } from "../ui/nav-link";
 import Dot from "../ui/dot";
 import { formatDate } from "date-fns/format";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
-import { AlbumGridItem } from "@/features/album/contracts/album-dto";
 import { AppImage } from "./app-image";
 import { ContextPlayButton } from "./context-play-button";
 import { useRouter } from "next/navigation";
+import { AlbumGridItem } from "@/features/album/contracts/album-dto";
 
 type AlbumGridProps = {
   albums: AlbumGridItem[];
