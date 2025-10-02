@@ -2,21 +2,11 @@ import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/features/app-sidebar";
-import { Header } from "@/components/features/header";
 import { AuthProvider } from "@/providers/auth-provider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
-import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import RightPanel from "@/components/features/right-panel";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { getSidebarArtists } from "@/features/artist/data-access/artist-repo";
-import AudioPlayer from "@/components/features/audio-player";
-import { NewPlaylistDialog } from "@/components/shared/new-playlist-dialog";
-import { getUserPlaylists } from "@/features/playlist/data-access/playlist-repo";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -34,13 +24,6 @@ export default async function RootLayout({
 }) {
   const session = await getServerSession(authOptions);
 
-  const userId = session?.user.id;
-
-  const [artists, playlists] = await Promise.all([
-    getSidebarArtists(userId!),
-    getUserPlaylists(userId!),
-  ]);
-
   return (
     <html
       lang="en"
@@ -55,42 +38,8 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <ReactQueryProvider>
-            <AuthProvider session={session}>
-              <SidebarProvider
-                className="h-full"
-                style={
-                  {
-                    "--header-height": "calc(var(--spacing) * 15)",
-                  } as React.CSSProperties
-                }
-              >
-                <AppSidebar
-                  initialArtists={artists}
-                  initialPlaylists={playlists}
-                />
-                <SidebarInset
-                  className="h-full transition-[width]"
-                  style={{
-                    paddingBottom:
-                      "calc(env(safe-area-inset-bottom) + var(--player-offset, 0px))",
-                  }}
-                >
-                  <ScrollArea viewportId="app-scroll" className="h-full">
-                    <Header />
-                    <div className="flex flex-col flex-1 p-6 md:p-8 lg:p-10 xl:p-12">
-                      <div className="@container/main flex flex-1 flex-col gap-8">
-                        <PlayerOffsetSetter />
-                        {children}
-                      </div>
-                    </div>
-                  </ScrollArea>
-                </SidebarInset>
-                <RightPanel />
-                <AudioPlayer />
-                <Toaster />
-                <NewPlaylistDialog />
-              </SidebarProvider>
-            </AuthProvider>
+            <AuthProvider session={session}>{children}</AuthProvider>
+            <Toaster />
           </ReactQueryProvider>
         </ThemeProvider>
       </body>
