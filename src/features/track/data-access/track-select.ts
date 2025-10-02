@@ -13,11 +13,6 @@ export const trackItemSelect = {
       id: true,
       imageId: true,
       title: true,
-      _count: {
-        select: {
-          likedBy: true,
-        },
-      },
     },
   },
   artists: {

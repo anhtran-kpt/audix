@@ -3,12 +3,44 @@ import db from "@/lib/db";
 import { createHash } from "crypto";
 import { trackItemSelect } from "@/features/track/data-access/track-select";
 import {
+  ServerPlaybackSession,
   RepeatPlaybackInput,
   ShufflePlaybackInput,
   StartPlaybackInput,
 } from "../contracts/playback-dto";
 import { NextResponse } from "next/server";
 import { playbackSessionSelect } from "./playback-select";
+import { getTrackOrThrow } from "@/features/track/data-access/track-repo";
+import { PlaybackContextType, Prisma } from "@/app/generated/prisma";
+import { AppError } from "@/lib/errors";
+import { shuffleArray } from "@/utils/array";
+
+export const transformTrackItem = (
+  track: Prisma.TrackGetPayload<{ select: typeof trackItemSelect }>
+) => {
+  return {
+    ...track,
+    artists: track.artists.map((a) => a.artist),
+  };
+};
+
+export const getPlaybackSessionOrThrow = async (userId: string) => {
+  const playbackSession = await db.playbackSession.findUnique({
+    where: {
+      id: userId,
+    },
+    select: playbackSessionSelect,
+  });
+
+  if (!playbackSession) {
+    throw new AppError("NOT_FOUND", "Playback session not found!");
+  }
+
+  return {
+    ...playbackSession,
+    currentTrack: transformTrackItem(playbackSession.currentTrack),
+  };
+};
 
 export const buildClientQueue = ({
   snapshot,
@@ -16,7 +48,7 @@ export const buildClientQueue = ({
   queue,
   isShuffled,
 }: Pick<
-  PlaybackSession,
+  ServerPlaybackSession,
   "snapshot" | "contextIndex" | "queue" | "isShuffled"
 >) => {
   const nextQueue = queue
@@ -50,7 +82,7 @@ export const getPlaybackBoundaries = ({
   queue,
   repeatMode,
 }: Pick<
-  PlaybackSession,
+  ServerPlaybackSession,
   "snapshot" | "contextIndex" | "queue" | "repeatMode"
 >) => {
   const tracks = snapshot.tracks;
@@ -75,28 +107,29 @@ export const getPlaybackBoundaries = ({
   return { hasNext, hasPrevious };
 };
 
-function shuffleArray<T>(arr: T[]): T[] {
-  const result = [...arr];
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [result[i], result[j]] = [result[j], result[i]];
-  }
-  return result;
-}
-
-export const getPlaybackSession = async (userId: string) => {
+export const getClientPlaybackSession = async (userId: string) => {
   const session = await db.playbackSession.findUnique({
-    where: { userId },
+    where: {
+      id: userId,
+    },
     select: playbackSessionSelect,
   });
 
-  if (!session) return null;
+  if (!session) {
+    return {};
+  }
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
 
   const queue = buildClientQueue(session);
 
-  return { ...session, hasNext, hasPrevious, queue };
+  return {
+    ...session,
+    hasNext,
+    hasPrevious,
+    queue,
+    currentTrack: transformTrackItem(session.currentTrack),
+  };
 };
 
 const createSnapshotFromPlaylist = async ({
@@ -317,11 +350,15 @@ const createSnapshotFromSearch = async ({
   });
 };
 
-const createSnapshot = (
-  userId: string,
-  contextType: PlaybackContextType,
-  contextId: string
-) => {
+const createSnapshot = ({
+  userId,
+  contextType,
+  contextId,
+}: {
+  userId: string;
+  contextType: PlaybackContextType;
+  contextId: string;
+}) => {
   switch (contextType) {
     case "PLAYLIST":
       return createSnapshotFromPlaylist({
@@ -359,7 +396,8 @@ export const startPlaybackSession = async ({
 }) => {
   const { contextType, contextId, startTrackId } = context;
 
-  const snapshot = await createSnapshot(userId, contextType, contextId);
+  const snapshot = await createSnapshot({ userId, contextType, contextId });
+
   const snapshotTracks = await db.playbackSnapshotTrack.findMany({
     where: { snapshotId: snapshot.id },
     orderBy: { index: "asc" },
@@ -370,6 +408,7 @@ export const startPlaybackSession = async ({
   }
 
   let contextIndex = 0;
+
   if (startTrackId) {
     const foundIndex = snapshotTracks.findIndex(
       (t) => t.trackId === startTrackId
@@ -381,22 +420,27 @@ export const startPlaybackSession = async ({
 
   const currentTrackId = snapshotTracks[contextIndex].trackId;
 
-  const session = await db.playbackSession.upsert({
-    where: { userId },
-    create: {
-      userId,
-      snapshotId: snapshot.id,
-      contextIndex,
-      currentTrackId,
-    },
-    update: {
-      snapshotId: snapshot.id,
-      contextIndex,
-      currentTrackId,
-      version: { increment: 1 },
-    },
-    select: playbackSessionSelect,
-  });
+  const session = await db.playbackSession
+    .upsert({
+      where: { userId },
+      create: {
+        userId,
+        snapshotId: snapshot.id,
+        contextIndex,
+        currentTrackId,
+      },
+      update: {
+        snapshotId: snapshot.id,
+        contextIndex,
+        currentTrackId,
+        version: { increment: 1 },
+      },
+      select: playbackSessionSelect,
+    })
+    .then((data) => ({
+      ...data,
+      currentTrack: transformTrackItem(data.currentTrack),
+    }));
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
 
@@ -459,20 +503,22 @@ export const skipToNext = async (userId: string) => {
 
   if (!pickedTrackId) return null;
 
-  const nextTrack = await db.track.findUniqueOrThrow({
-    where: { id: pickedTrackId },
-    select: trackDetailSelect,
-  });
+  const nextTrack = await getTrackOrThrow(pickedTrackId);
 
-  const updated = await db.playbackSession.update({
-    where: { id: session.id },
-    data: {
-      currentTrackId: pickedTrackId,
-      contextIndex: newIndex,
-      version: { increment: 1 },
-    },
-    select: playbackSessionSelect,
-  });
+  const updated = await db.playbackSession
+    .update({
+      where: { id: session.id },
+      data: {
+        currentTrackId: pickedTrackId,
+        contextIndex: newIndex,
+        version: { increment: 1 },
+      },
+      select: playbackSessionSelect,
+    })
+    .then((data) => ({
+      ...data,
+      currentTrack: transformTrackItem(data.currentTrack),
+    }));
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
 
@@ -533,20 +579,22 @@ export const skipToPrevious = async (userId: string, progressMs?: number) => {
     newTrackId = tracks[newIndex].trackId;
   }
 
-  const newTrack = await db.track.findUniqueOrThrow({
-    where: { id: newTrackId },
-    select: trackDetailSelect,
-  });
+  const newTrack = await getTrackOrThrow(newTrackId);
 
-  const updated = await db.playbackSession.update({
-    where: { id: session.id },
-    data: {
-      currentTrackId: newTrackId,
-      contextIndex: newIndex,
-      version: { increment: 1 },
-    },
-    select: playbackSessionSelect,
-  });
+  const updated = await db.playbackSession
+    .update({
+      where: { id: session.id },
+      data: {
+        currentTrackId: newTrackId,
+        contextIndex: newIndex,
+        version: { increment: 1 },
+      },
+      select: playbackSessionSelect,
+    })
+    .then((data) => ({
+      ...data,
+      currentTrack: transformTrackItem(data.currentTrack),
+    }));
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
 

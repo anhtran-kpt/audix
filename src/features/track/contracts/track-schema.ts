@@ -15,4 +15,8 @@ export const TrackItemSchema = TrackSchema.pick({
   addedAt: z.date().optional(),
 });
 
+export const MiniTrackItemSchema = TrackSchema.pick({
+  id: true,
+})
+
 

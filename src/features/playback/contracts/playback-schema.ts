@@ -3,7 +3,10 @@ import {
   PlaybackQueueItemSchema,
   PlaybackSessionSchema,
 } from "@/app/generated/zod";
-import { TrackItemSchema } from "@/features/track/contracts/track-schema";
+import {
+  MiniTrackItemSchema,
+  TrackItemSchema,
+} from "@/features/track/contracts/track-schema";
 import z from "zod";
 
 export const MiniPlaybackContextSnapshotSchema =
@@ -12,6 +15,35 @@ export const MiniPlaybackContextSnapshotSchema =
     contextId: true,
     name: true,
   });
+
+export const ServerPlaybackSessionSchema = PlaybackSessionSchema.pick({
+  id: true,
+  isShuffled: true,
+  repeatMode: true,
+  currentTrackId: true,
+  contextIndex: true,
+  queue: true,
+}).extend({
+  currentTrack: TrackItemSchema,
+  snapshot: MiniPlaybackContextSnapshotSchema.extend({
+    tracks: z
+      .object({
+        index: z.number().int().nonnegative(),
+        track: MiniTrackItemSchema,
+      })
+      .array(),
+  }),
+  hasNext: z.boolean(),
+  hasPrevious: z.boolean(),
+  queue: PlaybackQueueItemSchema.pick({
+    kind: true,
+    position: true,
+  })
+    .extend({
+      track: MiniTrackItemSchema,
+    })
+    .array(),
+});
 
 export const ClientPlaybackSessionSchema = PlaybackSessionSchema.pick({
   id: true,

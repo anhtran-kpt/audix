@@ -10,9 +10,11 @@ import {
   ShufflePlaybackOutputSchema,
   StartPlaybackInputSchema,
   VolumePlaybackInputSchema,
+  ServerPlaybackSessionSchema,
 } from "./playback-schema";
 
 export type ClientPlaybackSession = z.infer<typeof ClientPlaybackSessionSchema>;
+export type ServerPlaybackSession = z.infer<typeof ServerPlaybackSessionSchema>;
 export type VolumePlaybackInput = z.infer<typeof VolumePlaybackInputSchema>;
 export type StartPlaybackInput = z.infer<typeof StartPlaybackInputSchema>;
 export type NextPlaybackOutput = z.infer<typeof NextPlaybackOutputSchema>;

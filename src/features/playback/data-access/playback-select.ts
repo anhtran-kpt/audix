@@ -1,10 +1,10 @@
 import { Prisma } from "@/app/generated/prisma";
-import { trackDetailSelect } from "@/features/track/data-access/track-select";
+import { trackItemSelect } from "@/features/track/data-access/track-select";
 
 export const playbackSessionSelect = {
   id: true,
   currentTrackId: true,
-  currentTrack: { select: trackDetailSelect },
+  currentTrack: { select: trackItemSelect },
   contextIndex: true,
   isShuffled: true,
   repeatMode: true,

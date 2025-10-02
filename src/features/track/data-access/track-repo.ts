@@ -14,7 +14,7 @@ export const getTrackOrThrow = async (trackId: string) => {
 
   if (!track) throw new AppError("NOT_FOUND", "Track not found");
 
-  return track;
+  return { ...track, artists: track.artists.map((item) => item.artist) };
 };
 
 export const getTrackListByIds = async (trackIds: string[]) => {
