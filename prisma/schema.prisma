@@ -26,9 +26,10 @@ datasource db {
 model User {
   id            String    @id @default(cuid())
   email         String?   @unique
-  name          String?
+  name          String
   image         String?
   emailVerified DateTime? @map("email_verified")
+  passwordHash  String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -39,18 +40,15 @@ model User {
   accounts Account[]
   sessions Session[]
 
-  // Music related
-  playlists      Playlist[]
-  likedTracks    UserLikedTrack[]
-  likedAlbums    UserLikedAlbum[]
-  likedPlaylists UserLikedPlaylist[]
-  likedArtists   UserFollowedArtist[]
+  playlists       Playlist[]
+  likedTracks     UserLikedTrack[]
+  likedAlbums     UserLikedAlbum[]
+  likedPlaylists  UserLikedPlaylist[]
+  followedArtists UserFollowedArtist[]
 
-  // Listening history & behavior
   playHistory   PlayHistory[]
   searchHistory SearchHistory[]
 
-  // Social features
   followers               UserFollow[]              @relation("UserFollowers")
   following               UserFollow[]              @relation("UserFollowing")
   playbackSession         PlaybackSession[]
@@ -220,11 +218,9 @@ model Track {
 // ================================
 
 model Genre {
-  id          String  @id @default(cuid())
-  name        String  @unique
-  slug        String  @unique
-  description String?
-  color       String
+  id   String @id @default(cuid())
+  name String @unique
+  slug String @unique
 
   tracks  TrackGenre[]
   albums  AlbumGenre[]

@@ -29,9 +29,10 @@ CREATE TYPE "public"."ChartType" AS ENUM ('TOP_SONGS', 'TOP_ALBUMS', 'TOP_ARTIST
 CREATE TABLE "public"."users" (
     "id" TEXT NOT NULL,
     "email" TEXT,
-    "name" TEXT,
+    "name" TEXT NOT NULL,
     "image" TEXT,
     "email_verified" TIMESTAMP(3),
+    "passwordHash" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -144,8 +145,6 @@ CREATE TABLE "public"."genres" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
-    "description" TEXT,
-    "color" TEXT NOT NULL,
 
     CONSTRAINT "genres_pkey" PRIMARY KEY ("id")
 );

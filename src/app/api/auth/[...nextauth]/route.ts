@@ -1,8 +1,10 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/db";
 import type { Adapter } from "next-auth/adapters";
+import { compare } from "bcryptjs";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
@@ -14,6 +16,34 @@ export const authOptions: NextAuthOptions = {
         params: {
           scope: "openid email profile",
         },
+      },
+    }),
+
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password is required");
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (!user || !user.passwordHash) {
+          throw new Error("Account not found");
+        }
+
+        const isValid = await compare(credentials.password, user.passwordHash);
+        if (!isValid) {
+          throw new Error("Incorrect password");
+        }
+
+        return user;
       },
     }),
   ],
@@ -82,6 +112,14 @@ export const authOptions: NextAuthOptions = {
         },
       });
     },
+  },
+
+  pages: {
+    signIn: "/auth/sign-in", // custom login page
+    // signOut: "/auth/signout", // (optional) custom signout
+    // error: "/auth/error",     // (optional) show errors
+    // verifyRequest: "/auth/verify", // (optional) for email provider
+    // newUser: "/onboarding"    // (optional) first login redirect
   },
 };
 
