@@ -91,14 +91,22 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
 
-    async signIn({ account }) {
-      return account?.provider === "google";
-    },
+    async signIn({ user, account, profile }) {
+      if (account?.provider === "google") {
+        if (!user.name) {
+          const fallback =
+            profile?.name || user.email?.split("@")[0] || `User-${Date.now()}`;
 
-    async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      if (new URL(url).origin === baseUrl) return url;
-      return `${baseUrl}`;
+          await prisma.user.update({
+            where: { id: user.id },
+            data: { name: fallback },
+          });
+          user.name = fallback;
+        }
+      }
+      return (
+        account?.provider === "google" || account?.provider === "credentials"
+      );
     },
   },
 

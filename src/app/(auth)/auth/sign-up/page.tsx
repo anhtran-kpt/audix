@@ -21,6 +21,7 @@ import Google from "@/components/ui/google";
 import { Input } from "@/components/ui/input";
 import { NavLink } from "@/components/ui/nav-link";
 import { Separator } from "@/components/ui/separator";
+import { useSignUp } from "@/features/auth/api/hooks/use-sign-up";
 import { SignUpInput } from "@/features/auth/contracts/auth-dto";
 import { SignUpInputSchema } from "@/features/auth/contracts/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,19 +30,21 @@ import { useForm } from "react-hook-form";
 
 export default function SignUpPage() {
   const form = useForm<SignUpInput>({
-    mode: "onBlur",
     resolver: zodResolver(SignUpInputSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: SignUpInput) {
-    console.log(values);
-  }
+  const { mutate: signUp } = useSignUp();
 
-  const { control, handleSubmit } = form;
+  const onSubmit = (values: SignUpInput) => {
+    signUp(values);
+  };
+
+  const { control, handleSubmit, formState } = form;
 
   return (
     <Card className="w-full max-w-md absolute top-1/2 left-1/2 -translate-1/2">
@@ -100,7 +103,11 @@ export default function SignUpPage() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={formState.isLoading}
+            >
               Sign up
             </Button>
             <div className="relative">
@@ -112,7 +119,7 @@ export default function SignUpPage() {
             <Button
               type="button"
               className="w-full"
-              onClick={() => signIn("google")}
+              onClick={() => signIn("google", { callbackUrl: "/" })}
               variant="outline"
             >
               <Google />

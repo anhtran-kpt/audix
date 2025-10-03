@@ -29,7 +29,6 @@ import { useForm } from "react-hook-form";
 
 export default function SignInPage() {
   const form = useForm<SignInInput>({
-    mode: "onBlur",
     resolver: zodResolver(SignInInputSchema),
     defaultValues: {
       email: "",
@@ -37,9 +36,14 @@ export default function SignInPage() {
     },
   });
 
-  function onSubmit(values: SignInInput) {
-    console.log(values);
-  }
+  const onSubmit = async (values: SignInInput) => {
+    await signIn("credentials", {
+      email: values.email,
+      password: values.password,
+      redirect: true,
+      callbackUrl: "/",
+    });
+  };
 
   const { control, handleSubmit } = form;
 
@@ -82,6 +86,8 @@ export default function SignInPage() {
                         placeholder="Enter your password"
                         {...field}
                         type="password"
+                        autoComplete="new-password"
+                        autoCorrect="off"
                       />
                     </FormControl>
                     <FormMessage />
@@ -106,7 +112,7 @@ export default function SignInPage() {
             <Button
               type="button"
               className="w-full"
-              onClick={() => signIn("google")}
+              onClick={() => signIn("google", { callbackUrl: "/" })}
               variant="outline"
             >
               <Google />
