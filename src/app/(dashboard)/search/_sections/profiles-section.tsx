@@ -1,6 +1,6 @@
 import SectionHeading from "@/components/ui/section-heading";
 import { SearchResult } from "@/features/search/contracts/search-dto";
-import SeeAllButton from "./see-all-button";
+import SeeAllButton from "../../../../components/features/search/see-all-button";
 
 export default function ProfilesSection({
   profiles,

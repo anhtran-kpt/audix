@@ -1,11 +1,10 @@
 import { SearchResult } from "@/features/search/contracts/search-dto";
-import SectionHeading from "../../ui/section-heading";
+import SectionHeading from "../../../../components/ui/section-heading";
 import Link from "next/link";
-import Dot from "../../ui/dot";
+import Dot from "../../../../components/ui/dot";
 import { CldImage } from "next-cloudinary";
 import { BadgeCheckIcon } from "lucide-react";
-import { FollowersBadge } from "../follow-badge";
-import { Badge } from "../../ui/badge";
+import { FollowersBadge } from "../../../../components/features/follow-badge";
 import { ContextPlayButton } from "@/components/shared/context-play-button";
 import { AppImage } from "@/components/shared/app-image";
 
@@ -18,7 +17,7 @@ export default function TopResultSection({
   topResult,
   q,
 }: TopResultSectionProps) {
-  if (topResult?.type === "artist") {
+  if (topResult?.type === "artists") {
     return (
       <section>
         <SectionHeading title="Top Result" />
@@ -54,16 +53,6 @@ export default function TopResultSection({
             <div>
               <FollowersBadge artistId={topResult.item.id} />
             </div>
-            <div className="space-x-2">
-              {topResult.item.genres.map(({ genre }) => (
-                <Badge
-                  key={genre.name}
-                  style={{ backgroundColor: genre.color }}
-                >
-                  {genre.name}
-                </Badge>
-              ))}
-            </div>
           </div>
         </div>
       </section>
@@ -78,6 +67,7 @@ export default function TopResultSection({
           alt={topResult?.item.title}
           src={topResult?.item.album.imageId}
           containerClassName="size-40"
+          sizes="160px"
         />
         <div className="space-y-3 flex-1 flex flex-col justify-between">
           <h3 className="font-semibold text-2xl">{topResult?.item.title}</h3>

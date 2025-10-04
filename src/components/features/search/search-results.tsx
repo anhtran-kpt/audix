@@ -1,12 +1,12 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import TopResultSection from "@/components/features/search/top-result-section";
-import TracksSection from "@/components/features/search/tracks-section";
-import ArtistsSection from "@/components/features/search/artists-section";
-import AlbumsSection from "@/components/features/search/albums-section";
-import PlaylistsSection from "@/components/features/search/playlists-section";
-import ProfilesSection from "@/components/features/search/profiles-section";
+import TopResultSection from "@/app/(dashboard)/search/_sections/top-result-section";
+import TracksSection from "@/app/(dashboard)/search/_sections/tracks-section";
+import ArtistsSection from "@/app/(dashboard)/search/_sections/artists-section";
+import AlbumsSection from "@/app/(dashboard)/search/_sections/albums-section";
+import PlaylistsSection from "@/app/(dashboard)/search/_sections/playlists-section";
+import ProfilesSection from "@/app/(dashboard)/search/_sections/profiles-section";
 import { LoaderCircleIcon } from "lucide-react";
 import { searchOptions } from "@/features/search/api/search-options";
 

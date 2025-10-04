@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SearchResults } from "./search-results";
@@ -14,18 +13,9 @@ const SEARCH_TABS = [
   { value: "profiles", label: "Profiles" },
 ];
 
-export function SearchTabs() {
+export function SearchTabs({ q, type }: { q: string; type: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const q = searchParams.get("q") ?? "";
-
-  const typeFromUrl = searchParams.get("type") ?? "all";
-
-  const [activeTab, setActiveTab] = useState<string | null>(null);
-
-  useEffect(() => {
-    setActiveTab(typeFromUrl);
-  }, [typeFromUrl]);
 
   const handleChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -36,35 +26,23 @@ export function SearchTabs() {
     }
 
     router.push(`/search?${params.toString()}`);
-
-    setActiveTab(value);
   };
 
-  if (activeTab === null) {
-    return null;
-  }
-
   return (
-    <>
-      <Tabs
-        value={activeTab}
-        onValueChange={handleChange}
-        className="w-full gap-6"
-      >
-        <TabsList>
-          {SEARCH_TABS.map((tab) => (
-            <TabsTrigger key={tab.value} value={tab.value}>
-              {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
+    <Tabs value={type} onValueChange={handleChange} className="w-full gap-6">
+      <TabsList>
         {SEARCH_TABS.map((tab) => (
-          <TabsContent key={tab.value} value={tab.value}>
-            <SearchResults q={q} type={activeTab} />
-          </TabsContent>
+          <TabsTrigger key={tab.value} value={tab.value}>
+            {tab.label}
+          </TabsTrigger>
         ))}
-      </Tabs>
-    </>
+      </TabsList>
+
+      {SEARCH_TABS.map((tab) => (
+        <TabsContent key={tab.value} value={tab.value}>
+          <SearchResults q={q} type={tab.value} />
+        </TabsContent>
+      ))}
+    </Tabs>
   );
 }

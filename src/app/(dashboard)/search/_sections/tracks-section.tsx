@@ -1,6 +1,6 @@
 import { SearchResult } from "@/features/search/contracts/search-dto";
-import SectionHeading from "../../ui/section-heading";
-import SeeAllButton from "./see-all-button";
+import SectionHeading from "../../../../components/ui/section-heading";
+import SeeAllButton from "../../../../components/features/search/see-all-button";
 import { TrackItemCompact } from "@/components/shared/track-item-compact";
 
 export default function TracksSection({

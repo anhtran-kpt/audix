@@ -6,7 +6,7 @@ import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/use-debounce";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export const HeaderSearchBar = () => {
   const searchParams = useSearchParams();
@@ -26,15 +26,10 @@ export const HeaderSearchBar = () => {
       return;
     }
 
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams();
     params.set("q", q);
-
-    if (pathname.startsWith("/search")) {
-      router.push(`/search?${params.toString()}`);
-    } else {
-      router.push(`/search?${params.toString()}`);
-    }
-  }, [debounced, router, searchParams, pathname]);
+    router.push(`/search?${params.toString()}`);
+  }, [debounced, router, pathname]);
 
   return (
     <div className="grid w-sm items-center gap-3 relative">

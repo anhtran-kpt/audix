@@ -4,11 +4,19 @@ import { PlaylistItemSchema } from "@/features/playlist/contracts/playlist-schem
 import { TrackItemSchema } from "@/features/track/contracts/track-schema";
 import z from "zod";
 
+export const searchTypeSchema = z.enum([
+  "tracks",
+  "artists",
+  "albums",
+  "playlists",
+  "profiles",
+]);
+
 export const searchQuerySchema = z.object({
   q: z.string().min(1, "Query is required"),
   type: z
     .string()
-    .default("track,artist,album,playlist,user")
+    .default("tracks,artists,albums,playlists,users")
     .transform((val) => val.split(",")),
   limit: z
     .string()
@@ -23,7 +31,7 @@ export const searchQuerySchema = z.object({
 export const searchResult = z.object({
   topResult: z
     .object({
-      type: z.enum(["track", "artist", "album", "playlist"]),
+      type: searchTypeSchema,
       item: z.any(),
     })
     .nullable(),
