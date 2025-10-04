@@ -1,3 +1,3 @@
 export const playlistEndpoints = {
-  list: () => "/playlist" as const,
+  list: () => "/me/playlists" as const,
 } as const;

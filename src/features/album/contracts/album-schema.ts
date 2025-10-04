@@ -1,4 +1,4 @@
-import { AlbumSchema } from "@/app/generated/zod";
+import { AlbumSchema, ArtistSchema } from "@/app/generated/zod";
 
 export const MiniAlbumSchema = AlbumSchema.pick({
   id: true,
@@ -6,10 +6,16 @@ export const MiniAlbumSchema = AlbumSchema.pick({
   title: true,
 });
 
-export const AlbumGridItemSchema = AlbumSchema.pick({
+export const AlbumItemSchema = AlbumSchema.pick({
   id: true,
   imageId: true,
   title: true,
-  releaseDate: true,
   albumType: true,
+  releaseDate: true,
+}).extend({
+  releaseDate: AlbumSchema.shape.releaseDate.optional(),
+  artist: ArtistSchema.pick({
+    id: true,
+    name: true,
+  }),
 });

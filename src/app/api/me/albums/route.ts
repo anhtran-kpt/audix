@@ -1,9 +1,9 @@
-import { getSidebarArtists } from "@/features/artist/data-access/artist-repo";
+import { getMyLikedAlbums } from "@/features/me/data-access/me-repo";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({
   auth: "required",
   handler: async ({ userId }) => {
-    return getSidebarArtists(userId!);
+    return getMyLikedAlbums(userId!);
   },
 });

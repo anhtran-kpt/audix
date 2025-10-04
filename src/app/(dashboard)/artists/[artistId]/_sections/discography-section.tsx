@@ -1,13 +1,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
 import AlbumGrid from "@/components/shared/album-grid";
-import { AlbumGridItem } from "@/features/album/contracts/album-dto";
+import { AlbumItem } from "@/features/album/contracts/album-dto";
 
 type DiscographySectionProps = {
   artistId: string;
-  popular: AlbumGridItem[];
-  albums: AlbumGridItem[];
-  singlesAndEps: AlbumGridItem[];
+  popular: AlbumItem[];
+  albums: AlbumItem[];
+  singlesAndEps: AlbumItem[];
 };
 
 export const DiscographySection = ({

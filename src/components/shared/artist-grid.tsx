@@ -39,11 +39,11 @@ export default function ArtistGrid({ artists }: ArtistGridProps) {
           <div className="flex flex-col items-start w-full min-w-0">
             <NavLink
               href={`/artists/${artist.id}`}
-              className="text-15 truncate"
+              className="text-[calc(15rem/16)] truncate"
             >
               {artist.name}
             </NavLink>
-            <div className="flex text-13 text-muted-foreground items-center gap-1.5 mt-0.5">
+            <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
               <span>Artist</span>
             </div>
           </div>

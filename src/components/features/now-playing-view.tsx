@@ -124,7 +124,7 @@ export const NowPlayingView = () => {
           </div>
 
           <div className="bg-muted rounded-lg overflow-hidden relative">
-            <span className="absolute z-10 top-4 left-4 font-semibold text-15 pointer-events-none">
+            <span className="absolute z-10 top-4 left-4 font-semibold text-[calc(15rem/16)] pointer-events-none">
               About the artist
             </span>
 
@@ -141,7 +141,7 @@ export const NowPlayingView = () => {
               <div>
                 <NavLink
                   href={`/artists/${data.artist.id}`}
-                  className="font-semibold text-15"
+                  className="font-semibold text-[calc(15rem/16)]"
                 >
                   {data.artist.name}
                 </NavLink>
@@ -150,7 +150,7 @@ export const NowPlayingView = () => {
                 <FollowersBadge artistId={data.artist.id} />
                 <FollowButton artistId={data.artist.id} />
               </div>
-              <p className="text-13 text-muted-foreground line-clamp-3">
+              <p className="text-[calc(13rem/16)] text-muted-foreground line-clamp-3">
                 {data.artist.bio}
               </p>
             </div>
@@ -158,11 +158,13 @@ export const NowPlayingView = () => {
 
           <div className="bg-muted rounded-lg p-4 space-y-4 w-full">
             <div className="flex justify-between items-center gap-6">
-              <span className="font-semibold text-15">Credits</span>
+              <span className="font-semibold text-[calc(15rem/16)]">
+                Credits
+              </span>
               <CreditDialog
                 trackId={currentTrack.id}
                 trigger={
-                  <span className="font-medium text-13 text-muted-foreground hover:text-primary hover:underline underline-offset-2 cursor-pointer">
+                  <span className="font-medium text-[calc(13rem/16)] text-muted-foreground hover:text-primary hover:underline underline-offset-2 cursor-pointer">
                     Show all
                   </span>
                 }
@@ -185,9 +187,11 @@ export const NowPlayingView = () => {
                       </NavLink>
                     </div>
                   ) : (
-                    <p className="text-15 font-medium">{credit.displayName}</p>
+                    <p className="text-[calc(15rem/16)] font-medium">
+                      {credit.displayName}
+                    </p>
                   )}
-                  <p className="text-muted-foreground text-13 line-clamp-2">
+                  <p className="text-muted-foreground text-[calc(13rem/16)] line-clamp-2">
                     {credit.roles.reduce((acc, role, index) => {
                       if (index < credit.roles.length - 1) {
                         return acc + role.label + ", ";

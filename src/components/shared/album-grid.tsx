@@ -8,10 +8,10 @@ import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { AppImage } from "./app-image";
 import { ContextPlayButton } from "./context-play-button";
 import { useRouter } from "next/navigation";
-import { AlbumGridItem } from "@/features/album/contracts/album-dto";
+import { AlbumItem } from "@/features/album/contracts/album-dto";
 
 type AlbumGridProps = {
-  albums: AlbumGridItem[];
+  albums: AlbumItem[];
 };
 
 export default function AlbumGrid({ albums }: AlbumGridProps) {
@@ -39,17 +39,31 @@ export default function AlbumGrid({ albums }: AlbumGridProps) {
             />
           </div>
           <div className="flex flex-col items-start w-full min-w-0">
-            <NavLink href={`/albums/${album.id}`} className="text-15 truncate">
+            <NavLink
+              href={`/albums/${album.id}`}
+              className="text-[calc(15rem/16)] truncate"
+            >
               {album.title}
             </NavLink>
-            <div className="flex text-13 text-muted-foreground items-center gap-1.5 mt-0.5">
-              {album.releaseDate && (
+            <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+              {album.releaseDate ? (
                 <>
                   <span>{formatDate(album.releaseDate, "yyyy")}</span>
                   <Dot />
+                  <span>{albumTypeMap[album.albumType]}</span>
+                </>
+              ) : (
+                <>
+                  <span>{albumTypeMap[album.albumType]}</span>
+                  <Dot />
+                  <NavLink
+                    href={`/albums/${album.artist.id}`}
+                    className="text-[calc(15rem/16)] truncate"
+                  >
+                    {album.artist.name}
+                  </NavLink>
                 </>
               )}
-              <span>{albumTypeMap[album.albumType]}</span>
             </div>
           </div>
         </div>

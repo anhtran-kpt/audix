@@ -35,7 +35,6 @@ export const search = async (query: SearchQuery) => {
                   select: {
                     id: true,
                     name: true,
-                    color: true,
                   },
                 },
               },

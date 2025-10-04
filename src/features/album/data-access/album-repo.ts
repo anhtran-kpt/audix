@@ -14,7 +14,6 @@ export const getAlbumDetail = async (albumId: string) => {
             select: {
               id: true,
               name: true,
-              color: true,
             },
           },
         },

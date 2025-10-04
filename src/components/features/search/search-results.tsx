@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { searchOptions } from "@/features/search/query/search-options";
 import TopResultSection from "@/components/features/search/top-result-section";
 import TracksSection from "@/components/features/search/tracks-section";
 import ArtistsSection from "@/components/features/search/artists-section";
@@ -9,6 +8,7 @@ import AlbumsSection from "@/components/features/search/albums-section";
 import PlaylistsSection from "@/components/features/search/playlists-section";
 import ProfilesSection from "@/components/features/search/profiles-section";
 import { LoaderCircleIcon } from "lucide-react";
+import { searchOptions } from "@/features/search/api/search-options";
 
 type Props = {
   q: string;

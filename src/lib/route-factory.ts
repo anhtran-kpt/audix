@@ -87,47 +87,16 @@ async function run<
   }
 }
 
-export function makeGET<
+function makeRoute<
   P extends ZodType | undefined,
-  Q extends ZodType | undefined
->(config: Config<P, Q, undefined>) {
-  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
-    run(req, config, ctx);
-  return handler;
-}
-
-export function makePOST<
-  P extends ZodType | undefined,
+  Q extends ZodType | undefined,
   B extends ZodType | undefined
->(config: Config<P, undefined, B>) {
-  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
-    run(req, config, ctx);
-  return handler;
+>(config: Config<P, Q, B>) {
+  return (req: NextRequest, ctx: NextRouteContext) => run(req, config, ctx);
 }
 
-export function makePATCH<
-  P extends ZodType | undefined,
-  B extends ZodType | undefined
->(config: Config<P, undefined, B>) {
-  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
-    run(req, config, ctx);
-  return handler;
-}
-
-export function makePUT<
-  P extends ZodType | undefined,
-  B extends ZodType | undefined
->(config: Config<P, undefined, B>) {
-  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
-    run(req, config, ctx);
-  return handler;
-}
-
-export function makeDELETE<
-  P extends ZodType | undefined,
-  Q extends ZodType | undefined
->(config: Config<P, Q, undefined>) {
-  const handler = async (req: NextRequest, ctx: NextRouteContext) =>
-    run(req, config, ctx);
-  return handler;
-}
+export const makeGET = makeRoute;
+export const makePOST = makeRoute;
+export const makePATCH = makeRoute;
+export const makePUT = makeRoute;
+export const makeDELETE = makeRoute;

@@ -33,7 +33,7 @@ export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
       <h2 className="font-bold text-2xl select-none capitalize mb-2">
         Recommended
       </h2>
-      <p className="text-muted-foreground text-13">
+      <p className="text-muted-foreground text-[calc(13rem/16)]">
         Based on what&apos;s in this playlist
       </p>
 

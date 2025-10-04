@@ -2,28 +2,7 @@ import "server-only";
 import db from "@/lib/db";
 import { AwaitedReturnType } from "@/utils/type";
 import { trackItemSelect } from "@/features/track/data-access/track-select";
-
-export const getSidebarArtists = async (userId: string) => {
-  return await db.userFollowedArtist
-    .findMany({
-      where: {
-        userId,
-      },
-      select: {
-        artist: {
-          select: {
-            id: true,
-            name: true,
-            imageId: true,
-          },
-        },
-      },
-      orderBy: {
-        likedAt: "desc",
-      },
-    })
-    .then((data) => data.map((item) => item.artist));
-};
+import { artistItemSelect } from "./artist-select";
 
 export const getFollowStatus = async (userId: string, artistId: string) => {
   const [artist, link] = await Promise.all([
@@ -105,7 +84,6 @@ export const getArtistDetailPage = async (artistId: string) => {
               select: {
                 id: true,
                 name: true,
-                color: true,
               },
             },
           },
@@ -195,6 +173,9 @@ export const getArtistReleases = async (artistId: string, take = 12) => {
           imageId: true,
           albumType: true,
           releaseDate: true,
+          artist: {
+            select: artistItemSelect,
+          },
           _count: { select: { likedBy: true } },
         },
       }),
@@ -209,6 +190,9 @@ export const getArtistReleases = async (artistId: string, take = 12) => {
           imageId: true,
           albumType: true,
           releaseDate: true,
+          artist: {
+            select: artistItemSelect,
+          },
         },
       }),
 
@@ -222,6 +206,9 @@ export const getArtistReleases = async (artistId: string, take = 12) => {
           imageId: true,
           albumType: true,
           releaseDate: true,
+          artist: {
+            select: artistItemSelect,
+          },
         },
       }),
     ]);

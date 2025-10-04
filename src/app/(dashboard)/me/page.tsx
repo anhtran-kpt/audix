@@ -13,11 +13,11 @@ export default async function MePage() {
       <BannerSection
         image={profile.image}
         name={profile.name}
-        followingCount={profile._count.likedArtists}
+        followingCount={profile._count.followedArtists}
         playlistCount={profile._count.playlists}
       />
       <PublicPlaylistSection playlists={profile.playlists} />
-      <FollowingSection artists={profile.likedArtists} />
+      <FollowingSection artists={profile.followedArtists} />
     </>
   );
 }

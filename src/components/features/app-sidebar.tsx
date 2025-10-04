@@ -34,15 +34,21 @@ import { MiniPlayContextButton } from "../shared/mini-play-context-button";
 import { AppImage } from "../shared/app-image";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 import { ArtistItem } from "@/features/artist/contracts/artist-dto";
-import { playlistsListOption } from "@/features/playlist/api/playlist-options";
-import { artistsListOptions } from "@/features/artist/api/artist-options";
+import { AlbumItem } from "@/features/album/contracts/album-dto";
+import {
+  libraryAlbumsOptions,
+  libraryArtistsOptions,
+  libraryPlaylistsOptions,
+} from "@/features/me/api/me-options";
 
 export function AppSidebar({
   initialArtists,
   initialPlaylists,
+  initialAlbums,
 }: {
   initialArtists: ArtistItem[];
   initialPlaylists: PlaylistItem[];
+  initialAlbums: AlbumItem[];
 }) {
   const pathname = usePathname();
   const { openDialog } = useNewPlaylistDialog();
@@ -50,14 +56,20 @@ export function AppSidebar({
   const router = useRouter();
 
   const { data: playlists } = useQuery({
-    ...playlistsListOption(),
+    ...libraryPlaylistsOptions(),
     initialData: initialPlaylists,
     initialDataUpdatedAt: Date.now(),
   });
 
   const { data: artists } = useQuery({
-    ...artistsListOptions(),
+    ...libraryArtistsOptions(),
     initialData: initialArtists,
+    initialDataUpdatedAt: Date.now(),
+  });
+
+  const { data: albums } = useQuery({
+    ...libraryAlbumsOptions(),
+    initialData: initialAlbums,
     initialDataUpdatedAt: Date.now(),
   });
 
@@ -68,7 +80,9 @@ export function AppSidebar({
     }))
   );
 
-  const [filter, setFilter] = useState<"all" | "artists" | "playlists">("all");
+  const [filter, setFilter] = useState<
+    "all" | "artists" | "playlists" | "albums"
+  >("all");
 
   return (
     <Sidebar collapsible="icon" variant="inset" className="group">
@@ -171,10 +185,10 @@ export function AppSidebar({
                           }
                           info={
                             <>
-                              <p className="text-foreground font-medium text-13 truncate">
+                              <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
                                 {artist.name}
                               </p>
-                              <p className="text-11 text-muted-foreground truncate font-normal">
+                              <p className="text-[calc(11rem/16)] text-muted-foreground truncate font-normal">
                                 Artist
                               </p>
                             </>
@@ -228,14 +242,14 @@ export function AppSidebar({
                           }
                           info={
                             <>
-                              <p className="text-foreground font-medium text-13 truncate">
+                              <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
                                 {playlist.title}
                               </p>
-                              <div className="flex items-center text-11 gap-x-1 text-muted-foreground truncate">
+                              <div className="flex items-center text-[calc(11rem/16)] gap-x-1 text-muted-foreground truncate">
                                 <p>Playlist</p>
                                 <Dot />
                                 {playlist.user && (
-                                  <span className="text-11">
+                                  <span className="text-[calc(11rem/16)]">
                                     {playlist.user.name}
                                   </span>
                                 )}
@@ -245,6 +259,68 @@ export function AppSidebar({
                           right={
                             isPlaying &&
                             contextId === playlist.id && <WaveForm />
+                          }
+                        />
+                      </div>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+
+              {(filter === "all" || filter === "albums") &&
+                albums.map((album) => (
+                  <SidebarMenuItem key={album.id}>
+                    <SidebarMenuButton
+                      size="lg"
+                      asChild
+                      isActive={pathname === `/albums/${album.id}`}
+                    >
+                      <div
+                        onClick={() => router.push(`/albums/${album.id}`)}
+                        className="cursor-pointer"
+                      >
+                        <SidebarItemWrapper
+                          open={open}
+                          image={
+                            album.imageId ? (
+                              <>
+                                <AppImage
+                                  fill
+                                  sizes="40px"
+                                  className="group-hover/menu-item:brightness-65"
+                                  alt={album.title}
+                                  src={album.imageId}
+                                  containerClassName="size-10"
+                                />
+                                <MiniPlayContextButton
+                                  context={{
+                                    contextType: "ALBUM",
+                                    contextId: album.id,
+                                  }}
+                                  className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                                />
+                              </>
+                            ) : (
+                              <FallbackCoverImage type="item" />
+                            )
+                          }
+                          info={
+                            <>
+                              <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
+                                {album.title}
+                              </p>
+                              <div className="flex items-center text-[calc(11rem/16)] gap-x-1 text-muted-foreground truncate">
+                                <p>Album</p>
+                                <Dot />
+                                {album.artist && (
+                                  <span className="text-[calc(11rem/16)]">
+                                    {album.artist.name}
+                                  </span>
+                                )}
+                              </div>
+                            </>
+                          }
+                          right={
+                            isPlaying && contextId === album.id && <WaveForm />
                           }
                         />
                       </div>

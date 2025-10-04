@@ -1,7 +1,7 @@
-import { FullAlbumSchema } from "@/features/album/contracts/album-schema";
-import { FullArtistSchema } from "@/features/artist/contracts/artist-schema";
-import { FullPlaylistSchema } from "@/features/playlist/contracts/playlist-schema";
-import { FullTrackSchema } from "@/features/track/contracts/track-schema";
+import { AlbumItemSchema } from "@/features/album/contracts/album-schema";
+import { ArtistItemSchema } from "@/features/artist/contracts/artist-schema";
+import { PlaylistItemSchema } from "@/features/playlist/contracts/playlist-schema";
+import { TrackItemSchema } from "@/features/track/contracts/track-schema";
 import z from "zod";
 
 export const searchQuerySchema = z.object({
@@ -27,23 +27,19 @@ export const searchResult = z.object({
       item: z.any(),
     })
     .nullable(),
-  tracks: FullTrackSchema.pick({
+  tracks: TrackItemSchema.pick({
     id: true,
     title: true,
     duration: true,
     album: true,
     artists: true,
   }).array(),
-  albums: FullAlbumSchema.pick({
-    id: true,
-    title: true,
-    imageId: true,
-  }).array(),
-  playlists: FullPlaylistSchema.pick({
+  albums: AlbumItemSchema.array(),
+  playlists: PlaylistItemSchema.pick({
     id: true,
     title: true,
   }).array(),
-  artists: FullArtistSchema.pick({
+  artists: ArtistItemSchema.pick({
     id: true,
     name: true,
     imageId: true,

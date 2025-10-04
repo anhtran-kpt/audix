@@ -6,8 +6,11 @@ import RightPanel from "@/components/features/right-panel";
 import { NewPlaylistDialog } from "@/components/shared/new-playlist-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { getSidebarArtists } from "@/features/artist/data-access/artist-repo";
-import { getUserPlaylists } from "@/features/playlist/data-access/playlist-repo";
+import {
+  getLibraryPlaylists,
+  getMyFollowedArtists,
+  getMyLikedAlbums,
+} from "@/features/me/data-access/me-repo";
 import { getUserIdOrThrow } from "@/lib/auth";
 
 export default async function DashboardLayout({
@@ -17,10 +20,12 @@ export default async function DashboardLayout({
 }) {
   const userId = await getUserIdOrThrow();
 
-  const [artists, playlists] = await Promise.all([
-    getSidebarArtists(userId),
-    getUserPlaylists(userId),
+  const [artists, playlists, albums] = await Promise.all([
+    getMyFollowedArtists(userId),
+    getLibraryPlaylists(userId),
+    getMyLikedAlbums(userId),
   ]);
+
   return (
     <SidebarProvider
       className="h-full"
@@ -30,7 +35,11 @@ export default async function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar initialArtists={artists} initialPlaylists={playlists} />
+      <AppSidebar
+        initialArtists={artists}
+        initialPlaylists={playlists}
+        initialAlbums={albums}
+      />
       <SidebarInset
         className="h-full transition-[width]"
         style={{

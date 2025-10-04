@@ -9,28 +9,6 @@ import cloudinary from "@/lib/config/cloudinary";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { AwaitedReturnType } from "@/utils/type";
 
-export const getUserPlaylists = async (userId: string) => {
-  return await db.playlist.findMany({
-    where: {
-      userId,
-    },
-    select: {
-      id: true,
-      title: true,
-      imageId: true,
-      user: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-};
-
 export const createPlaylist = async (
   userId: string,
   input: CreatePlaylistInput

@@ -66,7 +66,7 @@ export const UserProfile = () => {
               <Badge
                 className={`${
                   subscription === "FREE" ? "bg-zinc-500" : "bg-amber-500"
-                } text-8 px-1 rounded-sm`}
+                } text-[calc(8rem/16)] px-1 rounded-sm`}
               >
                 {subscription}
               </Badge>

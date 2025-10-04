@@ -1,10 +1,9 @@
-import { getUserPlaylists } from "@/features/playlist/data-access/playlist-repo";
+import { getLibraryPlaylists } from "@/features/me/data-access/me-repo";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({
   auth: "required",
-  handler: async ({ userId, req }) => {
-    const trackId = req.nextUrl.searchParams.get("trackId");
-    return getUserPlaylists(userId!, trackId!);
+  handler: async ({ userId }) => {
+    return getLibraryPlaylists(userId!);
   },
 });

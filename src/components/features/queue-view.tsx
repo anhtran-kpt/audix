@@ -41,7 +41,9 @@ export default function QueueView() {
         >
           <div className="space-y-2">
             <div className="flex flex-col gap-2">
-              <p className="font-semibold text-15 px-2">Now playing</p>
+              <p className="font-semibold text-[calc(15rem/16)] px-2">
+                Now playing
+              </p>
               <TrackItemCompact
                 track={{
                   ...currentTrack,
@@ -60,7 +62,9 @@ export default function QueueView() {
             </div>
             {queueNext && (
               <div className="flex flex-col gap-2">
-                <p className="font-semibold text-15 px-2">Next in queue:</p>
+                <p className="font-semibold text-[calc(15rem/16)] px-2">
+                  Next in queue:
+                </p>
 
                 <div className="flex flex-col gap-1">
                   {queueNext.map((track) => (
@@ -86,7 +90,7 @@ export default function QueueView() {
             )}
             {queueContext && (
               <div className="flex flex-col gap-2">
-                <p className="font-semibold text-15 px-2">
+                <p className="font-semibold text-[calc(15rem/16)] px-2">
                   Next from: {currentTrack.title}
                 </p>
 
@@ -114,7 +118,9 @@ export default function QueueView() {
             )}
             {queueLater && (
               <div className="flex flex-col gap-2">
-                <p className="font-semibold text-15 px-2">Later in queue:</p>
+                <p className="font-semibold text-[calc(15rem/16)] px-2">
+                  Later in queue:
+                </p>
 
                 <div className="flex flex-col gap-1">
                   {queueLater.map((track) => (

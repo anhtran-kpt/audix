@@ -1,4 +1,4 @@
-import { searchQuerySchema } from "@/features/search/contracts/search-dto";
+import { searchQuerySchema } from "@/features/search/contracts/search-schema";
 import { search } from "@/features/search/data-access/search-repo";
 import { makeGET } from "@/lib/route-factory";
 
