@@ -1,14 +1,8 @@
 "use client";
 
-import {
-  DownloadIcon,
-  EllipsisIcon,
-  PlusCircleIcon,
-  ShuffleIcon,
-} from "lucide-react";
+import { DownloadIcon, EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { NavLink } from "@/components/ui/nav-link";
 import Dot from "@/components/ui/dot";
@@ -20,6 +14,7 @@ import tinycolor from "tinycolor2";
 import { ContextPlayButton } from "@/components/shared/context-play-button";
 import { AlbumDetail } from "@/features/album/data-access/album-repo";
 import { AppImage } from "@/components/shared/app-image";
+import { LikeButton } from "@/components/shared/like-button";
 
 type BannerSectionProps = {
   imageId: AlbumDetail["imageId"];
@@ -29,7 +24,6 @@ type BannerSectionProps = {
   title: AlbumDetail["title"];
   totalTracks: AlbumDetail["totalTracks"];
   duration: AlbumDetail["duration"];
-  genres: AlbumDetail["genres"];
   albumId: string;
 };
 
@@ -41,7 +35,6 @@ export const BannerSection = ({
   title,
   totalTracks,
   duration,
-  genres,
   albumId,
 }: BannerSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -75,13 +68,6 @@ export const BannerSection = ({
           <div className="flex flex-col gap-3">
             <p className="font-medium">{albumTypeMap[albumType]}</p>
             <p className="font-bold text-6xl mt-1 mb-3">{title}</p>
-            <div className="space-x-2">
-              {genres.map(({ genre }) => (
-                <Badge key={genre.id} style={{ backgroundColor: genre.color }}>
-                  {genre.name}
-                </Badge>
-              ))}
-            </div>
             <div className="inline-flex items-center gap-2">
               <AppImage
                 alt={artist.name}
@@ -129,15 +115,7 @@ export const BannerSection = ({
             </>
           }
         />
-        <IconButton
-          icon={PlusCircleIcon}
-          size="xl"
-          tooltipContent={
-            <>
-              Save to <strong>Your Library</strong>
-            </>
-          }
-        />
+        <LikeButton albumId={albumId} />
         <IconButton icon={DownloadIcon} size="xl" tooltipContent="Download" />
         <IconButton
           icon={EllipsisIcon}

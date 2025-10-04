@@ -46,11 +46,11 @@ export const usePlaybackStore = create<PlaybackState>()(
 
       async hydrate() {
         try {
-          const session = await getApi<ClientPlaybackSession | null>(
+          const session = await getApi<ClientPlaybackSession>(
             "/playback/session"
           );
 
-          if (!session) {
+          if (JSON.stringify(session) === "{}") {
             return;
           }
 
