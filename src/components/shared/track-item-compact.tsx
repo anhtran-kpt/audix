@@ -37,7 +37,7 @@ export const TrackItemCompact = ({
     context?.contextId === snapshot?.contextId &&
     currentTrackId === track.id;
 
-    console.log(track);
+
 
   return (
     <div

@@ -116,7 +116,7 @@ export const getClientPlaybackSession = async (userId: string) => {
   });
 
   if (!session) {
-    return {};
+    return null;
   }
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);

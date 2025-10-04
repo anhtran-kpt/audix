@@ -1,5 +1,11 @@
 import axios from "axios";
-import type { ResponseEnvelope } from "@/lib/errors";
+import { AppError, type ResponseEnvelope } from "@/lib/errors";
+import type { AxiosResponse } from "axios";
+
+export interface AxiosResponseWithUnwrapped<T = unknown>
+  extends AxiosResponse<T> {
+  unwrapped?: T;
+}
 
 export const http = axios.create({
   baseURL: "/api",
@@ -9,19 +15,18 @@ export const http = axios.create({
 http.interceptors.response.use(
   (res) => {
     const data = res.data as ResponseEnvelope<unknown>;
-    if (!data || typeof data !== "object" || !("ok" in data)) return res;
-    if (data.ok) {
-      (res as any).unwrapped = data.data;
+    if (!data || typeof data !== "object" || !("ok" in data)) {
       return res;
     }
 
-    const err = new Error(data.error.message) as any;
-    err.code = data.error.code;
-    err.details = data.error.details;
-    err.isAppError = true;
-    return Promise.reject(err);
+    if (data.ok) {
+      (res as AxiosResponseWithUnwrapped).unwrapped = data.data;
+      return res;
+    }
+
+    return Promise.reject(
+      new AppError(data.error.code, data.error.message, data.error.details)
+    );
   },
-  (err) => {
-    return Promise.reject(err);
-  }
+  (err) => Promise.reject(err)
 );

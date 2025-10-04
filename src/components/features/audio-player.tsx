@@ -61,8 +61,6 @@ export default function AudioPlayer() {
     useShallow((s) => ({ toggle: s.toggle, active: s.active }))
   );
 
-  console.log(session);
-
   return (
     <>
       {currentTrack && session && (
@@ -71,10 +69,7 @@ export default function AudioPlayer() {
             <div className="flex items-center">
               <div className="w-3xs">
                 <TrackItemCompact
-                  track={{
-                    ...currentTrack,
-                    artists: currentTrack.artists.map((item) => item.artist),
-                  }}
+                  track={currentTrack}
                   canHover={false}
                   hasMoreDetails={false}
                 />

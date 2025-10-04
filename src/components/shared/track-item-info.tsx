@@ -16,7 +16,6 @@ export const TrackItemInfo = ({
   artists,
   isActiveTrack,
 }: TrackInfoProps) => {
-  console.log(artists);
   return (
     <div className="flex flex-col gap-0.5 flex-1 min-w-0 overflow-hidden">
       <p
