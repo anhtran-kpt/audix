@@ -1,23 +1,26 @@
 import "server-only";
 import db from "@/lib/db";
 import { AwaitedReturnType } from "@/utils/type";
+import { AppError } from "@/lib/errors";
+import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 
 export const getAlbumDetail = async (albumId: string) => {
-  return await db.album.findUniqueOrThrow({
+  const album = await db.album.findUnique({
     where: {
       id: albumId,
     },
-    include: {
-      genres: {
-        select: {
-          genre: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
-        },
+    select: {
+      artistId: true,
+      imageId: true,
+      title: true,
+      albumType: true,
+      releaseDate: true,
+      totalTracks: true,
+      duration: true,
+      artist: {
+        select: artistItemSelect,
       },
+      id: true,
       tracks: {
         select: {
           id: true,
@@ -46,15 +49,20 @@ export const getAlbumDetail = async (albumId: string) => {
           },
         },
       },
-      artist: {
-        select: {
-          id: true,
-          name: true,
-          imageId: true,
-        },
-      },
     },
   });
+
+  if (!album) {
+    throw new AppError("NOT_FOUND", "Album not found");
+  }
+
+  return {
+    ...album,
+    tracks: album.tracks.map((track) => ({
+      ...track,
+      artists: track.artists.map((a) => a.artist),
+    })),
+  };
 };
 
 export type AlbumDetail = AwaitedReturnType<typeof getAlbumDetail>;

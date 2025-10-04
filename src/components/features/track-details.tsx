@@ -36,8 +36,8 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { TrackItem } from "@/features/track/contracts/track-dto";
-import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
-import { useOptimisticTrackRemove } from "@/hooks/use-optimistic-track-remove";
+import { useOptimisticTrackAdd } from "@/features/playlist/hooks/use-optimistic-track-add";
+import { useOptimisticTrackRemove } from "@/features/playlist/hooks/use-optimistic-track-remove";
 import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 import { playlistsListOption } from "@/features/playlist/api/playlist-options";
@@ -57,7 +57,7 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
     status: queryStatus,
     error,
   } = useQuery({
-    ...playlistsListOption()
+    ...playlistsListOption(),
   });
 
   const [open, setOpen] = useState(false);
@@ -117,7 +117,6 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
                               <CommandItem
                                 key={playlist.id}
                                 value={playlist.id}
-                                
                                 onSelect={(value) => {
                                   addTrackMutation.mutate({
                                     playlistId: value,

@@ -29,7 +29,6 @@ export default async function AlbumDetail({
         artist={album.artist}
         totalTracks={album.totalTracks}
         duration={album.duration}
-        genres={album.genres}
         albumId={album.id}
       />
       <TracksSection tracks={album.tracks} albumId={albumId} />

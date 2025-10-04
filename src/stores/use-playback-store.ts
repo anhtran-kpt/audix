@@ -54,6 +54,8 @@ export const usePlaybackStore = create<PlaybackState>()(
             return;
           }
 
+          console.log(session);
+
           set({ session, isPlaying: false });
         } catch (err) {
           console.error("Failed to hydrate playback session:", err);

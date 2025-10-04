@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon, ListPlusIcon, TrashIcon } from "lucide-react";
-import { useOptimisticPlaylistDelete } from "@/hooks/use-optimistic-playlist-delete";
+import { useOptimisticPlaylistDelete } from "@/features/playlist/hooks/use-optimistic-playlist-delete";
 import { ConfirmDialog } from "./confirm-dialog";
 
 type PlaylistDetailDropdownProps = {

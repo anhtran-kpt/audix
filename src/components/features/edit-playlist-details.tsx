@@ -16,7 +16,7 @@ import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Textarea } from "../ui/textarea";
 import { FallbackCoverImage } from "./fallback-cover-image";
-import { useOptimisticPlaylistUpdate } from "@/hooks/use-optimistic-playlist-update";
+import { useOptimisticPlaylistUpdate } from "@/features/playlist/hooks/use-optimistic-playlist-update";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdatePlaylistInput } from "@/features/playlist/contracts/playlist-dto";

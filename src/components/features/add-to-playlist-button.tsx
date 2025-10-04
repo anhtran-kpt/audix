@@ -2,7 +2,7 @@
 
 import { TrackItem } from "@/features/track/contracts/track-dto";
 import { Button } from "../ui/button";
-import { useOptimisticTrackAdd } from "@/hooks/use-optimistic-track-add";
+import { useOptimisticTrackAdd } from "@/features/playlist/hooks/use-optimistic-track-add";
 
 type AddToPlaylistButtonProps = {
   track: TrackItem;

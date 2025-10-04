@@ -37,8 +37,6 @@ export const TrackItemCompact = ({
     context?.contextId === snapshot?.contextId &&
     currentTrackId === track.id;
 
-
-
   return (
     <div
       className={cn(
@@ -47,8 +45,8 @@ export const TrackItemCompact = ({
       )}
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <div className="relative">
-          {hasCover && (
+        {hasCover && (
+          <div className="relative">
             <AppImage
               src={track.album.imageId}
               alt={track.title}
@@ -60,14 +58,14 @@ export const TrackItemCompact = ({
                   "group-hover:brightness-65 transition-[brightness]"
               )}
             />
-          )}
-          {context && canPlay && (
-            <RowPlayButton
-              context={context}
-              className="absolute top-1/2 left-1/2 -translate-1/2 opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity"
-            />
-          )}
-        </div>
+            {context && canPlay && (
+              <RowPlayButton
+                context={context}
+                className="absolute top-1/2 left-1/2 -translate-1/2 opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity"
+              />
+            )}
+          </div>
+        )}
         <TrackItemInfo
           title={track.title}
           isExplicit={track.isExplicit}

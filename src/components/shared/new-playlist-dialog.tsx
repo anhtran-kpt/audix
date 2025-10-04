@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { useCreatePlaylist } from "@/hooks/use-create-playlist";
+import { useCreatePlaylist } from "@/features/playlist/hooks/use-create-playlist";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 
 export function NewPlaylistDialog() {
