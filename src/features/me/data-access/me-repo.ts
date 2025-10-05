@@ -58,35 +58,25 @@ export const getMyProfile = async (userId: string) => {
 
 export type MyProfile = AwaitedReturnType<typeof getMyProfile>;
 
-export const getLibraryPlaylists = async (userId: string) => {
+export const getMyLibraryPlaylists = async (userId: string) => {
   const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
     select: {
       likedPlaylists: {
         select: {
-          playlist: {
-            select: playlistItemSelect,
-          },
+          playlist: { select: playlistItemSelect },
           likedAt: true,
         },
-        orderBy: {
-          likedAt: "desc",
-        },
+        orderBy: { likedAt: "desc" },
       },
       playlists: {
         select: { ...playlistItemSelect, createdAt: true },
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy: { createdAt: "desc" },
       },
     },
   });
 
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
+  if (!user) throw new AppError("NOT_FOUND", "User not found");
 
   const liked = user.likedPlaylists.map((lp) => ({
     playlist: lp.playlist,
@@ -102,7 +92,18 @@ export const getLibraryPlaylists = async (userId: string) => {
     (a, b) => b.date.getTime() - a.date.getTime()
   );
 
-  return merged.map((item) => item.playlist);
+  const unique = Array.from(
+    merged
+      .reduce((map, item) => {
+        if (!map.has(item.playlist.id)) {
+          map.set(item.playlist.id, item);
+        }
+        return map;
+      }, new Map<string, (typeof merged)[number]>())
+      .values()
+  );
+
+  return unique.map((item) => item.playlist);
 };
 
 export const getMyFollowedArtists = async (userId: string) => {

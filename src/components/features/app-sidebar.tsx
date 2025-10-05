@@ -15,7 +15,6 @@ import Dot from "../ui/dot";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { ScrollArea } from "../ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
-import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import WaveForm from "../ui/wave-form";
 import { IconButton } from "../ui/icon-button";
 import {
@@ -33,23 +32,13 @@ import { VolumeIcon } from "../shared/volume-icon";
 import { MiniPlayContextButton } from "../shared/mini-play-context-button";
 import { AppImage } from "../shared/app-image";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
-import { ArtistItem } from "@/features/artist/contracts/artist-dto";
-import { AlbumItem } from "@/features/album/contracts/album-dto";
 import {
-  libraryAlbumsOptions,
-  libraryArtistsOptions,
+  followedArtistsOptions,
   libraryPlaylistsOptions,
+  likedAlbumsOptions,
 } from "@/features/me/api/me-options";
 
-export function AppSidebar({
-  initialArtists,
-  initialPlaylists,
-  initialAlbums,
-}: {
-  initialArtists: ArtistItem[];
-  initialPlaylists: PlaylistItem[];
-  initialAlbums: AlbumItem[];
-}) {
+export function AppSidebar() {
   const pathname = usePathname();
   const { openDialog } = useNewPlaylistDialog();
   const { toggleSidebar, open } = useSidebar();
@@ -57,20 +46,14 @@ export function AppSidebar({
 
   const { data: playlists } = useQuery({
     ...libraryPlaylistsOptions(),
-    initialData: initialPlaylists,
-    initialDataUpdatedAt: Date.now(),
   });
 
   const { data: artists } = useQuery({
-    ...libraryArtistsOptions(),
-    initialData: initialArtists,
-    initialDataUpdatedAt: Date.now(),
+    ...followedArtistsOptions(),
   });
 
   const { data: albums } = useQuery({
-    ...libraryAlbumsOptions(),
-    initialData: initialAlbums,
-    initialDataUpdatedAt: Date.now(),
+    ...likedAlbumsOptions(),
   });
 
   const { isPlaying, contextId } = usePlaybackStore(
@@ -151,7 +134,7 @@ export function AppSidebar({
           <SidebarGroup className="h-full">
             <SidebarMenu>
               {(filter === "all" || filter === "artists") &&
-                artists.map((artist) => (
+                artists?.map((artist) => (
                   <SidebarMenuItem key={artist.id}>
                     <SidebarMenuButton
                       size="lg"
@@ -204,7 +187,7 @@ export function AppSidebar({
                 ))}
 
               {(filter === "all" || filter === "playlists") &&
-                playlists.map((playlist) => (
+                playlists?.map((playlist) => (
                   <SidebarMenuItem key={playlist.id}>
                     <SidebarMenuButton
                       size="lg"
@@ -267,7 +250,7 @@ export function AppSidebar({
                 ))}
 
               {(filter === "all" || filter === "albums") &&
-                albums.map((album) => (
+                albums?.map((album) => (
                   <SidebarMenuItem key={album.id}>
                     <SidebarMenuButton
                       size="lg"

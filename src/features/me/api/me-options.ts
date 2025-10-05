@@ -6,17 +6,21 @@ import { meEndpoints } from "./me-endpoints";
 import { ArtistItem } from "@/features/artist/contracts/artist-dto";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 
-export const libraryAlbumsOptions = () => {
+export const likedAlbumsOptions = () => {
   return queryOptions({
-    queryKey: meKeys.libraryAlbums(),
-    queryFn: () => getApi<AlbumItem[]>(meEndpoints.libraryAlbums()),
+    queryKey: meKeys.likedAlbums(),
+    queryFn: () => getApi<AlbumItem[]>(meEndpoints.likedAlbums()),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
   });
 };
 
-export const libraryArtistsOptions = () => {
+export const followedArtistsOptions = () => {
   return queryOptions({
-    queryKey: meKeys.libraryArtists(),
-    queryFn: () => getApi<ArtistItem[]>(meEndpoints.libraryArtists()),
+    queryKey: meKeys.followedArtists(),
+    queryFn: () => getApi<ArtistItem[]>(meEndpoints.followedArtists()),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
   });
 };
 
@@ -24,5 +28,7 @@ export const libraryPlaylistsOptions = () => {
   return queryOptions({
     queryKey: meKeys.libraryPlaylists(),
     queryFn: () => getApi<PlaylistItem[]>(meEndpoints.libraryPlaylists()),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
   });
 };
