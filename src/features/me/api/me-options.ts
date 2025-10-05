@@ -32,3 +32,12 @@ export const libraryPlaylistsOptions = () => {
     gcTime: 1000 * 60 * 30,
   });
 };
+
+export const myPlaylistsOptions = () => {
+  return queryOptions({
+    queryKey: meKeys.myPlaylists(),
+    queryFn: () => getApi<PlaylistItem[]>(meEndpoints.myPlaylists()),
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+  });
+};

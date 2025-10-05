@@ -9,7 +9,7 @@ type FollowingSectionProps = {
 export const FollowingSection = ({ artists }: FollowingSectionProps) => {
   return (
     <section>
-      <SectionHeading title="Following" />
+      <SectionHeading title="Following Artists" />
       <ArtistGrid artists={artists} />
     </section>
   );

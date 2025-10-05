@@ -12,7 +12,7 @@ import {
   PlaylistItem,
 } from "@/features/playlist/contracts/playlist-dto";
 import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
-import { playlistKeys } from "@/features/playlist/api/playlist-keys";
+import { meKeys } from "@/features/me/api/me-keys";
 
 export function useCreatePlaylist(
   onSuccess?: (res: CreatePlaylistOutput) => void
@@ -34,10 +34,11 @@ export function useCreatePlaylist(
     mutationFn: (data: CreatePlaylistInput) =>
       postApi<CreatePlaylistOutput>("/playlists", data),
     onMutate: async (vars) => {
-      await qc.cancelQueries({ queryKey: playlistKeys.list() });
+      await qc.cancelQueries({ queryKey: meKeys.myPlaylists() });
+      await qc.cancelQueries({ queryKey: meKeys.libraryPlaylists() });
 
       const previousPlaylists = qc.getQueryData<PlaylistItem[]>(
-        playlistKeys.list()
+        meKeys.myPlaylists()
       );
 
       const optimistic: PlaylistItem = {
@@ -50,7 +51,11 @@ export function useCreatePlaylist(
         },
       };
 
-      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (old) =>
+      qc.setQueryData<PlaylistItem[]>(meKeys.myPlaylists(), (old) =>
+        old ? [optimistic, ...old] : [optimistic]
+      );
+
+      qc.setQueryData<PlaylistItem[]>(meKeys.libraryPlaylists(), (old) =>
         old ? [optimistic, ...old] : [optimistic]
       );
 
@@ -58,12 +63,18 @@ export function useCreatePlaylist(
     },
     onError: (err, _, ctx) => {
       if (ctx?.previousPlaylists) {
-        qc.setQueryData(playlistKeys.list(), ctx.previousPlaylists);
+        qc.setQueryData(meKeys.myPlaylists(), ctx.previousPlaylists);
       }
       toast.error(err.message);
     },
     onSuccess: (res) => {
-      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (old) => {
+      qc.setQueryData<PlaylistItem[]>(meKeys.myPlaylists(), (old) => {
+        if (!old) return [res];
+        const filtered = old.filter((pl) => !pl.id.startsWith("optimistic-"));
+        return [res, ...filtered];
+      });
+
+      qc.setQueryData<PlaylistItem[]>(meKeys.libraryPlaylists(), (old) => {
         if (!old) return [res];
         const filtered = old.filter((pl) => !pl.id.startsWith("optimistic-"));
         return [res, ...filtered];

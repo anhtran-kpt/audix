@@ -13,6 +13,13 @@ export const getMyProfile = async (userId: string) => {
       id: true,
       name: true,
       image: true,
+      likedAlbums: {
+        select: {
+          album: {
+            select: albumItemSelect,
+          },
+        },
+      },
       playlists: {
         select: {
           imageId: true,
@@ -52,8 +59,9 @@ export const getMyProfile = async (userId: string) => {
   }
 
   const artists = user.followedArtists.map((a) => a.artist);
+  const albums = user.likedAlbums.map((a) => a.album);
 
-  return { ...user, followedArtists: artists };
+  return { ...user, followedArtists: artists, likedAlbums: albums };
 };
 
 export type MyProfile = AwaitedReturnType<typeof getMyProfile>;
@@ -104,6 +112,22 @@ export const getMyLibraryPlaylists = async (userId: string) => {
   );
 
   return unique.map((item) => item.playlist);
+};
+
+export const getMyPlaylists = async (userId: string) => {
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: {
+      playlists: {
+        select: { ...playlistItemSelect, createdAt: true },
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+
+  if (!user) throw new AppError("NOT_FOUND", "User not found");
+
+  return user.playlists;
 };
 
 export const getMyFollowedArtists = async (userId: string) => {

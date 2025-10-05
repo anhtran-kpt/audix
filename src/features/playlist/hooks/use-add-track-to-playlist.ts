@@ -24,7 +24,7 @@ type AddTrackToPlaylist = {
   track: TrackItem;
 };
 
-export function useOptimisticTrackAdd() {
+export function useAddTrackToPlaylist() {
   const qc = useQueryClient();
   const updateCoverMutation = useOptimisticCoverUpdate();
 

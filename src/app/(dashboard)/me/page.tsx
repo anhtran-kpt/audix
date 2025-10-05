@@ -1,8 +1,9 @@
 import { getMyProfile } from "@/features/me/data-access/me-repo";
 import { BannerSection } from "./_sections/banner-section";
 import { getUserIdOrThrow } from "@/lib/auth";
-import { PublicPlaylistSection } from "./_sections/public-playlists-section";
+import { PlaylistSection } from "./_sections/playlists-section";
 import { FollowingSection } from "./_sections/following-section";
+import { AlbumSection } from "./_sections/albums-section";
 
 export default async function MePage() {
   const userId = await getUserIdOrThrow();
@@ -16,7 +17,8 @@ export default async function MePage() {
         followingCount={profile._count.followedArtists}
         playlistCount={profile._count.playlists}
       />
-      <PublicPlaylistSection playlists={profile.playlists} />
+      <PlaylistSection initialData={profile.playlists} />
+      <AlbumSection albums={profile.likedAlbums} />
       <FollowingSection artists={profile.followedArtists} />
     </>
   );

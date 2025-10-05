@@ -1,8 +1,6 @@
+import { getMyPlaylists } from "@/features/me/data-access/me-repo";
 import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
-import {
-  createPlaylist,
-  getUserPlaylists,
-} from "@/features/playlist/data-access/playlist-repo";
+import { createPlaylist } from "@/features/playlist/data-access/playlist-repo";
 import { makeGET, makePOST } from "@/lib/route-factory";
 
 export const POST = makePOST({
@@ -16,6 +14,6 @@ export const POST = makePOST({
 export const GET = makeGET({
   auth: "required",
   handler: async ({ userId }) => {
-    return getUserPlaylists(userId!);
+    return getMyPlaylists(userId!);
   },
 });

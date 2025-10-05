@@ -2,7 +2,7 @@
 
 import { TrackItem } from "@/features/track/contracts/track-dto";
 import { Button } from "../ui/button";
-import { useOptimisticTrackAdd } from "@/features/playlist/hooks/use-optimistic-track-add";
+import { useAddTrackToPlaylist } from "@/features/playlist/hooks/use-add-track-to-playlist";
 
 type AddToPlaylistButtonProps = {
   track: TrackItem;
@@ -13,7 +13,7 @@ export default function AddToPlaylistButton({
   track,
   playlistId,
 }: AddToPlaylistButtonProps) {
-  const { mutate, isPending } = useOptimisticTrackAdd();
+  const { mutate, isPending } = useAddTrackToPlaylist();
 
   return (
     <Button

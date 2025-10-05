@@ -36,8 +36,8 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { TrackItem } from "@/features/track/contracts/track-dto";
-import { useOptimisticTrackAdd } from "@/features/playlist/hooks/use-optimistic-track-add";
-import { useOptimisticTrackRemove } from "@/features/playlist/hooks/use-optimistic-track-remove";
+import { useAddTrackToPlaylist } from "@/features/playlist/hooks/use-add-track-to-playlist";
+import { useRemoveTrackFromPlaylist } from "@/features/playlist/hooks/use-remove-track-from-playlist";
 import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 import { playlistsListOption } from "@/features/playlist/api/playlist-options";
@@ -48,8 +48,8 @@ type TrackDetailsProps = {
 };
 
 export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
-  const removeTrackMutation = useOptimisticTrackRemove();
-  const addTrackMutation = useOptimisticTrackAdd();
+  const removeTrackMutation = useRemoveTrackFromPlaylist();
+  const addTrackMutation = useAddTrackToPlaylist();
   const { openDialog } = useNewPlaylistDialog();
   const { status } = useSession();
   const {

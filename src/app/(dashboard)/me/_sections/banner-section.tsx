@@ -16,7 +16,7 @@ type BannerSectionProps = {
   image: MyProfile["image"];
   name: MyProfile["name"];
   playlistCount: MyProfile["_count"]["playlists"];
-  followingCount: MyProfile["_count"]["following"];
+  followingCount: MyProfile["_count"]["followedArtists"];
 };
 
 export const BannerSection = ({

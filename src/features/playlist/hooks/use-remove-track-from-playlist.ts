@@ -9,7 +9,7 @@ type RemoveTrackInput = {
   trackId: string;
 };
 
-export function useOptimisticTrackRemove() {
+export function useRemoveTrackFromPlaylist() {
   const qc = useQueryClient();
   const updateCoverMutation = useOptimisticCoverUpdate();
 
