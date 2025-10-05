@@ -58,7 +58,7 @@ export default function AlbumGrid({ albums }: AlbumGridProps) {
                   <Dot />
                   <NavLink
                     href={`/albums/${album.artist.id}`}
-                    className="text-[calc(15rem/16)] truncate"
+                    className="text-[calc(13rem/16)] truncate"
                   >
                     {album.artist.name}
                   </NavLink>

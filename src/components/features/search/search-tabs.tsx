@@ -3,6 +3,7 @@
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SearchResults } from "./search-results";
+import { useState } from "react";
 
 const SEARCH_TABS = [
   { value: "all", label: "All" },
@@ -16,6 +17,7 @@ const SEARCH_TABS = [
 export function SearchTabs({ q, type }: { q: string; type: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [availableTabs, setAvailableTabs] = useState<string[]>([]);
 
   const handleChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -28,10 +30,14 @@ export function SearchTabs({ q, type }: { q: string; type: string }) {
     router.push(`/search?${params.toString()}`);
   };
 
+  const visibleTabs = SEARCH_TABS.filter((tab) =>
+    availableTabs.includes(tab.value)
+  );
+
   return (
     <Tabs value={type} onValueChange={handleChange} className="w-full gap-6">
       <TabsList>
-        {SEARCH_TABS.map((tab) => (
+        {visibleTabs.map((tab) => (
           <TabsTrigger key={tab.value} value={tab.value}>
             {tab.label}
           </TabsTrigger>
@@ -40,7 +46,7 @@ export function SearchTabs({ q, type }: { q: string; type: string }) {
 
       {SEARCH_TABS.map((tab) => (
         <TabsContent key={tab.value} value={tab.value}>
-          <SearchResults q={q} type={tab.value} />
+          <SearchResults q={q} type={tab.value} onDataLoad={setAvailableTabs} />
         </TabsContent>
       ))}
     </Tabs>
