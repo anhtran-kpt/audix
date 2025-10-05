@@ -40,9 +40,7 @@ export function NewPlaylistDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-center">
-            Create a new playlist
-          </DialogTitle>
+          <DialogTitle className="text-center">Create new playlist</DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>
 

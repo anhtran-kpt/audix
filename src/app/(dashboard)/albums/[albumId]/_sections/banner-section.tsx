@@ -11,10 +11,10 @@ import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
 import { IconButton } from "@/components/ui/icon-button";
 import tinycolor from "tinycolor2";
-import { ContextPlayButton } from "@/components/shared/context-play-button";
 import { AlbumDetail } from "@/features/album/data-access/album-repo";
 import { AppImage } from "@/components/shared/app-image";
 import { LikeButton } from "@/components/shared/like-button";
+import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 
 type BannerSectionProps = {
   imageId: AlbumDetail["imageId"];
@@ -100,7 +100,7 @@ export const BannerSection = ({
         </div>
       </div>
       <div className="flex items-center gap-6 px-12">
-        <ContextPlayButton
+        <RoundedPlayButton
           context={{
             contextType: "ALBUM",
             contextId: albumId,

@@ -5,8 +5,8 @@ import Dot from "../../../../components/ui/dot";
 import { CldImage } from "next-cloudinary";
 import { BadgeCheckIcon } from "lucide-react";
 import { FollowersBadge } from "../../../../components/features/follow-badge";
-import { ContextPlayButton } from "@/components/shared/context-play-button";
 import { AppImage } from "@/components/shared/app-image";
+import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 
 type TopResultSectionProps = {
   topResult: SearchResult["topResult"];
@@ -28,7 +28,7 @@ export default function TopResultSection({
             fill
             className="object-cover brightness-80 group-hover:brightness-60 transition-all duration-300"
           />
-          <ContextPlayButton
+          <RoundedPlayButton
             context={{
               contextType: "ARTIST",
               contextId: topResult.item.id,
@@ -89,7 +89,7 @@ export default function TopResultSection({
             ))}
           </div>
         </div>
-        <ContextPlayButton
+        <RoundedPlayButton
           context={{ contextType: "SEARCH", contextId: q }}
           className="absolute opacity-0 bottom-5 right-5 translate-y-5 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
         />

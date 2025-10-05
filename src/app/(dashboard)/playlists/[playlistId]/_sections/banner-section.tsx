@@ -23,10 +23,10 @@ import tinycolor from "tinycolor2";
 import { useQuery } from "@tanstack/react-query";
 import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
 import EditPlaylistDetails from "@/components/features/edit-playlist-details";
-import { ContextPlayButton } from "@/components/shared/context-play-button";
 import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 import { AppImage } from "@/components/shared/app-image";
 import { playlistDetailOption } from "@/features/playlist/api/playlist-options";
+import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 
 type BannerSectionProps = {
   initialData: PlaylistDetail;
@@ -147,7 +147,7 @@ export const BannerSection = ({
         <div className="flex items-center gap-6">
           {playlist.totalTracks > 0 && (
             <>
-              <ContextPlayButton
+              <RoundedPlayButton
                 context={{
                   contextType: "PLAYLIST",
                   contextId: playlist.id,

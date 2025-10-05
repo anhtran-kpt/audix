@@ -40,7 +40,7 @@ import { useAddTrackToPlaylist } from "@/features/playlist/hooks/use-add-track-t
 import { useRemoveTrackFromPlaylist } from "@/features/playlist/hooks/use-remove-track-from-playlist";
 import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
-import { playlistsListOption } from "@/features/playlist/api/playlist-options";
+import { myPlaylistsOptions } from "@/features/me/api/me-options";
 
 type TrackDetailsProps = {
   track: TrackItem;
@@ -57,7 +57,7 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
     status: queryStatus,
     error,
   } = useQuery({
-    ...playlistsListOption(),
+    ...myPlaylistsOptions(),
   });
 
   const [open, setOpen] = useState(false);

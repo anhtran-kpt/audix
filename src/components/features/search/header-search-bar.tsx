@@ -19,22 +19,17 @@ export const HeaderSearchBar = () => {
   const isSearchPage = pathname.startsWith("/search");
   const prevDebouncedRef = useRef(debounced);
 
-  // 🧠 Dùng flag để phân biệt khi nào người dùng đang gõ
   const userTypingRef = useRef(false);
 
-  // Khi input thay đổi -> đánh dấu user đang gõ
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     userTypingRef.current = true;
     setValue(e.target.value);
   };
 
-  // Khi user rời khỏi trang /search → clear input
-  // Khi quay lại /search → khôi phục query từ URL
   useEffect(() => {
     if (!isSearchPage) {
       setValue("");
     } else if (!userTypingRef.current) {
-      // chỉ sync từ URL khi user KHÔNG đang gõ
       setValue(queryFromUrl);
     }
   }, [isSearchPage, queryFromUrl]);
@@ -43,7 +38,6 @@ export const HeaderSearchBar = () => {
     const q = debounced.trim();
     const prevDebounced = prevDebouncedRef.current.trim();
 
-    // reset typing flag sau mỗi lần debounce xong
     userTypingRef.current = false;
 
     if (q === prevDebounced) return;
@@ -60,8 +54,6 @@ export const HeaderSearchBar = () => {
     const currentType = searchParams.get("type");
     if (currentType) params.set("type", currentType);
 
-    // Ở trang search thì replace (tránh flicker history)
-    // Ở trang khác thì push
     if (isSearchPage) router.replace(`/search?${params.toString()}`);
     else router.push(`/search?${params.toString()}`);
   }, [debounced, router, isSearchPage, searchParams]);

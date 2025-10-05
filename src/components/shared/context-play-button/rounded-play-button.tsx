@@ -1,20 +1,19 @@
 "use client";
 
-import { Button } from "../ui/button";
-import { PauseIcon, PlayIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
-import { cn } from "@/lib/utils";
 import { usePlayContext } from "@/hooks/use-play-context";
+import { cn } from "@/lib/utils";
+import { PauseIcon, PlayIcon } from "lucide-react";
 
-type ContextPlayButtonProps = {
+type RoundedPlayButtonProps = {
   context: StartPlaybackInput;
   className?: string;
 };
-
-export const ContextPlayButton = ({
+export const RoundedPlayButton = ({
   context,
   className,
-}: ContextPlayButtonProps) => {
+}: RoundedPlayButtonProps) => {
   const { handlePlay, isThisContext, isPlaying } = usePlayContext(context);
 
   return (

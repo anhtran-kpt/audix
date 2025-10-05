@@ -13,7 +13,6 @@ import { FollowButton } from "./follow-button";
 import { buildCreditsByPerson } from "@/utils/credits-by-person";
 import { ScrollArea } from "../ui/scroll-area";
 import CreditDialog from "./credits-dialog";
-import { CldImage } from "next-cloudinary";
 import { cn } from "@/lib/utils";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { FollowersBadge } from "./follow-badge";

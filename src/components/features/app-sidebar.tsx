@@ -102,6 +102,7 @@ export function AppSidebar() {
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="playlists">Playlists</TabsTrigger>
                 <TabsTrigger value="artists">Artists</TabsTrigger>
+                <TabsTrigger value="albums">Albums</TabsTrigger>
               </TabsList>
             </Tabs>
           </>

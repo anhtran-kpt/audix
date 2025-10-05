@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { GridWrapper } from "./grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import { AppImage } from "./app-image";
-import { ContextPlayButton } from "./context-play-button";
 import { ArtistItem } from "@/features/artist/contracts/artist-dto";
+import { RoundedPlayButton } from "./context-play-button/rounded-play-button";
 
 type ArtistGridProps = {
   artists: ArtistItem[];
@@ -31,7 +31,7 @@ export default function ArtistGrid({ artists }: ArtistGridProps) {
               containerClassName="rounded-full"
               sizes="20vw"
             />
-            <ContextPlayButton
+            <RoundedPlayButton
               context={{ contextType: "ARTIST", contextId: artist.id }}
               className="absolute opacity-0 bottom-2 right-2 translate-y-2 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
             />

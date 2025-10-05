@@ -7,9 +7,9 @@ import tinycolor from "tinycolor2";
 import { IconButton } from "@/components/ui/icon-button";
 import { FollowButton } from "@/components/features/follow-button";
 import { FollowersBadge } from "@/components/features/follow-badge";
-import { ContextPlayButton } from "@/components/shared/context-play-button";
 import { ArtistDetailPage } from "@/features/artist/data-access/artist-repo";
 import { AppImage } from "@/components/shared/app-image";
+import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 
 type BannerSectionProps = {
   imageId: ArtistDetailPage["artist"]["imageId"];
@@ -68,7 +68,7 @@ export const BannerSection = ({
         </div>
       </div>
       <div className="flex items-center gap-6 px-12">
-        <ContextPlayButton
+        <RoundedPlayButton
           context={{
             contextType: "ARTIST",
             contextId: artistId,

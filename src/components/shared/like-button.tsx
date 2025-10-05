@@ -13,7 +13,7 @@ export const LikeButton = ({ albumId }: LikeButtonProps) => {
   const queryClient = useQueryClient();
 
   const likedAlbums =
-    queryClient.getQueryData<string[]>(meKeys.libraryAlbums()) ?? [];
+    queryClient.getQueryData<string[]>(meKeys.likedAlbums()) ?? [];
   const isLiked = likedAlbums.includes(albumId);
 
   return (

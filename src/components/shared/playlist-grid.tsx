@@ -6,8 +6,8 @@ import Dot from "../ui/dot";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { FallbackCoverImage } from "../features/fallback-cover-image";
 import { AppImage } from "./app-image";
-import { ContextPlayButton } from "./context-play-button";
 import { useRouter } from "next/navigation";
+import { RoundedPlayButton } from "./context-play-button/rounded-play-button";
 
 type PlaylistGridProps = {
   playlists: PlaylistItem[];
@@ -34,7 +34,7 @@ export default function PlaylistGrid({ playlists }: PlaylistGridProps) {
                 className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
                 sizes="20vw"
               />
-              <ContextPlayButton
+              <RoundedPlayButton
                 context={{ contextType: "PLAYLIST", contextId: playlist.id }}
                 className="absolute opacity-0 bottom-2 right-2 translate-y-2 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
               />

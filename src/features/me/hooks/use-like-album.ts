@@ -11,13 +11,13 @@ export function useLikeAlbum(albumId: string) {
   const likeMutation = useMutation({
     mutationFn: () => putApi(meEndpoints.toggleLikeAlbum(albumId), {}),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: meKeys.libraryAlbums() });
+      await queryClient.cancelQueries({ queryKey: meKeys.likedAlbums() });
 
       const previousData = queryClient.getQueryData<string[]>(
-        meKeys.libraryAlbums()
+        meKeys.likedAlbums()
       );
 
-      queryClient.setQueryData<string[]>(meKeys.libraryAlbums(), (old) => {
+      queryClient.setQueryData<string[]>(meKeys.likedAlbums(), (old) => {
         if (!old) return [albumId];
         if (old.includes(albumId)) return old;
         return [...old, albumId];
@@ -27,24 +27,24 @@ export function useLikeAlbum(albumId: string) {
     },
     onError: (_err, _vars, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(meKeys.libraryAlbums(), context.previousData);
+        queryClient.setQueryData(meKeys.likedAlbums(), context.previousData);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: meKeys.libraryAlbums() });
+      queryClient.invalidateQueries({ queryKey: meKeys.likedAlbums() });
     },
   });
 
   const unlikeMutation = useMutation({
     mutationFn: () => deleteApi(meEndpoints.toggleLikeAlbum(albumId)),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: meKeys.libraryAlbums() });
+      await queryClient.cancelQueries({ queryKey: meKeys.likedAlbums() });
 
       const previousData = queryClient.getQueryData<string[]>(
-        meKeys.libraryAlbums()
+        meKeys.likedAlbums()
       );
 
-      queryClient.setQueryData<string[]>(meKeys.libraryAlbums(), (old) => {
+      queryClient.setQueryData<string[]>(meKeys.likedAlbums(), (old) => {
         if (!old) return [];
         return old.filter((id) => id !== albumId);
       });
@@ -53,11 +53,11 @@ export function useLikeAlbum(albumId: string) {
     },
     onError: (_err, _vars, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(meKeys.libraryAlbums(), context.previousData);
+        queryClient.setQueryData(meKeys.likedAlbums(), context.previousData);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: meKeys.libraryAlbums() });
+      queryClient.invalidateQueries({ queryKey: meKeys.likedAlbums() });
     },
   });
 

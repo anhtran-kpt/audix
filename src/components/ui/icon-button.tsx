@@ -35,7 +35,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
       className,
       disabled
         ? "opacity-50 cursor-not-allowed pointer-events-none"
-        : "hover:text-foreground hover:scale-105 cursor-pointer"
+        : "hover:text-foreground cursor-pointer"
     );
 
     const btn = (
