@@ -3,6 +3,7 @@ import db from "@/lib/db";
 import { AwaitedReturnType } from "@/utils/type";
 import { trackItemSelect } from "@/features/track/data-access/track-select";
 import { artistItemSelect } from "./artist-select";
+import { AppError } from "@/lib/errors";
 
 export const getFollowStatus = async (userId: string, artistId: string) => {
   const [artist, link] = await Promise.all([
@@ -153,6 +154,27 @@ export const getArtistDetailPage = async (artistId: string) => {
     suggestions,
   };
 };
+
+export const getArtistBanner = async (artistId: string) => {
+  const artist = await db.artist.findUnique({
+    where: {
+      id: artistId,
+    },
+    select: {
+      name: true,
+      imageId: true,
+      isVerified: true,
+    },
+  });
+
+  if (!artist) {
+    throw new AppError("NOT_FOUND", "Artist not found");
+  }
+
+  return artist;
+};
+
+export type ArtistBannerReturn = AwaitedReturnType<typeof getArtistBanner>;
 
 export type ArtistDetailPage = AwaitedReturnType<typeof getArtistDetailPage>;
 

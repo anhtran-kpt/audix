@@ -97,15 +97,16 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
                         autoFocus={true}
                         className="h-9"
                       />
-
-                      <IconButton
-                        icon={PlusIcon}
-                        aria-label="New playlist"
-                        tooltipContent="New playlist"
-                        iconClassName="size-6"
-                        onClick={openDialog}
-                      />
-
+                      <CommandItem>
+                        <IconButton
+                          icon={PlusIcon}
+                          aria-label="New playlist"
+                          tooltipContent="New playlist"
+                          iconClassName="size-6"
+                          onClick={openDialog}
+                        />
+                        Create new playlist
+                      </CommandItem>
                       <DropdownMenuSeparator />
                       <CommandList>
                         <CommandEmpty>No playlist found.</CommandEmpty>

@@ -7,25 +7,15 @@ import tinycolor from "tinycolor2";
 import { IconButton } from "@/components/ui/icon-button";
 import { FollowButton } from "@/components/features/follow-button";
 import { FollowersBadge } from "@/components/features/follow-badge";
-import { ArtistDetailPage } from "@/features/artist/data-access/artist-repo";
 import { AppImage } from "@/components/shared/app-image";
 import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
+import { useQuery } from "@tanstack/react-query";
+import { artistBannerOptions } from "@/features/artist/api/artist-options";
 
-type BannerSectionProps = {
-  imageId: ArtistDetailPage["artist"]["imageId"];
-  isVerified: ArtistDetailPage["artist"]["isVerified"];
-  name: ArtistDetailPage["artist"]["name"];
-  artistId: string;
-};
-
-export const BannerSection = ({
-  imageId,
-  isVerified,
-  name,
-  artistId,
-}: BannerSectionProps) => {
+export const BannerSection = ({ artistId }: { artistId: string }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
+  const { data: artist } = useQuery({ ...artistBannerOptions(artistId) });
 
   const from = gradient?.from ?? "transparent";
   const via = gradient?.via ?? from;
@@ -46,8 +36,8 @@ export const BannerSection = ({
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
           <AppImage
             priority
-            alt={name}
-            src={imageId}
+            alt={artist.name}
+            src={artist.imageId}
             containerClassName="size-56"
             className="rounded-full"
             sizes="(max-width: 768px) 50vw, 224px"
@@ -56,13 +46,13 @@ export const BannerSection = ({
             }}
           />
           <div className="flex flex-col gap-3">
-            {isVerified && (
+            {artist.isVerified && (
               <div className="flex gap-2 items-center">
                 <BadgeCheckIcon className="stroke-white fill-sky-500 size-8" />
                 Verified Artist
               </div>
             )}
-            <p className="font-extrabold text-6xl mt-1 mb-3">{name}</p>
+            <p className="font-extrabold text-6xl mt-1 mb-3">{artist.name}</p>
             <FollowersBadge artistId={artistId} />
           </div>
         </div>
@@ -79,7 +69,7 @@ export const BannerSection = ({
           size="xl"
           tooltipContent={
             <>
-              Enable shuffle for <strong>{name}</strong>
+              Enable shuffle for <strong>{artist.name}</strong>
             </>
           }
         />
@@ -89,7 +79,7 @@ export const BannerSection = ({
           size="xl"
           tooltipContent={
             <>
-              More options for <strong>{name}</strong>
+              More options for <strong>{artist.name}</strong>
             </>
           }
         />

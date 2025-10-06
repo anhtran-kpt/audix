@@ -1,12 +1,17 @@
 import { DiscographySection } from "./_sections/discography-section";
-import {
-  getArtistDetailPage,
-  getArtistReleases,
-} from "@/features/artist/data-access/artist-repo";
 import { PopularTracksSection } from "./_sections/popular-tracks-section";
 import { AboutSection } from "./_sections/about-section";
 import { SuggestionSection } from "./_sections/suggestion-section";
 import { BannerSection } from "./_sections/banner-section";
+import { createQueryClient } from "@/lib/query-client";
+import {
+  artistAboutOptions,
+  artistBannerOptions,
+  artistDiscographyOptions,
+  artistPopularTracksOptions,
+  artistSuggestionsOptions,
+} from "@/features/artist/api/artist-options";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 export default async function ArtistDetail({
   params,
@@ -15,36 +20,23 @@ export default async function ArtistDetail({
 }) {
   const { artistId } = await params;
 
-  const [
-    { artist, suggestions, popularTracks },
-    { popular, albums, singlesAndEps },
-  ] = await Promise.all([
-    getArtistDetailPage(artistId),
-    getArtistReleases(artistId),
+  const qc = createQueryClient();
+
+  await Promise.all([
+    qc.prefetchQuery({ ...artistBannerOptions(artistId) }),
+    qc.prefetchQuery({ ...artistPopularTracksOptions(artistId) }),
+    qc.prefetchQuery({ ...artistDiscographyOptions(artistId) }),
+    qc.prefetchQuery({ ...artistAboutOptions(artistId) }),
+    qc.prefetchQuery({ ...artistSuggestionsOptions(artistId) }),
   ]);
 
   return (
-    <>
-      <BannerSection
-        imageId={artist.imageId}
-        name={artist.name}
-        isVerified={artist.isVerified}
-        artistId={artistId}
-      />
-      <PopularTracksSection tracks={popularTracks} artistId={artistId} />
-      <DiscographySection
-        artistId={artistId}
-        popular={popular}
-        albums={albums}
-        singlesAndEps={singlesAndEps}
-      />
-      <AboutSection
-        bio={artist.bio}
-        artistId={artistId}
-        name={artist.name}
-        bannerId={artist.bannerId}
-      />
-      <SuggestionSection artists={suggestions} />
-    </>
+    <HydrationBoundary state={dehydrate(qc)}>
+      <BannerSection artistId={artistId} />
+      <PopularTracksSection artistId={artistId} />
+      <DiscographySection artistId={artistId} />
+      <AboutSection artistId={artistId} />
+      <SuggestionSection artistId={artistId} />
+    </HydrationBoundary>
   );
 }

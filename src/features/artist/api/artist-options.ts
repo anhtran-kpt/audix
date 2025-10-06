@@ -3,7 +3,8 @@ import { queryOptions } from "@tanstack/react-query";
 import { artistKeys } from "./artist-keys";
 import { ArtistItem } from "../contracts/artist-dto";
 import { artistEndpoints } from "./artist-endpoints";
-import { FollowStatus } from "../data-access/artist-repo";
+import { ArtistBannerReturn, FollowStatus } from "../data-access/artist-repo";
+import { apiFetch } from "@/lib/http/api-fetch";
 
 export const artistsListOptions = () => {
   return queryOptions({
@@ -16,6 +17,53 @@ export const followStatusOptions = (artistId: string) => {
   return queryOptions({
     queryKey: artistKeys.followStatus(artistId),
     queryFn: () => getApi<FollowStatus>(artistEndpoints.followStatus(artistId)),
+    staleTime: 30_000,
+  });
+};
+
+export const artistBannerOptions = (artistId: string) => {
+  return queryOptions({
+    queryKey: artistKeys.artistBanner(artistId),
+    queryFn: () =>
+      apiFetch<ArtistBannerReturn>(
+        "GET",
+        artistEndpoints.artistBanner(artistId)
+      ),
+    staleTime: 30_000,
+  });
+};
+
+export const artistPopularTracksOptions = (artistId: string) => {
+  return queryOptions({
+    queryKey: artistKeys.artistPopularTracks(artistId),
+    queryFn: () =>
+      apiFetch("GET", artistEndpoints.artistPopularTracks(artistId)),
+    staleTime: 30_000,
+  });
+};
+
+export const artistDiscographyOptions = (artistId: string) => {
+  return queryOptions({
+    queryKey: artistKeys.artistDiscography(artistId),
+    queryFn: () =>
+      getApi<FollowStatus>(artistEndpoints.artistDiscography(artistId)),
+    staleTime: 30_000,
+  });
+};
+
+export const artistAboutOptions = (artistId: string) => {
+  return queryOptions({
+    queryKey: artistKeys.artistAbout(artistId),
+    queryFn: () => getApi<FollowStatus>(artistEndpoints.artistAbout(artistId)),
+    staleTime: 30_000,
+  });
+};
+
+export const artistSuggestionsOptions = (artistId: string) => {
+  return queryOptions({
+    queryKey: artistKeys.artistSuggestions(artistId),
+    queryFn: () =>
+      getApi<FollowStatus>(artistEndpoints.artistSuggestions(artistId)),
     staleTime: 30_000,
   });
 };

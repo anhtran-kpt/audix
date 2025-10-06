@@ -2,7 +2,6 @@ import { SearchResult } from "@/features/search/contracts/search-dto";
 import SectionHeading from "../../../../components/ui/section-heading";
 import Link from "next/link";
 import Dot from "../../../../components/ui/dot";
-import { CldImage } from "next-cloudinary";
 import { BadgeCheckIcon } from "lucide-react";
 import { FollowersBadge } from "../../../../components/features/follow-badge";
 import { AppImage } from "@/components/shared/app-image";
@@ -21,21 +20,21 @@ export default function TopResultSection({
     return (
       <section>
         <SectionHeading title="Top Result" />
-        <div className="relative overflow-hidden bg-muted/60 rounded-lg group p-5 space-y-5">
-          <CldImage
+        <div className="relative overflow-hidden bg-muted/60 rounded-lg group p-5 flex items-end gap-4">
+          <AppImage
             alt={topResult?.item.name}
-            src={topResult?.item.bannerId}
-            fill
-            className="object-cover brightness-80 group-hover:brightness-60 transition-all duration-300"
+            src={topResult?.item.imageId}
+            containerClassName="size-40 rounded-full"
+            sizes="160px"
           />
           <RoundedPlayButton
             context={{
               contextType: "ARTIST",
               contextId: topResult.item.id,
             }}
-            className="absolute bottom-0 right-5 opacity-0 translate-y-2 scale-95 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
+            className="absolute bottom-5 right-5 opacity-0 translate-y-2 scale-95 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
           />
-          <div className="space-y-3 absolute bottom-5 left-5">
+          <div className="space-y-3 bottom-5 left-5">
             {topResult?.item.isVerified && (
               <div className="flex gap-2 items-center">
                 <BadgeCheckIcon className="stroke-white fill-sky-500 size-8" />
