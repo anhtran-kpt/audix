@@ -34,7 +34,7 @@ export default async function ArtistDetail({
     <HydrationBoundary state={dehydrate(qc)}>
       <BannerSection artistId={artistId} />
       <PopularTracksSection artistId={artistId} />
-      <DiscographySection artistId={artistId} />
+      {/* <DiscographySection artistId={artistId} /> */}
       <AboutSection artistId={artistId} />
       <SuggestionSection artistId={artistId} />
     </HydrationBoundary>

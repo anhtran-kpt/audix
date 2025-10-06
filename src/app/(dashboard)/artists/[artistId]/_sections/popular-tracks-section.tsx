@@ -1,13 +1,14 @@
-import { TrackList } from "@/components/features/track-list";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+"use client";
 
-export const PopularTracksSection = ({
-  artistId,
-  tracks,
-}: {
-  artistId: string;
-  tracks: TrackItem[];
-}) => {
+import { TrackList } from "@/components/features/track-list";
+import { artistPopularTracksOptions } from "@/features/artist/api/artist-options";
+import { useQuery } from "@tanstack/react-query";
+
+export const PopularTracksSection = ({ artistId }: { artistId: string }) => {
+  const { data: tracks } = useQuery({
+    ...artistPopularTracksOptions(artistId),
+  });
+
   return (
     <section>
       <div className="flex items-center justify-between mb-6 ">

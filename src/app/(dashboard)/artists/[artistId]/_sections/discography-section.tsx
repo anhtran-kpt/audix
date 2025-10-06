@@ -1,21 +1,16 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
 import AlbumGrid from "@/components/shared/album-grid";
-import { AlbumItem } from "@/features/album/contracts/album-dto";
+import { useQuery } from "@tanstack/react-query";
+import { artistDiscographyOptions } from "@/features/artist/api/artist-options";
 
-type DiscographySectionProps = {
-  artistId: string;
-  popular: AlbumItem[];
-  albums: AlbumItem[];
-  singlesAndEps: AlbumItem[];
-};
+export const DiscographySection = ({ artistId }: { artistId: string }) => {
+  const { data: discography } = useQuery({
+    ...artistDiscographyOptions(artistId),
+  });
 
-export const DiscographySection = ({
-  artistId,
-  popular,
-  albums,
-  singlesAndEps,
-}: DiscographySectionProps) => {
   const availableTabs = [
     { key: "popular", label: "Popular Releases", data: popular },
     { key: "albums", label: "Albums", data: albums },

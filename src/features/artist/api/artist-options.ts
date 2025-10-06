@@ -3,7 +3,14 @@ import { queryOptions } from "@tanstack/react-query";
 import { artistKeys } from "./artist-keys";
 import { ArtistItem } from "../contracts/artist-dto";
 import { artistEndpoints } from "./artist-endpoints";
-import { ArtistBannerReturn, FollowStatus } from "../data-access/artist-repo";
+import {
+  ArtistAboutReturn,
+  ArtistBannerReturn,
+  ArtistDiscographyReturn,
+  ArtistPopularTracksReturn,
+  ArtistSuggestionsReturn,
+  FollowStatus,
+} from "../data-access/artist-repo";
 import { apiFetch } from "@/lib/http/api-fetch";
 
 export const artistsListOptions = () => {
@@ -37,7 +44,10 @@ export const artistPopularTracksOptions = (artistId: string) => {
   return queryOptions({
     queryKey: artistKeys.artistPopularTracks(artistId),
     queryFn: () =>
-      apiFetch("GET", artistEndpoints.artistPopularTracks(artistId)),
+      apiFetch<ArtistPopularTracksReturn>(
+        "GET",
+        artistEndpoints.artistPopularTracks(artistId)
+      ),
     staleTime: 30_000,
   });
 };
@@ -46,7 +56,10 @@ export const artistDiscographyOptions = (artistId: string) => {
   return queryOptions({
     queryKey: artistKeys.artistDiscography(artistId),
     queryFn: () =>
-      getApi<FollowStatus>(artistEndpoints.artistDiscography(artistId)),
+      apiFetch<ArtistDiscographyReturn>(
+        "GET",
+        artistEndpoints.artistDiscography(artistId)
+      ),
     staleTime: 30_000,
   });
 };
@@ -54,7 +67,8 @@ export const artistDiscographyOptions = (artistId: string) => {
 export const artistAboutOptions = (artistId: string) => {
   return queryOptions({
     queryKey: artistKeys.artistAbout(artistId),
-    queryFn: () => getApi<FollowStatus>(artistEndpoints.artistAbout(artistId)),
+    queryFn: () =>
+      apiFetch<ArtistAboutReturn>("GET", artistEndpoints.artistAbout(artistId)),
     staleTime: 30_000,
   });
 };
@@ -63,7 +77,10 @@ export const artistSuggestionsOptions = (artistId: string) => {
   return queryOptions({
     queryKey: artistKeys.artistSuggestions(artistId),
     queryFn: () =>
-      getApi<FollowStatus>(artistEndpoints.artistSuggestions(artistId)),
+      apiFetch<ArtistSuggestionsReturn>(
+        "GET",
+        artistEndpoints.artistSuggestions(artistId)
+      ),
     staleTime: 30_000,
   });
 };

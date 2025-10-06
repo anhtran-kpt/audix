@@ -54,9 +54,10 @@ export async function apiFetch<S extends z.ZodType, B = unknown>(
   }
 
   const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
   const cookieHeader =
     (isGet ? (schemaOrCookie as string) : maybeCookieHeader) ??
-    cookies().toString();
+    cookieStore.toString();
 
   switch (method) {
     case "GET":

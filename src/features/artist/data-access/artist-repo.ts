@@ -176,9 +176,36 @@ export const getArtistBanner = async (artistId: string) => {
 
 export type ArtistBannerReturn = AwaitedReturnType<typeof getArtistBanner>;
 
-export type ArtistDetailPage = AwaitedReturnType<typeof getArtistDetailPage>;
+export const getArtistPopularTracks = async (artistId: string) => {
+  return await db.trackArtist
+    .findMany({
+      where: {
+        artistId,
+      },
+      select: {
+        track: {
+          select: trackItemSelect,
+        },
+      },
+      orderBy: {
+        track: {
+          playCount: "desc",
+        },
+      },
+    })
+    .then((tracks) =>
+      tracks.map((item) => ({
+        ...item.track,
+        artists: item.track.artists.map((a) => a.artist),
+      }))
+    );
+};
 
-export const getArtistReleases = async (artistId: string, take = 12) => {
+export type ArtistPopularTracksReturn = AwaitedReturnType<
+  typeof getArtistPopularTracks
+>;
+
+export const getArtistDiscography = async (artistId: string) => {
   return db.$transaction(async (tx) => {
     const [popular, albums, singlesAndEps] = await Promise.all([
       tx.album.findMany({
@@ -188,7 +215,6 @@ export const getArtistReleases = async (artistId: string, take = 12) => {
           { releaseDate: "desc" },
           { id: "desc" },
         ],
-        take,
         select: {
           id: true,
           title: true,
@@ -205,7 +231,6 @@ export const getArtistReleases = async (artistId: string, take = 12) => {
       tx.album.findMany({
         where: { artistId, albumType: "ALBUM" },
         orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
-        take,
         select: {
           id: true,
           title: true,
@@ -221,7 +246,6 @@ export const getArtistReleases = async (artistId: string, take = 12) => {
       tx.album.findMany({
         where: { artistId, albumType: { in: ["SINGLE", "EP"] } },
         orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
-        take,
         select: {
           id: true,
           title: true,
@@ -239,4 +263,89 @@ export const getArtistReleases = async (artistId: string, take = 12) => {
   });
 };
 
-export type ArtistReleases = AwaitedReturnType<typeof getArtistReleases>;
+export type ArtistDiscographyReturn = AwaitedReturnType<
+  typeof getArtistDiscography
+>;
+
+export const getArtistAbout = async (artistId: string) => {
+  const artist = await db.artist.findUnique({
+    where: {
+      id: artistId,
+    },
+    select: {
+      name: true,
+      bannerId: true,
+      bio: true,
+    },
+  });
+
+  if (!artist) {
+    throw new AppError("NOT_FOUND", "Artist not found");
+  }
+
+  return artist;
+};
+
+export type ArtistAboutReturn = AwaitedReturnType<typeof getArtistAbout>;
+
+export const getArtistSuggestions = async (artistId: string) => {
+  return db.$transaction(async (tx) => {
+    const [popular, albums, singlesAndEps] = await Promise.all([
+      tx.album.findMany({
+        where: { artistId },
+        orderBy: [
+          { likedBy: { _count: "desc" } },
+          { releaseDate: "desc" },
+          { id: "desc" },
+        ],
+        select: {
+          id: true,
+          title: true,
+          imageId: true,
+          albumType: true,
+          releaseDate: true,
+          artist: {
+            select: artistItemSelect,
+          },
+          _count: { select: { likedBy: true } },
+        },
+      }),
+
+      tx.album.findMany({
+        where: { artistId, albumType: "ALBUM" },
+        orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
+        select: {
+          id: true,
+          title: true,
+          imageId: true,
+          albumType: true,
+          releaseDate: true,
+          artist: {
+            select: artistItemSelect,
+          },
+        },
+      }),
+
+      tx.album.findMany({
+        where: { artistId, albumType: { in: ["SINGLE", "EP"] } },
+        orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
+        select: {
+          id: true,
+          title: true,
+          imageId: true,
+          albumType: true,
+          releaseDate: true,
+          artist: {
+            select: artistItemSelect,
+          },
+        },
+      }),
+    ]);
+
+    return { popular, albums, singlesAndEps };
+  });
+};
+
+export type ArtistSuggestionsReturn = AwaitedReturnType<
+  typeof getArtistSuggestions
+>;
