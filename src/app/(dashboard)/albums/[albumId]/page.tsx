@@ -1,10 +1,9 @@
-import {
-  getAlbumDetail,
-  getSuggestionAlbums,
-} from "@/features/album/data-access/album-repo";
 import { BannerSection } from "./_sections/banner-section";
 import { TracksSection } from "./_sections/tracks-section";
 import { SuggestionSection } from "./_sections/suggestion-section";
+import { createQueryClient } from "@/lib/query-client";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { albumQueryOptions } from "@/features/album/api/album-query-options";
 
 export default async function AlbumDetail({
   params,
@@ -13,26 +12,19 @@ export default async function AlbumDetail({
 }) {
   const { albumId } = await params;
 
-  const album = await getAlbumDetail(albumId);
-  const suggestions = await getSuggestionAlbums({
-    albumId,
-    artistId: album.artistId,
-  });
+  const qc = createQueryClient();
+
+  await Promise.all([
+    qc.prefetchQuery({ ...albumQueryOptions.banner(albumId) }),
+    qc.prefetchQuery({ ...albumQueryOptions.tracks(albumId) }),
+    qc.prefetchQuery({ ...albumQueryOptions.suggestions(albumId) }),
+  ]);
 
   return (
-    <>
-      <BannerSection
-        imageId={album.imageId}
-        title={album.title}
-        albumType={album.albumType}
-        releaseDate={album.releaseDate}
-        artist={album.artist}
-        totalTracks={album.totalTracks}
-        duration={album.duration}
-        albumId={album.id}
-      />
-      <TracksSection tracks={album.tracks} albumId={albumId} />
-      <SuggestionSection artist={album.artist} albums={suggestions} />
-    </>
+    <HydrationBoundary state={dehydrate(qc)}>
+      <BannerSection albumId={albumId} />
+      <TracksSection albumId={albumId} />
+      <SuggestionSection albumId={albumId} />
+    </HydrationBoundary>
   );
 }

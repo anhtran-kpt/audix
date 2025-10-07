@@ -1,12 +1,22 @@
+"use client";
+
 import { TrackList } from "@/components/features/track-list";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { albumQueryOptions } from "@/features/album/api/album-query-options";
+import { useQuery } from "@tanstack/react-query";
 
-type TracksSectionProps = {
-  tracks: TrackItem[];
-  albumId: string;
-};
+export const TracksSection = ({ albumId }: { albumId: string }) => {
+  const { data: tracks, status } = useQuery({
+    ...albumQueryOptions.tracks(albumId),
+  });
 
-export const TracksSection = ({ tracks, albumId }: TracksSectionProps) => {
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
+
   return (
     <section>
       <TrackList contextId={albumId} tracks={tracks} contextType="ALBUM" />

@@ -11,34 +11,26 @@ import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
 import { IconButton } from "@/components/ui/icon-button";
 import tinycolor from "tinycolor2";
-import { AlbumDetail } from "@/features/album/data-access/album-repo";
 import { AppImage } from "@/components/shared/app-image";
 import { LikeButton } from "@/components/shared/like-button";
 import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
+import { useQuery } from "@tanstack/react-query";
+import { albumQueryOptions } from "@/features/album/api/album-query-options";
 
-type BannerSectionProps = {
-  imageId: AlbumDetail["imageId"];
-  releaseDate: AlbumDetail["releaseDate"];
-  albumType: AlbumDetail["albumType"];
-  artist: AlbumDetail["artist"];
-  title: AlbumDetail["title"];
-  totalTracks: AlbumDetail["totalTracks"];
-  duration: AlbumDetail["duration"];
-  albumId: string;
-};
-
-export const BannerSection = ({
-  imageId,
-  releaseDate,
-  albumType,
-  artist,
-  title,
-  totalTracks,
-  duration,
-  albumId,
-}: BannerSectionProps) => {
+export const BannerSection = ({ albumId }: { albumId: string }) => {
+  const { data: album, status } = useQuery({
+    ...albumQueryOptions.banner(albumId),
+  });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
+
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
 
   const from = gradient?.from ?? "transparent";
   const via = gradient?.via ?? from;
@@ -58,39 +50,39 @@ export const BannerSection = ({
       <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
           <AppImage
-            alt={title}
-            src={imageId}
+            alt={album.title}
+            src={album.imageId}
             containerClassName="size-56"
             sizes="(max-width: 768px) 50vw, 224px"
             onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
             priority
           />
           <div className="flex flex-col gap-3">
-            <p className="font-medium">{albumTypeMap[albumType]}</p>
-            <p className="font-bold text-6xl mt-1 mb-3">{title}</p>
+            <p className="font-medium">{albumTypeMap[album.albumType]}</p>
+            <p className="font-bold text-6xl mt-1 mb-3">{album.title}</p>
             <div className="inline-flex items-center gap-2">
               <AppImage
-                alt={artist.name}
-                src={artist.imageId}
+                alt={album.artist.name}
+                src={album.artist.imageId}
                 sizes="48px"
                 containerClassName="size-7 rounded-full"
               />
-              <NavLink href={`/artists/${artist.id}`} className="text-sm">
-                {artist.name}
+              <NavLink href={`/artists/${album.artist.id}`} className="text-sm">
+                {album.artist.name}
               </NavLink>
               <Dot />
-              {releaseDate && (
-                <span className="">{formatDate(releaseDate, "PP")}</span>
+              {album.releaseDate && (
+                <span className="">{formatDate(album.releaseDate, "PP")}</span>
               )}
               <div className="flex items-center gap-2">
-                {totalTracks > 0 && (
+                {album.totalTracks > 0 && (
                   <>
                     <Dot />
                     <span>
-                      {`${totalTracks} ${pluralize(
+                      {`${album.totalTracks} ${pluralize(
                         "tracks",
-                        totalTracks
-                      )}, ${prettyMilliseconds(duration * 1000)}`}
+                        album.totalTracks
+                      )}, ${prettyMilliseconds(album.duration * 1000)}`}
                     </span>
                   </>
                 )}
@@ -111,7 +103,7 @@ export const BannerSection = ({
           size="xl"
           tooltipContent={
             <>
-              Enable shuffle for <strong>{title}</strong>
+              Enable shuffle for <strong>{album.title}</strong>
             </>
           }
         />
@@ -122,7 +114,7 @@ export const BannerSection = ({
           size="xl"
           tooltipContent={
             <>
-              More options for <strong>{title}</strong>
+              More options for <strong>{album.title}</strong>
             </>
           }
         />

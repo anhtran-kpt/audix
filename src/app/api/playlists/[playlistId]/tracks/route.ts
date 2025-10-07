@@ -1,13 +1,26 @@
-import { AddTrackToPlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
-import { addTrackToPlaylist } from "@/features/playlist/data-access/playlist-repo";
-import { makePOST } from "@/lib/route-factory";
-import z, { object } from "zod";
+import {
+  AddTrackToPlaylistInputSchema,
+  PlaylistParamsSchema,
+} from "@/features/playlist/contracts/playlist-schema";
+import {
+  addTrackToPlaylist,
+  getPlaylistTracks,
+} from "@/features/playlist/data-access/playlist-repo";
+import { makeGET, makePOST } from "@/lib/route-factory";
 
 export const POST = makePOST({
   auth: "required",
-  params: object({ playlistId: z.cuid2() }),
+  params: PlaylistParamsSchema,
   body: AddTrackToPlaylistInputSchema,
   handler: async ({ body, params }) => {
     return addTrackToPlaylist(params.playlistId, body.trackId);
+  },
+});
+
+export const GET = makeGET({
+  auth: "required",
+  params: PlaylistParamsSchema,
+  handler: async ({ params }) => {
+    return getPlaylistTracks(params.playlistId);
   },
 });

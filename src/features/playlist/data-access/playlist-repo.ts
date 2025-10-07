@@ -8,6 +8,7 @@ import { Prisma } from "@/app/generated/prisma";
 import cloudinary from "@/lib/config/cloudinary";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { AwaitedReturnType } from "@/utils/type";
+import { AppError } from "@/lib/errors";
 
 export const createPlaylist = async (
   userId: string,
@@ -161,25 +162,6 @@ export const removeTrackFromPlaylist = async ({
   });
 };
 
-export const getPlaylistTracks = async (playlistId: string) => {
-  return await db.playlist
-    .findUniqueOrThrow({
-      where: {
-        id: playlistId,
-      },
-      select: {
-        tracks: {
-          select: {
-            track: {
-              select: trackItemSelect,
-            },
-          },
-        },
-      },
-    })
-    .then((data) => data.tracks.map((item) => item.track));
-};
-
 export const getPlaylistDetail = async (playlistId: string) => {
   return await db.playlist
     .findUniqueOrThrow({
@@ -244,6 +226,72 @@ export const getPlaylistDetail = async (playlistId: string) => {
 };
 
 export type PlaylistDetail = AwaitedReturnType<typeof getPlaylistDetail>;
+
+export const getPlaylistBanner = async (playlistId: string) => {
+  const playlist = await db.playlist.findUnique({
+    where: {
+      id: playlistId,
+    },
+    select: {
+      id: true,
+      title: true,
+      imageId: true,
+      totalTracks: true,
+      duration: true,
+      isPublic: true,
+      description: true,
+      user: {
+        select: {
+          id: true,
+          name: true,
+          image: true,
+        },
+      },
+    },
+  });
+
+  if (!playlist) {
+    throw new AppError("NOT_FOUND", "Playlist not found");
+  }
+
+  return playlist;
+};
+
+export type PlaylistBanner = AwaitedReturnType<typeof getPlaylistBanner>;
+
+export const getPlaylistTracks = async (playlistId: string) => {
+  const playlist = await db.playlist.findUnique({
+    where: {
+      id: playlistId,
+    },
+    select: {
+      tracks: {
+        select: {
+          addedAt: true,
+          track: {
+            select: trackItemSelect,
+          },
+        },
+      },
+    },
+  });
+
+  if (!playlist) {
+    throw new AppError("NOT_FOUND", "Playlist not found");
+  }
+
+  const tracks = playlist.tracks.map((track) => ({
+    ...track.track,
+    addedAt: track.addedAt,
+  }));
+
+  return tracks.map((track) => ({
+    ...track,
+    artists: track.artists.map((a) => a.artist),
+  }));
+};
+
+export type PlaylistTracks = AwaitedReturnType<typeof getPlaylistTracks>;
 
 export const getRecommendedTracks = async (playlistId: string, take = 5) => {
   const playlist = await db.playlist.findUniqueOrThrow({
@@ -340,6 +388,7 @@ export const getRecommendedTracks = async (playlistId: string, take = 5) => {
   return tracks.map((track) => ({
     ...track,
     addedAt: new Date(),
+    artists: track.artists.map((a) => a.artist),
   }));
 };
 

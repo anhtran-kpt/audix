@@ -1,7 +1,9 @@
-import { getPlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 import { BannerSection } from "./_sections/banner-section";
 import { TracksSection } from "./_sections/tracks-section";
 import { BrowseTrackSection } from "./_sections/browse-track-section";
+import { createQueryClient } from "@/lib/query-client";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
 
 export default async function PlaylistDetailPage({
   params,
@@ -10,13 +12,18 @@ export default async function PlaylistDetailPage({
 }) {
   const { playlistId } = await params;
 
-  const playlist = await getPlaylistDetail(playlistId);
+  const qc = createQueryClient();
+
+  await Promise.all([
+    qc.prefetchQuery({ ...playlistQueryOptions.banner(playlistId) }),
+    qc.prefetchQuery({ ...playlistQueryOptions.tracks(playlistId) }),
+  ]);
 
   return (
-    <>
-      <BannerSection playlistId={playlistId} initialData={playlist} />
-      <TracksSection playlistId={playlistId} initialData={playlist} />
+    <HydrationBoundary state={dehydrate(qc)}>
+      <BannerSection playlistId={playlistId} />
+      <TracksSection playlistId={playlistId} />
       <BrowseTrackSection playlistId={playlistId} />
-    </>
+    </HydrationBoundary>
   );
 }

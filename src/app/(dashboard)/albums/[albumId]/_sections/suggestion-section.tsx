@@ -1,28 +1,34 @@
+"use client";
+
 import AlbumGrid from "@/components/shared/album-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { AlbumBase } from "@/features/album/contracts/album-dto";
-import { ArtistBase } from "@/features/artist/contracts/artist-schema";
+import { albumQueryOptions } from "@/features/album/api/album-query-options";
+import { useQuery } from "@tanstack/react-query";
 
-interface SuggestionSectionProps {
-  artist: Pick<ArtistBase, "id" | "name">;
-  albums: Pick<
-    AlbumBase,
-    "id" | "title" | "albumType" | "releaseDate" | "imageId"
-  >[];
-}
+export const SuggestionSection = ({ albumId }: { albumId: string }) => {
+  const { data, status } = useQuery({
+    ...albumQueryOptions.suggestions(albumId),
+  });
 
-export const SuggestionSection = ({
-  artist,
-  albums,
-}: SuggestionSectionProps) => {
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
+
   return (
     <section>
       <SectionHeading
-        title={`More by ${artist.name}`}
-        hasShowAll
-        href={`/artists/${artist.id}/albums`}
+        title={`More by ${data.artist.name}`}
+        showAllHref={
+          data.pagination.hasMore
+            ? `/artists/${data.artist.id}/albums`
+            : undefined
+        }
       />
-      <AlbumGrid albums={albums} />
+      <AlbumGrid albums={data.items} />
     </section>
   );
 };

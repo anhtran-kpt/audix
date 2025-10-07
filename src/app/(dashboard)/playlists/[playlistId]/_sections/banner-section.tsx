@@ -23,20 +23,14 @@ import tinycolor from "tinycolor2";
 import { useQuery } from "@tanstack/react-query";
 import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
 import EditPlaylistDetails from "@/components/features/edit-playlist-details";
-import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 import { AppImage } from "@/components/shared/app-image";
-import { playlistDetailOption } from "@/features/playlist/api/playlist-options";
 import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
+import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
 
-type BannerSectionProps = {
-  initialData: PlaylistDetail;
-  playlistId: string;
-};
-
-export const BannerSection = ({
-  initialData,
-  playlistId,
-}: BannerSectionProps) => {
+export const BannerSection = ({ playlistId }: { playlistId: string }) => {
+  const { data: playlist, status } = useQuery({
+    ...playlistQueryOptions.banner(playlistId),
+  });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
 
@@ -46,20 +40,13 @@ export const BannerSection = ({
     .setAlpha(0)
     .toRgbString();
 
-  const { data: playlist } = useQuery({
-    ...playlistDetailOption(playlistId),
-    select: (data) => ({
-      id: data.id,
-      imageId: data.imageId,
-      title: data.title,
-      isPublic: data.isPublic,
-      description: data.description,
-      user: data.user,
-      totalTracks: data.totalTracks,
-      duration: data.duration,
-    }),
-    initialData: initialData,
-  });
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
 
   return (
     <section

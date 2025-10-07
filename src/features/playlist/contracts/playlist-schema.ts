@@ -43,3 +43,7 @@ export const PlaylistItemSchema = PlaylistSchema.pick({
 }).extend({
   user: MiniUserSchema.nullable(),
 });
+
+export const PlaylistParamsSchema = z.object({
+  playlistId: z.cuid2(),
+});

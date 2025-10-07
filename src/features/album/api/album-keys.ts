@@ -1,3 +1,16 @@
+import { PaginationParams } from "@/features/shared/contracts/shared-dto";
+import { stableKey } from "@/utils/stable-keys";
+
 export const albumKeys = {
-  list: () => ["me", "albums"] as const,
+  base: ["albums"] as const,
+  list: (params?: Partial<PaginationParams>) =>
+    [...albumKeys.base, "list", stableKey(params)] as const,
+  detail: (albumId: string) => [...albumKeys.base, albumId] as const,
+
+  banner: (albumId: string) =>
+    [...albumKeys.detail(albumId), "banner"] as const,
+  tracks: (albumId: string) =>
+    [...albumKeys.detail(albumId), "tracks"] as const,
+  suggestions: (albumId: string, params?: Partial<PaginationParams>) =>
+    [...albumKeys.detail(albumId), "suggestions", stableKey(params)] as const,
 } as const;

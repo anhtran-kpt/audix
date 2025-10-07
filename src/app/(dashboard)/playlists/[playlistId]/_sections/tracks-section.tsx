@@ -1,24 +1,21 @@
 "use client";
 
 import { TrackList } from "@/components/features/track-list";
-import { playlistDetailOption } from "@/features/playlist/api/playlist-options";
-import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
+import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
 import { useQuery } from "@tanstack/react-query";
 
-type TracksSectionProps = {
-  initialData: PlaylistDetail;
-  playlistId: string;
-};
-
-export const TracksSection = ({
-  initialData,
-  playlistId,
-}: TracksSectionProps) => {
-  const { data: tracks } = useQuery({
-    ...playlistDetailOption(playlistId),
-    select: (data) => data.tracks,
-    initialData,
+export const TracksSection = ({ playlistId }: { playlistId: string }) => {
+  const { data: tracks, status } = useQuery({
+    ...playlistQueryOptions.tracks(playlistId),
   });
+
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
 
   return (
     <section>

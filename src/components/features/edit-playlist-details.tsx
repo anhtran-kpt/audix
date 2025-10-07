@@ -30,8 +30,8 @@ import {
 } from "../ui/form";
 import { useEffect, useState } from "react";
 import { UpdatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
-import { playlistDetailOption } from "@/features/playlist/api/playlist-options";
 import { AppImage } from "../shared/app-image";
+import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
 
 export default function EditPlaylistDetails({
   playlistId,
@@ -41,7 +41,7 @@ export default function EditPlaylistDetails({
   const [open, setOpen] = useState(false);
 
   const { data: playlist, status } = useQuery({
-    ...playlistDetailOption(playlistId),
+    ...playlistQueryOptions.banner(playlistId),
     select: (data) => ({
       imageId: data.imageId,
       title: data.title,
