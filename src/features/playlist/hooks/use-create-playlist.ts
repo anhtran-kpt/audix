@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postApi } from "@/lib/http/request";
+import { postApi } from "@/lib/http/api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import {

@@ -1,4 +1,4 @@
-import { deleteApi } from "@/lib/http/request";
+import { deleteApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";

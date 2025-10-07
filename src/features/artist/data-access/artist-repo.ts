@@ -4,6 +4,8 @@ import { AwaitedReturnType } from "@/utils/type";
 import { trackItemSelect } from "@/features/track/data-access/track-select";
 import { artistItemSelect } from "./artist-select";
 import { AppError } from "@/lib/errors";
+import { PaginationParams } from "@/features/shared/contracts/shared-dto";
+import { getPaginationMeta } from "@/types/get-pagination-meta";
 
 export const getFollowStatus = async (userId: string, artistId: string) => {
   const [artist, link] = await Promise.all([
@@ -66,95 +68,6 @@ export const unfollowArtist = async (userId: string, artistId: string) => {
   });
 };
 
-export const getArtistDetailPage = async (artistId: string) => {
-  const artist = await db.artist
-    .findUniqueOrThrow({
-      where: {
-        id: artistId,
-      },
-      select: {
-        name: true,
-        isVerified: true,
-        imageId: true,
-        bannerId: true,
-        bio: true,
-        followersCount: true,
-        genres: {
-          select: {
-            genre: {
-              select: {
-                id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    })
-    .then((data) => ({
-      ...data,
-      genres: data.genres.map((data) => data.genre),
-    }));
-
-  const popularTracks = await db.trackArtist
-    .findMany({
-      where: {
-        artistId,
-      },
-      select: {
-        track: {
-          select: trackItemSelect,
-        },
-      },
-      orderBy: {
-        track: {
-          playCount: "desc",
-        },
-      },
-    })
-    .then((tracks) =>
-      tracks.map((item) => ({
-        ...item.track,
-        artists: item.track.artists.map((a) => a.artist),
-      }))
-    );
-
-  const genreIds = artist.genres.map((genre) => genre.id);
-
-  const candidates = await db.artist.findMany({
-    where: {
-      id: { not: artistId },
-      genres: { some: { genreId: { in: genreIds } } },
-    },
-    take: 20,
-    select: {
-      id: true,
-      name: true,
-      imageId: true,
-      genres: { select: { genreId: true } },
-    },
-  });
-
-  const suggestions = candidates
-    .map((a) => ({
-      a,
-      overlap: a.genres.filter((g) => genreIds.includes(g.genreId)).length,
-    }))
-    .sort((x, y) => y.overlap - x.overlap)
-    .slice(0, 5)
-    .map((x) => ({
-      id: x.a.id,
-      imageId: x.a.imageId,
-      name: x.a.name,
-    }));
-
-  return {
-    artist,
-    popularTracks,
-    suggestions,
-  };
-};
-
 export const getArtistBanner = async (artistId: string) => {
   const artist = await db.artist.findUnique({
     where: {
@@ -176,91 +89,127 @@ export const getArtistBanner = async (artistId: string) => {
 
 export type ArtistBannerReturn = AwaitedReturnType<typeof getArtistBanner>;
 
-export const getArtistPopularTracks = async (artistId: string) => {
-  return await db.trackArtist
-    .findMany({
+export const getArtistPopularTracks = async (
+  artistId: string,
+  paginationParams: PaginationParams
+) => {
+  const { limit, offset } = paginationParams;
+
+  const [items, total] = await Promise.all([
+    db.trackArtist
+      .findMany({
+        where: {
+          artistId,
+        },
+        select: {
+          track: {
+            select: trackItemSelect,
+          },
+        },
+        take: limit,
+        skip: offset,
+        orderBy: {
+          track: {
+            playCount: "desc",
+          },
+        },
+      })
+      .then((tracks) =>
+        tracks.map((item) => ({
+          ...item.track,
+          artists: item.track.artists.map((a) => a.artist),
+        }))
+      ),
+
+    db.trackArtist.count({
       where: {
         artistId,
       },
-      select: {
-        track: {
-          select: trackItemSelect,
-        },
-      },
-      orderBy: {
-        track: {
-          playCount: "desc",
-        },
-      },
-    })
-    .then((tracks) =>
-      tracks.map((item) => ({
-        ...item.track,
-        artists: item.track.artists.map((a) => a.artist),
-      }))
-    );
+    }),
+  ]);
+
+  return {
+    items,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
 };
 
 export type ArtistPopularTracksReturn = AwaitedReturnType<
   typeof getArtistPopularTracks
 >;
 
-export const getArtistDiscography = async (artistId: string) => {
-  return db.$transaction(async (tx) => {
-    const [popular, albums, singlesAndEps] = await Promise.all([
-      tx.album.findMany({
-        where: { artistId },
-        orderBy: [
-          { likedBy: { _count: "desc" } },
-          { releaseDate: "desc" },
-          { id: "desc" },
-        ],
-        select: {
-          id: true,
-          title: true,
-          imageId: true,
-          albumType: true,
-          releaseDate: true,
-          artist: {
-            select: artistItemSelect,
-          },
-          _count: { select: { likedBy: true } },
-        },
-      }),
+export const getArtistDiscography = async (
+  artistId: string,
+  paginationParams: PaginationParams
+) => {
+  const { limit, offset } = paginationParams;
 
-      tx.album.findMany({
-        where: { artistId, albumType: "ALBUM" },
-        orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
-        select: {
-          id: true,
-          title: true,
-          imageId: true,
-          albumType: true,
-          releaseDate: true,
-          artist: {
-            select: artistItemSelect,
+  const [items, total] = await Promise.all([
+    db.$transaction(async (tx) => {
+      const [popular, albums, singlesAndEps] = await Promise.all([
+        tx.album.findMany({
+          where: { artistId },
+          orderBy: [
+            { likedBy: { _count: "desc" } },
+            { releaseDate: "desc" },
+            { id: "desc" },
+          ],
+          take: limit,
+          select: {
+            id: true,
+            title: true,
+            imageId: true,
+            albumType: true,
+            releaseDate: true,
+            artist: {
+              select: artistItemSelect,
+            },
+            _count: { select: { likedBy: true } },
           },
-        },
-      }),
+        }),
 
-      tx.album.findMany({
-        where: { artistId, albumType: { in: ["SINGLE", "EP"] } },
-        orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
-        select: {
-          id: true,
-          title: true,
-          imageId: true,
-          albumType: true,
-          releaseDate: true,
-          artist: {
-            select: artistItemSelect,
+        tx.album.findMany({
+          where: { artistId, albumType: "ALBUM" },
+          orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
+          take: limit,
+          select: {
+            id: true,
+            title: true,
+            imageId: true,
+            albumType: true,
+            releaseDate: true,
+            artist: {
+              select: artistItemSelect,
+            },
           },
-        },
-      }),
-    ]);
+        }),
 
-    return { popular, albums, singlesAndEps };
-  });
+        tx.album.findMany({
+          where: { artistId, albumType: { in: ["SINGLE", "EP"] } },
+          take: limit,
+          orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
+          select: {
+            id: true,
+            title: true,
+            imageId: true,
+            albumType: true,
+            releaseDate: true,
+            artist: {
+              select: artistItemSelect,
+            },
+          },
+        }),
+      ]);
+
+      return { popular, albums, singlesAndEps };
+    }),
+
+    db.album.count({
+      where: { artistId },
+    }),
+  ]);
+
+  return { items, pagination: getPaginationMeta({ limit, offset, total }) };
 };
 
 export type ArtistDiscographyReturn = AwaitedReturnType<
@@ -288,62 +237,73 @@ export const getArtistAbout = async (artistId: string) => {
 
 export type ArtistAboutReturn = AwaitedReturnType<typeof getArtistAbout>;
 
-export const getArtistSuggestions = async (artistId: string) => {
-  return db.$transaction(async (tx) => {
-    const [popular, albums, singlesAndEps] = await Promise.all([
-      tx.album.findMany({
-        where: { artistId },
-        orderBy: [
-          { likedBy: { _count: "desc" } },
-          { releaseDate: "desc" },
-          { id: "desc" },
-        ],
-        select: {
-          id: true,
-          title: true,
-          imageId: true,
-          albumType: true,
-          releaseDate: true,
-          artist: {
-            select: artistItemSelect,
-          },
-          _count: { select: { likedBy: true } },
-        },
-      }),
+export const getArtistSuggestions = async (
+  artistId: string,
+  paginationParams: PaginationParams
+) => {
+  const { limit, offset } = paginationParams;
 
-      tx.album.findMany({
-        where: { artistId, albumType: "ALBUM" },
-        orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
+  const artist = await db.artist.findUnique({
+    where: {
+      id: artistId,
+    },
+    select: {
+      genres: {
         select: {
-          id: true,
-          title: true,
-          imageId: true,
-          albumType: true,
-          releaseDate: true,
-          artist: {
-            select: artistItemSelect,
+          genre: {
+            select: {
+              id: true,
+              name: true,
+            },
           },
         },
-      }),
-
-      tx.album.findMany({
-        where: { artistId, albumType: { in: ["SINGLE", "EP"] } },
-        orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
-        select: {
-          id: true,
-          title: true,
-          imageId: true,
-          albumType: true,
-          releaseDate: true,
-          artist: {
-            select: artistItemSelect,
-          },
-        },
-      }),
-    ]);
-
-    return { popular, albums, singlesAndEps };
+      },
+    },
   });
+
+  if (!artist) {
+    throw new AppError("NOT_FOUND", "Artist not found");
+  }
+
+  const genreIds = artist.genres.map(({ genre }) => genre.id);
+
+  const [candidates, total] = await Promise.all([
+    db.artist.findMany({
+      where: {
+        id: { not: artistId },
+        genres: { some: { genreId: { in: genreIds } } },
+      },
+      take: 20,
+      select: {
+        id: true,
+        name: true,
+        imageId: true,
+        genres: { select: { genreId: true } },
+      },
+    }),
+
+    db.artist.count({
+      where: {
+        id: { not: artistId },
+        genres: { some: { genreId: { in: genreIds } } },
+      },
+    }),
+  ]);
+
+  const items = candidates
+    .map((a) => ({
+      a,
+      overlap: a.genres.filter((g) => genreIds.includes(g.genreId)).length,
+    }))
+    .sort((x, y) => y.overlap - x.overlap)
+    .slice(0, limit)
+    .map((x) => ({
+      id: x.a.id,
+      imageId: x.a.imageId,
+      name: x.a.name,
+    }));
+
+  return { items, pagination: getPaginationMeta({ limit, offset, total }) };
 };
 
 export type ArtistSuggestionsReturn = AwaitedReturnType<

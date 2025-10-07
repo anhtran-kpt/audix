@@ -1,6 +1,6 @@
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
-import { deleteApi } from "@/lib/http/request";
+import { deleteApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";

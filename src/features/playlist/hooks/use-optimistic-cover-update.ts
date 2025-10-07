@@ -1,7 +1,7 @@
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
-import { postApi } from "@/lib/http/request";
+import { postApi } from "@/lib/http/api";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 

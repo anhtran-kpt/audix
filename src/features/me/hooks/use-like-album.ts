@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteApi, putApi } from "@/lib/http/request";
+import { deleteApi, putApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { meEndpoints } from "../api/me-endpoints";
 import { meKeys } from "../api/me-keys";

@@ -1,4 +1,3 @@
-import { getApi } from "@/lib/http/request";
 import { queryOptions } from "@tanstack/react-query";
 import { artistKeys } from "./artist-keys";
 import { ArtistItem } from "../contracts/artist-dto";
@@ -11,7 +10,9 @@ import {
   ArtistSuggestionsReturn,
   FollowStatus,
 } from "../data-access/artist-repo";
-import { apiFetch } from "@/lib/http/api-fetch";
+import { PaginationParams } from "@/features/shared/contracts/shared-dto";
+import { getApi } from "@/lib/http/api";
+import { artistFactory } from "../artist-factory";
 
 export const artistsListOptions = () => {
   return queryOptions({
@@ -32,21 +33,21 @@ export const artistBannerOptions = (artistId: string) => {
   return queryOptions({
     queryKey: artistKeys.artistBanner(artistId),
     queryFn: () =>
-      apiFetch<ArtistBannerReturn>(
-        "GET",
-        artistEndpoints.artistBanner(artistId)
-      ),
+      getApi<ArtistBannerReturn>(artistEndpoints.artistBanner(artistId)),
     staleTime: 30_000,
   });
 };
 
-export const artistPopularTracksOptions = (artistId: string) => {
+export const artistPopularTracksOptions = (
+  artistId: string,
+  params?: Partial<PaginationParams>
+) => {
   return queryOptions({
     queryKey: artistKeys.artistPopularTracks(artistId),
     queryFn: () =>
-      apiFetch<ArtistPopularTracksReturn>(
-        "GET",
-        artistEndpoints.artistPopularTracks(artistId)
+      getApi<ArtistPopularTracksReturn>(
+        artistEndpoints.artistPopularTracks(artistId),
+        { params }
       ),
     staleTime: 30_000,
   });
@@ -56,8 +57,7 @@ export const artistDiscographyOptions = (artistId: string) => {
   return queryOptions({
     queryKey: artistKeys.artistDiscography(artistId),
     queryFn: () =>
-      apiFetch<ArtistDiscographyReturn>(
-        "GET",
+      getApi<ArtistDiscographyReturn>(
         artistEndpoints.artistDiscography(artistId)
       ),
     staleTime: 30_000,
@@ -68,7 +68,7 @@ export const artistAboutOptions = (artistId: string) => {
   return queryOptions({
     queryKey: artistKeys.artistAbout(artistId),
     queryFn: () =>
-      apiFetch<ArtistAboutReturn>("GET", artistEndpoints.artistAbout(artistId)),
+      getApi<ArtistAboutReturn>(artistEndpoints.artistAbout(artistId)),
     staleTime: 30_000,
   });
 };
@@ -77,10 +77,65 @@ export const artistSuggestionsOptions = (artistId: string) => {
   return queryOptions({
     queryKey: artistKeys.artistSuggestions(artistId),
     queryFn: () =>
-      apiFetch<ArtistSuggestionsReturn>(
-        "GET",
+      getApi<ArtistSuggestionsReturn>(
         artistEndpoints.artistSuggestions(artistId)
       ),
     staleTime: 30_000,
   });
+};
+
+export const artistQueries = {
+  banner: (artistId: string) =>
+    artistFactory.createQuery<ArtistBannerReturn>({
+      id: artistId,
+      subKey: "banner",
+      subPath: "banner",
+      params: undefined,
+      extraOptions: {
+        enabled: !!artistId,
+      },
+    }),
+
+  popularTracks: (artistId: string, params?: Partial<PaginationParams>) =>
+    artistFactory.createQuery<ArtistPopularTracksReturn>({
+      id: artistId,
+      subKey: "popular-tracks",
+      subPath: "popular-tracks",
+      params: params,
+      extraOptions: {
+        enabled: !!artistId,
+      },
+    }),
+
+  discography: (artistId: string, params?: Partial<PaginationParams>) =>
+    artistFactory.createQuery<ArtistDiscographyReturn>({
+      id: artistId,
+      subKey: "discography",
+      subPath: "discography",
+      params: params,
+      extraOptions: {
+        enabled: !!artistId,
+      },
+    }),
+
+  about: (artistId: string) =>
+    artistFactory.createQuery<ArtistAboutReturn>({
+      id: artistId,
+      subKey: "about",
+      subPath: "about",
+      params: undefined,
+      extraOptions: {
+        enabled: !!artistId,
+        staleTime: Infinity,
+      },
+    }),
+
+  suggestions: (artistId: string, params?: Partial<PaginationParams>) =>
+    artistFactory.createQuery<ArtistSuggestionsReturn>({
+      id: artistId,
+      subKey: "suggestions",
+      subPath: "suggestions",
+      params,
+      extraOptions: { enabled: !!artistId },
+    }),
 };

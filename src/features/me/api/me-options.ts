@@ -1,10 +1,10 @@
 import { queryOptions } from "@tanstack/react-query";
 import { meKeys } from "./me-keys";
-import { getApi } from "@/lib/http/request";
 import { AlbumItem } from "@/features/album/contracts/album-dto";
 import { meEndpoints } from "./me-endpoints";
 import { ArtistItem } from "@/features/artist/contracts/artist-dto";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
+import { getApi } from "@/lib/http/api";
 
 export const likedAlbumsOptions = () => {
   return queryOptions({

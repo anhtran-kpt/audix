@@ -4,17 +4,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
 import AlbumGrid from "@/components/shared/album-grid";
 import { useQuery } from "@tanstack/react-query";
-import { artistDiscographyOptions } from "@/features/artist/api/artist-options";
+import { artistQueries } from "@/features/artist/api/artist-options";
+import { useResponsiveLimit } from "@/hooks/use-reponsive-limit";
 
 export const DiscographySection = ({ artistId }: { artistId: string }) => {
-  const { data: discography } = useQuery({
-    ...artistDiscographyOptions(artistId),
+  const limit = useResponsiveLimit();
+
+  const { data, status } = useQuery({
+    ...artistQueries.discography(artistId, { limit }),
   });
 
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
+
   const availableTabs = [
-    { key: "popular", label: "Popular Releases", data: popular },
-    { key: "albums", label: "Albums", data: albums },
-    { key: "singles", label: "Singles & EPs", data: singlesAndEps },
+    { key: "popular", label: "Popular Releases", data: data.items.popular },
+    { key: "albums", label: "Albums", data: data.items.albums },
+    { key: "singles", label: "Singles & EPs", data: data.items.singlesAndEps },
   ].filter((tab) => tab.data && tab.data.length > 0);
 
   if (availableTabs.length === 0) return null;
@@ -25,8 +36,11 @@ export const DiscographySection = ({ artistId }: { artistId: string }) => {
     <section>
       <SectionHeading
         title="Discography"
-        hasShowAll
-        href={`/artists/${artistId}/discography`}
+        showAllHref={
+          data.pagination.hasMore
+            ? `/artists/${artistId}/discography`
+            : undefined
+        }
       />
       <Tabs defaultValue={defaultTab} className="w-full gap-6">
         <TabsList>

@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { albumKeys } from "./album-keys";
-import { getApi } from "@/lib/http/request";
+import { getApi } from "@/lib/http/api";
 import { AlbumItem } from "../contracts/album-dto";
 import { albumEndpoints } from "./album-endpoints";
 

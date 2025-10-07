@@ -9,7 +9,7 @@ import {
   ShufflePlaybackOutput,
   StartPlaybackInput,
 } from "@/features/playback/contracts/playback-dto";
-import { getApi, patchApi, postApi } from "@/lib/http/request";
+import { getApi, patchApi, postApi } from "@/lib/http/api";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

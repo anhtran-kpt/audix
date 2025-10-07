@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NavLink } from "@/components/ui/nav-link";
 import { TrackItem } from "@/features/track/contracts/track-dto";
-import { getApi } from "@/lib/http/request";
+import { getApi } from "@/lib/http/api";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshCcwIcon, SearchIcon } from "lucide-react";
 

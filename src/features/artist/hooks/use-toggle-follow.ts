@@ -1,9 +1,9 @@
 "use client";
 
-import { deleteApi, postApi } from "@/lib/http/request";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FollowStatus } from "../data-access/artist-repo";
 import { artistKeys } from "../api/artist-keys";
+import { deleteApi, postApi } from "@/lib/http/api";
 
 export function useToggleFollow(artistId: string) {
   const qc = useQueryClient();

@@ -1,7 +1,7 @@
 "use client";
 
 import { TrackItem } from "@/features/track/contracts/track-dto";
-import { getApi, postApi } from "@/lib/http/request";
+import { getApi, postApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { toast } from "sonner";

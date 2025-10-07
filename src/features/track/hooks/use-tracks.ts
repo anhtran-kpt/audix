@@ -1,4 +1,4 @@
-import { getApi, postApi } from "@/lib/http/request";
+import { getApi, postApi } from "@/lib/http/api";
 import { useQuery } from "@tanstack/react-query";
 import { TrackItem } from "../contracts/track-dto";
 

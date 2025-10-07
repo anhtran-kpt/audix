@@ -2,16 +2,32 @@
 
 import ArtistGrid from "@/components/shared/artist-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { artistSuggestionsOptions } from "@/features/artist/api/artist-options";
+import { artistQueries } from "@/features/artist/api/artist-options";
+import { useResponsiveLimit } from "@/hooks/use-reponsive-limit";
 import { useQuery } from "@tanstack/react-query";
 
 export const SuggestionSection = ({ artistId }: { artistId: string }) => {
-  const { data: artists } = useQuery({ ...artistSuggestionsOptions(artistId) });
+  const limit = useResponsiveLimit();
+
+  const { data, status } = useQuery({
+    ...artistQueries.suggestions(artistId, { limit }),
+  });
+
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
 
   return (
     <section>
-      <SectionHeading title="Fans also like" href={`/artists`} hasShowAll />
-      <ArtistGrid artists={artists} />
+      <SectionHeading
+        title="Fans also like"
+        showAllHref={data.pagination.hasMore ? `/artists` : undefined}
+      />
+      <ArtistGrid artists={data.items} />
     </section>
   );
 };

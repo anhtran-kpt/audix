@@ -5,7 +5,7 @@ import {
   UpdatePlaylistOutput,
 } from "@/features/playlist/contracts/playlist-dto";
 import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
-import { patchApi } from "@/lib/http/request";
+import { patchApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 

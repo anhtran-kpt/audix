@@ -1,6 +1,6 @@
 "use client";
 
-import { postApi } from "@/lib/http/request";
+import { postApi } from "@/lib/http/api";
 import { useMutation } from "@tanstack/react-query";
 import { SignUpOutput } from "../../data-access/auth-repo";
 import { SignUpInput } from "../../contracts/auth-dto";

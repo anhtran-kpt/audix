@@ -4,13 +4,7 @@ import { AboutSection } from "./_sections/about-section";
 import { SuggestionSection } from "./_sections/suggestion-section";
 import { BannerSection } from "./_sections/banner-section";
 import { createQueryClient } from "@/lib/query-client";
-import {
-  artistAboutOptions,
-  artistBannerOptions,
-  artistDiscographyOptions,
-  artistPopularTracksOptions,
-  artistSuggestionsOptions,
-} from "@/features/artist/api/artist-options";
+import { artistQueries } from "@/features/artist/api/artist-options";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 export default async function ArtistDetail({
@@ -23,18 +17,20 @@ export default async function ArtistDetail({
   const qc = createQueryClient();
 
   await Promise.all([
-    qc.prefetchQuery({ ...artistBannerOptions(artistId) }),
-    qc.prefetchQuery({ ...artistPopularTracksOptions(artistId) }),
-    qc.prefetchQuery({ ...artistDiscographyOptions(artistId) }),
-    qc.prefetchQuery({ ...artistAboutOptions(artistId) }),
-    qc.prefetchQuery({ ...artistSuggestionsOptions(artistId) }),
+    qc.prefetchQuery({ ...artistQueries.banner(artistId) }),
+    qc.prefetchQuery({
+      ...artistQueries.popularTracks(artistId, { limit: 5 }),
+    }),
+    qc.prefetchQuery({ ...artistQueries.discography(artistId, { limit: 5 }) }),
+    qc.prefetchQuery({ ...artistQueries.about(artistId) }),
+    qc.prefetchQuery({ ...artistQueries.suggestions(artistId, { limit: 5 }) }),
   ]);
 
   return (
     <HydrationBoundary state={dehydrate(qc)}>
       <BannerSection artistId={artistId} />
       <PopularTracksSection artistId={artistId} />
-      {/* <DiscographySection artistId={artistId} /> */}
+      <DiscographySection artistId={artistId} />
       <AboutSection artistId={artistId} />
       <SuggestionSection artistId={artistId} />
     </HydrationBoundary>

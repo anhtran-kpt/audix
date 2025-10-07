@@ -1,4 +1,4 @@
-import { getApi } from "@/lib/http/request";
+import { getApi } from "@/lib/http/api";
 import { queryOptions } from "@tanstack/react-query";
 import { playlistKeys } from "./playlist-keys";
 import { PlaylistDetail } from "../data-access/playlist-repo";

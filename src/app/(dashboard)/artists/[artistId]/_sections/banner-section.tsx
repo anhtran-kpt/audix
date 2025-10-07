@@ -10,12 +10,22 @@ import { FollowersBadge } from "@/components/features/follow-badge";
 import { AppImage } from "@/components/shared/app-image";
 import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 import { useQuery } from "@tanstack/react-query";
-import { artistBannerOptions } from "@/features/artist/api/artist-options";
+import { artistQueries } from "@/features/artist/api/artist-options";
 
 export const BannerSection = ({ artistId }: { artistId: string }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
-  const { data: artist } = useQuery({ ...artistBannerOptions(artistId) });
+  const { data: artist, status } = useQuery({
+    ...artistQueries.banner(artistId),
+  });
+
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
 
   const from = gradient?.from ?? "transparent";
   const via = gradient?.via ?? from;
