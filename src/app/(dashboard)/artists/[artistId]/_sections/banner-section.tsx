@@ -10,13 +10,13 @@ import { FollowersBadge } from "@/components/features/follow-badge";
 import { AppImage } from "@/components/shared/app-image";
 import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 import { useQuery } from "@tanstack/react-query";
-import { artistQueries } from "@/features/artist/api/artist-options";
+import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 
 export const BannerSection = ({ artistId }: { artistId: string }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
   const { data: artist, status } = useQuery({
-    ...artistQueries.banner(artistId),
+    ...artistQueryOptions.banner(artistId),
   });
 
   if (status === "pending") {

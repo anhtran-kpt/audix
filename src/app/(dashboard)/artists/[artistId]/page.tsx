@@ -4,8 +4,8 @@ import { AboutSection } from "./_sections/about-section";
 import { SuggestionSection } from "./_sections/suggestion-section";
 import { BannerSection } from "./_sections/banner-section";
 import { createQueryClient } from "@/lib/query-client";
-import { artistQueries } from "@/features/artist/api/artist-options";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 
 export default async function ArtistDetail({
   params,
@@ -17,13 +17,17 @@ export default async function ArtistDetail({
   const qc = createQueryClient();
 
   await Promise.all([
-    qc.prefetchQuery({ ...artistQueries.banner(artistId) }),
+    qc.prefetchQuery({ ...artistQueryOptions.banner(artistId) }),
     qc.prefetchQuery({
-      ...artistQueries.popularTracks(artistId, { limit: 5 }),
+      ...artistQueryOptions.popularTracks(artistId, { limit: 5 }),
     }),
-    qc.prefetchQuery({ ...artistQueries.discography(artistId, { limit: 5 }) }),
-    qc.prefetchQuery({ ...artistQueries.about(artistId) }),
-    qc.prefetchQuery({ ...artistQueries.suggestions(artistId, { limit: 5 }) }),
+    qc.prefetchQuery({
+      ...artistQueryOptions.discography(artistId, { limit: 5 }),
+    }),
+    qc.prefetchQuery({ ...artistQueryOptions.about(artistId) }),
+    qc.prefetchQuery({
+      ...artistQueryOptions.suggestions(artistId, { limit: 5 }),
+    }),
   ]);
 
   return (

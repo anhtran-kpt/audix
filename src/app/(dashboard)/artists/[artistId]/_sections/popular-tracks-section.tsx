@@ -1,12 +1,12 @@
 "use client";
 
 import { TrackList } from "@/components/features/track-list";
-import { artistQueries } from "@/features/artist/api/artist-options";
+import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 import { useQuery } from "@tanstack/react-query";
 
 export const PopularTracksSection = ({ artistId }: { artistId: string }) => {
   const { data, status } = useQuery({
-    ...artistQueries.popularTracks(artistId, { limit: 5 }),
+    ...artistQueryOptions.popularTracks(artistId, { limit: 5 }),
   });
 
   if (status === "pending") {

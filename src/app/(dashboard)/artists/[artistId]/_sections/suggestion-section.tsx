@@ -2,7 +2,7 @@
 
 import ArtistGrid from "@/components/shared/artist-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { artistQueries } from "@/features/artist/api/artist-options";
+import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 import { useResponsiveLimit } from "@/hooks/use-reponsive-limit";
 import { useQuery } from "@tanstack/react-query";
 
@@ -10,7 +10,7 @@ export const SuggestionSection = ({ artistId }: { artistId: string }) => {
   const limit = useResponsiveLimit();
 
   const { data, status } = useQuery({
-    ...artistQueries.suggestions(artistId, { limit }),
+    ...artistQueryOptions.suggestions(artistId, { limit }),
   });
 
   if (status === "pending") {

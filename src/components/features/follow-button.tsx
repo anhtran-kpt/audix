@@ -4,14 +4,14 @@ import { Button } from "../ui/button";
 import { Loader2Icon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { followStatusOptions } from "@/features/artist/api/artist-options";
 import { useToggleFollow } from "@/features/artist/hooks/use-toggle-follow";
+import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 
 export const FollowButton = ({ artistId }: { artistId: string }) => {
   const { status } = useSession();
 
   const { data: followStatus } = useQuery({
-    ...followStatusOptions(artistId),
+    ...artistQueryOptions.followStatus(artistId),
     enabled: !!artistId && status === "authenticated",
   });
 

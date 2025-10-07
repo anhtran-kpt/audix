@@ -4,14 +4,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
 import AlbumGrid from "@/components/shared/album-grid";
 import { useQuery } from "@tanstack/react-query";
-import { artistQueries } from "@/features/artist/api/artist-options";
 import { useResponsiveLimit } from "@/hooks/use-reponsive-limit";
+import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 
 export const DiscographySection = ({ artistId }: { artistId: string }) => {
   const limit = useResponsiveLimit();
 
   const { data, status } = useQuery({
-    ...artistQueries.discography(artistId, { limit }),
+    ...artistQueryOptions.discography(artistId, { limit }),
   });
 
   if (status === "pending") {
