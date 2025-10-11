@@ -34,8 +34,10 @@ export const TrackList = ({
 
   const gridCols: Record<TrackListProps["contextType"], string> = {
     PLAYLIST: "grid-cols-[3rem_1fr_9rem_9rem_6rem_4rem_3rem]",
-    ALBUM: "grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]",
-    ARTIST: "grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]",
+    ALBUM:
+      "grid-cols-[3rem_1fr_6rem_4rem_3rem] md:grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]",
+    ARTIST:
+      "grid-cols-[3rem_1fr_6rem_4rem_3rem] md:grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]",
   };
 
   const gridClass = cn("grid w-full items-center", gridCols[contextType]);
@@ -51,7 +53,7 @@ export const TrackList = ({
         <div className="text-center">#</div>
         <div className="text-left">Title</div>
         {contextType === "PLAYLIST" && <div className="text-left">Album</div>}
-        <div className="text-right">
+        <div className="text-right hidden md:block">
           {contextType === "PLAYLIST" ? "Date added" : "Plays"}
         </div>
         <div className="text-right"></div>
@@ -113,7 +115,7 @@ export const TrackList = ({
                 </div>
               )}
 
-              <div className="text-right">
+              <div className="text-right hidden md:block">
                 {contextType === "PLAYLIST" && track.addedAt
                   ? format(new Date(track.addedAt), "PP")
                   : track.playCount?.toLocaleString() ?? "—"}

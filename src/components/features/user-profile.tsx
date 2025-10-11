@@ -3,12 +3,17 @@
 import { signIn, signOut, useSession } from "next-auth/react";
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconButton } from "../ui/icon-button";
@@ -18,10 +23,12 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import Google from "../ui/google";
+import { useTheme } from "next-themes";
 
 export const UserProfile = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const { setTheme, theme } = useTheme();
 
   if (status === "loading") return <div>Loading...</div>;
 
@@ -87,6 +94,33 @@ export const UserProfile = () => {
           Profile
           <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
         </DropdownMenuItem>
+
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>Themes</DropdownMenuSubTrigger>
+          <DropdownMenuPortal>
+            <DropdownMenuSubContent>
+              <DropdownMenuCheckboxItem
+                checked={theme === "light"}
+                onCheckedChange={() => setTheme("light")}
+              >
+                Light
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={theme === "dark"}
+                onCheckedChange={() => setTheme("dark")}
+              >
+                Dark
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                checked={theme === "system"}
+                onCheckedChange={() => setTheme("system")}
+              >
+                System
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuPortal>
+        </DropdownMenuSub>
+
         <DropdownMenuItem
           onClick={() => signOut({ callbackUrl: "/auth/sign-in" })}
         >

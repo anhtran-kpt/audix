@@ -4,7 +4,6 @@ import { HomeIcon } from "lucide-react";
 import { HeaderSearchBar } from "./search/header-search-bar";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { ModeToggle } from "./mode-toggle";
 import { AppNavigation } from "./app-navigation";
 import { UserProfile } from "./user-profile";
 import Link from "next/link";
@@ -44,7 +43,7 @@ export const Header = () => {
   return (
     <header
       className={cn(
-        "sticky left-0 top-0 z-10 w-full h-(--header-height) flex items-center justify-between gap-6 py-3 px-6 md:px-8 lg:px-10 xl:px-12 group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)",
+        "sticky left-0 top-0 z-10 w-full h-(--header-height) flex items-center justify-between gap-4 lg:gap-6 py-3 px-6 md:px-8 lg:px-10 xl:px-12 group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)",
         "transition-transform duration-300 ease-in-out bg-transparent",
         isAtTop ? "" : "border-b backdrop-blur-md shadow-sm bg-background/90",
         isVisible ? "translate-y-0" : "-translate-y-full pointer-events-none"
@@ -57,10 +56,7 @@ export const Header = () => {
         </Link>
         <HeaderSearchBar />
       </div>
-      <div className="flex gap-4 items-center">
-        <ModeToggle />
-        <UserProfile />
-      </div>
+      <UserProfile />
     </header>
   );
 };

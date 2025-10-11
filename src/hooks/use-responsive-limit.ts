@@ -38,7 +38,5 @@ export const useResponsiveLimit = () => {
     return () => window.removeEventListener("resize", calcLimit);
   }, [open, isMobile, state]);
 
-  console.log(isMobile);
-
   return limit;
 };
