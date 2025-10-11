@@ -8,11 +8,6 @@ export interface AxiosResponseWithUnwrapped<T = unknown>
   unwrapped?: T;
 }
 
-interface BaseRequestOptions {
-  params?: Record<string, any> & Partial<PaginationParams>;
-  cookieHeader?: string;
-}
-
 function createAxiosInstance(cookieHeader?: string): AxiosInstance {
   const isServer = typeof window === "undefined";
 
@@ -75,18 +70,24 @@ export async function getApi<TData = unknown>(
   return (res as AxiosResponseWithUnwrapped).unwrapped ?? res.data;
 }
 
-interface MethodOptions<TSchema extends z.ZodType, TData>
+interface BaseRequestOptions {
+  params?: Record<string, any> & Partial<PaginationParams>;
+  cookieHeader?: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface MutateOptions<S extends z.ZodType, R>
   extends BaseRequestOptions {
-  schema: TSchema;
-  body: TData;
+  schema: S;
+  body: z.input<S>;
   parseBeforeSend?: boolean;
 }
 
-async function mutateApi<TSchema extends z.ZodType, TResponse = unknown>(
+async function mutateApi<S extends z.ZodType, R = unknown>(
   method: "POST" | "PUT" | "PATCH" | "DELETE",
   url: string,
-  options: MethodOptions<TSchema, TResponse>
-): Promise<TResponse> {
+  options: MutateOptions<S, R>
+): Promise<R> {
   const {
     schema,
     body,
@@ -108,22 +109,30 @@ async function mutateApi<TSchema extends z.ZodType, TResponse = unknown>(
   return (res as AxiosResponseWithUnwrapped).unwrapped ?? res.data;
 }
 
-export const postApi = <S extends z.ZodType, R = unknown>(
+export async function postApi<S extends z.ZodType, R = unknown>(
   url: string,
-  options: MethodOptions<S, R>
-) => mutateApi<S, R>("POST", url, options);
+  options: MutateOptions<S, R>
+): Promise<R> {
+  return mutateApi<S, R>("POST", url, options);
+}
 
-export const putApi = <S extends z.ZodType, R = unknown>(
+export async function putApi<S extends z.ZodType, R = unknown>(
   url: string,
-  options: MethodOptions<S, R>
-) => mutateApi<S, R>("PUT", url, options);
+  options: MutateOptions<S, R>
+): Promise<R> {
+  return mutateApi<S, R>("PUT", url, options);
+}
 
-export const patchApi = <S extends z.ZodType, R = unknown>(
+export async function patchApi<S extends z.ZodType, R = unknown>(
   url: string,
-  options: MethodOptions<S, R>
-) => mutateApi<S, R>("PATCH", url, options);
+  options: MutateOptions<S, R>
+): Promise<R> {
+  return mutateApi<S, R>("PATCH", url, options);
+}
 
-export const deleteApi = <S extends z.ZodType, R = unknown>(
+export async function deleteApi<S extends z.ZodType, R = unknown>(
   url: string,
-  options: MethodOptions<S, R>
-) => mutateApi<S, R>("DELETE", url, options);
+  options: MutateOptions<S, R>
+): Promise<R> {
+  return mutateApi<S, R>("DELETE", url, options);
+}

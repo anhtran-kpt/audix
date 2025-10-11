@@ -1,4 +1,9 @@
-import { QueryClient, QueryCache, MutationCache } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryCache,
+  MutationCache,
+  keepPreviousData,
+} from "@tanstack/react-query";
 import { AppError } from "./errors";
 
 export function createQueryClient() {
@@ -52,6 +57,7 @@ export function createQueryClient() {
           }
           return failureCount < 3;
         },
+        placeholderData: keepPreviousData,
       },
       mutations: {
         retry: 0,

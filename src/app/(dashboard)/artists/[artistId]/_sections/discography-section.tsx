@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SectionHeading from "@/components/ui/section-heading";
 import AlbumGrid from "@/components/shared/album-grid";
 import { useQuery } from "@tanstack/react-query";
-import { useResponsiveLimit } from "@/hooks/use-reponsive-limit";
+import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
 import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 
 export const DiscographySection = ({ artistId }: { artistId: string }) => {

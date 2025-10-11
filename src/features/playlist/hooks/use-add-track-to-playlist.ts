@@ -7,6 +7,7 @@ import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { toast } from "sonner";
 import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
+import { AddTrackToPlaylistInputSchema } from "../contracts/playlist-schema";
 
 type RecommendedTrackItem = TrackItem & {
   optimistic?: boolean;
@@ -33,9 +34,13 @@ export function useAddTrackToPlaylist() {
 
   return useMutation({
     mutationFn: ({ playlistId, track }: AddTrackToPlaylist) => {
-      return postApi<TrackItem>(`/playlists/${playlistId}/tracks`, {
-        trackId: track.id,
-      });
+      return postApi<typeof AddTrackToPlaylistInputSchema, TrackItem>(
+        `/playlists/${playlistId}/tracks`,
+        {
+          schema: AddTrackToPlaylistInputSchema,
+          body: { trackId: track.id },
+        }
+      );
     },
 
     onMutate: async ({ playlistId, track }) => {

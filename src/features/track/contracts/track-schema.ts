@@ -17,6 +17,4 @@ export const TrackItemSchema = TrackSchema.pick({
 
 export const MiniTrackItemSchema = TrackSchema.pick({
   id: true,
-})
-
-
+});
