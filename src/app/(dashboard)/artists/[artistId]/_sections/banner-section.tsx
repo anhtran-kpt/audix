@@ -11,10 +11,12 @@ import { AppImage } from "@/components/shared/app-image";
 import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 import { useQuery } from "@tanstack/react-query";
 import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const BannerSection = ({ artistId }: { artistId: string }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
+  const isMobile = useIsMobile();
   const { data: artist, status } = useQuery({
     ...artistQueryOptions.banner(artistId),
   });
@@ -33,9 +35,65 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
     .setAlpha(0)
     .toRgbString();
 
+  if (isMobile) {
+    return (
+      <section className="relative -mx-12 -mt-30 space-y-4 transition-colors w-[calc(100%+6rem)]">
+        <div className="relative h-[calc(108rem/4)]">
+          <AppImage
+            priority
+            alt={artist.name}
+            src={artist.bannerId}
+            containerClassName="rounded-none size-full"
+            className="rounded-none brightness-80"
+            sizes="100vw"
+          />
+          <div className="absolute bottom-4 left-12">
+            <span className="font-extrabold text-4xl sm:text-5xl">
+              {artist.name}
+            </span>
+          </div>
+        </div>
+        <div className="px-12">
+          <FollowersBadge artistId={artistId} />
+        </div>
+        <div className="flex items-center gap-6 px-12 justify-between">
+          <div className="flex items-center gap-6">
+            <FollowButton artistId={artistId} />
+            <IconButton
+              icon={EllipsisIcon}
+              size="xl"
+              tooltipContent={
+                <>
+                  More options for <strong>{artist.name}</strong>
+                </>
+              }
+            />
+          </div>
+          <div className="flex items-center gap-6">
+            <IconButton
+              icon={ShuffleIcon}
+              size="xl"
+              tooltipContent={
+                <>
+                  Enable shuffle for <strong>{artist.name}</strong>
+                </>
+              }
+            />
+            <RoundedPlayButton
+              context={{
+                contextType: "ARTIST",
+                contextId: artistId,
+              }}
+            />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section
-      className="relative -mx-12 -mt-30 space-y-8 transition-colors"
+      className="relative -mx-12 -mt-30 space-y-8 transition-colors w-[calc(100%+12rem)]"
       style={{
         backgroundImage: `linear-gradient(180deg, ${from} 0%, ${via} 50%, ${toT} 100%)`,
         backgroundRepeat: "no-repeat",

@@ -54,7 +54,7 @@ export const PopularTracksSection = ({ artistId }: { artistId: string }) => {
         <div className="flex mt-4">
           <Button
             variant="link"
-            className="text-sm font-medium text-foreground p-0 h-fit"
+            className="text-sm font-medium text-foreground p-0 h-fit underline hover:text-primary"
             onClick={handleToggle}
           >
             {expanded ? "See less" : "See more"}

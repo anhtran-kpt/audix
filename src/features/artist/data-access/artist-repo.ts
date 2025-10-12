@@ -76,6 +76,7 @@ export const getArtistBanner = async (artistId: string) => {
     select: {
       name: true,
       imageId: true,
+      bannerId: true,
       isVerified: true,
     },
   });

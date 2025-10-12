@@ -21,9 +21,10 @@ import {
   PlusIcon,
   PanelLeftCloseIcon,
   PanelRightCloseIcon,
+  ChevronDownIcon,
+  FilterIcon,
 } from "lucide-react";
 import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { SidebarItemWrapper } from "../shared/sidebar-item-wrapper";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { RowPlayButton } from "../shared/row-play-button";
@@ -37,6 +38,14 @@ import {
   libraryPlaylistsOptions,
   likedAlbumsOptions,
 } from "@/features/me/api/me-options";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -63,9 +72,7 @@ export function AppSidebar() {
     }))
   );
 
-  const [filter, setFilter] = useState<
-    "all" | "artists" | "playlists" | "albums"
-  >("all");
+  const [filter, setFilter] = useState("all");
 
   return (
     <Sidebar collapsible="icon" variant="inset" className="group">
@@ -97,14 +104,45 @@ export function AppSidebar() {
                 onClick={openDialog}
               />
             </div>
-            <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
-              <TabsList className="w-full bg-sidebar p-0">
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="playlists">Playlists</TabsTrigger>
-                <TabsTrigger value="artists">Artists</TabsTrigger>
-                <TabsTrigger value="albums">Albums</TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-1 w-full rounded-full justify-between"
+                >
+                  <div className="flex items-center gap-2">
+                    <FilterIcon />
+                    Filter:{" "}
+                    {filter === "all"
+                      ? "All"
+                      : filter === "playlists"
+                      ? "Playlists"
+                      : filter === "artists"
+                      ? "Artists"
+                      : "Albums"}
+                  </div>
+                  <ChevronDownIcon />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent className="w-32">
+                <DropdownMenuRadioGroup
+                  value={filter}
+                  onValueChange={setFilter}
+                >
+                  <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="artists">
+                    Artists
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="playlists">
+                    Playlists
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="albums">
+                    Albums
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </>
         ) : (
           <>

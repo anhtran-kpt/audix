@@ -10,6 +10,7 @@ import ProfilesSection from "@/app/(dashboard)/search/_sections/profiles-section
 import { LoaderCircleIcon } from "lucide-react";
 import { searchOptions } from "@/features/search/api/search-options";
 import { useEffect } from "react";
+import { TrackList } from "../track-list";
 
 type Props = {
   q: string;
@@ -98,7 +99,13 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
     if (data.tracks?.items.length === 0) {
       return <p className="text-muted-foreground">No tracks found.</p>;
     }
-    return <TracksSection data={data.tracks} />;
+    return (
+      <TrackList
+        tracks={data.tracks.items}
+        contextId={q}
+        contextType="PLAYLIST"
+      />
+    );
   }
 
   if (type === "artists") {

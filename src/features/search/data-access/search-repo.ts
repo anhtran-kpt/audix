@@ -53,12 +53,19 @@ export const search = async (query: SearchQuery) => {
     profilesTotal,
   ] = await Promise.all([
     type.includes("tracks")
-      ? await db.track.findMany({
-          where: { title: { contains: q, mode: "insensitive" } },
-          take: limit,
-          select: { ...trackItemSelect, playCount: true },
-          skip: offset,
-        })
+      ? await db.track
+          .findMany({
+            where: { title: { contains: q, mode: "insensitive" } },
+            take: limit,
+            select: { ...trackItemSelect, playCount: true },
+            skip: offset,
+          })
+          .then((data) =>
+            data.map((item) => ({
+              ...item,
+              artists: item.artists.map((a) => a.artist),
+            }))
+          )
       : [],
     type.includes("tracks")
       ? await db.track.count({

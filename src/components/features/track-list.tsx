@@ -33,7 +33,7 @@ export const TrackList = ({
   );
 
   const gridCols: Record<TrackListProps["contextType"], string> = {
-    PLAYLIST: "grid-cols-[3rem_1fr_9rem_9rem_6rem_4rem_3rem]",
+    PLAYLIST: "grid-cols-[3rem_1fr_9rem_12rem_6rem_4rem_3rem]",
     ALBUM:
       "grid-cols-[3rem_1fr_6rem_4rem_3rem] md:grid-cols-[3rem_1fr_9rem_6rem_4rem_3rem]",
     ARTIST:
@@ -52,7 +52,7 @@ export const TrackList = ({
       >
         <div className="text-center">#</div>
         <div className="text-left">Title</div>
-        {contextType === "PLAYLIST" && <div className="text-left">Album</div>}
+        {contextType === "PLAYLIST" && <div className="text-right">Album</div>}
         <div className="text-right hidden md:block">
           {contextType === "PLAYLIST" ? "Date added" : "Plays"}
         </div>
@@ -105,11 +105,8 @@ export const TrackList = ({
               />
 
               {contextType === "PLAYLIST" && (
-                <div>
-                  <NavLink
-                    href={`/albums/${track.album.id}`}
-                    className="text-left"
-                  >
+                <div className="text-right">
+                  <NavLink href={`/albums/${track.album.id}`}>
                     {track.album.title}
                   </NavLink>
                 </div>
