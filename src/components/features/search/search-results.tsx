@@ -24,9 +24,11 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
       type === "all"
         ? ["tracks", "artists", "albums", "playlists", "profiles"]
         : [type],
-      type === "all" ? 5 : 50
+      { limit: 5 }
     ),
   });
+
+  console.log(data);
 
   useEffect(() => {
     if (status === "success" && onDataLoad) {
@@ -34,11 +36,11 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
 
       const availableTabs = ["all"];
 
-      if (data.tracks?.length > 0) availableTabs.push("tracks");
-      if (data.artists?.length > 0) availableTabs.push("artists");
-      if (data.albums?.length > 0) availableTabs.push("albums");
-      if (data.playlists?.length > 0) availableTabs.push("playlists");
-      if (data.profiles?.length > 0) availableTabs.push("profiles");
+      if (data.tracks?.items.length > 0) availableTabs.push("tracks");
+      if (data.artists?.items.length > 0) availableTabs.push("artists");
+      if (data.albums?.items.length > 0) availableTabs.push("albums");
+      if (data.playlists?.items.length > 0) availableTabs.push("playlists");
+      if (data.profiles?.items.length > 0) availableTabs.push("profiles");
 
       onDataLoad(availableTabs);
     }
@@ -62,7 +64,7 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
       data.playlists,
       data.tracks,
       data.profiles,
-    ].every((arr) => arr.length === 0);
+    ].every((arr) => arr.items.length === 0);
 
   if (hasNoResults)
     return <p className="text-muted-foreground">No results found.</p>;
@@ -74,59 +76,57 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
           {data.topResult && (
             <TopResultSection topResult={data.topResult} q={q} />
           )}
-          {data.tracks?.length > 0 && (
-            <TracksSection tracks={data.tracks} q={q} />
+          {data.tracks?.items.length > 0 && (
+            <TracksSection data={data.tracks} />
           )}
         </div>
-        {data.artists?.length > 0 && (
-          <ArtistsSection artists={data.artists} q={q} />
+        {data.artists?.items.length > 0 && (
+          <ArtistsSection data={data.artists} />
         )}
-        {data.albums?.length > 0 && (
-          <AlbumsSection albums={data.albums} q={q} />
+        {data.albums?.items.length > 0 && <AlbumsSection data={data.albums} />}
+        {data.playlists?.items.length > 0 && (
+          <PlaylistsSection data={data.playlists} />
         )}
-        {data.playlists?.length > 0 && (
-          <PlaylistsSection playlists={data.playlists} q={q} />
-        )}
-        {data.profiles?.length > 0 && (
-          <ProfilesSection profiles={data.profiles} q={q} />
+        {data.profiles?.items.length > 0 && (
+          <ProfilesSection data={data.profiles} />
         )}
       </div>
     );
   }
 
   if (type === "tracks") {
-    if (data.tracks?.length === 0) {
+    if (data.tracks?.items.length === 0) {
       return <p className="text-muted-foreground">No tracks found.</p>;
     }
-    return <TracksSection tracks={data.tracks} />;
+    return <TracksSection data={data.tracks} />;
   }
 
   if (type === "artists") {
-    if (data.artists?.length === 0) {
+    if (data.artists?.items.length === 0) {
       return <p className="text-muted-foreground">No artists found.</p>;
     }
-    return <ArtistsSection artists={data.artists} />;
+    return <ArtistsSection data={data.artists} />;
   }
 
   if (type === "albums") {
-    if (data.albums?.length === 0) {
+    if (data.albums?.items.length === 0) {
       return <p className="text-muted-foreground">No albums found.</p>;
     }
-    return <AlbumsSection albums={data.albums} />;
+    return <AlbumsSection data={data.albums} />;
   }
 
   if (type === "playlists") {
-    if (data.playlists?.length === 0) {
+    if (data.playlists?.items.length === 0) {
       return <p className="text-muted-foreground">No playlists found.</p>;
     }
-    return <PlaylistsSection playlists={data.playlists} />;
+    return <PlaylistsSection data={data.playlists} />;
   }
 
   if (type === "profiles") {
-    if (data.profiles?.length === 0) {
+    if (data.profiles?.items.length === 0) {
       return <p className="text-muted-foreground">No profiles found.</p>;
     }
-    return <ProfilesSection profiles={data.profiles} />;
+    return <ProfilesSection data={data.profiles} />;
   }
 
   return null;

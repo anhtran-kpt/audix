@@ -1,22 +1,22 @@
 import { queryOptions } from "@tanstack/react-query";
 import { getApi } from "@/lib/http/api";
-import { SearchResult } from "../contracts/search-dto";
+import { PaginationParams } from "@/features/shared/contracts/shared-dto";
+import { stableKey } from "@/utils/stable-keys";
+import { SearchResults } from "../data-access/search-repo";
 
 export const searchOptions = (
   q: string,
   type: string[] = ["tracks", "artists", "albums", "playlists, profiles"],
-  limit = 5,
-  offset = 0
+  params?: Partial<PaginationParams>
 ) => {
   return queryOptions({
-    queryKey: ["search", q, type],
+    queryKey: ["search", q, type, stableKey(params)],
     queryFn: () =>
-      getApi<SearchResult>(
+      getApi<SearchResults>(
         `/search?q=${encodeURIComponent(q)}&type=${encodeURIComponent(
           type.join(",")
-        )}&limit=${encodeURIComponent(limit)}&offset=${encodeURIComponent(
-          offset
-        )}`
+        )}`,
+        { params }
       ),
     enabled: !!q,
   });

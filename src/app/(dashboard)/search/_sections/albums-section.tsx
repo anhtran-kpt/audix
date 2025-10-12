@@ -1,22 +1,21 @@
-import { SearchResult } from "@/features/search/contracts/search-dto";
 import SectionHeading from "../../../../components/ui/section-heading";
-import SeeAllButton from "../../../../components/features/search/see-all-button";
 import AlbumGrid from "@/components/shared/album-grid";
+import { SearchResults } from "@/features/search/data-access/search-repo";
 
 export default function AlbumsSection({
-  albums,
-  q,
+  data,
 }: {
-  albums: SearchResult["albums"];
-  q?: string;
+  data: SearchResults["albums"];
 }) {
   return (
     <section>
       <SectionHeading
         title="Albums"
-        seeAllBtn={q && <SeeAllButton q={q} targetType="albums" />}
+        showAllHref={
+          data.pagination.hasMore ? `/search?type=albums` : undefined
+        }
       />
-      <AlbumGrid albums={albums} />
+      <AlbumGrid albums={data.items} />
     </section>
   );
 }

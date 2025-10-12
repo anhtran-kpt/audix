@@ -1,23 +1,18 @@
 import SectionHeading from "@/components/ui/section-heading";
-import { SearchResult } from "@/features/search/contracts/search-dto";
-import SeeAllButton from "../../../../components/features/search/see-all-button";
+import { SearchResults } from "@/features/search/data-access/search-repo";
 
 export default function ProfilesSection({
-  profiles,
-  q,
+  data,
 }: {
-  profiles: SearchResult["profiles"];
-  q?: string;
+  data: SearchResults["profiles"];
 }) {
-  if (profiles.length === 0) {
-    return null;
-  }
-
   return (
     <section>
       <SectionHeading
         title="Profiles"
-        seeAllBtn={q && <SeeAllButton q={q} targetType="profiles" />}
+        showAllHref={
+          data.pagination.hasMore ? `/search?type=profiles` : undefined
+        }
       />
     </section>
   );

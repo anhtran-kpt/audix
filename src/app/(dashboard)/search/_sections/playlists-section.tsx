@@ -1,26 +1,21 @@
-import { SearchResult } from "@/features/search/contracts/search-dto";
 import SectionHeading from "../../../../components/ui/section-heading";
-import SeeAllButton from "../../../../components/features/search/see-all-button";
 import PlaylistGrid from "@/components/shared/playlist-grid";
+import { SearchResults } from "@/features/search/data-access/search-repo";
 
 export default function PlaylistsSection({
-  playlists,
-  q,
+  data,
 }: {
-  playlists: SearchResult["playlists"];
-  q?: string;
+  data: SearchResults["playlists"];
 }) {
-  if (playlists.length === 0) {
-    return null;
-  }
-
   return (
     <section>
       <SectionHeading
         title="Playlists"
-        seeAllBtn={q && <SeeAllButton q={q} targetType="playlists" />}
+        showAllHref={
+          data.pagination.hasMore ? `/search?type=playlists` : undefined
+        }
       />
-      <PlaylistGrid playlists={playlists} />
+      <PlaylistGrid playlists={data.items} />
     </section>
   );
 }

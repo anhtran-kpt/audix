@@ -1,22 +1,21 @@
-import { SearchResult } from "@/features/search/contracts/search-dto";
 import SectionHeading from "../../../../components/ui/section-heading";
-import SeeAllButton from "../../../../components/features/search/see-all-button";
 import ArtistGrid from "@/components/shared/artist-grid";
+import { SearchResults } from "@/features/search/data-access/search-repo";
 
 export default function ArtistsSection({
-  artists,
-  q,
+  data,
 }: {
-  artists: SearchResult["artists"];
-  q?: string;
+  data: SearchResults["artists"];
 }) {
   return (
     <section>
       <SectionHeading
         title="Artists"
-        seeAllBtn={q && <SeeAllButton q={q} targetType="artists" />}
+        showAllHref={
+          data.pagination.hasMore ? "/search?type=artists" : undefined
+        }
       />
-      <ArtistGrid artists={artists} />
+      <ArtistGrid artists={data.items} />
     </section>
   );
 }

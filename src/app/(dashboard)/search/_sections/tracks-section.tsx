@@ -1,23 +1,24 @@
-import { SearchResult } from "@/features/search/contracts/search-dto";
 import SectionHeading from "../../../../components/ui/section-heading";
-import SeeAllButton from "../../../../components/features/search/see-all-button";
 import { TrackItemCompact } from "@/components/shared/track-item-compact";
+import { SearchResults } from "@/features/search/data-access/search-repo";
 
 export default function TracksSection({
-  tracks,
+  data,
   q,
 }: {
-  tracks: SearchResult["tracks"];
+  data: SearchResults["tracks"];
   q?: string;
 }) {
   return (
     <section>
       <SectionHeading
         title="Tracks"
-        seeAllBtn={q && <SeeAllButton q={q} targetType="tracks" />}
+        showAllHref={
+          data.pagination.hasMore ? "/search/types=tracks" : undefined
+        }
       />
       <div className="flex flex-col gap-1">
-        {tracks.map((track) => (
+        {data.items.map((track) => (
           <TrackItemCompact
             key={track.id}
             track={{

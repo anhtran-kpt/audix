@@ -13,7 +13,6 @@ type ArtistGridProps = {
 
 export default function ArtistGrid({ artists }: ArtistGridProps) {
   const router = useRouter();
-  console.log(artists);
   return (
     <GridWrapper>
       {artists.map((artist) => (
