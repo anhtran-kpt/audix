@@ -45,10 +45,7 @@ export default function QueueView() {
                 Now playing
               </p>
               <TrackItemCompact
-                track={{
-                  ...currentTrack,
-                  artists: currentTrack.artists.map((item) => item.artist),
-                }}
+                track={currentTrack}
                 context={
                   snapshot
                     ? {
@@ -70,10 +67,7 @@ export default function QueueView() {
                   {queueNext.map((track) => (
                     <TrackItemCompact
                       key={track.id}
-                      track={{
-                        ...track,
-                        artists: track.artists.map((item) => item.artist),
-                      }}
+                      track={track}
                       context={
                         snapshot
                           ? {
@@ -98,10 +92,7 @@ export default function QueueView() {
                   {queueContext.map((track) => (
                     <TrackItemCompact
                       key={track.id}
-                      track={{
-                        ...track,
-                        artists: track.artists.map((item) => item.artist),
-                      }}
+                      track={track}
                       context={
                         snapshot
                           ? {
@@ -126,10 +117,7 @@ export default function QueueView() {
                   {queueLater.map((track) => (
                     <TrackItemCompact
                       key={track.id}
-                      track={{
-                        ...track,
-                        artists: track.artists.map((item) => item.artist),
-                      }}
+                      track={track}
                       context={
                         snapshot
                           ? {
@@ -159,7 +147,7 @@ export default function QueueView() {
             <div className="flex flex-col gap-1">
               {recentTracks.map(({ id, track }) => (
                 <TrackItemCompact
-                  key={track.id}
+                  key={id}
                   track={track}
                   context={{
                     contextType: "HISTORY",

@@ -18,10 +18,17 @@ export const getTrackOrThrow = async (trackId: string) => {
 };
 
 export const getTrackListByIds = async (trackIds: string[]) => {
-  const rows = await db.track.findMany({
-    where: { id: { in: trackIds } },
-    select: trackItemSelect,
-  });
+  const rows = await db.track
+    .findMany({
+      where: { id: { in: trackIds } },
+      select: trackItemSelect,
+    })
+    .then((data) =>
+      data.map((track) => ({
+        ...track,
+        artists: track.artists.map((a) => a.artist),
+      }))
+    );
 
   const byId = new Map(rows.map((t) => [t.id, t]));
 
@@ -56,6 +63,10 @@ export const getRecentlyPlayedTracks = async (userId: string) => {
       }))
     );
 };
+
+export type RecentlyPlayedTracks = AwaitedReturnType<
+  typeof getRecentlyPlayedTracks
+>;
 
 export const getNewReleases = async () => {
   return await db.track.findMany({

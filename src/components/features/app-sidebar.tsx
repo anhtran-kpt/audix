@@ -15,7 +15,6 @@ import Dot from "../ui/dot";
 import { FallbackCoverImage } from "./fallback-cover-image";
 import { ScrollArea } from "../ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
-import WaveForm from "../ui/wave-form";
 import { IconButton } from "../ui/icon-button";
 import {
   PlusIcon,
@@ -30,7 +29,6 @@ import { usePlaybackStore } from "@/stores/use-playback-store";
 import { RowPlayButton } from "../shared/row-play-button";
 import { useShallow } from "zustand/react/shallow";
 import { VolumeIcon } from "../shared/volume-icon";
-import { MiniPlayContextButton } from "../shared/mini-play-context-button";
 import { AppImage } from "../shared/app-image";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 import {
@@ -250,7 +248,7 @@ export function AppSidebar() {
                                   src={playlist.imageId}
                                   containerClassName="size-10"
                                 />
-                                <MiniPlayContextButton
+                                <RowPlayButton
                                   context={{
                                     contextType: "PLAYLIST",
                                     contextId: playlist.id,
@@ -280,7 +278,7 @@ export function AppSidebar() {
                           }
                           right={
                             isPlaying &&
-                            contextId === playlist.id && <WaveForm />
+                            contextId === playlist.id && <VolumeIcon />
                           }
                         />
                       </div>
@@ -313,7 +311,7 @@ export function AppSidebar() {
                                   src={album.imageId}
                                   containerClassName="size-10"
                                 />
-                                <MiniPlayContextButton
+                                <RowPlayButton
                                   context={{
                                     contextType: "ALBUM",
                                     contextId: album.id,
@@ -342,7 +340,8 @@ export function AppSidebar() {
                             </>
                           }
                           right={
-                            isPlaying && contextId === album.id && <WaveForm />
+                            isPlaying &&
+                            contextId === album.id && <VolumeIcon />
                           }
                         />
                       </div>

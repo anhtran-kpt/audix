@@ -105,8 +105,9 @@ export const ShufflePlaybackInputSchema = PlaybackSessionSchema.pick({
   isShuffled: true,
 });
 
-export const ShufflePlaybackOutputSchema = PlaybackSessionSchema.pick({
+export const ShufflePlaybackOutputSchema = ClientPlaybackSessionSchema.pick({
   isShuffled: true,
+  queue: true,
 });
 
 export const RepeatPlaybackInputSchema = PlaybackSessionSchema.pick({

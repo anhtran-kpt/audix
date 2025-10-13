@@ -103,7 +103,7 @@ export function TrackDropdownDetails({
                             playlists.map((playlist) => (
                               <CommandItem
                                 key={playlist.id}
-                                value={playlist.id}
+                                value={playlist.title}
                                 onSelect={(value) => {
                                   addTrackMutation.mutate({
                                     playlistId: value,

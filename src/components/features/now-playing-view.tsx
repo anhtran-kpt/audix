@@ -93,7 +93,7 @@ export const NowPlayingView = () => {
           <div className="flex items-center justify-between gap-4">
             <div className="space-y-1">
               <p className="font-semibold text-xl">{currentTrack.title}</p>
-              {currentTrack.artists.map(({ artist }, index, originalArr) => (
+              {currentTrack.artists.map((artist, index, originalArr) => (
                 <span key={artist.id} className="text-muted-foreground">
                   <NavLink
                     href={`/artists/${artist.id}`}

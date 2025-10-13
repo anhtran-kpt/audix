@@ -260,12 +260,14 @@ async function ensureSnapshot({
 
 export const getClientPlaybackSession = async (userId: string) => {
   const session = await db.playbackSession.findUnique({
-    where: { id: userId },
+    where: { userId: userId },
     select: playbackSessionSelect,
   });
+
   if (!session) {
     return {};
   }
+
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
   const queue = buildClientQueue(session);
   return {

@@ -54,8 +54,6 @@ export const usePlaybackStore = create<PlaybackState>()(
             return;
           }
 
-          console.log(session);
-
           set({ session, isPlaying: false });
         } catch (err) {
           console.error("Failed to hydrate playback session:", err);
@@ -157,8 +155,14 @@ export const usePlaybackStore = create<PlaybackState>()(
         set({ session: { ...session, isShuffled: next } });
 
         try {
-          await patchApi<ShufflePlaybackOutput>("/playback/shuffle", {
-            body: { isShuffled: next },
+          const response = await patchApi<ShufflePlaybackOutput>(
+            "/playback/shuffle",
+            {
+              body: { isShuffled: next },
+            }
+          );
+          set({
+            session: { ...session, queue: response.queue, isShuffled: next },
           });
         } catch (err) {
           console.error("Toggle shuffle failed:", err);

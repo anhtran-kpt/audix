@@ -3,8 +3,8 @@ export const VolumeIcon = () => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       id="SvgjsSvg1019"
-      width="24"
-      height="24"
+      width="20"
+      height="20"
       version="1.1"
     >
       <defs id="SvgjsDefs1020" />
@@ -12,8 +12,8 @@ export const VolumeIcon = () => {
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
-          width="24"
-          height="24"
+          width="20"
+          height="20"
         >
           <path
             fill="currentColor"
