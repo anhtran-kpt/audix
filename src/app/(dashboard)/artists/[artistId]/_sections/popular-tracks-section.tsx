@@ -1,7 +1,8 @@
 "use client";
 
-import { TrackList } from "@/components/features/track-list";
+import { TrackList } from "@/components/features/track-list/track-list";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -45,21 +46,26 @@ export const PopularTracksSection = ({ artistId }: { artistId: string }) => {
       </div>
 
       <TrackList
+        tracks={data.items}
+        isLoading={false}
         contextId={artistId}
         contextType="ARTIST"
-        tracks={data.items}
       />
 
-      {canSeeMore && (
-        <div className="flex mt-4">
-          <Button
-            variant="link"
-            className="text-sm font-medium text-foreground p-0 h-fit underline hover:text-primary"
-            onClick={handleToggle}
-          >
-            {expanded ? "See less" : "See more"}
-          </Button>
-        </div>
+      {false ? (
+        <Skeleton className="w-16 h-5" />
+      ) : (
+        canSeeMore && (
+          <div className="flex mt-4">
+            <Button
+              variant="link"
+              className="text-sm font-medium text-foreground p-0 h-fit underline hover:text-primary"
+              onClick={handleToggle}
+            >
+              {expanded ? "See less" : "See more"}
+            </Button>
+          </div>
+        )
       )}
     </section>
   );

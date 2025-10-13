@@ -1,6 +1,6 @@
 "use client";
 
-import { TrackList } from "@/components/features/track-list";
+import { TrackList } from "@/components/features/track-list/track-list";
 import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
 import { useQuery } from "@tanstack/react-query";
 
@@ -23,6 +23,7 @@ export const TracksSection = ({ playlistId }: { playlistId: string }) => {
         contextId={playlistId}
         tracks={tracks}
         contextType="PLAYLIST"
+        isLoading={false}
       />
     </section>
   );

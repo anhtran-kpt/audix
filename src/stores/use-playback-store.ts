@@ -67,7 +67,9 @@ export const usePlaybackStore = create<PlaybackState>()(
         try {
           const session = await postApi<ClientPlaybackSession>(
             "/playback/start",
-            input
+            {
+              body: input,
+            }
           );
 
           set({ session: session, isLoading: false, progressMs: 0 });
@@ -123,7 +125,9 @@ export const usePlaybackStore = create<PlaybackState>()(
           const response = await postApi<PreviousPlaybackOutput>(
             "/playback/previous",
             {
-              positionMs: progressMs,
+              body: {
+                positionMs: progressMs,
+              },
             }
           );
           set({
@@ -154,7 +158,7 @@ export const usePlaybackStore = create<PlaybackState>()(
 
         try {
           await patchApi<ShufflePlaybackOutput>("/playback/shuffle", {
-            isShuffled: next,
+            body: { isShuffled: next },
           });
         } catch (err) {
           console.error("Toggle shuffle failed:", err);
@@ -174,7 +178,7 @@ export const usePlaybackStore = create<PlaybackState>()(
 
         try {
           await patchApi<RepeatPlaybackOutput>("/playback/repeat", {
-            repeatMode: next,
+            body: { repeatMode: next },
           });
         } catch (err) {
           console.error("Set repeat mode failed:", err);

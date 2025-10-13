@@ -1,6 +1,6 @@
 "use client";
 
-import { TrackList } from "@/components/features/track-list";
+import { TrackList } from "@/components/features/track-list/track-list";
 import { albumQueryOptions } from "@/features/album/api/album-query-options";
 import { useQuery } from "@tanstack/react-query";
 
@@ -19,7 +19,12 @@ export const TracksSection = ({ albumId }: { albumId: string }) => {
 
   return (
     <section>
-      <TrackList contextId={albumId} tracks={tracks} contextType="ALBUM" />
+      <TrackList
+        tracks={tracks}
+        contextId={albumId}
+        contextType="ALBUM"
+        isLoading={false}
+      />
     </section>
   );
 };

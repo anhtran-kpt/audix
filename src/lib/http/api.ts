@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance, type AxiosResponse } from "axios";
+import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { z } from "zod";
 import { AppError, type ResponseEnvelope } from "@/lib/errors";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
@@ -19,10 +19,6 @@ function createAxiosInstance(cookieHeader?: string): AxiosInstance {
   });
 
   instance.interceptors.request.use((config) => {
-    // config.params ??= {};
-    // config.params.limit ??= 5;
-    // config.params.offset ??= 0;
-
     if (cookieHeader) config.headers.Cookie = cookieHeader;
     return config;
   });
@@ -61,32 +57,23 @@ async function requestInstance(cookieHeader?: string): Promise<AxiosInstance> {
   return createAxiosInstance(effectiveCookie);
 }
 
-export async function getApi<TData = unknown>(
-  url: string,
-  options?: BaseRequestOptions
-): Promise<TData> {
-  const instance = await requestInstance(options?.cookieHeader);
-  const res = await instance.get(url, { params: options?.params });
-  return (res as AxiosResponseWithUnwrapped).unwrapped ?? res.data;
-}
-
-interface BaseRequestOptions {
+export interface BaseRequestOptions {
   params?: Record<string, any> & Partial<PaginationParams>;
   cookieHeader?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface MutateOptions<S extends z.ZodType, R>
+export interface MutateOptions<S extends z.ZodType | undefined, R>
   extends BaseRequestOptions {
-  schema: S;
-  body: z.input<S>;
+  schema?: S;
+  body?: S extends z.ZodType ? z.input<S> : unknown;
   parseBeforeSend?: boolean;
 }
 
-async function mutateApi<S extends z.ZodType, R = unknown>(
+async function mutateApi<S extends z.ZodType | undefined, R = unknown>(
   method: "POST" | "PUT" | "PATCH" | "DELETE",
   url: string,
-  options: MutateOptions<S, R>
+  options?: MutateOptions<S, R>
 ): Promise<R> {
   const {
     schema,
@@ -94,10 +81,11 @@ async function mutateApi<S extends z.ZodType, R = unknown>(
     params,
     cookieHeader,
     parseBeforeSend = true,
-  } = options;
+  } = options ?? {};
 
   const instance = await requestInstance(cookieHeader);
-  const safeBody = parseBeforeSend ? schema.parse(body) : body;
+  const safeBody =
+    schema && body && parseBeforeSend ? schema.parse(body) : body;
 
   const res = await instance.request({
     method,
@@ -106,33 +94,43 @@ async function mutateApi<S extends z.ZodType, R = unknown>(
     params,
   });
 
-  return (res as AxiosResponseWithUnwrapped).unwrapped ?? res.data;
+  return (res as AxiosResponseWithUnwrapped<R>).unwrapped ?? res.data;
 }
 
-export async function postApi<S extends z.ZodType, R = unknown>(
+// ✅ GET
+export async function getApi<TData = unknown>(
   url: string,
-  options: MutateOptions<S, R>
-): Promise<R> {
+  options?: BaseRequestOptions
+): Promise<TData> {
+  const instance = await requestInstance(options?.cookieHeader);
+  const res = await instance.get(url, { params: options?.params });
+  return (res as AxiosResponseWithUnwrapped<TData>).unwrapped ?? res.data;
+}
+
+export async function postApi<
+  R = unknown,
+  S extends z.ZodType | undefined = undefined
+>(url: string, options?: MutateOptions<S, R>): Promise<R> {
   return mutateApi<S, R>("POST", url, options);
 }
 
-export async function putApi<S extends z.ZodType, R = unknown>(
-  url: string,
-  options: MutateOptions<S, R>
-): Promise<R> {
+export async function putApi<
+  R = unknown,
+  S extends z.ZodType | undefined = undefined
+>(url: string, options?: MutateOptions<S, R>): Promise<R> {
   return mutateApi<S, R>("PUT", url, options);
 }
 
-export async function patchApi<S extends z.ZodType, R = unknown>(
-  url: string,
-  options: MutateOptions<S, R>
-): Promise<R> {
+export async function patchApi<
+  R = unknown,
+  S extends z.ZodType | undefined = undefined
+>(url: string, options?: MutateOptions<S, R>): Promise<R> {
   return mutateApi<S, R>("PATCH", url, options);
 }
 
-export async function deleteApi<S extends z.ZodType, R = unknown>(
-  url: string,
-  options: MutateOptions<S, R>
-): Promise<R> {
+export async function deleteApi<
+  R = unknown,
+  S extends z.ZodType | undefined = undefined
+>(url: string, options?: MutateOptions<S, R>): Promise<R> {
   return mutateApi<S, R>("DELETE", url, options);
 }

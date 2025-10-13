@@ -31,8 +31,8 @@ export default async function DashboardLayout({
       >
         <ScrollArea viewportId="app-scroll" className="h-full">
           <Header />
-          <div className="flex flex-col flex-1 p-6 md:p-8 lg:p-10 xl:p-12">
-            <div className="@container/main flex flex-1 flex-col gap-8">
+          <div className="flex flex-col flex-1 p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12">
+            <div className="@container/main flex flex-1 flex-col gap-6 xl:gap-8">
               <PlayerOffsetSetter />
               {children}
             </div>

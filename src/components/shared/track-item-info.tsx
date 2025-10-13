@@ -2,26 +2,39 @@ import { cn } from "@/lib/utils";
 import ExplicitIcon from "../ui/explicit-icon";
 import { NavLink } from "../ui/nav-link";
 import { TrackItem } from "@/features/track/contracts/track-dto";
+import { usePlaybackStore } from "@/stores/use-playback-store";
+import { useShallow } from "zustand/react/shallow";
+import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 
 type TrackInfoProps = {
   title: string;
   isExplicit?: boolean;
   artists: TrackItem["artists"];
-  isActiveTrack: boolean;
+  context?: StartPlaybackInput;
 };
 
 export const TrackItemInfo = ({
   title,
   isExplicit,
   artists,
-  isActiveTrack,
+  context,
 }: TrackInfoProps) => {
+  const { contextId, currentTrackId } = usePlaybackStore(
+    useShallow((s) => ({
+      contextId: s.session?.snapshot?.contextId,
+      currentTrackId: s.session?.currentTrackId,
+    }))
+  );
+
+  const isThisContext = contextId === context?.contextId;
+  const isThisTrack = currentTrackId === context?.startTrackId;
+
   return (
     <div className="flex flex-col gap-0.5 flex-1 min-w-0 overflow-hidden">
       <p
         className={cn(
           "font-medium truncate text-foreground text-sm select-none",
-          isActiveTrack && "text-primary"
+          isThisContext && isThisTrack && "text-primary"
         )}
       >
         {title}
