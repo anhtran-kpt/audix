@@ -10,7 +10,7 @@ import TrackIndexCell from "../shared/track-index-cell";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
 import { formatDuration } from "@/utils/date";
-import { TrackDetails } from "./track-details";
+import { TrackDetails } from "./track-dropdown-details";
 import { TrackItemCompact } from "../shared/track-item-compact";
 
 type TrackListProps = {

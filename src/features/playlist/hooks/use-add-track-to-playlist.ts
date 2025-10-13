@@ -34,13 +34,10 @@ export function useAddTrackToPlaylist() {
 
   return useMutation({
     mutationFn: ({ playlistId, track }: AddTrackToPlaylist) => {
-      return postApi<typeof AddTrackToPlaylistInputSchema, TrackItem>(
-        `/playlists/${playlistId}/tracks`,
-        {
-          schema: AddTrackToPlaylistInputSchema,
-          body: { trackId: track.id },
-        }
-      );
+      return postApi<TrackItem>(`/playlists/${playlistId}/tracks`, {
+        schema: AddTrackToPlaylistInputSchema,
+        body: { trackId: track.id },
+      });
     },
 
     onMutate: async ({ playlistId, track }) => {

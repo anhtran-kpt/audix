@@ -2,11 +2,9 @@ import { cn } from "@/lib/utils";
 import { AppImage } from "./app-image";
 import { TrackItem } from "@/features/track/contracts/track-dto";
 import { TrackItemInfo } from "./track-item-info";
-import { TrackDetails } from "../features/track-details";
 import { RowPlayButton } from "./row-play-button";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
-import { usePlaybackStore } from "@/stores/use-playback-store";
-import { useShallow } from "zustand/react/shallow";
+import { TrackDropdownDetails } from "../features/track-dropdown-details";
 
 type TrackItemCompactProps = {
   track: TrackItem;
@@ -25,18 +23,6 @@ export const TrackItemCompact = ({
   hasCover = true,
   canPlay = true,
 }: TrackItemCompactProps) => {
-  const { snapshot, currentTrackId } = usePlaybackStore(
-    useShallow((s) => ({
-      snapshot: s.session?.snapshot,
-      currentTrackId: s.session?.currentTrackId,
-    }))
-  );
-
-  const isActiveTrack =
-    context?.contextType === snapshot?.contextType &&
-    context?.contextId === snapshot?.contextId &&
-    currentTrackId === track.id;
-
   return (
     <div
       className={cn(
@@ -70,12 +56,16 @@ export const TrackItemCompact = ({
           title={track.title}
           isExplicit={track.isExplicit}
           artists={track.artists}
-          isActiveTrack={isActiveTrack}
+          context={context}
         />
       </div>
       {hasMoreDetails && (
         <div className="flex items-center justify-center opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity">
-          <TrackDetails track={track} />
+          <TrackDropdownDetails
+            track={track}
+            contextType="ALBUM"
+            contextId={track.album.id}
+          />
         </div>
       )}
     </div>

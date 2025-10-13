@@ -3,7 +3,7 @@ import TrackIndexCell from "./track-index-cell";
 import { TrackItemCompact } from "./track-item-compact";
 import { cn } from "@/lib/utils";
 import { TrackItemDetailed as TrackItemDetailedType } from "@/features/track/contracts/track-dto";
-import { TrackDetails } from "../features/track-details";
+import { TrackDetails } from "../features/track-dropdown-details";
 import { formatDuration } from "@/utils/date";
 import { NavLink } from "../ui/nav-link";
 import { format } from "date-fns";

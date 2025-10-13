@@ -9,8 +9,9 @@ import { TrackItem } from "@/features/track/contracts/track-dto";
 import { cn } from "@/lib/utils";
 import { formatDuration } from "@/utils/date";
 import { format } from "date-fns/format";
-import { Clock3Icon, MoreHorizontalIcon, PlusCircleIcon } from "lucide-react";
+import { Clock3Icon, PlusCircleIcon } from "lucide-react";
 import { TrackIndexCell } from "./track-index-cell";
+import { TrackDropdownDetails } from "../track-dropdown-details";
 
 type TrackListProps = {
   tracks: TrackItem[];
@@ -138,7 +139,11 @@ export const TrackList = ({
               {formatDuration(track.duration)}
             </div>
             <div className="flex justify-end items-center select-none opacity-0 group-hover/item:select-auto group-hover/item:opacity-100 sm:pr-2">
-              <IconButton icon={MoreHorizontalIcon} />
+              <TrackDropdownDetails
+                track={track}
+                contextId={contextId}
+                contextType={contextType}
+              />
             </div>
           </li>
         ))}

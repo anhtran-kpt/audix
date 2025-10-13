@@ -14,16 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IconButton } from "../ui/icon-button";
-import {
-  BookHeadphonesIcon,
-  CirclePlusIcon,
-  Disc3Icon,
-  EllipsisIcon,
-  ListPlusIcon,
-  MicVocalIcon,
-  PlusIcon,
-  TrashIcon,
-} from "lucide-react";
+import { EllipsisIcon, PlusIcon } from "lucide-react";
 import CreditsDialog from "./credits-dialog";
 import {
   Command,
@@ -42,12 +33,17 @@ import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 import { myPlaylistsOptions } from "@/features/me/api/me-options";
 
-type TrackDetailsProps = {
+type TrackDropdownDetailsProps = {
   track: TrackItem;
-  playlistId?: string;
+  contextId: string;
+  contextType: "ALBUM" | "PLAYLIST" | "ARTIST";
 };
 
-export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
+export function TrackDropdownDetails({
+  track,
+  contextId,
+  contextType,
+}: TrackDropdownDetailsProps) {
   const removeTrackMutation = useRemoveTrackFromPlaylist();
   const addTrackMutation = useAddTrackToPlaylist();
   const { openDialog } = useNewPlaylistDialog();
@@ -85,10 +81,7 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
           <DropdownMenuGroup>
             {status === "authenticated" && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  <PlusIcon />
-                  Add to playlist
-                </DropdownMenuSubTrigger>
+                <DropdownMenuSubTrigger>Add to playlist</DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
                   <DropdownMenuSubContent>
                     <Command className="space-y-2">
@@ -97,17 +90,10 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
                         autoFocus={true}
                         className="h-9"
                       />
-                      <CommandItem>
-                        <IconButton
-                          icon={PlusIcon}
-                          aria-label="New playlist"
-                          tooltipContent="New playlist"
-                          iconClassName="size-6"
-                          onClick={openDialog}
-                        />
+                      <CommandItem onSelect={openDialog}>
+                        <PlusIcon className="text-foreground" />
                         Create new playlist
                       </CommandItem>
-                      <DropdownMenuSeparator />
                       <CommandList>
                         <CommandEmpty>No playlist found.</CommandEmpty>
                         <CommandGroup>
@@ -137,24 +123,17 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
                 </DropdownMenuPortal>
               </DropdownMenuSub>
             )}
-            <DropdownMenuItem>
-              <CirclePlusIcon />
-              Save to Liked Songs
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <ListPlusIcon />
-              Add to queue
-            </DropdownMenuItem>
-            {playlistId && (
+            <DropdownMenuItem>Save to Liked Songs</DropdownMenuItem>
+            <DropdownMenuItem>Add to queue</DropdownMenuItem>
+            {contextType === "PLAYLIST" && (
               <DropdownMenuItem
                 onClick={() =>
                   removeTrackMutation.mutate({
-                    playlistId,
+                    playlistId: contextId,
                     trackId: track.id,
                   })
                 }
               >
-                <TrashIcon />
                 Remove from this playlist
               </DropdownMenuItem>
             )}
@@ -162,10 +141,7 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>
-                <MicVocalIcon />
-                Go to artist
-              </DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger>Go to artist</DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   {track.artists.map((artist) => (
@@ -179,17 +155,17 @@ export function TrackDetails({ track, playlistId }: TrackDetailsProps) {
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
-            <DropdownMenuItem
-              onClick={() => router.push(`/albums/${track.album.id}`)}
-            >
-              <Disc3Icon />
-              Go to album
-            </DropdownMenuItem>
+            {contextType !== "ALBUM" && (
+              <DropdownMenuItem
+                onClick={() => router.push(`/albums/${track.album.id}`)}
+              >
+                Go to album
+              </DropdownMenuItem>
+            )}
             <CreditsDialog
               trackId={track.id}
               trigger={
                 <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  <BookHeadphonesIcon />
                   View credits
                 </DropdownMenuItem>
               }
