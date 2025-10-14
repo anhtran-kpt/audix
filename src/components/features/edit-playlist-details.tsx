@@ -15,7 +15,6 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { Textarea } from "../ui/textarea";
-import { FallbackCoverImage } from "./fallback-cover-image";
 import { useOptimisticPlaylistUpdate } from "@/features/playlist/hooks/use-optimistic-playlist-update";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -107,16 +106,15 @@ export default function EditPlaylistDetails({
           >
             <div className="flex items-stretch gap-4">
               <div className="flex-shrink-0">
-                {playlist.imageId ? (
-                  <AppImage
-                    alt={playlist.title}
-                    src={playlist.imageId}
-                    sizes="224px"
-                    containerClassName="size-56"
-                  />
-                ) : (
-                  <FallbackCoverImage type="detail" />
-                )}
+                <AppImage
+                  alt={playlist.title}
+                  src={
+                    playlist.imageId ??
+                    process.env.NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
+                  }
+                  sizes="224px"
+                  containerClassName="size-56"
+                />
               </div>
 
               <div className="flex flex-col grow gap-4">

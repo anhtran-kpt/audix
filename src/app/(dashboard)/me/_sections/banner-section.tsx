@@ -6,11 +6,10 @@ import { useState } from "react";
 import tinycolor from "tinycolor2";
 import { IconButton } from "@/components/ui/icon-button";
 import { MyProfile } from "@/features/me/data-access/me-repo";
-import { FallbackCoverImage } from "@/components/features/fallback-cover-image";
 import pluralize from "pluralize";
 import Dot from "@/components/ui/dot";
 import { NavLink } from "@/components/ui/nav-link";
-import Image from "next/image";
+import { AppImage } from "@/components/shared/app-image";
 
 type BannerSectionProps = {
   image: MyProfile["image"];
@@ -45,23 +44,19 @@ export const BannerSection = ({
     >
       <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
-          {image ? (
-            <div className="relative size-56 overflow-hidden shrink-0 aspect-square rounded-sm">
-              <Image
-                priority
-                alt={name ?? "profile"}
-                src={image}
-                className="rounded-full"
-                sizes="(max-width: 768px) 50vw, 224px"
-                fill
-                onLoad={(e) => {
-                  setImageUrl((e.target as HTMLImageElement).src);
-                }}
-              />
-            </div>
-          ) : (
-            <FallbackCoverImage type="detail" />
-          )}
+          <div className="relative size-56 overflow-hidden shrink-0 aspect-square rounded-sm">
+            <AppImage
+              priority
+              alt={name ?? "profile"}
+              src={image ?? process.env.NEXT_PUBLIC_FALLBACK_USER_COVER!}
+              className="rounded-full"
+              sizes="(max-width: 768px) 50vw, 224px"
+              containerClassName="size-56"
+              onLoad={(e) => {
+                setImageUrl((e.target as HTMLImageElement).src);
+              }}
+            />
+          </div>
 
           <div className="flex flex-col gap-3">
             Profile

@@ -32,7 +32,7 @@ export function useCreatePlaylist(
 
   const mutation = useMutation({
     mutationFn: (data: CreatePlaylistInput) =>
-      postApi<CreatePlaylistOutput>("/playlists", data),
+      postApi<CreatePlaylistOutput>("/playlists", { body: data }),
     onMutate: async (vars) => {
       await qc.cancelQueries({ queryKey: meKeys.myPlaylists() });
       await qc.cancelQueries({ queryKey: meKeys.libraryPlaylists() });

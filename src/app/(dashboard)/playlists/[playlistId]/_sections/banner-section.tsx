@@ -6,8 +6,6 @@ import { NavLink } from "@/components/ui/nav-link";
 import Dot from "@/components/ui/dot";
 import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
-import { FallbackCoverImage } from "@/components/features/fallback-cover-image";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { IconButton } from "@/components/ui/icon-button";
 import {
   DownloadIcon,
@@ -26,6 +24,7 @@ import EditPlaylistDetails from "@/components/features/edit-playlist-details";
 import { AppImage } from "@/components/shared/app-image";
 import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
+import { UserImage } from "@/components/shared/user-image";
 
 export const BannerSection = ({ playlistId }: { playlistId: string }) => {
   const { data: playlist, status } = useQuery({
@@ -59,18 +58,18 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
     >
       <div className="relative h-[calc(108rem/4)]">
         <div className="absolute left-12 bottom-6 flex items-end gap-6">
-          {playlist.imageId ? (
-            <AppImage
-              alt={playlist.title}
-              src={playlist.imageId}
-              onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
-              priority
-              containerClassName="size-56"
-              sizes="(max-width: 768px) 50vw, 224px"
-            />
-          ) : (
-            <FallbackCoverImage type="detail" />
-          )}
+          <AppImage
+            alt={playlist.title}
+            src={
+              playlist.imageId ??
+              process.env.NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
+            }
+            onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
+            priority
+            containerClassName="size-56"
+            sizes="(max-width: 768px) 50vw, 224px"
+          />
+
           <div className="flex flex-col gap-3">
             {playlist.isPublic ? (
               <div className="flex items-center gap-2">
@@ -97,10 +96,10 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
             <div className="inline-flex items-center gap-2">
               {playlist.user ? (
                 <>
-                  <Avatar>
-                    <AvatarImage src={playlist.user.image as string} />
-                    <AvatarFallback>{playlist.user.name}</AvatarFallback>
-                  </Avatar>
+                  <UserImage
+                    imageUrl={playlist.user.image}
+                    name={playlist.user.name}
+                  />
                   <NavLink
                     href={`/users/${playlist.user.id}`}
                     className="text-sm"

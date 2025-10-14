@@ -5,7 +5,7 @@ import { SuggestionSection } from "./_sections/suggestion-section";
 import { createQueryClient } from "@/lib/query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
-import { BannerSection } from "@/components/features/banner-section";
+import { BannerSection } from "@/app/(dashboard)/artists/[artistId]/_sections/banner-section";
 
 export default async function ArtistDetail({
   params,

@@ -4,7 +4,6 @@ import { GridWrapper } from "./grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import Dot from "../ui/dot";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
-import { FallbackCoverImage } from "../features/fallback-cover-image";
 import { AppImage } from "./app-image";
 import { useRouter } from "next/navigation";
 import { RoundedPlayButton } from "./context-play-button/rounded-play-button";
@@ -23,25 +22,25 @@ export default function PlaylistGrid({ playlists }: PlaylistGridProps) {
           key={playlist.id}
           className="flex flex-col group gap-2 overflow-hidden"
         >
-          {playlist.imageId ? (
-            <div
-              className="relative cursor-pointer"
-              onClick={() => router.push(`/playlists/${playlist.id}`)}
-            >
-              <AppImage
-                alt={playlist.title}
-                src={playlist.imageId}
-                className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
-                sizes="20vw"
-              />
-              <RoundedPlayButton
-                context={{ contextType: "PLAYLIST", contextId: playlist.id }}
-                className="absolute opacity-0 bottom-2 right-2 translate-y-2 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
-              />
-            </div>
-          ) : (
-            <FallbackCoverImage type="detail" />
-          )}
+          <div
+            className="relative cursor-pointer"
+            onClick={() => router.push(`/playlists/${playlist.id}`)}
+          >
+            <AppImage
+              alt={playlist.title}
+              src={
+                playlist.imageId ??
+                process.env.NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
+              }
+              className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
+              sizes="20vw"
+            />
+            <RoundedPlayButton
+              context={{ contextType: "PLAYLIST", contextId: playlist.id }}
+              className="absolute opacity-0 bottom-2 right-2 translate-y-2 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
+            />
+          </div>
+
           <div className="flex flex-col items-start w-full min-w-0">
             <NavLink
               href={`/playlists/${playlist.id}`}

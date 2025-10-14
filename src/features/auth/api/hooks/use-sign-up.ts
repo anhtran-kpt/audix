@@ -13,7 +13,7 @@ export const useSignUp = () => {
 
   return useMutation({
     mutationFn: (input: SignUpInput) =>
-      postApi<SignUpOutput>(`/auth/sign-up`, input),
+      postApi<SignUpOutput>(`/auth/sign-up`, { body: input }),
     onMutate: () => {},
     onSuccess: async (_, vars) => {
       const result = await signIn("credentials", {

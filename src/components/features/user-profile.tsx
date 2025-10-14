@@ -18,12 +18,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IconButton } from "../ui/icon-button";
 import { User2Icon } from "lucide-react";
-import { AvatarImage, Avatar, AvatarFallback } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import Google from "../ui/google";
 import { useTheme } from "next-themes";
+import { UserImage } from "../shared/user-image";
 
 export const UserProfile = () => {
   const { data: session, status } = useSession();
@@ -55,15 +55,12 @@ export const UserProfile = () => {
       </DropdownMenu>
     );
 
-  const { image: imageUrl, name, email, subscription } = session.user;
+  const { image, name, email, subscription } = session.user;
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Avatar className="size-9">
-          <AvatarImage src={imageUrl as string} />
-          <AvatarFallback>{name}</AvatarFallback>
-        </Avatar>
+      <DropdownMenuTrigger>
+        <UserImage imageUrl={image} name={name} />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start">
         <DropdownMenuLabel asChild>

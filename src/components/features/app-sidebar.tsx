@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/sidebar";
 import { usePathname, useRouter } from "next/navigation";
 import Dot from "../ui/dot";
-import { FallbackCoverImage } from "./fallback-cover-image";
 import { ScrollArea } from "../ui/scroll-area";
 import { useQuery } from "@tanstack/react-query";
 import { IconButton } from "../ui/icon-button";
@@ -238,27 +237,27 @@ export function AppSidebar() {
                         <SidebarItemWrapper
                           open={open}
                           image={
-                            playlist.imageId ? (
-                              <>
-                                <AppImage
-                                  fill
-                                  sizes="40px"
-                                  className="group-hover/menu-item:brightness-65"
-                                  alt={playlist.title}
-                                  src={playlist.imageId}
-                                  containerClassName="size-10"
-                                />
-                                <RowPlayButton
-                                  context={{
-                                    contextType: "PLAYLIST",
-                                    contextId: playlist.id,
-                                  }}
-                                  className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                />
-                              </>
-                            ) : (
-                              <FallbackCoverImage type="item" />
-                            )
+                            <>
+                              <AppImage
+                                fill
+                                sizes="40px"
+                                className="group-hover/menu-item:brightness-65"
+                                alt={playlist.title}
+                                src={
+                                  playlist.imageId ??
+                                  process.env
+                                    .NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
+                                }
+                                containerClassName="size-10"
+                              />
+                              <RowPlayButton
+                                context={{
+                                  contextType: "PLAYLIST",
+                                  contextId: playlist.id,
+                                }}
+                                className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                              />
+                            </>
                           }
                           info={
                             <>
@@ -301,27 +300,23 @@ export function AppSidebar() {
                         <SidebarItemWrapper
                           open={open}
                           image={
-                            album.imageId ? (
-                              <>
-                                <AppImage
-                                  fill
-                                  sizes="40px"
-                                  className="group-hover/menu-item:brightness-65"
-                                  alt={album.title}
-                                  src={album.imageId}
-                                  containerClassName="size-10"
-                                />
-                                <RowPlayButton
-                                  context={{
-                                    contextType: "ALBUM",
-                                    contextId: album.id,
-                                  }}
-                                  className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                                />
-                              </>
-                            ) : (
-                              <FallbackCoverImage type="item" />
-                            )
+                            <>
+                              <AppImage
+                                fill
+                                sizes="40px"
+                                className="group-hover/menu-item:brightness-65"
+                                alt={album.title}
+                                src={album.imageId}
+                                containerClassName="size-10"
+                              />
+                              <RowPlayButton
+                                context={{
+                                  contextType: "ALBUM",
+                                  contextId: album.id,
+                                }}
+                                className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                              />
+                            </>
                           }
                           info={
                             <>
