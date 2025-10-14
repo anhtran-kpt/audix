@@ -1,6 +1,6 @@
 "use client";
 
-import { BadgeCheckIcon, EllipsisIcon, ShuffleIcon } from "lucide-react";
+import { EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useState } from "react";
 import tinycolor from "tinycolor2";
@@ -114,12 +114,6 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
             }}
           />
           <div className="flex flex-col gap-3">
-            {artist.isVerified && (
-              <div className="flex gap-2 items-center">
-                <BadgeCheckIcon className="stroke-white fill-sky-500 size-8" />
-                Verified Artist
-              </div>
-            )}
             <p className="font-extrabold text-6xl mt-1 mb-3">{artist.name}</p>
             <FollowersBadge artistId={artistId} />
           </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import prisma from "@/lib/db";
 import { genres as genreData } from "./genres.json";
 import { artists as artistData } from "./artists.json";

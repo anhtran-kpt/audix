@@ -138,7 +138,6 @@ model Artist {
   bio            String?  @db.Text
   imageId        String
   bannerId       String
-  isVerified     Boolean  @default(false)
   followersCount Int      @default(0)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -157,7 +156,6 @@ model Album {
   id          String    @id @default(cuid())
   title       String
   slug        String    @unique
-  description String?   @db.Text
   imageId     String
   albumType   AlbumType @default(SINGLE)
   releaseDate DateTime  @default(now())

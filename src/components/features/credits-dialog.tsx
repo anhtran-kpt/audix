@@ -32,10 +32,11 @@ export default function CreditsDialog({
     return (
       <Dialog>
         <DialogTrigger asChild>{trigger}</DialogTrigger>
-        <DialogContent
-          aria-describedby={undefined}
-          className="gap-4"
-        ></DialogContent>
+        <DialogContent aria-describedby={undefined} className="gap-4">
+          <DialogHeader>
+            <DialogTitle>Credits</DialogTitle>
+          </DialogHeader>
+        </DialogContent>
       </Dialog>
     );
   }

@@ -10,7 +10,7 @@ import TrackIndexCell from "../shared/track-index-cell";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
 import { formatDuration } from "@/utils/date";
-import { TrackDetails } from "./track-dropdown-details";
+import { TrackDropdownDetails } from "./track-dropdown-details";
 import { TrackItemCompact } from "../shared/track-item-compact";
 
 type TrackListProps = {
@@ -134,11 +134,10 @@ export const TrackList = ({
               <div className="text-right">{formatDuration(track.duration)}</div>
 
               <div className="invisible group-hover:visible flex items-center justify-end">
-                <TrackDetails
+                <TrackDropdownDetails
                   track={track}
-                  playlistId={
-                    contextType === "PLAYLIST" ? contextId : undefined
-                  }
+                  contextId={contextId}
+                  contextType={contextType}
                 />
               </div>
             </div>

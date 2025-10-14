@@ -177,7 +177,7 @@ export default function TopResultSection({
               {topResult.type}
             </span>
             <Dot />
-            {topResult.item.artists.map(({ artist }, index, originalArr) => (
+            {topResult.item.artists.map((artist, index, originalArr) => (
               <span key={artist.id} className="truncate">
                 <Link
                   href={`/artists/${artist.id}`}

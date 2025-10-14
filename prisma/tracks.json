@@ -1546,6 +1546,1968 @@
       ],
       "audioId": "audix/audios/bat-no-len",
       "duration": 2006
+    },
+    {
+      "title": "Vùng An Toàn",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        },
+        {
+          "slug": null,
+          "name": "V#",
+          "role": "COMPOSER",
+          "order": 3
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=_XX248bq6Pw",
+      "slug": "vung-an-toan",
+      "audioId": "audix/audios/vung-an-toan",
+      "duration": 266
+    },
+    {
+      "title": "The One",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        },
+        {
+          "slug": null,
+          "name": "Đạt G",
+          "role": "LYRICIST",
+          "order": 3
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=6-26Nb-HqLU",
+      "slug": "the-one",
+      "audioId": "audix/audios/the-one",
+      "duration": 191
+    },
+    {
+      "title": "Viết Em Bản Tình Ca",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=Rx8Co7N_x8Q",
+      "slug": "viet-em-ban-tinh-ca",
+      "audioId": "audix/audios/viet-em-ban-tinh-ca",
+      "duration": 163
+    },
+    {
+      "title": "Ghệ Mới",
+      "trackNumber": 4,
+      "isExplicit": true,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        },
+        {
+          "slug": null,
+          "name": "Young H",
+          "role": "RAP",
+          "order": 3
+        },
+        {
+          "slug": null,
+          "name": "Young H",
+          "role": "LYRICIST",
+          "order": 4
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=ArFyxygoLHs",
+      "slug": "ghe-moi",
+      "audioId": "audix/audios/ghe-moi",
+      "duration": 226
+    },
+    {
+      "title": "Y Chang Em",
+      "trackNumber": 5,
+      "isExplicit": true,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=Vd6pF0O1lUE",
+      "slug": "y-chang-em",
+      "audioId": "audix/audios/y-chang-em",
+      "duration": 167
+    },
+    {
+      "title": "Feel At Home",
+      "trackNumber": 6,
+      "isExplicit": true,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=6x1yluqMuc4",
+      "slug": "feel-at-home",
+      "audioId": "audix/audios/feel-at-home",
+      "duration": 163
+    },
+    {
+      "title": "Selfish Man",
+      "trackNumber": 7,
+      "isExplicit": true,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=EF7wZYwk6ig",
+      "slug": "selfish-man",
+      "audioId": "audix/audios/selfish-man",
+      "duration": 217
+    },
+    {
+      "title": "Không Thuộc Về Nơi Này",
+      "trackNumber": 8,
+      "isExplicit": true,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=z4SbZOb4y-s",
+      "slug": "khong-thuoc-ve-noi-nay",
+      "audioId": "audix/audios/khong-thuoc-ve-noi-nay",
+      "duration": 208
+    },
+    {
+      "title": "Còn Ai Ngoài Anh Với Em",
+      "trackNumber": 9,
+      "isExplicit": false,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=ufAOvq7ZNPw",
+      "slug": "con-ai-ngoai-anh-voi-em",
+      "audioId": "audix/audios/con-ai-ngoai-anh-voi-em",
+      "duration": 244
+    },
+    {
+      "title": "Are You Sad",
+      "trackNumber": 10,
+      "isExplicit": false,
+      "albumSlug": "cho-bao",
+      "artists": [
+        {
+          "slug": "b-ray",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["hip-hop", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": "b-ray",
+          "name": null,
+          "role": "RAP",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=wtVC5BS5Aiw",
+      "slug": "are-you-sad",
+      "audioId": "audix/audios/are-you-sad",
+      "duration": 224
+    },
+    {
+      "title": "Khi Giấc Mơ Về",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "rewind",
+      "artists": [
+        {
+          "slug": "lam-bao-ngoc",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["r&b", "pop", "mood", "chill"],
+      "credits": [
+        {
+          "slug": "lam-bao-ngoc",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Đức Trí",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Đức Trí",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=ENcQcQl1MhQ",
+      "slug": "khi-giac-mo-ve",
+      "audioId": "audix/audios/khi-giac-mo-ve",
+      "duration": 228
+    },
+    {
+      "title": "Có Nhau Trọn Đời",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "rewind",
+      "artists": [
+        {
+          "slug": "lam-bao-ngoc",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["r&b", "pop", "mood", "chill"],
+      "credits": [
+        {
+          "slug": "lam-bao-ngoc",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Đức Trí",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Đức Trí",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=GosvECkVbQk",
+      "slug": "co-nhau-tron-doi",
+      "audioId": "audix/audios/co-nhau-tron-doi",
+      "duration": 244
+    },
+    {
+      "title": "Bên Em Là Biển Rộng",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "rewind",
+      "artists": [
+        {
+          "slug": "lam-bao-ngoc",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["r&b", "pop", "mood", "chill"],
+      "credits": [
+        {
+          "slug": "lam-bao-ngoc",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Dương Edward",
+          "role": "LEAD_VOCALS",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Bảo Chấn",
+          "role": "COMPOSER",
+          "order": 2
+        },
+        {
+          "slug": null,
+          "name": "Bảo Chấn",
+          "role": "LYRICIST",
+          "order": 3
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=Eb3Y7OC2GcA",
+      "slug": "ben-em-la-bien-rong",
+      "audioId": "audix/audios/ben-em-la-bien-rong",
+      "duration": 223
+    },
+    {
+      "title": "Trái Tim Không Ngủ Yên",
+      "trackNumber": 4,
+      "isExplicit": false,
+      "albumSlug": "rewind",
+      "artists": [
+        {
+          "slug": "lam-bao-ngoc",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["r&b", "pop", "mood", "chill"],
+      "credits": [
+        {
+          "slug": "lam-bao-ngoc",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Hoàng Hải",
+          "role": "LEAD_VOCALS",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Thanh Tùng",
+          "role": "COMPOSER",
+          "order": 2
+        },
+        {
+          "slug": null,
+          "name": "Thanh Tùng",
+          "role": "LYRICIST",
+          "order": 3
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=Vz-4tt_6xi8",
+      "slug": "trai-tim-khong-ngu-yen",
+      "audioId": "audix/audios/trai-tim-khong-ngu-yen",
+      "duration": 274
+    },
+    {
+      "title": "Hoa Nở Không Màu",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "hoa-no-khong-mau",
+      "artists": [
+        {
+          "slug": "hoai-lam",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoai-lam",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Nguyễn Minh Cường",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Nguyễn Minh Cường",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=y_6aSG2yfe8",
+      "slug": "hoa-no-khong-mau",
+      "audioId": "audix/audios/hoa-no-khong-mau",
+      "duration": 340
+    },
+    {
+      "title": "Rất Buồn",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "rat-buon",
+      "artists": [
+        {
+          "slug": "hoai-lam",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "hoai-lam",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Nguyễn Minh Cường",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Nguyễn Minh Cường",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=uda4oqUroHA",
+      "slug": "rat-buon",
+      "audioId": "audix/audios/rat-buon",
+      "duration": 325
+    },
+    {
+      "title": "Em Hát Ai Nghe",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "em-hat-ai-nghe",
+      "artists": [
+        {
+          "slug": "orange",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Hồ Văn Trung",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Hồ Văn Trung",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=2ZjgZ1Jhy60",
+      "slug": "em-hat-ai-nghe",
+      "audioId": "audix/audios/em-hat-ai-nghe",
+      "duration": 276
+    },
+    {
+      "title": "Khi Em Lớn",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "khi-em-lon",
+      "artists": [
+        {
+          "slug": "orange",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        },
+        {
+          "slug": "hoang-dung",
+          "role": "MAIN_ARTIST",
+          "order": 1
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b"],
+      "credits": [
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=1Lh1E9voEsc",
+      "slug": "khi-em-lon",
+      "audioId": "audix/audios/khi-em-lon",
+      "duration": 235
+    },
+    {
+      "title": "Đừng Tốt Với Em",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "cam-on",
+      "artists": [
+        {
+          "slug": "orange",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "hip-hop"],
+      "credits": [
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "DT TAP RAP",
+          "role": "RAP",
+          "order": 2
+        },
+        {
+          "slug": null,
+          "name": "DT TAP RAP",
+          "role": "LYRICIST",
+          "order": 3
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=IJaBsEkOGkg",
+      "slug": "dung-tot-voi-em",
+      "audioId": "audix/audios/dung-tot-voi-em",
+      "duration": 192
+    },
+    {
+      "title": "Có Đau Thì Đau Một Mình",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "cam-on",
+      "artists": [
+        {
+          "slug": "orange",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood", "r&b", "hip-hop"],
+      "credits": [
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phúc Du",
+          "role": "RAP",
+          "order": 2
+        },
+        {
+          "slug": null,
+          "name": "Phúc Du",
+          "role": "LYRICIST",
+          "order": 3
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=yyhCLsO1wos",
+      "slug": "co-dau-thi-dau-mot-minh",
+      "audioId": "audix/audios/co-dau-thi-dau-mot-minh",
+      "duration": 234
+    },
+    {
+      "title": "Có Bao Lần",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "cam-on",
+      "artists": [
+        {
+          "slug": "orange",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Hà Trần",
+          "role": "LEAD_VOCALS",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=Zzc_h7GPF8U",
+      "slug": "co-bao-lan",
+      "audioId": "audix/audios/co-bao-lan",
+      "duration": 224
+    },
+    {
+      "title": "Đừng Kết Thúc Hôm Nay",
+      "trackNumber": 4,
+      "isExplicit": false,
+      "albumSlug": "cam-on",
+      "artists": [
+        {
+          "slug": "orange",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=PUofnMN4v0k",
+      "slug": "dung-ket-thuc-hom-nay",
+      "audioId": "audix/audios/dung-ket-thuc-hom-nay",
+      "duration": 220
+    },
+    {
+      "title": "Em Nên Yêu Cô Ta",
+      "trackNumber": 5,
+      "isExplicit": false,
+      "albumSlug": "cam-on",
+      "artists": [
+        {
+          "slug": "orange",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=vOl3v699S_Q",
+      "slug": "em-nen-yeu-co-ta",
+      "audioId": "audix/audios/em-nen-yeu-co-ta",
+      "duration": 241
+    },
+    {
+      "title": "Cuộc Gọi Về Nhà",
+      "trackNumber": 6,
+      "isExplicit": false,
+      "albumSlug": "cam-on",
+      "artists": [
+        {
+          "slug": "orange",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=9asubVWPYv8",
+      "slug": "cuoc-goi-ve-nha",
+      "audioId": "audix/audios/cuoc-goi-ve-nha",
+      "duration": 236
+    },
+    {
+      "title": "Gặp Lại Năm Ta 60",
+      "trackNumber": 7,
+      "isExplicit": false,
+      "albumSlug": "cam-on",
+      "artists": [
+        {
+          "slug": "orange",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["pop", "mood"],
+      "credits": [
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "orange",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=ZXNrz72k1ew",
+      "slug": "gap-lai-nam-ta-60",
+      "audioId": "audix/audios/gap-lai-nam-ta-60",
+      "duration": 336
+    },
+    {
+      "title": "Mười Năm",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "muoi-nam",
+      "artists": [
+        {
+          "slug": "den-vau",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "hip-hop"],
+      "credits": [
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=L0NZW6pgSLc",
+      "slug": "muoi-nam",
+      "audioId": "audix/audios/muoi-nam",
+      "duration": 246
+    },
+    {
+      "title": "Lối Nhỏ",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "loi-nho",
+      "artists": [
+        {
+          "slug": "den-vau",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "hip-hop"],
+      "credits": [
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=KKc_RMln5UY",
+      "slug": "loi-nho",
+      "audioId": "audix/audios/loi-nho",
+      "duration": 296
+    },
+    {
+      "title": "Mơ",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "kobukovu",
+      "artists": [
+        {
+          "slug": "den-vau",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "hip-hop"],
+      "credits": [
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Hậu Vi",
+          "role": "LEAD_VOCALS",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=0nn_fOjcYM0",
+      "slug": "mo",
+      "audioId": "audix/audios/mo",
+      "duration": 289
+    },
+    {
+      "title": "Cô Gái Bàn Bên",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "kobukovu",
+      "artists": [
+        {
+          "slug": "den-vau",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "hip-hop"],
+      "credits": [
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Lynk Lee",
+          "role": "LEAD_VOCALS",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=CPkGTSW34_I",
+      "slug": "co-gai-ban-ben",
+      "audioId": "audix/audios/co-gai-ban-ben",
+      "duration": 200
+    },
+    {
+      "title": "Mưa Trên Những Mái Tôn",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "kobukovu",
+      "artists": [
+        {
+          "slug": "den-vau",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "hip-hop"],
+      "credits": [
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Kaang",
+          "role": "LEAD_VOCALS",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=BdUpEgc1Wp0",
+      "slug": "mua-tren-nhung-mai-ton",
+      "audioId": "audix/audios/mua-tren-nhung-mai-ton",
+      "duration": 186
+    },
+    {
+      "title": "Ghé Thăm",
+      "trackNumber": 4,
+      "isExplicit": false,
+      "albumSlug": "kobukovu",
+      "artists": [
+        {
+          "slug": "den-vau",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "hip-hop"],
+      "credits": [
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "LYRICIST",
+          "order": 0
+        },
+        {
+          "slug": "den-vau",
+          "name": null,
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Kimmese",
+          "role": "LEAD_VOCALS",
+          "order": 2
+        },
+        {
+          "slug": null,
+          "name": "Linh Cáo",
+          "role": "LEAD_VOCALS",
+          "order": 3
+        },
+        {
+          "slug": null,
+          "name": "JGKiD",
+          "role": "LEAD_VOCALS",
+          "order": 4
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=yDwdxhQU4A0",
+      "slug": "ghe-tham",
+      "audioId": "audix/audios/ghe-tham",
+      "duration": 330
+    },
+    {
+      "title": "Rồi Người Thương Cũng Hóa Người Dưng",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "roi-nguoi-thuong-cung-hoa-nguoi-dung",
+      "artists": [
+        {
+          "slug": "hien-ho",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "hien-ho",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "RIN9",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=IGyA9CxWwbs",
+      "slug": "roi-nguoi-thuong-cung-hoa-nguoi-dung",
+      "audioId": "audix/audios/roi-nguoi-thuong-cung-hoa-nguoi-dung",
+      "duration": 286
+    },
+    {
+      "title": "Đừng Nói Tôi Điên",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "dung-noi-toi-dien",
+      "artists": [
+        {
+          "slug": "hien-ho",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "hien-ho",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phúc Bồ",
+          "role": "COMPOSER",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=XfjtLGPnbTA",
+      "slug": "dung-noi-toi-dien",
+      "audioId": "audix/audios/dung-noi-toi-dien",
+      "duration": 298
+    },
+    {
+      "title": "Em Ngày Xưa Khác Rồi",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "em-ngay-xua-khac-roi",
+      "artists": [
+        {
+          "slug": "hien-ho",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "hien-ho",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Vương Anh Tú",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Vương Anh Tú",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=RTu3NV79iPo",
+      "slug": "em-ngay-xua-khac-roi",
+      "audioId": "audix/audios/em-ngay-xua-khac-roi",
+      "duration": 290
+    },
+    {
+      "title": "Lạc",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=vSO8f1FbuiA",
+      "slug": "lac",
+      "audioId": "audix/audios/lac",
+      "duration": 286
+    },
+    {
+      "title": "Cứ Thế",
+      "trackNumber": 2,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=4gSGB6isGKA",
+      "slug": "cu-the",
+      "audioId": "audix/audios/cu-the",
+      "duration": 300
+    },
+    {
+      "title": "Tái Bút Anh Yêu Em",
+      "trackNumber": 3,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=kbUP3CTC2Wg",
+      "slug": "tai-but-anh-yeu-em",
+      "audioId": "audix/audios/tai-but-anh-yeu-em",
+      "duration": 323
+    },
+    {
+      "title": "Tháng Tư Là Lời Nói Dối Của Em",
+      "trackNumber": 4,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=Sf9_daKZrnY",
+      "slug": "thang-tu-la-loi-noi-doi-cua-em",
+      "audioId": "audix/audios/thang-tu-la-loi-noi-doi-cua-em",
+      "duration": 356
+    },
+    {
+      "title": "Chuyện Của Mùa Đông",
+      "trackNumber": 5,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=DY8ho3_UBsg",
+      "slug": "chuyen-cua-mua-dong",
+      "audioId": "audix/audios/chuyen-cua-mua-dong",
+      "duration": 365
+    },
+    {
+      "title": "Người Con Gái Ta Thương",
+      "trackNumber": 6,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        },
+        {
+          "slug": null,
+          "name": "Giang Trung",
+          "role": "COMPOSER",
+          "order": 3
+        },
+        {
+          "slug": null,
+          "name": "Giang Trung",
+          "role": "LYRICIST",
+          "order": 4
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=LVQxfALfTe4",
+      "slug": "nguoi-con-gai-ta-thuong",
+      "audioId": "audix/audios/nguoi-con-gai-ta-thuong",
+      "duration": 387
+    },
+    {
+      "title": "Anh Ấy Cô Ấy",
+      "trackNumber": 7,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=_jS4ZXZIFmo",
+      "slug": "anh-ay-co-ay",
+      "audioId": "audix/audios/anh-ay-co-ay",
+      "duration": 315
+    },
+    {
+      "title": "Hoàng Hôn Tháng Tám",
+      "trackNumber": 8,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=TAYORPeI9zc",
+      "slug": "hoang-hon-thang-tam",
+      "audioId": "audix/audios/hoang-hon-thang-tam",
+      "duration": 269
+    },
+    {
+      "title": "Mong Manh",
+      "trackNumber": 9,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=nsyo9XZfyho",
+      "slug": "mong-manh",
+      "audioId": "audix/audios/mong-manh",
+      "duration": 281
+    },
+    {
+      "title": "Em À",
+      "trackNumber": 10,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=cybiyNhlROs",
+      "slug": "em-a",
+      "audioId": "audix/audios/em-a",
+      "duration": 332
+    },
+    {
+      "title": "Người",
+      "trackNumber": 11,
+      "isExplicit": false,
+      "albumSlug": "fragile",
+      "artists": [
+        {
+          "slug": "ha-anh-tuan",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": "ha-anh-tuan",
+          "name": null,
+          "role": "LEAD_VOCALS",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "COMPOSER",
+          "order": 1
+        },
+        {
+          "slug": null,
+          "name": "Phạm Toàn Thắng",
+          "role": "LYRICIST",
+          "order": 2
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=QuHuJYfDu_M",
+      "slug": "nguoi",
+      "audioId": "audix/audios/nguoi",
+      "duration": 215
+    },
+    {
+      "title": "Đã Từng",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "da-tung",
+      "artists": [
+        {
+          "slug": "duong-hoang-yen",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        },
+        {
+          "slug": "bui-anh-tuan",
+          "role": "FEATURED_ARTIST",
+          "order": 1
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Trần Hùng",
+          "role": "COMPOSER",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Trần Hùng",
+          "role": "LYRICIST",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=1AyFdoqkZhA",
+      "slug": "da-tung",
+      "audioId": "audix/audios/da-tung",
+      "duration": 291
+    },
+    {
+      "title": "Không Phải Em Đúng Không",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "khong-phai-em-dung-khong",
+      "artists": [
+        {
+          "slug": "duong-hoang-yen",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Khắc Việt",
+          "role": "COMPOSER",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Khắc Việt",
+          "role": "LYRICIST",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=7W7Nxur8H9k",
+      "slug": "khong-phai-em-dung-khong",
+      "audioId": "audix/audios/khong-phai-em-dung-khong",
+      "duration": 217
+    },
+    {
+      "title": "Em Đã Thương Người Ta Hơn Anh",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "em-da-thuong-nguoi-ta-hon-anh",
+      "artists": [
+        {
+          "slug": "noo-phuoc-thinh",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Vương Anh Tú",
+          "role": "COMPOSER",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Vương Anh Tú",
+          "role": "LYRICIST",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=fW_Bk7tPADc",
+      "slug": "em-da-thuong-nguoi-ta-hon-anh",
+      "audioId": "audix/audios/em-da-thuong-nguoi-ta-hon-anh",
+      "duration": 312
+    },
+    {
+      "title": "Chạm Khẽ Tim Anh Một Chút Thôi",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "cham-khe-tim-anh-mot-chut-thoi",
+      "artists": [
+        {
+          "slug": "noo-phuoc-thinh",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Tăng Nhật Tuệ",
+          "role": "COMPOSER",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Tăng Nhật Tuệ",
+          "role": "LYRICIST",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=Rzm_kltwHbg",
+      "slug": "cham-khe-tim-anh-mot-chut-thoi",
+      "audioId": "audix/audios/cham-khe-tim-anh-mot-chut-thoi",
+      "duration": 347
+    },
+    {
+      "title": "Chạm Khẽ Tim Anh Một Chút Thôi",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "cham-khe-tim-anh-mot-chut-thoi",
+      "artists": [
+        {
+          "slug": "noo-phuoc-thinh",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Tăng Nhật Tuệ",
+          "role": "COMPOSER",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Tăng Nhật Tuệ",
+          "role": "LYRICIST",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=Rzm_kltwHbg",
+      "slug": "cham-khe-tim-anh-mot-chut-thoi",
+      "audioId": "audix/audios/cham-khe-tim-anh-mot-chut-thoi",
+      "duration": 347
+    },
+    {
+      "title": "Như Phút Ban Đầu",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "nhu-phut-ban-dau",
+      "artists": [
+        {
+          "slug": "noo-phuoc-thinh",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Đỗ Hiếu",
+          "role": "COMPOSER",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Đỗ Hiếu",
+          "role": "LYRICIST",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=JA-BQgQSw9o",
+      "slug": "nhu-phut-ban-dau",
+      "audioId": "audix/audios/nhu-phut-ban-dau",
+      "duration": 253
+    },
+    {
+      "title": "Những Kẻ Mộng Mơ",
+      "trackNumber": 1,
+      "isExplicit": false,
+      "albumSlug": "nhung-ke-mong-mo",
+      "artists": [
+        {
+          "slug": "noo-phuoc-thinh",
+          "role": "MAIN_ARTIST",
+          "order": 0
+        }
+      ],
+      "genreSlugs": ["mood", "r&b", "pop"],
+      "credits": [
+        {
+          "slug": null,
+          "name": "Bảo Trọng",
+          "role": "COMPOSER",
+          "order": 0
+        },
+        {
+          "slug": null,
+          "name": "Bảo Trọng",
+          "role": "LYRICIST",
+          "order": 1
+        }
+      ],
+      "link": "https://www.youtube.com/watch?v=tnYrDhi1KGA",
+      "slug": "nhung-ke-mong-mo",
+      "audioId": "audix/audios/nhung-ke-mong-mo",
+      "duration": 252
     }
   ]
 }

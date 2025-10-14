@@ -77,7 +77,6 @@ export const getArtistBanner = async (artistId: string) => {
       name: true,
       imageId: true,
       bannerId: true,
-      isVerified: true,
     },
   });
 
