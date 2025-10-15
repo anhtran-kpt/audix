@@ -1,4 +1,5 @@
 export const meEndpoints = {
+  banner: () => `/me/banner` as const,
   libraryPlaylists: () => `/me/library/playlists` as const,
   likedAlbums: () => `/me/albums` as const,
   followedArtists: () => `/me/artists` as const,

@@ -1,12 +1,23 @@
+"use client";
+
 import AlbumGrid from "@/components/shared/album-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { AlbumItem } from "@/features/album/contracts/album-dto";
+import { meQueryOptions } from "@/features/me/api/me-query-options";
+import { useQuery } from "@tanstack/react-query";
 
-type AlbumsSectionProps = {
-  albums: AlbumItem[];
-};
+export const AlbumSection = () => {
+  const { data: albums, status } = useQuery({
+    ...meQueryOptions.likedAlbums(),
+  });
 
-export const AlbumSection = ({ albums }: AlbumsSectionProps) => {
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
+
   return (
     <section>
       <SectionHeading title="Liked Albums" />

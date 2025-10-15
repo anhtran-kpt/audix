@@ -30,11 +30,7 @@ import { useShallow } from "zustand/react/shallow";
 import { VolumeIcon } from "../shared/volume-icon";
 import { AppImage } from "../shared/app-image";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
-import {
-  followedArtistsOptions,
-  libraryPlaylistsOptions,
-  likedAlbumsOptions,
-} from "@/features/me/api/me-options";
+import { meQueryOptions } from "@/features/me/api/me-query-options";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,15 +47,15 @@ export function AppSidebar() {
   const router = useRouter();
 
   const { data: playlists } = useQuery({
-    ...libraryPlaylistsOptions(),
+    ...meQueryOptions.libraryPlaylists(),
   });
 
   const { data: artists } = useQuery({
-    ...followedArtistsOptions(),
+    ...meQueryOptions.followedArtists(),
   });
 
   const { data: albums } = useQuery({
-    ...likedAlbumsOptions(),
+    ...meQueryOptions.likedAlbums(),
   });
 
   const { isPlaying, contextId } = usePlaybackStore(

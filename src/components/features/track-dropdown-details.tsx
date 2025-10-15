@@ -31,7 +31,7 @@ import { useAddTrackToPlaylist } from "@/features/playlist/hooks/use-add-track-t
 import { useRemoveTrackFromPlaylist } from "@/features/playlist/hooks/use-remove-track-from-playlist";
 import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
-import { myPlaylistsOptions } from "@/features/me/api/me-options";
+import { meQueryOptions } from "@/features/me/api/me-query-options";
 
 type TrackDropdownDetailsProps = {
   track: TrackItem;
@@ -53,7 +53,7 @@ export function TrackDropdownDetails({
     status: queryStatus,
     error,
   } = useQuery({
-    ...myPlaylistsOptions(),
+    ...meQueryOptions.myPlaylists(),
   });
 
   const [open, setOpen] = useState(false);

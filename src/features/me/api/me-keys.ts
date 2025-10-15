@@ -1,9 +1,11 @@
 export const meKeys = {
-  libraryPlaylists: () => ["me", "library", "playlists"] as const,
-  followedArtists: () => ["me", "artists"] as const,
-  likedAlbums: () => ["me", "albums"] as const,
-  myPlaylists: () => ["me", "playlists"] as const,
-  likeAlbum: (albumId: string) => ["me", "albums", albumId] as const,
+  base: ["me"] as const,
+  profile: () => [...meKeys.base, "profile"] as const,
+  libraryPlaylists: () => [...meKeys.base, "library", "playlists"] as const,
+  followedArtists: () => [...meKeys.base, "artists"] as const,
+  likedAlbums: () => [...meKeys.base, "albums"] as const,
+  myPlaylists: () => [...meKeys.base, "playlists"] as const,
+  likeAlbum: (albumId: string) => [...meKeys.base, "albums", albumId] as const,
   likePlaylist: (playlistId: string) =>
-    ["me", "playlists", playlistId] as const,
+    [...meKeys.base, "playlists", playlistId] as const,
 } as const;

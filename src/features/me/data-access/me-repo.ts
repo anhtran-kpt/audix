@@ -66,6 +66,31 @@ export const getMyProfile = async (userId: string) => {
 
 export type MyProfile = AwaitedReturnType<typeof getMyProfile>;
 
+export const getMyBanner = async (userId: string) => {
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      _count: {
+        select: {
+          playlists: true,
+          followedArtists: true,
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found!");
+  }
+
+  return user;
+};
+
+export type MyBanner = AwaitedReturnType<typeof getMyBanner>;
+
 export const getMyLibraryPlaylists = async (userId: string) => {
   const user = await db.user.findUnique({
     where: { id: userId },
@@ -130,6 +155,8 @@ export const getMyPlaylists = async (userId: string) => {
   return user.playlists;
 };
 
+export type MyPlaylists = AwaitedReturnType<typeof getMyPlaylists>;
+
 export const getMyFollowedArtists = async (userId: string) => {
   const user = await db.user.findUnique({
     where: {
@@ -158,6 +185,8 @@ export const getMyFollowedArtists = async (userId: string) => {
   return artists;
 };
 
+export type MyFollowedArtists = AwaitedReturnType<typeof getMyFollowedArtists>;
+
 export const getMyLikedAlbums = async (userId: string) => {
   const user = await db.user.findUnique({
     where: {
@@ -185,6 +214,8 @@ export const getMyLikedAlbums = async (userId: string) => {
 
   return albums;
 };
+
+export type MyLikedAlbums = AwaitedReturnType<typeof getMyLikedAlbums>;
 
 export const likeAlbum = async ({
   userId,

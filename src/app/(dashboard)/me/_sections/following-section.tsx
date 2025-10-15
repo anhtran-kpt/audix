@@ -1,12 +1,23 @@
+"use client";
+
 import ArtistGrid from "@/components/shared/artist-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { ArtistItem } from "@/features/artist/contracts/artist-dto";
+import { meQueryOptions } from "@/features/me/api/me-query-options";
+import { useQuery } from "@tanstack/react-query";
 
-type FollowingSectionProps = {
-  artists: ArtistItem[];
-};
+export const FollowingSection = () => {
+  const { data: artists, status } = useQuery({
+    ...meQueryOptions.followedArtists(),
+  });
 
-export const FollowingSection = ({ artists }: FollowingSectionProps) => {
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
+
   return (
     <section>
       <SectionHeading title="Following Artists" />

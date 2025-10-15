@@ -1,30 +1,30 @@
-import { getMyProfile } from "@/features/me/data-access/me-repo";
-import { getUserIdOrThrow } from "@/lib/auth";
+import { requireAuth } from "@/lib/auth";
 import { PlaylistSection } from "./_sections/playlists-section";
 import { FollowingSection } from "./_sections/following-section";
 import { AlbumSection } from "./_sections/albums-section";
-import { BannerSection } from "./banner-section";
+import { BannerSection } from "./_sections/banner-section";
 import { createQueryClient } from "@/lib/query-client";
+import { meQueryOptions } from "@/features/me/api/me-query-options";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
 export default async function MePage() {
-  const userId = await getUserIdOrThrow();
-  const profile = await getMyProfile(userId);
+  await requireAuth();
 
   const qc = createQueryClient();
 
-  await qc.prefetchQuery({});
+  await Promise.all([
+    qc.prefetchQuery({ ...meQueryOptions.banner() }),
+    qc.prefetchQuery({ ...meQueryOptions.myPlaylists() }),
+    qc.prefetchQuery({ ...meQueryOptions.likedAlbums() }),
+    qc.prefetchQuery({ ...meQueryOptions.followedArtists() }),
+  ]);
 
   return (
-    <HydrationBoundary state>
-      <BannerSection
-        image={profile.image}
-        name={profile.name}
-        followingCount={profile._count.followedArtists}
-        playlistCount={profile._count.playlists}
-      />
-      <PlaylistSection initialData={profile.playlists} />
-      <AlbumSection albums={profile.likedAlbums} />
-      <FollowingSection artists={profile.followedArtists} />
+    <HydrationBoundary state={dehydrate(qc)}>
+      <BannerSection />
+      <PlaylistSection />
+      <AlbumSection />
+      <FollowingSection />
     </HydrationBoundary>
   );
 }

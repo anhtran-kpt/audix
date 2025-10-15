@@ -2,24 +2,25 @@
 
 import PlaylistGrid from "@/components/shared/playlist-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { myPlaylistsOptions } from "@/features/me/api/me-options";
-import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
+import { meQueryOptions } from "@/features/me/api/me-query-options";
 import { useQuery } from "@tanstack/react-query";
 
-type PlaylistsSectionProps = {
-  initialData: PlaylistItem[];
-};
-
-export const PlaylistSection = ({ initialData }: PlaylistsSectionProps) => {
-  const { data: playlists } = useQuery({
-    ...myPlaylistsOptions(),
-    initialData,
-    initialDataUpdatedAt: Date.now(),
+export const PlaylistSection = () => {
+  const { data: playlists, status } = useQuery({
+    ...meQueryOptions.myPlaylists(),
   });
+
+  if (status === "pending") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "error") {
+    return <div>Error</div>;
+  }
 
   return (
     <section>
-      <SectionHeading title="Liked Playlists" />
+      <SectionHeading title="My Playlists" />
       <PlaylistGrid playlists={playlists} />
     </section>
   );
