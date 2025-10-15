@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+/* @import "./responsive-spacing.css"; */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -163,6 +164,8 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  --spacing-responsive: var(--spacing-responsive);
 }
 
 @layer base {
@@ -171,6 +174,31 @@
   }
   body {
     @apply bg-background text-foreground text-sm;
+  }
+
+  :root {
+    --spacing-responsive: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --spacing-responsive: 1.5rem;
+    }
+  }
+  @media (min-width: 768px) {
+    :root {
+      --spacing-responsive: 2rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    :root {
+      --spacing-responsive: 2.5rem;
+    }
+  }
+  @media (min-width: 1280px) {
+    :root {
+      --spacing-responsive: 3rem;
+    }
   }
 }
 

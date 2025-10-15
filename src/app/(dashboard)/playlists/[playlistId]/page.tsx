@@ -1,9 +1,9 @@
-import { BannerSection } from "./_sections/banner-section";
 import { TracksSection } from "./_sections/tracks-section";
 import { BrowseTrackSection } from "./_sections/browse-track-section";
 import { createQueryClient } from "@/lib/query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
+import { BannerSection } from "./_sections/banner-section";
 
 export default async function PlaylistDetailPage({
   params,

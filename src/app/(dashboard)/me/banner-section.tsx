@@ -15,7 +15,19 @@ import Dot from "@/components/ui/dot";
 import { LikeButton } from "@/components/shared/like-button";
 import { UserImage } from "@/components/shared/user-image";
 
-export const BannerSection = ({ playlistId }: { playlistId: string }) => {
+type BannerSectionProps = {
+  image: MyProfile["image"];
+  name: MyProfile["name"];
+  playlistCount: MyProfile["_count"]["playlists"];
+  followingCount: MyProfile["_count"]["followedArtists"];
+};
+
+export const BannerSection = ({
+  image,
+  name,
+  playlistCount,
+  followingCount,
+}: BannerSectionProps) => {
   const { data: playlist, status } = useQuery({
     ...playlistQueryOptions.banner(playlistId),
   });

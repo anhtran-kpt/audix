@@ -44,7 +44,7 @@ export const useImageGradient = (imageUrl: string | null) => {
         }).toHexString();
         const via = tinycolor({
           ...baseColor,
-          l: Math.max(baseColor.l - 0.5, 0.2),
+          l: Math.max(baseColor.l - 0.4, 0.2),
         }).toHexString();
         const to = background;
 

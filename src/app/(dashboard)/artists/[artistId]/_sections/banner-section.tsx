@@ -1,15 +1,16 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { AppImage } from "../../../../../components/shared/app-image";
 import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
-import { FollowersBadge } from "../../../../../components/features/follow-badge";
 import { useImageGradient } from "@/hooks/use-image-gradient";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { IconButton } from "../../../../../components/ui/icon-button";
+
 import { EllipsisIcon, ShuffleIcon } from "lucide-react";
-import { RoundedPlayButton } from "../../../../../components/shared/context-play-button/rounded-play-button";
-import { FollowButton } from "../../../../../components/features/follow-button";
+import { FollowersBadge } from "@/components/features/follow-badge";
+import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
+import { IconButton } from "@/components/ui/icon-button";
+import { AppImage } from "@/components/shared/app-image";
+import { FollowButton } from "@/components/features/follow-button";
 
 export const BannerSection = ({ artistId }: { artistId: string }) => {
   const { data: artist, status } = useQuery({
@@ -27,35 +28,34 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
   }
 
   return (
-    <section className="-mx-4 sm:-mx-6 md:-mx-8 lg:-mx-10 xl:-mx-12 -mt-19 sm:-mt-21 md:-mt-23 lg:-mt-25 xl:-mt-27 flex flex-col">
-      <div className="relative">
+    <section
+      className="transition-colors -mx-responsive -mt-[calc(var(--spacing-responsive)+var(--header-height))] px-responsive flex flex-col gap-6 xl:gap-8"
+      style={{
+        background: gradient
+          ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 60%, ${gradient.to} 100%)`
+          : undefined,
+      }}
+    >
+      <div className="mt-[calc(var(--spacing-responsive)+var(--header-height))] flex flex-col sm:flex-row justify-start sm:items-end sm:gap-5 xl:gap-6">
         <AppImage
-          priority
           alt={artist.name}
-          src={artist.bannerId}
-          containerClassName="rounded-none w-full h-52 sm:h-60 md:h-68 lg:h-76 xl:h-84 2xl:h-92"
-          className="rounded-none brightness-75 object-top object-cover"
-          sizes="100vw"
-          onLoad={(e) => {
-            setImageUrl((e.target as HTMLImageElement).src);
-          }}
+          src={artist.imageId}
+          containerClassName="size-72 sm:size-42 md:size-48 lg:size-52 xl:size-56 max-sm:place-self-center rounded-full"
+          className="rounded-full"
+          sizes="(max-width: 768px) 50vw, 224px"
+          onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
+          priority
         />
-        <div className="absolute flex flex-col gap-2 md:gap-3 left-4 sm:left-6 md:left-8 lg:left-10 xl:left-12 bottom-4 lg:bottom-6">
-          <span className="font-extrabold text-4xl sm:text-5xl xl:text-6xl 2xl:text-7xl">
+        <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5 xl:gap-6 max-sm:mt-6">
+          <span className="max-sm:hidden">Artist</span>
+          <span className="font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
             {artist.name}
           </span>
           <FollowersBadge artistId={artistId} />
         </div>
       </div>
-      <div
-        style={{
-          background: gradient
-            ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 30%, ${gradient.to} 100%)`
-            : undefined,
-        }}
-        className="transition-colors flex items-center px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 gap-6 justify-between sm:justify-start pt-6"
-      >
-        <div className="flex items-center gap-6">
+      <div className="flex items-center justify-between sm:justify-start max-sm:flex-row-reverse sm:gap-6">
+        <div className="flex items-center gap-6 max-sm:flex-row-reverse">
           <RoundedPlayButton
             context={{
               contextType: "ARTIST",
