@@ -20,6 +20,12 @@ export const meQueryOptions = {
       queryFn: () => getApi<MyPlaylists>(meEndpoints.myPlaylists()),
     }),
 
+  likedPlaylists: () =>
+    queryOptions({
+      queryKey: meKeys.likedPlaylists(),
+      queryFn: () => getApi<PlaylistItem[]>(meEndpoints.likedPlaylists()),
+    }),
+
   likedAlbums: () =>
     queryOptions({
       queryKey: meKeys.likedAlbums(),
@@ -30,11 +36,5 @@ export const meQueryOptions = {
     queryOptions({
       queryKey: meKeys.followedArtists(),
       queryFn: () => getApi<ArtistItem[]>(meEndpoints.followedArtists()),
-    }),
-
-  libraryPlaylists: () =>
-    queryOptions({
-      queryKey: meKeys.libraryPlaylists(),
-      queryFn: () => getApi<PlaylistItem[]>(meEndpoints.libraryPlaylists()),
     }),
 } as const;

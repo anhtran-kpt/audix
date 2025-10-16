@@ -4,7 +4,7 @@ import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-opt
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { EllipsisIcon, GlobeIcon, LockIcon, ShuffleIcon } from "lucide-react";
+import { GlobeIcon, LockIcon, ShuffleIcon } from "lucide-react";
 import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 import { IconButton } from "@/components/ui/icon-button";
 import { AppImage } from "@/components/shared/app-image";
@@ -14,6 +14,7 @@ import pluralize from "pluralize";
 import Dot from "@/components/ui/dot";
 import { LikeButton } from "@/components/shared/like-button";
 import { UserImage } from "@/components/shared/user-image";
+import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
 
 export const BannerSection = ({ playlistId }: { playlistId: string }) => {
   const { data: playlist, status } = useQuery({
@@ -139,14 +140,9 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
         </div>
         <div className="flex items-center gap-6">
           <LikeButton albumId={playlistId} />
-          <IconButton
-            icon={EllipsisIcon}
-            size="xl"
-            tooltipContent={
-              <>
-                More options for <strong>{playlist.title}</strong>
-              </>
-            }
+          <PlaylistDetailDropdown
+            playlistId={playlistId}
+            title={playlist.title}
           />
         </div>
       </div>

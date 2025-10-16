@@ -1,3 +1,4 @@
+import { meKeys } from "@/features/me/api/me-keys";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { deleteApi } from "@/lib/http/api";
@@ -19,35 +20,36 @@ export function useOptimisticPlaylistDelete() {
       deleteApi(`/playlists/${playlistId}`),
 
     onMutate: async ({ playlistId }) => {
-      await qc.cancelQueries({ queryKey: playlistKeys.detail(playlistId) });
-      await qc.cancelQueries({ queryKey: playlistKeys.list() });
+      await Promise.all([
+        qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) }),
+        qc.cancelQueries({ queryKey: playlistKeys.tracks(playlistId) }),
+        qc.cancelQueries({ queryKey: meKeys.myPlaylists() }),
+      ]);
 
-      const prevLists = qc.getQueryData<PlaylistItem[]>(playlistKeys.list());
+      const prevData = qc.getQueryData(meKeys.myPlaylists());
 
-      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (old = []) =>
+      qc.setQueryData<PlaylistItem[]>(meKeys.myPlaylists(), (old = []) =>
         old.filter((pl) => pl.id !== playlistId)
       );
 
-      qc.removeQueries({ queryKey: playlistKeys.detail(playlistId) });
-
-      return { prevLists, playlistId };
+      return { prevData, playlistId };
     },
 
     onError: (_, __, ctx) => {
-      if (ctx?.prevLists) {
-        qc.setQueryData(playlistKeys.list(), ctx.prevLists);
-      }
+      if (!ctx) return;
+
+      qc.setQueryData(meKeys.myPlaylists(), ctx.prevData);
     },
 
     onSuccess: async (_, { playlistId }) => {
-      qc.invalidateQueries({ queryKey: playlistKeys.list() });
-
       toast.success("Playlist deleted.");
       if (pathname === `/playlists/${playlistId}`) {
         router.push("/");
       }
+    },
 
-      qc.removeQueries({ queryKey: playlistKeys.detail(playlistId) });
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: meKeys.myPlaylists() });
     },
   });
 }

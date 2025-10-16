@@ -47,7 +47,7 @@ export function AppSidebar() {
   const router = useRouter();
 
   const { data: playlists } = useQuery({
-    ...meQueryOptions.libraryPlaylists(),
+    ...meQueryOptions.likedPlaylists(),
   });
 
   const { data: artists } = useQuery({

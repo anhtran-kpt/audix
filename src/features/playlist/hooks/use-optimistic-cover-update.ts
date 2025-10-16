@@ -1,6 +1,7 @@
 "use client";
 
 import { meKeys } from "@/features/me/api/me-keys";
+import { MyPlaylists } from "@/features/me/data-access/me-repo";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { PlaylistBanner } from "@/features/playlist/data-access/playlist-repo";
@@ -28,9 +29,13 @@ export const useOptimisticCoverUpdate = () => {
       await qc.cancelQueries({ queryKey: playlistKeys.list() });
       await qc.cancelQueries({ queryKey: meKeys.myPlaylists() });
 
-      const prevBanner = qc.getQueryData<PlaylistBanner>(
-        playlistKeys.banner(playlistId)
-      );
+      const prevData = {
+        banner: qc.getQueryData<PlaylistBanner>(
+          playlistKeys.banner(playlistId)
+        ),
+        myPlaylists: qc.getQueryData<MyPlaylists>(meKeys.myPlaylists()),
+        list: qc.getQueryData<PlaylistItem[]>(playlistKeys.list()),
+      };
 
       const optimisticImageId =
         imageIds.length === 1 ? imageIds[0] : buildPlaylistCoverUrl(imageIds);
@@ -59,28 +64,21 @@ export const useOptimisticCoverUpdate = () => {
           : prev
       );
 
-      return { prevBanner };
+      return { prevData };
     },
 
     onError: (_err, { playlistId }, ctx) => {
-      if (ctx?.prevBanner) {
-        qc.setQueryData(playlistKeys.banner(playlistId), ctx.prevBanner);
-      }
+      if (!ctx) return;
+
+      qc.setQueryData(playlistKeys.banner(playlistId), ctx.prevData.banner);
+      qc.setQueryData(meKeys.myPlaylists(), ctx.prevData.myPlaylists);
+      qc.setQueryData(playlistKeys.list(), ctx.prevData.list);
     },
 
-    onSuccess: ({ imageId }, { playlistId }) => {
-      qc.setQueryData<PlaylistBanner>(
-        playlistKeys.banner(playlistId),
-        (prevBanner) => (prevBanner ? { ...prevBanner, imageId } : prevBanner)
-      );
-
-      qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (prevBanner) =>
-        prevBanner
-          ? prevBanner.map((pl) =>
-              pl.id === playlistId ? { ...pl, imageId } : pl
-            )
-          : prevBanner
-      );
+    onSettled: (_, __, { playlistId }) => {
+      qc.invalidateQueries({ queryKey: playlistKeys.banner(playlistId) });
+      qc.invalidateQueries({ queryKey: meKeys.myPlaylists() });
+      qc.invalidateQueries({ queryKey: playlistKeys.list() });
     },
   });
 };

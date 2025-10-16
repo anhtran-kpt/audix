@@ -36,8 +36,10 @@ export function useCreatePlaylist(
     mutationFn: (data: CreatePlaylistInput) =>
       postApi<CreatePlaylistOutput>("/playlists", { body: data }),
     onMutate: async (vars) => {
-      await qc.cancelQueries({ queryKey: meKeys.myPlaylists() });
-      await qc.cancelQueries({ queryKey: meKeys.libraryPlaylists() });
+      await Promise.all([
+        qc.cancelQueries({ queryKey: meKeys.myPlaylists() }),
+        qc.cancelQueries({ queryKey: meKeys.profile() }),
+      ]);
 
       const previousPlaylists = qc.getQueryData<PlaylistItem[]>(
         meKeys.myPlaylists()
@@ -57,10 +59,6 @@ export function useCreatePlaylist(
         old ? [optimistic, ...old] : [optimistic]
       );
 
-      qc.setQueryData<PlaylistItem[]>(meKeys.libraryPlaylists(), (old) =>
-        old ? [optimistic, ...old] : [optimistic]
-      );
-
       return { previousPlaylists };
     },
     onError: (err, _, ctx) => {
@@ -76,15 +74,13 @@ export function useCreatePlaylist(
         return [res, ...filtered];
       });
 
-      qc.setQueryData<PlaylistItem[]>(meKeys.libraryPlaylists(), (old) => {
-        if (!old) return [res];
-        const filtered = old.filter((pl) => !pl.id.startsWith("optimistic-"));
-        return [res, ...filtered];
-      });
-
-      onSuccess?.(res);
       form.reset();
+      onSuccess?.(res);
       router.push(`/playlists/${res.id}`);
+    },
+
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: meKeys.profile() });
     },
   });
 
