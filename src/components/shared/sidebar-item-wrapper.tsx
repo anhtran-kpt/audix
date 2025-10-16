@@ -19,14 +19,13 @@ export function SidebarItemWrapper({
   return (
     <div
       className={cn(
-        "min-w-0 flex items-center transition-all duration-200",
-        open ? "gap-3 flex-1" : "justify-center w-10"
+        "min-w-0 flex items-center transition-all duration-200 p-1.5",
+        open ? "gap-2 flex-1" : "justify-center w-10"
       )}
     >
       <div className="relative shrink-0 size-10 flex items-center justify-center">
         {image}
       </div>
-
       <div
         className={cn(
           "flex grow flex-col gap-0.5 overflow-hidden transition-[opacity,max-width,margin] duration-200",
@@ -36,7 +35,6 @@ export function SidebarItemWrapper({
       >
         {info}
       </div>
-
       {right}
     </div>
   );

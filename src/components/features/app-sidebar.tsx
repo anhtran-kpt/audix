@@ -13,7 +13,6 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import Dot from "../ui/dot";
 import { ScrollArea } from "../ui/scroll-area";
-import { useQuery } from "@tanstack/react-query";
 import { IconButton } from "../ui/icon-button";
 import {
   PlusIcon,
@@ -30,7 +29,6 @@ import { useShallow } from "zustand/react/shallow";
 import { VolumeIcon } from "../shared/volume-icon";
 import { AppImage } from "../shared/app-image";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
-import { meQueryOptions } from "@/features/me/api/me-query-options";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,24 +37,15 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
+import { LibraryFilter, useLibraryItems } from "@/hooks/use-library-items";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { openDialog } = useNewPlaylistDialog();
   const { toggleSidebar, open } = useSidebar();
   const router = useRouter();
-
-  const { data: playlists } = useQuery({
-    ...meQueryOptions.likedPlaylists(),
-  });
-
-  const { data: artists } = useQuery({
-    ...meQueryOptions.followedArtists(),
-  });
-
-  const { data: albums } = useQuery({
-    ...meQueryOptions.likedAlbums(),
-  });
+  const [filter, setFilter] = useState<LibraryFilter>("all");
+  const { filteredItems } = useLibraryItems(filter);
 
   const { isPlaying, contextId } = usePlaybackStore(
     useShallow((s) => ({
@@ -64,8 +53,6 @@ export function AppSidebar() {
       contextId: s.session?.snapshot?.contextId,
     }))
   );
-
-  const [filter, setFilter] = useState("all");
 
   return (
     <Sidebar collapsible="icon" variant="inset" className="group">
@@ -121,7 +108,7 @@ export function AppSidebar() {
               <DropdownMenuContent className="w-32">
                 <DropdownMenuRadioGroup
                   value={filter}
-                  onValueChange={setFilter}
+                  onValueChange={setFilter as any}
                 >
                   <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="artists">
@@ -165,70 +152,40 @@ export function AppSidebar() {
         <ScrollArea className="h-full min-h-0" scrollBarClassName="w-2">
           <SidebarGroup className="h-full">
             <SidebarMenu>
-              {(filter === "all" || filter === "artists") &&
-                artists?.map((artist) => (
-                  <SidebarMenuItem key={artist.id}>
-                    <SidebarMenuButton
-                      size="lg"
-                      asChild
-                      isActive={pathname === `/artists/${artist.id}`}
-                    >
-                      <div
-                        onClick={() => router.push(`/artists/${artist.id}`)}
-                        className="cursor-pointer"
-                      >
-                        <SidebarItemWrapper
-                          open={open}
-                          image={
-                            <>
-                              <AppImage
-                                fill
-                                sizes="40px"
-                                className="rounded-full group-hover/menu-item:brightness-65"
-                                alt={artist.name}
-                                src={artist.imageId}
-                                containerClassName="size-10"
-                              />
-                              <RowPlayButton
-                                context={{
-                                  contextType: "ARTIST",
-                                  contextId: artist.id,
-                                }}
-                                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 invisible group-hover/menu-item:visible"
-                              />
-                            </>
-                          }
-                          info={
-                            <>
-                              <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
-                                {artist.name}
-                              </p>
-                              <p className="text-[calc(11rem/16)] text-muted-foreground truncate font-normal">
-                                Artist
-                              </p>
-                            </>
-                          }
-                          right={
-                            isPlaying &&
-                            contextId === artist.id && <VolumeIcon />
-                          }
-                        />
-                      </div>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+              {filteredItems.map((item) => {
+                const isArtist = "type" in item && item.type === "ARTIST";
+                const isAlbum = "type" in item && item.type === "ALBUM";
+                const isPlaylist = "source" in item;
 
-              {(filter === "all" || filter === "playlists") &&
-                playlists?.map((playlist) => (
-                  <SidebarMenuItem key={playlist.id}>
+                return (
+                  <SidebarMenuItem key={item.id}>
                     <SidebarMenuButton
                       size="lg"
                       asChild
-                      isActive={pathname === `/playlists/${playlist.id}`}
+                      isActive={
+                        pathname ===
+                        `/${
+                          isArtist
+                            ? "artists"
+                            : isAlbum
+                            ? "albums"
+                            : "playlists"
+                        }/${item.id}`
+                      }
                     >
                       <div
-                        onClick={() => router.push(`/playlists/${playlist.id}`)}
                         className="cursor-pointer"
+                        onClick={() =>
+                          router.push(
+                            `/${
+                              isArtist
+                                ? "artists"
+                                : isAlbum
+                                ? "albums"
+                                : "playlists"
+                            }/${item.id}`
+                          )
+                        }
                       >
                         <SidebarItemWrapper
                           open={open}
@@ -237,10 +194,12 @@ export function AppSidebar() {
                               <AppImage
                                 fill
                                 sizes="40px"
-                                className="group-hover/menu-item:brightness-65"
-                                alt={playlist.title}
+                                className={`rounded-${
+                                  isArtist ? "full" : "sm"
+                                } group-hover/menu-item:brightness-65`}
+                                alt={isArtist ? item.name : item.title}
                                 src={
-                                  playlist.imageId ??
+                                  item.imageId ??
                                   process.env
                                     .NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
                                 }
@@ -248,8 +207,8 @@ export function AppSidebar() {
                               />
                               <RowPlayButton
                                 context={{
-                                  contextType: "PLAYLIST",
-                                  contextId: playlist.id,
+                                  contextType: item.type,
+                                  contextId: item.id,
                                 }}
                                 className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
                               />
@@ -257,88 +216,42 @@ export function AppSidebar() {
                           }
                           info={
                             <>
-                              <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
-                                {playlist.title}
+                              <p className="font-medium text-[calc(13rem/16)] truncate">
+                                {isArtist ? item.name : item.title}
                               </p>
-                              <div className="flex items-center text-[calc(11rem/16)] gap-x-1 text-muted-foreground truncate">
-                                <p>Playlist</p>
-                                <Dot />
-                                {playlist.user && (
-                                  <span className="text-[calc(11rem/16)]">
-                                    {playlist.user.name}
-                                  </span>
-                                )}
-                              </div>
-                            </>
-                          }
-                          right={
-                            isPlaying &&
-                            contextId === playlist.id && <VolumeIcon />
-                          }
-                        />
-                      </div>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
+                              <div className="flex items-center text-[calc(11rem/16)] text-muted-foreground gap-x-1 truncate">
+                                <p>
+                                  {isArtist
+                                    ? "Artist"
+                                    : isAlbum
+                                    ? "Album"
+                                    : "Playlist"}
+                                </p>
 
-              {(filter === "all" || filter === "albums") &&
-                albums?.map((album) => (
-                  <SidebarMenuItem key={album.id}>
-                    <SidebarMenuButton
-                      size="lg"
-                      asChild
-                      isActive={pathname === `/albums/${album.id}`}
-                    >
-                      <div
-                        onClick={() => router.push(`/albums/${album.id}`)}
-                        className="cursor-pointer"
-                      >
-                        <SidebarItemWrapper
-                          open={open}
-                          image={
-                            <>
-                              <AppImage
-                                fill
-                                sizes="40px"
-                                className="group-hover/menu-item:brightness-65"
-                                alt={album.title}
-                                src={album.imageId}
-                                containerClassName="size-10"
-                              />
-                              <RowPlayButton
-                                context={{
-                                  contextType: "ALBUM",
-                                  contextId: album.id,
-                                }}
-                                className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-                              />
-                            </>
-                          }
-                          info={
-                            <>
-                              <p className="text-foreground font-medium text-[calc(13rem/16)] truncate">
-                                {album.title}
-                              </p>
-                              <div className="flex items-center text-[calc(11rem/16)] gap-x-1 text-muted-foreground truncate">
-                                <p>Album</p>
-                                <Dot />
-                                {album.artist && (
-                                  <span className="text-[calc(11rem/16)]">
-                                    {album.artist.name}
-                                  </span>
+                                {isAlbum && item.artist && (
+                                  <>
+                                    <Dot />
+                                    <span>{item.artist.name}</span>
+                                  </>
+                                )}
+                                {isPlaylist && item.user && (
+                                  <>
+                                    <Dot />
+                                    <span>{item.user.name}</span>
+                                  </>
                                 )}
                               </div>
                             </>
                           }
                           right={
-                            isPlaying &&
-                            contextId === album.id && <VolumeIcon />
+                            isPlaying && contextId === item.id && <VolumeIcon />
                           }
                         />
                       </div>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                ))}
+                );
+              })}
             </SidebarMenu>
           </SidebarGroup>
         </ScrollArea>
