@@ -38,10 +38,10 @@ export default function AlbumGrid({ albums }: AlbumGridProps) {
               className="absolute opacity-0 bottom-2 right-2 translate-y-2 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
             />
           </div>
-          <div className="flex flex-col items-start w-full min-w-0">
+          <div className="flex flex-col items-start w-full min-w-0 overflow-hidden">
             <NavLink
               href={`/albums/${album.id}`}
-              className="text-[calc(15rem/16)] truncate"
+              className="text-[calc(15rem/16)] truncate block w-full"
             >
               {album.title}
             </NavLink>
@@ -58,7 +58,7 @@ export default function AlbumGrid({ albums }: AlbumGridProps) {
                   <Dot />
                   <NavLink
                     href={`/albums/${album.artist.id}`}
-                    className="text-[calc(13rem/16)] truncate"
+                    className="text-[calc(13rem/16)] truncate block w-full"
                   >
                     {album.artist.name}
                   </NavLink>

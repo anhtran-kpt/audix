@@ -19,7 +19,10 @@ export const useOptimisticPlaylistUpdate = () => {
     }: {
       playlistId: string;
       input: UpdatePlaylistInput;
-    }) => patchApi<UpdatePlaylistOutput>(`/playlists/${playlistId}`, input),
+    }) =>
+      patchApi<UpdatePlaylistOutput>(`/playlists/${playlistId}`, {
+        body: input,
+      }),
 
     onMutate: async ({ playlistId, input }) => {
       await qc.cancelQueries({ queryKey: playlistKeys.detail(playlistId) });

@@ -44,7 +44,7 @@ export default function PlaylistGrid({ playlists }: PlaylistGridProps) {
           <div className="flex flex-col items-start w-full min-w-0">
             <NavLink
               href={`/playlists/${playlist.id}`}
-              className="text-[calc(15rem/16)] truncate w-full"
+              className="text-[calc(15rem/16)] truncate block w-full"
             >
               {playlist.title}
             </NavLink>

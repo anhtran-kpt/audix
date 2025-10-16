@@ -13,12 +13,14 @@ import {
 } from "@/features/playlist/contracts/playlist-dto";
 import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
 import { meKeys } from "@/features/me/api/me-keys";
+import { useRouter } from "next/navigation";
 
 export function useCreatePlaylist(
   onSuccess?: (res: CreatePlaylistOutput) => void
 ) {
   const { data: session } = useSession();
   const qc = useQueryClient();
+  const router = useRouter();
 
   const form = useForm<CreatePlaylistInput>({
     resolver: zodResolver(CreatePlaylistInputSchema),
@@ -82,6 +84,7 @@ export function useCreatePlaylist(
 
       onSuccess?.(res);
       form.reset();
+      router.push(`/playlists/${res.id}`);
     },
   });
 

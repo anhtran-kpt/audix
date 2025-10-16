@@ -28,7 +28,7 @@ export const TrackList = ({
 }: TrackListProps) => {
   const gridCols: Record<TrackListProps["contextType"], string> = {
     PLAYLIST:
-      "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_14rem_6rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_14rem_14rem_6rem_3rem_3rem]",
+      "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_1fr_6rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_1fr_8rem_3rem_3rem_3rem]",
     ALBUM:
       "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_12rem_6rem_3rem_3rem]",
     ARTIST:
@@ -71,10 +71,10 @@ export const TrackList = ({
           )}
           {contextType === "PLAYLIST" && (
             <>
-              <div className="hidden md:flex justify-end items-center">
+              <div className="hidden md:flex justify-start items-center">
                 Album
               </div>
-              <div className="hidden xl:flex justify-end items-center">
+              <div className="hidden xl:flex justify-start items-center">
                 Date added
               </div>
             </>
@@ -122,12 +122,12 @@ export const TrackList = ({
             )}
             {contextType === "PLAYLIST" && (
               <>
-                <div className="hidden md:flex justify-end items-center">
+                <div className="hidden md:flex justify-start items-center">
                   <NavLink href={`/albums/${track.album.id}`}>
                     {track.album.title}
                   </NavLink>
                 </div>
-                <div className="hidden xl:flex justify-end items-center">
+                <div className="hidden xl:flex justify-start items-center">
                   {format(new Date(), "PP")}
                 </div>
               </>

@@ -49,13 +49,14 @@ export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
             type="search"
             id="header-search-bar"
             placeholder="Search for songs..."
-            className="pl-10"
+            className="pl-10 rounded-full"
           />
         </div>
         <Button
           variant="outline"
           onClick={() => refetch()}
           disabled={isFetching}
+          className="rounded-full"
         >
           <RefreshCcwIcon className={isFetching ? "animate-spin" : ""} />
           Refresh
