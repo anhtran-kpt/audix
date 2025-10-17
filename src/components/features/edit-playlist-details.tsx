@@ -142,8 +142,8 @@ export default function EditPlaylistDetails({
                         <Textarea
                           className="flex-1 resize-none"
                           placeholder="Add an optional description"
-                          value={field.value ?? ""}
                           {...field}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                       <FormMessage />

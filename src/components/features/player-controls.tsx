@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { cn } from "@/lib/utils";
-import { RepeatMode } from "@/features/shared/contracts/shared-enum";
+import { RepeatMode } from "@/app/generated/prisma";
 
 interface PlayerControlsProps {
   isPlaying: boolean;

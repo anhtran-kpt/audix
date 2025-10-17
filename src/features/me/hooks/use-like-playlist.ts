@@ -11,13 +11,13 @@ export function useLikePlaylist(playlistId: string) {
   const likeMutation = useMutation({
     mutationFn: () => putApi(meEndpoints.toggleLikePlaylist(playlistId), {}),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: meKeys.libraryPlaylists() });
+      await queryClient.cancelQueries({ queryKey: meKeys.likedPlaylists() });
 
       const previousData = queryClient.getQueryData<string[]>(
-        meKeys.libraryPlaylists()
+        meKeys.likedPlaylists()
       );
 
-      queryClient.setQueryData<string[]>(meKeys.libraryPlaylists(), (old) => {
+      queryClient.setQueryData<string[]>(meKeys.likedPlaylists(), (old) => {
         if (!old) return [playlistId];
         if (old.includes(playlistId)) return old;
         return [...old, playlistId];
@@ -27,27 +27,24 @@ export function useLikePlaylist(playlistId: string) {
     },
     onError: (_err, _vars, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(
-          meKeys.libraryPlaylists(),
-          context.previousData
-        );
+        queryClient.setQueryData(meKeys.likedPlaylists(), context.previousData);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: meKeys.libraryPlaylists() });
+      queryClient.invalidateQueries({ queryKey: meKeys.likedPlaylists() });
     },
   });
 
   const unlikeMutation = useMutation({
     mutationFn: () => deleteApi(meEndpoints.toggleLikePlaylist(playlistId)),
     onMutate: async () => {
-      await queryClient.cancelQueries({ queryKey: meKeys.libraryPlaylists() });
+      await queryClient.cancelQueries({ queryKey: meKeys.likedPlaylists() });
 
       const previousData = queryClient.getQueryData<string[]>(
-        meKeys.libraryPlaylists()
+        meKeys.likedPlaylists()
       );
 
-      queryClient.setQueryData<string[]>(meKeys.libraryPlaylists(), (old) => {
+      queryClient.setQueryData<string[]>(meKeys.likedPlaylists(), (old) => {
         if (!old) return [];
         return old.filter((id) => id !== playlistId);
       });
@@ -56,14 +53,11 @@ export function useLikePlaylist(playlistId: string) {
     },
     onError: (_err, _vars, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(
-          meKeys.libraryPlaylists(),
-          context.previousData
-        );
+        queryClient.setQueryData(meKeys.likedPlaylists(), context.previousData);
       }
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: meKeys.libraryPlaylists() });
+      queryClient.invalidateQueries({ queryKey: meKeys.likedPlaylists() });
     },
   });
 

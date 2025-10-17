@@ -9,6 +9,7 @@ export const TrackItemSchema = TrackSchema.pick({
   isExplicit: true,
   duration: true,
   playCount: true,
+  audioId: true,
 }).extend({
   artists: MiniArtistSchema.array(),
   album: MiniAlbumSchema,
