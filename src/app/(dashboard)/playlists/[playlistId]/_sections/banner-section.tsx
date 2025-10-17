@@ -12,9 +12,9 @@ import { NavLink } from "@/components/ui/nav-link";
 import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
 import Dot from "@/components/ui/dot";
-import { LikeButton } from "@/components/shared/like-button";
 import { UserImage } from "@/components/shared/user-image";
 import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
+import { ToggleLikePlaylistButton } from "@/components/features/toggle-like-playlist-button";
 
 export const BannerSection = ({ playlistId }: { playlistId: string }) => {
   const { data: playlist, status } = useQuery({
@@ -139,7 +139,7 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
           />
         </div>
         <div className="flex items-center gap-6">
-          <LikeButton albumId={playlistId} />
+          <ToggleLikePlaylistButton playlistId={playlistId} />
           <PlaylistDetailDropdown
             playlistId={playlistId}
             title={playlist.title}

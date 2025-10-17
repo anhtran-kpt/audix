@@ -14,7 +14,7 @@ import prettyMilliseconds from "pretty-ms";
 import pluralize from "pluralize";
 import { formatDate } from "date-fns/format";
 import Dot from "@/components/ui/dot";
-import { LikeButton } from "@/components/shared/like-button";
+import { ToggleLikeAlbumButton } from "@/components/shared/toggle-like-album-button";
 
 export const BannerSection = ({ albumId }: { albumId: string }) => {
   const { data: album, status } = useQuery({
@@ -113,7 +113,7 @@ export const BannerSection = ({ albumId }: { albumId: string }) => {
           />
         </div>
         <div className="flex items-center gap-6">
-          <LikeButton albumId={albumId} />
+          <ToggleLikeAlbumButton albumId={albumId} />
           <IconButton
             icon={EllipsisIcon}
             size="xl"

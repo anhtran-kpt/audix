@@ -91,54 +91,6 @@ export const getMyBanner = async (userId: string) => {
 
 export type MyBanner = AwaitedReturnType<typeof getMyBanner>;
 
-export const getMyLibraryPlaylists = async (userId: string) => {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: {
-      likedPlaylists: {
-        select: {
-          playlist: { select: playlistItemSelect },
-          likedAt: true,
-        },
-        orderBy: { likedAt: "desc" },
-      },
-      playlists: {
-        select: { ...playlistItemSelect, createdAt: true },
-        orderBy: { createdAt: "desc" },
-      },
-    },
-  });
-
-  if (!user) throw new AppError("NOT_FOUND", "User not found");
-
-  const liked = user.likedPlaylists.map((lp) => ({
-    playlist: lp.playlist,
-    date: lp.likedAt,
-  }));
-
-  const owned = user.playlists.map((p) => ({
-    playlist: p,
-    date: p.createdAt,
-  }));
-
-  const merged = [...liked, ...owned].sort(
-    (a, b) => b.date.getTime() - a.date.getTime()
-  );
-
-  const unique = Array.from(
-    merged
-      .reduce((map, item) => {
-        if (!map.has(item.playlist.id)) {
-          map.set(item.playlist.id, item);
-        }
-        return map;
-      }, new Map<string, (typeof merged)[number]>())
-      .values()
-  );
-
-  return unique.map((item) => item.playlist);
-};
-
 export const getMyPlaylists = async (userId: string) => {
   const user = await db.user.findUnique({
     where: { id: userId },
@@ -215,6 +167,8 @@ export const getMyLikedAlbums = async (userId: string) => {
   return albums;
 };
 
+export type MyLikedAlbum = AwaitedReturnType<typeof getMyLikedAlbums>[number];
+
 export const getMyLikedPlaylists = async (userId: string) => {
   const user = await db.user.findUnique({
     where: {
@@ -243,7 +197,9 @@ export const getMyLikedPlaylists = async (userId: string) => {
   return playlists;
 };
 
-export type MyLikedPlaylists = AwaitedReturnType<typeof getMyLikedPlaylists>;
+export type MyLikedPlaylist = AwaitedReturnType<
+  typeof getMyLikedPlaylists
+>[number];
 
 export const likeAlbum = async ({
   userId,
