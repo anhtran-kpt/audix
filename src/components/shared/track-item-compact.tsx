@@ -23,6 +23,7 @@ export const TrackItemCompact = ({
   hasCover = true,
   canPlay = true,
 }: TrackItemCompactProps) => {
+  console.log(track.artists);
   return (
     <div
       className={cn(

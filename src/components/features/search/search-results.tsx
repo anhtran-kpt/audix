@@ -29,8 +29,6 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
     ),
   });
 
-  console.log(data);
-
   useEffect(() => {
     if (status === "success" && onDataLoad) {
       if (type !== "all") return;
@@ -56,6 +54,8 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
   }
 
   if (status === "error") return <p>Something went wrong</p>;
+
+  console.log(data);
 
   const hasNoResults =
     !data.topResult &&
@@ -101,10 +101,7 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
     }
     return (
       <TrackList
-        tracks={data.tracks.items.map((item) => ({
-          ...item,
-          artists: item.artists.map((a) => a.artist),
-        }))}
+        tracks={data.tracks.items}
         contextId={q}
         contextType="SEARCH"
         isLoading={false}

@@ -7,38 +7,7 @@ import { getPaginationMeta, PaginationMeta } from "@/types/get-pagination-meta";
 import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 import { playlistItemSelect } from "@/features/playlist/data-access/playlist-select";
 import { fullTrackItemSelect } from "@/features/track/data-access/track-select";
-import { Prisma } from "@/app/generated/prisma";
-
-type TrackItem = Prisma.TrackGetPayload<{ select: typeof fullTrackItemSelect }>;
-type ArtistItem = Prisma.ArtistGetPayload<{
-  select: typeof artistItemSelect;
-}> & {
-  followersCount?: number;
-};
-
-type AlbumItem = Prisma.AlbumGetPayload<{ select: typeof albumItemSelect }> & {
-  releaseDate: Date;
-  _count: { likedBy: number };
-};
-
-type PlaylistItem = Prisma.PlaylistGetPayload<{
-  select: typeof playlistItemSelect;
-}> & {
-  _count: { likedBy: number };
-};
-
-type UserItem = Prisma.UserGetPayload<{
-  select: {
-    id: true;
-    image: true;
-    name: true;
-    _count: {
-      select: {
-        followers: true;
-      };
-    };
-  };
-}>;
+import { AwaitedReturnType } from "@/utils/type";
 
 export type SearchResults = {
   topResult:
@@ -60,7 +29,7 @@ export type SearchResults = {
       }
     | {
         type: "profiles";
-        item: UserItem;
+        item: ProfileItem;
       };
   tracks: {
     items: TrackItem[];
@@ -79,7 +48,7 @@ export type SearchResults = {
     pagination: PaginationMeta;
   };
   profiles: {
-    items: UserItem[];
+    items: ProfileItem[];
     pagination: PaginationMeta;
   };
 };
@@ -99,81 +68,28 @@ export const search = async (query: SearchQuery) => {
     profiles,
     profilesTotal,
   ] = await Promise.all([
-    type.includes("tracks")
-      ? await db.track
-          .findMany({
-            where: { title: { contains: q, mode: "insensitive" } },
-            take: limit,
-            select: fullTrackItemSelect,
-            skip: offset,
-          })
-          .then((data) =>
-            data.map((item) => ({
-              ...item,
-              artists: item.artists.map((a) => a.artist),
-            }))
-          )
-      : [],
+    type.includes("tracks") ? searchTracks(query) : [],
     type.includes("tracks")
       ? await db.track.count({
           where: { title: { contains: q, mode: "insensitive" } },
         })
       : 0,
 
-    type.includes("artists")
-      ? await db.artist.findMany({
-          where: { name: { contains: q, mode: "insensitive" } },
-          take: limit,
-          skip: offset,
-          select: { ...artistItemSelect, followersCount: true },
-        })
-      : [],
+    type.includes("artists") ? searchArtists(query) : [],
     type.includes("artists")
       ? await db.artist.count({
           where: { name: { contains: q, mode: "insensitive" } },
         })
       : 0,
 
-    type.includes("albums")
-      ? await db.album.findMany({
-          where: { title: { contains: q, mode: "insensitive" } },
-          take: limit,
-          skip: offset,
-          select: {
-            ...albumItemSelect,
-            releaseDate: true,
-            _count: {
-              select: {
-                likedBy: true,
-              },
-            },
-          },
-        })
-      : [],
+    type.includes("albums") ? searchAlbums(query) : [],
     type.includes("albums")
       ? await db.album.count({
           where: { title: { contains: q, mode: "insensitive" } },
         })
       : 0,
 
-    type.includes("playlists")
-      ? await db.playlist.findMany({
-          where: {
-            title: { contains: q, mode: "insensitive" },
-            isPublic: true,
-          },
-          take: limit,
-          skip: offset,
-          select: {
-            ...playlistItemSelect,
-            _count: {
-              select: {
-                likedBy: true,
-              },
-            },
-          },
-        })
-      : [],
+    type.includes("playlists") ? searchPlaylists(query) : [],
     type.includes("playlists")
       ? await db.playlist.count({
           where: {
@@ -183,23 +99,7 @@ export const search = async (query: SearchQuery) => {
         })
       : 0,
 
-    type.includes("profiles")
-      ? await db.user.findMany({
-          where: { name: { contains: q, mode: "insensitive" } },
-          take: limit,
-          skip: offset,
-          select: {
-            id: true,
-            image: true,
-            name: true,
-            _count: {
-              select: {
-                followers: true,
-              },
-            },
-          },
-        })
-      : [],
+    type.includes("profiles") ? searchProfiles(query) : [],
     type.includes("profiles")
       ? await db.user.count({
           where: { name: { contains: q, mode: "insensitive" } },
@@ -302,3 +202,102 @@ export const search = async (query: SearchQuery) => {
     },
   };
 };
+
+export const searchTracks = async (query: SearchQuery) => {
+  const { q, limit, offset } = query;
+
+  return await db.track
+    .findMany({
+      where: { title: { contains: q, mode: "insensitive" } },
+      take: limit,
+      select: fullTrackItemSelect,
+      skip: offset,
+    })
+    .then((data) =>
+      data.map((item) => ({
+        ...item,
+        artists: item.artists.map((a) => a.artist),
+      }))
+    );
+};
+
+type TrackItem = AwaitedReturnType<typeof searchTracks>[number];
+
+export const searchArtists = async (query: SearchQuery) => {
+  const { q, limit, offset } = query;
+
+  return await db.artist.findMany({
+    where: { name: { contains: q, mode: "insensitive" } },
+    take: limit,
+    skip: offset,
+    select: { ...artistItemSelect, followersCount: true },
+  });
+};
+
+type ArtistItem = AwaitedReturnType<typeof searchArtists>[number];
+
+export const searchAlbums = async (query: SearchQuery) => {
+  const { q, limit, offset } = query;
+
+  return await db.album.findMany({
+    where: { title: { contains: q, mode: "insensitive" } },
+    take: limit,
+    skip: offset,
+    select: {
+      ...albumItemSelect,
+      releaseDate: true,
+      _count: {
+        select: {
+          likedBy: true,
+        },
+      },
+    },
+  });
+};
+
+type AlbumItem = AwaitedReturnType<typeof searchAlbums>[number];
+
+export const searchPlaylists = async (query: SearchQuery) => {
+  const { q, limit, offset } = query;
+
+  return await db.playlist.findMany({
+    where: {
+      title: { contains: q, mode: "insensitive" },
+      isPublic: true,
+    },
+    take: limit,
+    skip: offset,
+    select: {
+      ...playlistItemSelect,
+      _count: {
+        select: {
+          likedBy: true,
+        },
+      },
+    },
+  });
+};
+
+type PlaylistItem = AwaitedReturnType<typeof searchPlaylists>[number];
+
+export const searchProfiles = async (query: SearchQuery) => {
+  const { q, limit, offset } = query;
+
+  return await db.user.findMany({
+    where: { name: { contains: q, mode: "insensitive" } },
+    take: limit,
+    skip: offset,
+    select: {
+      id: true,
+      image: true,
+      name: true,
+      _count: {
+        select: {
+          followers: true,
+        },
+      },
+    },
+  });
+};
+
+type ProfileItem = AwaitedReturnType<typeof searchProfiles>[number];

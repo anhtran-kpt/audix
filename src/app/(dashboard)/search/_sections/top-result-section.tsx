@@ -34,8 +34,6 @@ export default function TopResultSection({ topResult }: TopResultSectionProps) {
 
   let element;
 
-  console.log(item);
-
   if (type === "tracks") {
     element = (
       <div className="flex flex-col group gap-4 overflow-hidden">
