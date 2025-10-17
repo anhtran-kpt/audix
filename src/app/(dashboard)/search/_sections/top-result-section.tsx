@@ -14,13 +14,9 @@ import { formatDate } from "date-fns/format";
 
 type TopResultSectionProps = {
   topResult: SearchResults["topResult"];
-  q: string;
 };
 
-export default function TopResultSection({
-  topResult,
-  q,
-}: TopResultSectionProps) {
+export default function TopResultSection({ topResult }: TopResultSectionProps) {
   const router = useRouter();
 
   if (!topResult) {

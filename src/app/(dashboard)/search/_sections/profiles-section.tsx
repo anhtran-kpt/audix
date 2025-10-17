@@ -4,16 +4,19 @@ import { SearchResults } from "@/features/search/data-access/search-repo";
 
 export default function ProfilesSection({
   data,
+  q,
 }: {
   data: SearchResults["profiles"];
+  q?: string;
 }) {
-  console.log(data);
   return (
     <section>
       <SectionHeading
         title="Profiles"
         showAllHref={
-          data.pagination.hasMore ? `/search?type=profiles` : undefined
+          data.pagination.hasMore && q
+            ? `/search?q=${q}&type=profiles`
+            : undefined
         }
       />
       <UserGrid users={data.items} />

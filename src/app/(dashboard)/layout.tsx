@@ -3,6 +3,8 @@ import AudioPlayer from "@/components/features/audio-player";
 import { Header } from "@/components/features/header";
 import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
 import RightPanel from "@/components/features/right-panel";
+import { Footer } from "@/components/shared/footer";
+import MobileAudioPlayer from "@/components/shared/mobile-audio-player";
 import { NewPlaylistDialog } from "@/components/shared/new-playlist-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -37,10 +39,12 @@ export default async function DashboardLayout({
               {children}
             </div>
           </div>
+          <Footer />
         </ScrollArea>
       </SidebarInset>
       <RightPanel />
       <AudioPlayer />
+      <MobileAudioPlayer />
       <NewPlaylistDialog />
     </SidebarProvider>
   );

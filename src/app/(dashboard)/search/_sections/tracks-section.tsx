@@ -14,14 +14,19 @@ export default function TracksSection({
       <SectionHeading
         title="Tracks"
         showAllHref={
-          data.pagination.hasMore ? "/search/types=tracks" : undefined
+          data.pagination.hasMore && q
+            ? `/search?q=${q}&type=tracks`
+            : undefined
         }
       />
       <div className="flex flex-col gap-1">
         {data.items.map((track) => (
           <TrackItemCompact
             key={track.id}
-            track={track}
+            track={{
+              ...track,
+              artists: track.artists.map((a) => a.artist),
+            }}
             context={{
               contextId: q!,
               contextType: "SEARCH",

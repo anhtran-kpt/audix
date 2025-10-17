@@ -64,7 +64,7 @@ export default function AudioPlayer() {
   return (
     <>
       {currentTrack && session && (
-        <div className="fixed bottom-0 left-0 right-0 bg-player border z-60 px-4 py-2">
+        <div className="hidden sm:block fixed bottom-0 left-0 right-0 bg-player border z-60 px-4 py-2">
           <div className="flex items-center justify-between gap-6">
             <div className="flex items-center">
               <div className="w-fit lg:w-56 xl:w-64">

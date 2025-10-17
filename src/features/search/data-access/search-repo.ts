@@ -17,6 +17,7 @@ type ArtistItem = Prisma.ArtistGetPayload<{
 };
 
 type AlbumItem = Prisma.AlbumGetPayload<{ select: typeof albumItemSelect }> & {
+  releaseDate: Date;
   _count: { likedBy: number };
 };
 
@@ -50,7 +51,7 @@ export type SearchResults = {
         item: ArtistItem;
       }
     | {
-        type: "playlist";
+        type: "playlists";
         item: PlaylistItem;
       }
     | {
@@ -140,6 +141,7 @@ export const search = async (query: SearchQuery) => {
           skip: offset,
           select: {
             ...albumItemSelect,
+            releaseDate: true,
             _count: {
               select: {
                 likedBy: true,

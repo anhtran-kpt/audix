@@ -74,22 +74,22 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
     return (
       <div className="space-y-8">
         <div className="grid sm:grid-cols-2 gap-6">
-          {data.topResult && (
-            <TopResultSection topResult={data.topResult} q={q} />
-          )}
+          {data.topResult && <TopResultSection topResult={data.topResult} />}
           {data.tracks?.items.length > 0 && (
-            <TracksSection data={data.tracks} />
+            <TracksSection data={data.tracks} q={q} />
           )}
         </div>
         {data.artists?.items.length > 0 && (
-          <ArtistsSection data={data.artists} />
+          <ArtistsSection data={data.artists} q={q} />
         )}
-        {data.albums?.items.length > 0 && <AlbumsSection data={data.albums} />}
+        {data.albums?.items.length > 0 && (
+          <AlbumsSection data={data.albums} q={q} />
+        )}
         {data.playlists?.items.length > 0 && (
-          <PlaylistsSection data={data.playlists} />
+          <PlaylistsSection data={data.playlists} q={q} />
         )}
         {data.profiles?.items.length > 0 && (
-          <ProfilesSection data={data.profiles} />
+          <ProfilesSection data={data.profiles} q={q} />
         )}
       </div>
     );
@@ -101,7 +101,10 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
     }
     return (
       <TrackList
-        tracks={data.tracks.items}
+        tracks={data.tracks.items.map((item) => ({
+          ...item,
+          artists: item.artists.map((a) => a.artist),
+        }))}
         contextId={q}
         contextType="SEARCH"
         isLoading={false}

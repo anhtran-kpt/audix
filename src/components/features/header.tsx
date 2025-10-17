@@ -43,7 +43,7 @@ export const Header = () => {
   return (
     <header
       className={cn(
-        "sticky left-0 top-0 z-10 w-full h-(--header-height) flex items-center justify-between gap-4 lg:gap-6 py-3 p-responsive group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)",
+        "sticky left-0 top-0 z-10 w-full h-(--header-height) hidden sm:flex items-center justify-between gap-4 lg:gap-6 py-3 p-responsive group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)",
         "transition-transform duration-300 ease-in-out bg-transparent",
         isAtTop ? "" : "border-b backdrop-blur-md shadow-sm bg-background/90",
         isVisible ? "translate-y-0" : "-translate-y-full pointer-events-none"
