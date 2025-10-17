@@ -2,7 +2,10 @@ import { deleteApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
-import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
+import {
+  PlaylistBanner,
+  PlaylistTracks,
+} from "@/features/playlist/data-access/playlist-repo";
 
 type RemoveTrackInput = {
   playlistId: string;
@@ -18,14 +21,22 @@ export function useRemoveTrackFromPlaylist() {
       deleteApi(`/playlists/${playlistId}/tracks/${trackId}`),
 
     onMutate: async ({ playlistId, trackId }) => {
-      await qc.cancelQueries({ queryKey: playlistKeys.detail(playlistId) });
+      await Promise.all([
+        qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) }),
+        qc.cancelQueries({ queryKey: playlistKeys.tracks(playlistId) }),
+      ]);
 
-      const prev = qc.getQueryData<PlaylistDetail>(
-        playlistKeys.detail(playlistId)
+      const prevBanner = qc.getQueryData<PlaylistBanner>(
+        playlistKeys.banner(playlistId)
       );
-      if (!prev) return { prev, playlistId };
 
-      const newTracks = prev.tracks.filter((t) => t.id !== trackId);
+      const prevTracks = qc.getQueryData<PlaylistTracks>(
+        playlistKeys.tracks(playlistId)
+      );
+
+      if (!prevTracks || !prevBanner) return null;
+
+      const newTracks = prevTracks.filter((t) => t.id !== trackId);
       const newImageIds = newTracks.map((t) => t.album.imageId);
       const imageIdSet = new Set(newImageIds);
 
@@ -38,29 +49,49 @@ export function useRemoveTrackFromPlaylist() {
         });
       }
 
-      const removedTrack = prev.tracks.find((t) => t.id === trackId);
+      const removedTrack = prevTracks.find((t) => t.id === trackId);
       const removedTrackDuration = removedTrack?.duration ?? 0;
 
-      qc.setQueryData<PlaylistDetail>(playlistKeys.detail(playlistId), {
-        ...prev,
-        tracks: newTracks,
-        totalTracks: (prev.totalTracks ?? prev.tracks.length) - 1,
-        duration:
-          (prev.duration ?? prev.tracks.reduce((a, t) => a + t.duration, 0)) -
-          removedTrackDuration,
-      });
+      qc.setQueryData<PlaylistBanner>(
+        playlistKeys.banner(playlistId),
+        (old) => {
+          if (!old) return;
 
-      return { prev, playlistId };
+          return {
+            ...old,
+            totalTracks: (old.totalTracks ?? prevTracks.length) - 1,
+            duration:
+              (old.duration ?? prevTracks.reduce((a, t) => a + t.duration, 0)) -
+              removedTrackDuration,
+          };
+        }
+      );
+
+      qc.setQueryData<PlaylistTracks>(
+        playlistKeys.tracks(playlistId),
+        (old) => {
+          if (!old) return [];
+
+          return newTracks;
+        }
+      );
+
+      return { prevTracks, prevBanner, playlistId };
     },
 
     onError: (_err, _input, ctx) => {
-      if (ctx?.prev) {
-        qc.setQueryData(playlistKeys.detail(ctx.playlistId), ctx.prev);
-      }
+      if (!ctx) return null;
+
+      qc.setQueryData(playlistKeys.banner(ctx.playlistId), ctx.prevBanner);
+      qc.setQueryData(playlistKeys.tracks(ctx.playlistId), ctx.prevTracks);
     },
-    onSuccess: (_, { trackId }) => {
+
+    onSettled: (_, __, { trackId }) => {
       qc.invalidateQueries({
-        queryKey: playlistKeys.detail(trackId),
+        queryKey: playlistKeys.banner(trackId),
+      });
+      qc.invalidateQueries({
+        queryKey: playlistKeys.tracks(trackId),
       });
     },
   });

@@ -16,7 +16,7 @@ import { TrackDropdownDetails } from "../track-dropdown-details";
 type TrackListProps = {
   tracks: TrackItem[];
   contextId: string;
-  contextType: "PLAYLIST" | "ALBUM" | "ARTIST";
+  contextType: "PLAYLIST" | "ALBUM" | "ARTIST" | "SEARCH";
   isLoading: boolean;
 };
 
@@ -28,11 +28,13 @@ export const TrackList = ({
 }: TrackListProps) => {
   const gridCols: Record<TrackListProps["contextType"], string> = {
     PLAYLIST:
-      "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_1fr_6rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_1fr_8rem_3rem_3rem_3rem]",
+      "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_0.7fr_3rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_1fr_8rem_3rem_3rem_3rem]",
     ALBUM:
       "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_12rem_6rem_3rem_3rem]",
     ARTIST:
       "grid-cols-[1.5rem_1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_12rem_6rem_3rem_3rem]",
+    SEARCH:
+      "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_0.6fr_3rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_0.7fr_3rem_3rem_3rem]",
   };
 
   if (isLoading) {
@@ -66,7 +68,7 @@ export const TrackList = ({
         >
           <div className="text-center">#</div>
           <div>Title</div>
-          {contextType !== "PLAYLIST" && (
+          {contextType !== "PLAYLIST" && contextType !== "SEARCH" && (
             <div className="hidden md:flex justify-end items-center">Plays</div>
           )}
           {contextType === "PLAYLIST" && (
@@ -78,6 +80,11 @@ export const TrackList = ({
                 Date added
               </div>
             </>
+          )}
+          {contextType === "SEARCH" && (
+            <div className="hidden md:flex justify-start items-center">
+              Album
+            </div>
           )}
           <div className="flex justify-end items-center col-span-2">
             <Clock3Icon className="size-4" />
@@ -115,7 +122,7 @@ export const TrackList = ({
                 />
               </div>
             </div>
-            {contextType !== "PLAYLIST" && (
+            {contextType !== "PLAYLIST" && contextType !== "SEARCH" && (
               <div className="hidden md:flex justify-end items-center">
                 {track.playCount}
               </div>
@@ -131,6 +138,13 @@ export const TrackList = ({
                   {format(new Date(), "PP")}
                 </div>
               </>
+            )}
+            {contextType === "SEARCH" && (
+              <div className="hidden md:flex justify-start items-center">
+                <NavLink href={`/albums/${track.album.id}`}>
+                  {track.album.title}
+                </NavLink>
+              </div>
             )}
             <div className="flex justify-end items-center select-none opacity-0 group-hover/item:select-auto group-hover/item:opacity-100">
               <IconButton icon={PlusCircleIcon} />

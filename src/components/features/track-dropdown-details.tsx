@@ -36,7 +36,7 @@ import { meQueryOptions } from "@/features/me/api/me-query-options";
 type TrackDropdownDetailsProps = {
   track: TrackItem;
   contextId: string;
-  contextType: "ALBUM" | "PLAYLIST" | "ARTIST";
+  contextType: "ALBUM" | "PLAYLIST" | "ARTIST" | "SEARCH";
 };
 
 export function TrackDropdownDetails({
@@ -103,7 +103,7 @@ export function TrackDropdownDetails({
                             playlists.map((playlist) => (
                               <CommandItem
                                 key={playlist.id}
-                                value={playlist.title}
+                                value={playlist.id}
                                 onSelect={(value) => {
                                   addTrackMutation.mutate({
                                     playlistId: value,

@@ -97,6 +97,43 @@ async function ensureSnapshot({
   contextId: string;
 }) {
   switch (contextType) {
+    case "TRACK": {
+      const track = await db.track.findUnique({
+        where: { id: contextId },
+        select: {
+          title: true,
+          id: true,
+        },
+      });
+      if (!track) throw new Error("Track not found");
+
+      const hash = generateHash(userId, contextType, contextId, [track.id]);
+
+      const existing = await db.playbackContextSnapshot.findUnique({
+        where: { userId_hash: { userId, hash } },
+        include: { tracks: true },
+      });
+
+      if (existing) return existing;
+
+      return db.playbackContextSnapshot.create({
+        data: {
+          userId,
+          contextType,
+          contextId,
+          name: track.title,
+          hash,
+          tracks: {
+            create: {
+              index: 0,
+              trackId: track.id,
+            },
+          },
+        },
+        include: { tracks: true },
+      });
+    }
+
     case "PLAYLIST": {
       const playlist = await db.playlist.findUnique({
         where: { id: contextId },

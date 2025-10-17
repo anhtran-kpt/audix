@@ -21,10 +21,7 @@ export default function TracksSection({
         {data.items.map((track) => (
           <TrackItemCompact
             key={track.id}
-            track={{
-              ...track,
-              artists: track.artists.map((item) => item.artist),
-            }}
+            track={track}
             context={{
               contextId: q!,
               contextType: "SEARCH",

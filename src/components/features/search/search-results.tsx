@@ -10,7 +10,7 @@ import ProfilesSection from "@/app/(dashboard)/search/_sections/profiles-section
 import { LoaderCircleIcon } from "lucide-react";
 import { searchOptions } from "@/features/search/api/search-options";
 import { useEffect } from "react";
-import { TrackList } from "../track-list";
+import { TrackList } from "../track-list/track-list";
 
 type Props = {
   q: string;
@@ -103,7 +103,8 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
       <TrackList
         tracks={data.tracks.items}
         contextId={q}
-        contextType="PLAYLIST"
+        contextType="SEARCH"
+        isLoading={false}
       />
     );
   }

@@ -1,19 +1,15 @@
 import "server-only";
 import db from "@/lib/db";
 import { SearchQuery } from "../contracts/search-dto";
-import { trackItemSelect } from "@/features/track/data-access/track-select";
 import { albumItemSelect } from "@/features/album/data-access/album-select";
 import stringSimilarity from "string-similarity";
-import { AwaitedReturnType } from "@/utils/type";
-import { getPaginationMeta } from "@/types/get-pagination-meta";
+import { getPaginationMeta, PaginationMeta } from "@/types/get-pagination-meta";
 import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 import { playlistItemSelect } from "@/features/playlist/data-access/playlist-select";
+import { fullTrackItemSelect } from "@/features/track/data-access/track-select";
 import { Prisma } from "@/app/generated/prisma";
 
-type TrackItem = Prisma.TrackGetPayload<{ select: typeof trackItemSelect }> & {
-  playCount?: number;
-};
-
+type TrackItem = Prisma.TrackGetPayload<{ select: typeof fullTrackItemSelect }>;
 type ArtistItem = Prisma.ArtistGetPayload<{
   select: typeof artistItemSelect;
 }> & {
@@ -30,12 +26,62 @@ type PlaylistItem = Prisma.PlaylistGetPayload<{
   _count: { likedBy: number };
 };
 
-export type TopResult =
-  | { type: "tracks"; item: TrackItem }
-  | { type: "artists"; item: ArtistItem }
-  | { type: "albums"; item: AlbumItem }
-  | { type: "playlists"; item: PlaylistItem }
-  | null;
+type UserItem = Prisma.UserGetPayload<{
+  select: {
+    id: true;
+    image: true;
+    name: true;
+    _count: {
+      select: {
+        followers: true;
+      };
+    };
+  };
+}>;
+
+export type SearchResults = {
+  topResult:
+    | {
+        type: "albums";
+        item: AlbumItem;
+      }
+    | {
+        type: "artists";
+        item: ArtistItem;
+      }
+    | {
+        type: "playlist";
+        item: PlaylistItem;
+      }
+    | {
+        type: "tracks";
+        item: TrackItem;
+      }
+    | {
+        type: "profiles";
+        item: UserItem;
+      };
+  tracks: {
+    items: TrackItem[];
+    pagination: PaginationMeta;
+  };
+  artists: {
+    items: ArtistItem[];
+    pagination: PaginationMeta;
+  };
+  albums: {
+    items: AlbumItem[];
+    pagination: PaginationMeta;
+  };
+  playlists: {
+    items: PlaylistItem[];
+    pagination: PaginationMeta;
+  };
+  profiles: {
+    items: UserItem[];
+    pagination: PaginationMeta;
+  };
+};
 
 export const search = async (query: SearchQuery) => {
   const { q, type, limit, offset } = query;
@@ -57,7 +103,7 @@ export const search = async (query: SearchQuery) => {
           .findMany({
             where: { title: { contains: q, mode: "insensitive" } },
             take: limit,
-            select: { ...trackItemSelect, playCount: true },
+            select: fullTrackItemSelect,
             skip: offset,
           })
           .then((data) =>
@@ -144,6 +190,11 @@ export const search = async (query: SearchQuery) => {
             id: true,
             image: true,
             name: true,
+            _count: {
+              select: {
+                followers: true,
+              },
+            },
           },
         })
       : [],
@@ -173,15 +224,21 @@ export const search = async (query: SearchQuery) => {
       popularity: al._count.likedBy ?? 0,
       item: al,
     })),
-    ...playlists.map((pl) => ({
+    ...playlists.map((playlist) => ({
       type: "playlists" as const,
-      name: pl.title,
-      popularity: pl._count.likedBy ?? 0,
-      item: pl,
+      name: playlist.title,
+      popularity: playlist._count.likedBy ?? 0,
+      item: playlist,
+    })),
+    ...profiles.map((profile) => ({
+      type: "profiles" as const,
+      name: profile.name,
+      popularity: profile._count.followers ?? 0,
+      item: profile,
     })),
   ];
 
-  let topResult: TopResult = null;
+  let topResult = null;
 
   if (candidates.length > 0) {
     const maxPopularity = Math.max(...candidates.map((c) => c.popularity || 1));
@@ -202,16 +259,19 @@ export const search = async (query: SearchQuery) => {
 
     switch (best.type) {
       case "tracks":
-        topResult = { type: "tracks", item: best.item as TrackItem };
+        topResult = { type: "tracks", item: best.item };
         break;
       case "artists":
-        topResult = { type: "artists", item: best.item as ArtistItem };
+        topResult = { type: "artists", item: best.item };
         break;
       case "albums":
-        topResult = { type: "albums", item: best.item as AlbumItem };
+        topResult = { type: "albums", item: best.item };
         break;
       case "playlists":
-        topResult = { type: "playlists", item: best.item as PlaylistItem };
+        topResult = { type: "playlists", item: best.item };
+        break;
+      case "profiles":
+        topResult = { type: "profiles", item: best.item };
         break;
     }
   }
@@ -240,5 +300,3 @@ export const search = async (query: SearchQuery) => {
     },
   };
 };
-
-export type SearchResults = AwaitedReturnType<typeof search>;

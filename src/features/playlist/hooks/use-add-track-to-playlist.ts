@@ -35,8 +35,10 @@ export function useAddTrackToPlaylist() {
     },
 
     onMutate: async ({ playlistId, track }) => {
-      await qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) });
-      await qc.cancelQueries({ queryKey: playlistKeys.tracks(playlistId) });
+      await Promise.all([
+        qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) }),
+        qc.cancelQueries({ queryKey: playlistKeys.tracks(playlistId) }),
+      ]);
 
       const prevInfo = qc.getQueryData<PlaylistBanner>(
         playlistKeys.banner(playlistId)

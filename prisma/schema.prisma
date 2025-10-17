@@ -469,6 +469,7 @@ enum PlaybackContextType {
   PLAYLIST
   ALBUM
   ARTIST
+  TRACK
   HISTORY
   SEARCH
 }

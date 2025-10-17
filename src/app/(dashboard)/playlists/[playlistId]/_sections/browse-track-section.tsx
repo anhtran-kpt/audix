@@ -69,20 +69,21 @@ export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
             <div
               key={track.id}
               className={
-                "p-2 items-center group hover:bg-muted rounded-md text-muted-foreground hover:text-foreground grid w-full grid-cols-[1fr_1fr_4rem]"
+                "py-2 sm:px-2 items-center group hover:bg-muted rounded-md text-muted-foreground hover:text-foreground gap-responsive grid grid-cols-[1fr_4rem] md:grid-cols-[1fr_0.6fr_4rem]"
               }
             >
               <TrackItemCompact
                 track={track}
                 context={{
-                  contextType: "ALBUM",
-                  contextId: track.album.id,
+                  contextType: "TRACK",
+                  contextId: track.id,
+                  startTrackId: track.id,
                 }}
                 hasMoreDetails={false}
                 canHover={false}
               />
 
-              <div>
+              <div className="hidden md:block">
                 <NavLink
                   href={`/albums/${track.album.id}`}
                   className="text-left"

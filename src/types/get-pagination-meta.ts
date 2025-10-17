@@ -1,3 +1,5 @@
+import { AwaitedReturnType } from "@/utils/type";
+
 export const getPaginationMeta = ({
   limit,
   offset,
@@ -14,3 +16,5 @@ export const getPaginationMeta = ({
     hasMore: offset + limit < total,
   };
 };
+
+export type PaginationMeta = AwaitedReturnType<typeof getPaginationMeta>;

@@ -1,15 +1,16 @@
 "use client";
 
-import SectionHeading from "../../../../components/ui/section-heading";
-import Link from "next/link";
-import Dot from "../../../../components/ui/dot";
-import { FollowersBadge } from "../../../../components/features/follow-badge";
 import { AppImage } from "@/components/shared/app-image";
-import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
-import { SearchResults } from "@/features/search/data-access/search-repo";
+import Dot from "@/components/ui/dot";
 import { NavLink } from "@/components/ui/nav-link";
+import SectionHeading from "@/components/ui/section-heading";
+import { SearchResults } from "@/features/search/data-access/search-repo";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
+import { PlaybackContextType } from "@/app/generated/prisma";
+import { formatDate } from "date-fns/format";
 
 type TopResultSectionProps = {
   topResult: SearchResults["topResult"];
@@ -26,173 +27,227 @@ export default function TopResultSection({
     return null;
   }
 
-  if (topResult.type === "artists") {
-    return (
-      <section>
-        <SectionHeading title="Top Result" />
-        <div className="relative overflow-hidden bg-muted/60 rounded-lg group p-5 flex items-end gap-4">
-          <AppImage
-            alt={topResult.item.name}
-            src={topResult.item.imageId}
-            containerClassName="size-40 rounded-full"
-            sizes="160px"
-          />
-          <RoundedPlayButton
-            context={{
-              contextType: "ARTIST",
-              contextId: topResult.item.id,
-            }}
-            className="absolute bottom-5 right-5 opacity-0 translate-y-2 scale-95 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
-          />
-          <div className="space-y-3 bottom-5 left-5">
-            <div>
-              <Link
-                href={`/artists/${topResult.item.id}`}
-                className="font-semibold text-2xl hover:underline underline-offset-4 hover:text-primary transition-colors duration-200"
-              >
-                {topResult.item.name}
-              </Link>
-            </div>
-            <div>
-              <FollowersBadge artistId={topResult.item.id} />
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const { item, type } = topResult;
 
-  if (topResult.type === "albums") {
-    return (
-      <section>
-        <SectionHeading title="Top Result" />
-        <div className="relative overflow-hidden bg-muted/60 rounded-lg group p-5 flex flex-col gap-4">
-          <AppImage
-            alt={topResult.item.title}
-            src={topResult.item.imageId}
-            containerClassName="size-40"
-            sizes="160px"
-          />
-          <RoundedPlayButton
-            context={{
-              contextType: "ALBUM",
-              contextId: topResult.item.id,
-            }}
-            className="absolute bottom-5 right-5 opacity-0 translate-y-2 scale-95 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
-          />
-          <div className="space-y-2">
-            <NavLink href={`/albums/${topResult.item.id}`} className="text-xl">
-              {topResult.item.title}
-            </NavLink>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">
-                {albumTypeMap[topResult.item.albumType]}
-              </span>
-              <Dot />
-              <NavLink
-                href={`/albums/${topResult.item.artist.id}`}
-                className="text-[calc(15rem/16)]"
-              >
-                {topResult.item.artist.name}
-              </NavLink>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  const contextTypeMap = {
+    artists: "ARTIST",
+    tracks: "TRACK",
+    playlists: "PLAYLIST",
+    albums: "ALBUM",
+  };
 
-  if (topResult.type === "playlists") {
-    return (
-      <section>
-        <SectionHeading title="Top Result" />
+  let element;
+
+  console.log(item);
+
+  if (type === "tracks") {
+    element = (
+      <div className="flex flex-col group gap-4 overflow-hidden">
         <div
-          key={topResult.item.id}
-          className="flex flex-col group gap-2 overflow-hidden"
+          className="relative cursor-pointer"
+          onClick={() => router.push(`/albums/${item.album.id}`)}
         >
-          <div
-            className="relative cursor-pointer"
-            onClick={() => router.push(`/playlists/${topResult.item.id}`)}
+          <AppImage
+            alt={item.album.title}
+            src={item.album.imageId}
+            className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
+            containerClassName="size-40 sm:size-48 lg:size-52 xl:size-56"
+            sizes="20vw"
+          />
+        </div>
+        <div className="flex flex-col items-start w-full min-w-0 overflow-hidden">
+          <NavLink
+            href={`/albums/${item.album.id}`}
+            className="text-[calc(17rem/16)] truncate block w-full"
           >
-            <AppImage
-              alt={topResult.item.title}
-              src={
-                topResult.item.imageId ??
-                process.env.NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
-              }
-              className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
-              sizes="20vw"
-            />
-            <RoundedPlayButton
-              context={{
-                contextType: "PLAYLIST",
-                contextId: topResult.item.id,
-              }}
-              className="absolute opacity-0 bottom-2 right-2 translate-y-2 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
-            />
-          </div>
-
-          <div className="flex flex-col items-start w-full min-w-0">
+            {item.album.title}
+          </NavLink>
+          <div className="flex text-[calc(15rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+            <span>Track</span>
+            <Dot />
             <NavLink
-              href={`/playlists/${topResult.item.id}`}
-              className="text-[calc(15rem/16)] truncate w-full"
+              href={`/albums/${item.album.artist.id}`}
+              className="text-[calc(15rem/16)] truncate block w-full"
             >
-              {topResult.item.title}
+              {item.album.artist.name}
             </NavLink>
-            <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
-              <span>Playlist</span>
-              {topResult.item.user && (
-                <>
-                  <Dot />
-                  <div className="space-x-1">
-                    <span>By</span>
-                    <NavLink href={`users/${topResult.item.user.id}`}>
-                      {topResult.item.user.name}
-                    </NavLink>
-                  </div>
-                </>
-              )}
-            </div>
           </div>
         </div>
-      </section>
+      </div>
+    );
+  } else if (type === "albums") {
+    element = (
+      <div className="flex flex-col group gap-2 overflow-hidden">
+        <div
+          className="relative cursor-pointer"
+          onClick={() => router.push(`/albums/${item.id}`)}
+        >
+          <AppImage
+            alt={item.title}
+            src={item.imageId}
+            className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
+            containerClassName="size-40 sm:size-48 lg:size-52 xl:size-56"
+            sizes="20vw"
+          />
+        </div>
+        <div className="flex flex-col items-start w-full min-w-0 overflow-hidden">
+          <NavLink
+            href={`/albums/${item.id}`}
+            className="text-[calc(15rem/16)] truncate block w-full"
+          >
+            {item.title}
+          </NavLink>
+          <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+            {item.releaseDate ? (
+              <>
+                <span>{formatDate(item.releaseDate, "yyyy")}</span>
+                <Dot />
+                <span>{albumTypeMap[item.albumType]}</span>
+              </>
+            ) : (
+              <>
+                <span>{albumTypeMap[item.albumType]}</span>
+                <Dot />
+                <NavLink
+                  href={`/albums/${item.artist.id}`}
+                  className="text-[calc(13rem/16)] truncate block w-full"
+                >
+                  {item.artist.name}
+                </NavLink>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  } else if (type === "artists") {
+    element = (
+      <div className="flex flex-col group gap-2 overflow-hidden">
+        <div
+          className="relative cursor-pointer"
+          onClick={() => router.push(`/artists/${item.id}`)}
+        >
+          <AppImage
+            alt={item.name}
+            src={item.imageId}
+            className="rounded-full group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
+            containerClassName="size-40 sm:size-48 lg:size-52 xl:size-56 rounded-full"
+            sizes="20vw"
+          />
+        </div>
+        <div className="flex flex-col items-start w-full min-w-0">
+          <NavLink
+            href={`/artists/${item.id}`}
+            className="text-[calc(15rem/16)] truncate block w-full"
+          >
+            {item.name}
+          </NavLink>
+          <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+            <span>Artist</span>
+          </div>
+        </div>
+      </div>
+    );
+  } else if (type === "playlists") {
+    element = (
+      <div className="flex flex-col group gap-2 overflow-hidden">
+        <div
+          className="relative cursor-pointer"
+          onClick={() => router.push(`/playlists/${item.id}`)}
+        >
+          <AppImage
+            alt={item.title}
+            src={
+              item.imageId ?? process.env.NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
+            }
+            className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
+            containerClassName="size-40 sm:size-48 lg:size-52 xl:size-56"
+            sizes="20vw"
+          />
+        </div>
+
+        <div className="flex flex-col items-start w-full min-w-0">
+          <NavLink
+            href={`/playlists/${item.id}`}
+            className="text-[calc(15rem/16)] truncate block w-full"
+          >
+            {item.title}
+          </NavLink>
+          <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+            <span>Playlist</span>
+            {item.user && (
+              <>
+                <Dot />
+                <div className="space-x-1">
+                  <span>By</span>
+                  <NavLink href={`users/${item.user.id}`}>
+                    {item.user.name}
+                  </NavLink>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  } else if (type === "profiles") {
+    element = (
+      <div className="flex flex-col group gap-2 overflow-hidden">
+        <div
+          className="relative cursor-pointer group"
+          onClick={() => router.push(`/users/${item.id}`)}
+        >
+          {item.image && item.image.startsWith("https") ? (
+            <div className="rounded-full relative size-40 sm:size-48 lg:size-52 xl:size-56">
+              <Image
+                alt={item.name ?? "profile"}
+                src={item.image}
+                className="rounded-full size-56 object-cover group-hover:scale-105 transition-transform duration-300"
+                fill
+                priority
+                sizes="224px"
+              />
+            </div>
+          ) : (
+            <AppImage
+              priority
+              alt={item.name ?? "profile"}
+              src={item.image ?? process.env.NEXT_PUBLIC_FALLBACK_USER_COVER!}
+              className="rounded-full group-hover:scale-105 transition-transform duration-300"
+              sizes="(max-width: 768px) 50vw, 224px"
+              containerClassName="size-40 sm:size-48 lg:size-52 xl:size-56 rounded-full"
+            />
+          )}
+        </div>
+        <div className="flex flex-col items-start w-full min-w-0">
+          <NavLink
+            href={`/users/${item.id}`}
+            className="text-[calc(15rem/16)] truncate block w-full"
+          >
+            {item.name}
+          </NavLink>
+          <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+            <span>Profile</span>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <section>
+    <section className="flex flex-col">
       <SectionHeading title="Top Result" />
-      <div className="relative bg-muted/60 rounded-lg group hover:bg-muted transition-colors duration-400 p-5 flex flex-col gap-6">
-        <AppImage
-          alt={topResult.item.title}
-          src={topResult.item.album.imageId}
-          containerClassName="size-40"
-          sizes="160px"
-        />
-        <div className="space-y-3 flex-1 flex flex-col justify-between">
-          <h3 className="font-semibold text-2xl">{topResult.item.title}</h3>
-          <div className="flex items-center gap-1.5">
-            <span className="capitalize text-muted-foreground">
-              {topResult.type}
-            </span>
-            <Dot />
-            {topResult.item.artists.map((artist, index, originalArr) => (
-              <span key={artist.id} className="truncate">
-                <Link
-                  href={`/artists/${artist.id}`}
-                  className="text-[calc(13rem/16)] hover:text-primary hover:underline underline-offset-3 truncate font-medium"
-                >
-                  {artist.name}
-                </Link>
-                {index < originalArr.length - 1 && ", "}
-              </span>
-            ))}
-          </div>
-        </div>
-        <RoundedPlayButton
-          context={{ contextType: "SEARCH", contextId: q }}
-          className="absolute opacity-0 bottom-5 right-5 translate-y-5 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
-        />
+      <div className="relative overflow-hidden bg-muted/60 rounded-lg group p-4 xl:p-5 flex h-full items-start gap-4">
+        {element}
+        {type !== "profiles" && (
+          <RoundedPlayButton
+            context={{
+              contextType: contextTypeMap[type] as PlaybackContextType,
+              contextId: item.id,
+            }}
+            className="absolute opacity-0 bottom-4 xl:bottom-5 right-4 xl:right-5 translate-y-2 scale-95 transition-all duration-400 group-hover:opacity-100 group-hover:translate-y-0 group-hover:scale-100"
+          />
+        )}
       </div>
     </section>
   );

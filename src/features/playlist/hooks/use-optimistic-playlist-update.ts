@@ -4,7 +4,7 @@ import {
   UpdatePlaylistInput,
   UpdatePlaylistOutput,
 } from "@/features/playlist/contracts/playlist-dto";
-import { PlaylistDetail } from "@/features/playlist/data-access/playlist-repo";
+import { PlaylistBanner } from "@/features/playlist/data-access/playlist-repo";
 import { patchApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -25,13 +25,13 @@ export const useOptimisticPlaylistUpdate = () => {
       }),
 
     onMutate: async ({ playlistId, input }) => {
-      await qc.cancelQueries({ queryKey: playlistKeys.detail(playlistId) });
+      await qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) });
 
-      const prev = qc.getQueryData<PlaylistDetail>(
-        playlistKeys.detail(playlistId)
+      const prev = qc.getQueryData<PlaylistBanner>(
+        playlistKeys.banner(playlistId)
       );
 
-      qc.setQueryData<PlaylistDetail>(playlistKeys.detail(playlistId), (prev) =>
+      qc.setQueryData<PlaylistBanner>(playlistKeys.banner(playlistId), (prev) =>
         prev
           ? {
               ...prev,
@@ -59,13 +59,13 @@ export const useOptimisticPlaylistUpdate = () => {
 
     onError: (_err, { playlistId }, ctx) => {
       if (ctx?.prev) {
-        qc.setQueryData(playlistKeys.detail(playlistId), ctx.prev);
+        qc.setQueryData(playlistKeys.banner(playlistId), ctx.prev);
       }
     },
 
     onSuccess: (updatedPlaylist, { playlistId }) => {
       toast.success("Playlist updated successful!");
-      qc.setQueryData<PlaylistDetail>(playlistKeys.detail(playlistId), (prev) =>
+      qc.setQueryData<PlaylistBanner>(playlistKeys.banner(playlistId), (prev) =>
         prev
           ? {
               ...prev,

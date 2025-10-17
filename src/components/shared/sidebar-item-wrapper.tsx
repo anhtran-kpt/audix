@@ -19,7 +19,7 @@ export function SidebarItemWrapper({
   return (
     <div
       className={cn(
-        "min-w-0 flex items-center transition-all duration-200 p-1.5",
+        "min-w-0 flex items-center transition-all duration-200",
         open ? "gap-2 flex-1" : "justify-center w-10"
       )}
     >

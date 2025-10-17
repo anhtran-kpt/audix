@@ -1,3 +1,4 @@
+import UserGrid from "@/components/shared/user-grid";
 import SectionHeading from "@/components/ui/section-heading";
 import { SearchResults } from "@/features/search/data-access/search-repo";
 
@@ -6,6 +7,7 @@ export default function ProfilesSection({
 }: {
   data: SearchResults["profiles"];
 }) {
+  console.log(data);
   return (
     <section>
       <SectionHeading
@@ -14,6 +16,7 @@ export default function ProfilesSection({
           data.pagination.hasMore ? `/search?type=profiles` : undefined
         }
       />
+      <UserGrid users={data.items} />
     </section>
   );
 }
