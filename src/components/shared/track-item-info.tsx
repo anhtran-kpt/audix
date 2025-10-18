@@ -26,8 +26,6 @@ export const TrackItemInfo = ({
     }))
   );
 
-  console.log(artists);
-
   const isThisContext = contextId === context?.contextId;
   const isThisTrack = currentTrackId === context?.startTrackId;
 

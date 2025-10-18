@@ -139,7 +139,14 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
           />
         </div>
         <div className="flex items-center gap-6">
-          <ToggleLikePlaylistButton playlistId={playlistId} />
+          <ToggleLikePlaylistButton
+            playlist={{
+              id: playlist.id,
+              title: playlist.title,
+              imageId: playlist.imageId,
+              user: playlist.user,
+            }}
+          />
           <PlaylistDetailDropdown
             playlistId={playlistId}
             title={playlist.title}

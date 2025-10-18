@@ -2,7 +2,7 @@ import { DiscographySection } from "./_sections/discography-section";
 import { PopularTracksSection } from "./_sections/popular-tracks-section";
 import { AboutSection } from "./_sections/about-section";
 import { SuggestionSection } from "./_sections/suggestion-section";
-import { createQueryClient } from "@/lib/query-client";
+import { getQueryClient } from "@/lib/query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 import { BannerSection } from "./_sections/banner-section";
@@ -14,7 +14,7 @@ export default async function ArtistDetail({
 }) {
   const { artistId } = await params;
 
-  const qc = createQueryClient();
+  const qc = getQueryClient();
 
   await Promise.all([
     qc.prefetchQuery({ ...artistQueryOptions.banner(artistId) }),
