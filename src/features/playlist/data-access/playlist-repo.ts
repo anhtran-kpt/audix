@@ -10,6 +10,60 @@ import { buildPlaylistCoverUrl } from "@/utils/string";
 import { AwaitedReturnType } from "@/utils/type";
 import { AppError } from "@/lib/errors";
 
+export const authorizePlaylist = async ({
+  userId,
+  playlistId,
+}: {
+  userId: string;
+  playlistId: string;
+}) => {
+  const playlist = await db.playlist.findUnique({
+    where: { id: playlistId },
+    select: {
+      id: true,
+      title: true,
+      userId: true,
+      isPublic: true,
+    },
+  });
+
+  if (!playlist) {
+    return {
+      playlist: null,
+      role: "NONE",
+      canView: false,
+      canEdit: false,
+    };
+  }
+
+  const isOwner = userId && playlist.userId === userId;
+
+  if (isOwner) {
+    return {
+      playlist,
+      role: "OWNER",
+      canView: true,
+      canEdit: true,
+    };
+  }
+
+  if (playlist.isPublic) {
+    return {
+      playlist,
+      role: "VIEWER",
+      canView: true,
+      canEdit: false,
+    };
+  }
+
+  return {
+    playlist,
+    role: "NONE",
+    canView: false,
+    canEdit: false,
+  };
+};
+
 export const createPlaylist = async (
   userId: string,
   input: CreatePlaylistInput
@@ -227,7 +281,19 @@ export const getPlaylistDetail = async (playlistId: string) => {
 
 export type PlaylistDetail = AwaitedReturnType<typeof getPlaylistDetail>;
 
-export const getPlaylistBanner = async (playlistId: string) => {
+export const getPlaylistBanner = async ({
+  userId,
+  playlistId,
+}: {
+  userId: string;
+  playlistId: string;
+}) => {
+  const auth = await authorizePlaylist({ userId, playlistId });
+
+  if (!auth.canView) {
+    throw new AppError("FORBIDDEN", "Forbidden");
+  }
+
   const playlist = await db.playlist.findUnique({
     where: {
       id: playlistId,
@@ -254,12 +320,29 @@ export const getPlaylistBanner = async (playlistId: string) => {
     throw new AppError("NOT_FOUND", "Playlist not found");
   }
 
-  return playlist;
+  return {
+    ...playlist,
+    role: auth.role,
+    canEdit: auth.canEdit,
+    canView: auth.canView,
+  };
 };
 
 export type PlaylistBanner = AwaitedReturnType<typeof getPlaylistBanner>;
 
-export const getPlaylistTracks = async (playlistId: string) => {
+export const getPlaylistTracks = async ({
+  userId,
+  playlistId,
+}: {
+  userId: string;
+  playlistId: string;
+}) => {
+  const auth = await authorizePlaylist({ userId, playlistId });
+
+  if (!auth.canView) {
+    throw new AppError("FORBIDDEN", "Forbidden");
+  }
+
   const playlist = await db.playlist.findUnique({
     where: {
       id: playlistId,
@@ -285,15 +368,36 @@ export const getPlaylistTracks = async (playlistId: string) => {
     addedAt: track.addedAt,
   }));
 
-  return tracks.map((track) => ({
+  const playlistTracks = tracks.map((track) => ({
     ...track,
     artists: track.artists.map((a) => a.artist),
   }));
+
+  return {
+    tracks: playlistTracks,
+    role: auth.role,
+    canEdit: auth.canEdit,
+    canView: auth.canView,
+  };
 };
 
 export type PlaylistTracks = AwaitedReturnType<typeof getPlaylistTracks>;
 
-export const getRecommendedTracks = async (playlistId: string, take = 5) => {
+export const getRecommendedTracks = async ({
+  userId,
+  playlistId,
+  take = 5,
+}: {
+  userId: string;
+  playlistId: string;
+  take: number;
+}) => {
+  const auth = await authorizePlaylist({ userId, playlistId });
+
+  if (!auth.canView) {
+    throw new AppError("FORBIDDEN", "Forbidden");
+  }
+
   const playlist = await db.playlist.findUniqueOrThrow({
     where: { id: playlistId },
     select: {
@@ -385,17 +489,40 @@ export const getRecommendedTracks = async (playlistId: string, take = 5) => {
     }
   }
 
-  return tracks.map((track) => ({
+  const recommendedTracks = tracks.map((track) => ({
     ...track,
     addedAt: new Date(),
     artists: track.artists.map((a) => a.artist),
   }));
+
+  return {
+    tracks: recommendedTracks,
+    role: auth.role,
+    canEdit: auth.canEdit,
+    canView: auth.canView,
+  };
 };
 
-export const uploadPlaylistCover = async (
-  playlistId: string,
-  imageIds: string[]
-) => {
+export type RecommendedTracks = AwaitedReturnType<typeof getRecommendedTracks>;
+
+export const uploadPlaylistCover = async ({
+  userId,
+  playlistId,
+  imageIds,
+}: {
+  userId: string;
+  playlistId: string;
+  imageIds: string[];
+}) => {
+  const auth = await authorizePlaylist({
+    playlistId,
+    userId,
+  });
+
+  if (!auth.canEdit) {
+    return new AppError("FORBIDDEN", "You cannot edit this playlist");
+  }
+
   try {
     if (imageIds.length === 1) {
       const [imageId] = imageIds;
@@ -453,6 +580,15 @@ export const deletePlaylist = async ({
   playlistId: string;
   userId: string;
 }) => {
+  const auth = await authorizePlaylist({
+    playlistId,
+    userId,
+  });
+
+  if (!auth.canEdit) {
+    return new AppError("FORBIDDEN", "You cannot delete this playlist");
+  }
+
   return db.$transaction(async (tx) => {
     const playlist = await tx.playlist.findUnique({
       where: { id: playlistId },
@@ -512,10 +648,24 @@ export const getUserPlaylistsWithoutTrack = async (
   });
 };
 
-export const updatePlaylistInfo = async (
-  playlistId: string,
-  input: UpdatePlaylistInput
-) => {
+export const updatePlaylistInfo = async ({
+  userId,
+  playlistId,
+  input,
+}: {
+  userId: string;
+  playlistId: string;
+  input: UpdatePlaylistInput;
+}) => {
+  const auth = await authorizePlaylist({
+    playlistId,
+    userId,
+  });
+
+  if (!auth.canEdit) {
+    return new AppError("FORBIDDEN", "You cannot edit this playlist");
+  }
+
   return await db.playlist.update({
     where: {
       id: playlistId,

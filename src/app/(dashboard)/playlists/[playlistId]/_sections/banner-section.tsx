@@ -15,6 +15,7 @@ import Dot from "@/components/ui/dot";
 import { UserImage } from "@/components/shared/user-image";
 import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
 import { ToggleLikePlaylistButton } from "@/components/features/toggle-like-playlist-button";
+import EditPlaylistDetails from "@/components/features/edit-playlist-details";
 
 export const BannerSection = ({ playlistId }: { playlistId: string }) => {
   const { data: playlist, status } = useQuery({
@@ -139,17 +140,21 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
           />
         </div>
         <div className="flex items-center gap-6">
-          <ToggleLikePlaylistButton
-            playlist={{
-              id: playlist.id,
-              title: playlist.title,
-              imageId: playlist.imageId,
-              user: playlist.user,
-            }}
-          />
+          {playlist.role !== "OWNER" && (
+            <ToggleLikePlaylistButton
+              playlist={{
+                id: playlist.id,
+                title: playlist.title,
+                imageId: playlist.imageId,
+                user: playlist.user,
+              }}
+            />
+          )}
+          {playlist.canEdit && <EditPlaylistDetails playlistId={playlistId} />}
           <PlaylistDetailDropdown
             playlistId={playlistId}
             title={playlist.title}
+            canEdit={playlist.canEdit}
           />
         </div>
       </div>

@@ -18,6 +18,7 @@ type TrackListProps = {
   contextId: string;
   contextType: "PLAYLIST" | "ALBUM" | "ARTIST" | "SEARCH";
   isLoading: boolean;
+  canEdit?: boolean;
 };
 
 export const TrackList = ({
@@ -25,6 +26,7 @@ export const TrackList = ({
   contextId,
   contextType,
   isLoading = true,
+  canEdit = false,
 }: TrackListProps) => {
   const gridCols: Record<TrackListProps["contextType"], string> = {
     PLAYLIST:
@@ -157,6 +159,7 @@ export const TrackList = ({
                 track={track}
                 contextId={contextId}
                 contextType={contextType}
+                canEdit={canEdit}
               />
             </div>
           </li>

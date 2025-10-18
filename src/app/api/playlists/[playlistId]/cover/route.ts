@@ -6,7 +6,11 @@ export const POST = makePOST({
   auth: "required",
   params: object({ playlistId: z.cuid2() }),
   body: object({ imageIds: z.string().array() }),
-  handler: async ({ body, params }) => {
-    return uploadPlaylistCover(params.playlistId, body.imageIds);
+  handler: async ({ userId, body, params }) => {
+    return uploadPlaylistCover({
+      userId: userId!,
+      playlistId: params.playlistId,
+      imageIds: body.imageIds,
+    });
   },
 });

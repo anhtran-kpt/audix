@@ -5,7 +5,10 @@ import { makeGET } from "@/lib/route-factory";
 export const GET = makeGET({
   auth: "required",
   params: PlaylistParamsSchema,
-  handler: async ({ params }) => {
-    return getPlaylistBanner(params.playlistId);
+  handler: async ({ userId, params }) => {
+    return getPlaylistBanner({
+      userId: userId!,
+      playlistId: params.playlistId,
+    });
   },
 });

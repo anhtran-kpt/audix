@@ -29,7 +29,11 @@ export const PATCH = makePATCH({
   params: object({
     playlistId: z.cuid2(),
   }),
-  handler: async ({ body, params }) => {
-    return updatePlaylistInfo(params.playlistId, body);
+  handler: async ({ body, params, userId }) => {
+    return updatePlaylistInfo({
+      userId: userId!,
+      playlistId: params.playlistId,
+      input: body,
+    });
   },
 });

@@ -5,7 +5,7 @@ import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-opt
 import { useQuery } from "@tanstack/react-query";
 
 export const TracksSection = ({ playlistId }: { playlistId: string }) => {
-  const { data: tracks, status } = useQuery({
+  const { data, status } = useQuery({
     ...playlistQueryOptions.tracks(playlistId),
   });
 
@@ -17,13 +17,18 @@ export const TracksSection = ({ playlistId }: { playlistId: string }) => {
     return <div>Error</div>;
   }
 
+  if (!data.canView) {
+    return <section>You have no permission to see this content.</section>;
+  }
+
   return (
     <section>
       <TrackList
         contextId={playlistId}
-        tracks={tracks}
+        tracks={data.tracks}
         contextType="PLAYLIST"
         isLoading={false}
+        canEdit={data.canEdit}
       />
     </section>
   );

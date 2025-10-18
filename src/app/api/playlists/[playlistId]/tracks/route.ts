@@ -20,7 +20,10 @@ export const POST = makePOST({
 export const GET = makeGET({
   auth: "required",
   params: PlaylistParamsSchema,
-  handler: async ({ params }) => {
-    return getPlaylistTracks(params.playlistId);
+  handler: async ({ params, userId }) => {
+    return getPlaylistTracks({
+      userId: userId!,
+      playlistId: params.playlistId,
+    });
   },
 });

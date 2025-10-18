@@ -14,11 +14,13 @@ import { ConfirmDialog } from "./confirm-dialog";
 type PlaylistDetailDropdownProps = {
   playlistId: string;
   title: string;
+  canEdit?: boolean;
 };
 
 export function PlaylistDetailDropdown({
   playlistId,
   title,
+  canEdit = false,
 }: PlaylistDetailDropdownProps) {
   const deletePlaylistMutation = useOptimisticPlaylistDelete();
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -48,10 +50,12 @@ export function PlaylistDetailDropdown({
               <ListPlusIcon />
               Add to queue
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setOpenConfirm(true)}>
-              <TrashIcon />
-              Delete this playlist
-            </DropdownMenuItem>
+            {canEdit && (
+              <DropdownMenuItem onClick={() => setOpenConfirm(true)}>
+                <TrashIcon />
+                Delete this playlist
+              </DropdownMenuItem>
+            )}
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>

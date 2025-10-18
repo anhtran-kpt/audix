@@ -37,12 +37,14 @@ type TrackDropdownDetailsProps = {
   track: TrackItem;
   contextId: string;
   contextType: "ALBUM" | "PLAYLIST" | "ARTIST" | "SEARCH";
+  canEdit?: boolean;
 };
 
 export function TrackDropdownDetails({
   track,
   contextId,
   contextType,
+  canEdit = false,
 }: TrackDropdownDetailsProps) {
   const removeTrackMutation = useRemoveTrackFromPlaylist();
   const addTrackMutation = useAddTrackToPlaylist();
@@ -125,7 +127,7 @@ export function TrackDropdownDetails({
             )}
             <DropdownMenuItem>Save to Liked Songs</DropdownMenuItem>
             <DropdownMenuItem>Add to queue</DropdownMenuItem>
-            {contextType === "PLAYLIST" && (
+            {contextType === "PLAYLIST" && canEdit && (
               <DropdownMenuItem
                 onClick={() =>
                   removeTrackMutation.mutate({
