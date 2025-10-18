@@ -113,7 +113,7 @@ export const BannerSection = ({ albumId }: { albumId: string }) => {
           />
         </div>
         <div className="flex items-center gap-6">
-          <ToggleLikeAlbumButton albumId={albumId} />
+          <ToggleLikeAlbumButton album={{ ...album, id: albumId }} />
           <IconButton
             icon={EllipsisIcon}
             size="xl"

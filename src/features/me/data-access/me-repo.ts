@@ -201,6 +201,72 @@ export type MyLikedPlaylist = AwaitedReturnType<
   typeof getMyLikedPlaylists
 >[number];
 
+export const getLikedPlaylistStatus = async ({
+  userId,
+  playlistId,
+}: {
+  userId: string;
+  playlistId: string;
+}) => {
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      likedPlaylists: {
+        select: {
+          playlistId: true,
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found");
+  }
+
+  return {
+    isLiked: user.likedPlaylists
+      .map((pl) => pl.playlistId)
+      .includes(playlistId),
+  };
+};
+
+export type LikedPlaylistStatus = AwaitedReturnType<
+  typeof getLikedPlaylistStatus
+>;
+
+export const getLikedAlbumStatus = async ({
+  userId,
+  albumId,
+}: {
+  userId: string;
+  albumId: string;
+}) => {
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      likedAlbums: {
+        select: {
+          albumId: true,
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found");
+  }
+
+  return {
+    isLiked: user.likedAlbums.map((pl) => pl.albumId).includes(albumId),
+  };
+};
+
+export type LikedAlbumStatus = AwaitedReturnType<typeof getLikedAlbumStatus>;
+
 export const likeAlbum = async ({
   userId,
   albumId,

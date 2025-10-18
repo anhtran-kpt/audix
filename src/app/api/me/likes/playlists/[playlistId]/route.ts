@@ -1,9 +1,21 @@
 import { ToggleLikePlaylistInputSchema } from "@/features/me/contracts/me-schema";
 import {
+  getLikedPlaylistStatus,
   likePlaylist,
   unlikePlaylist,
 } from "@/features/me/data-access/me-repo";
-import { makeDELETE, makePUT } from "@/lib/route-factory";
+import { makeDELETE, makeGET, makePUT } from "@/lib/route-factory";
+
+export const GET = makeGET({
+  auth: "required",
+  params: ToggleLikePlaylistInputSchema,
+  handler: async ({ userId, params }) => {
+    return getLikedPlaylistStatus({
+      userId: userId!,
+      playlistId: params.playlistId,
+    });
+  },
+});
 
 export const PUT = makePUT({
   auth: "required",

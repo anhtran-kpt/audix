@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { MyLikedPlaylist } from "../data-access/me-repo";
+import { LikedPlaylistStatus, MyLikedPlaylist } from "../data-access/me-repo";
 import { meKeys } from "../api/me-keys";
 import { deleteApi, putApi } from "@/lib/http/api";
 import { meEndpoints } from "../api/me-endpoints";
@@ -11,21 +11,29 @@ export function useToggleLikePlaylist(playlist: PlaylistItem) {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
-      const liked = qc
-        .getQueryData<MyLikedPlaylist[]>(meKeys.likedPlaylists())
-        ?.some((p) => p.id === playlist.id);
-
-      if (liked) {
+    mutationFn: async (isLiked: boolean) => {
+      if (isLiked) {
         await deleteApi(meEndpoints.toggleLikePlaylist(playlist.id));
       } else {
-        await putApi(meEndpoints.toggleLikePlaylist(playlist.id), {});
+        await putApi(meEndpoints.toggleLikePlaylist(playlist.id));
       }
     },
-    onMutate: async () => {
-      await qc.cancelQueries({ queryKey: meKeys.likedPlaylists() });
 
-      const prev = qc.getQueryData<MyLikedPlaylist[]>(meKeys.likedPlaylists());
+    onMutate: async () => {
+      await Promise.all([
+        qc.cancelQueries({ queryKey: meKeys.likedPlaylists() }),
+        qc.cancelQueries({ queryKey: meKeys.likedPlaylistStatus(playlist.id) }),
+      ]);
+
+      const prevData = {
+        likedPlaylists: qc.getQueryData<MyLikedPlaylist[]>(
+          meKeys.likedPlaylists()
+        ),
+
+        likedPlaylistStatus: qc.getQueryData<LikedPlaylistStatus>(
+          meKeys.likedPlaylistStatus(playlist.id)
+        ),
+      };
 
       qc.setQueryData<MyLikedPlaylist[]>(meKeys.likedPlaylists(), (old) => {
         if (!old) return [playlist];
@@ -37,13 +45,28 @@ export function useToggleLikePlaylist(playlist: PlaylistItem) {
           : [...old, playlist];
       });
 
-      return { prev };
+      qc.setQueryData<LikedPlaylistStatus>(
+        meKeys.likedPlaylistStatus(playlist.id),
+        (old) => ({ isLiked: !old?.isLiked })
+      );
+
+      return { prevData };
     },
     onError: (_err, _vars, ctx) => {
-      if (ctx?.prev) qc.setQueryData(meKeys.likedPlaylists(), ctx.prev);
+      if (!ctx) return;
+
+      qc.setQueryData(meKeys.likedPlaylists(), ctx.prevData.likedPlaylists);
+      qc.setQueryData(
+        meKeys.likedPlaylistStatus(playlist.id),
+        ctx.prevData.likedPlaylistStatus
+      );
     },
+
     onSettled: () => {
       qc.invalidateQueries({ queryKey: meKeys.likedPlaylists() });
+      qc.invalidateQueries({
+        queryKey: meKeys.likedPlaylistStatus(playlist.id),
+      });
     },
   });
 }
