@@ -158,6 +158,7 @@ export const getTrackCredits = async (trackId: string) => {
               id: true,
               name: true,
               bannerId: true,
+              imageId: true,
               bio: true,
             },
           },

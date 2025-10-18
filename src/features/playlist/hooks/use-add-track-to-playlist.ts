@@ -46,7 +46,7 @@ export function useAddTrackToPlaylist() {
 
       const prevTracks = qc.getQueryData<PlaylistTracks>(
         playlistKeys.tracks(playlistId)
-      );
+      )?.tracks;
 
       if (!prevTracks || !prevInfo) return null;
 
@@ -75,7 +75,7 @@ export function useAddTrackToPlaylist() {
 
       qc.setQueryData(
         playlistKeys.tracks(playlistId),
-        (old: PlaylistTracks) => [...old, track]
+        (old: PlaylistTracks) => [...old.tracks, track]
       );
 
       qc.setQueryData(

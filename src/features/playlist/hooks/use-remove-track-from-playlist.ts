@@ -32,7 +32,7 @@ export function useRemoveTrackFromPlaylist() {
 
       const prevTracks = qc.getQueryData<PlaylistTracks>(
         playlistKeys.tracks(playlistId)
-      );
+      )?.tracks;
 
       if (!prevTracks || !prevBanner) return null;
 
@@ -70,9 +70,9 @@ export function useRemoveTrackFromPlaylist() {
       qc.setQueryData<PlaylistTracks>(
         playlistKeys.tracks(playlistId),
         (old) => {
-          if (!old) return [];
+          if (!old) return;
 
-          return newTracks;
+          return { ...old, tracks: newTracks };
         }
       );
 

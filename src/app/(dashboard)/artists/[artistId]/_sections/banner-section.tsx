@@ -73,7 +73,13 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
           />
         </div>
         <div className="flex items-center gap-6">
-          <FollowButton artistId={artistId} />
+          <FollowButton
+            artist={{
+              name: artist.name,
+              imageId: artist.imageId,
+              id: artistId,
+            }}
+          />
           <IconButton
             icon={EllipsisIcon}
             size="xl"

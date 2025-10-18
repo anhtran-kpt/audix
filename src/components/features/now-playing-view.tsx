@@ -147,7 +147,13 @@ export const NowPlayingView = () => {
               </div>
               <div className="flex items-center gap-4 justify-between">
                 <FollowersBadge artistId={data.artist.id} />
-                <FollowButton artistId={data.artist.id} />
+                <FollowButton
+                  artist={{
+                    name: data.artist.name,
+                    id: data.artist.id,
+                    imageId: data.artist.imageId,
+                  }}
+                />
               </div>
               <p className="text-[calc(13rem/16)] text-muted-foreground line-clamp-3">
                 {data.artist.bio}
@@ -199,7 +205,15 @@ export const NowPlayingView = () => {
                     }, "")}
                   </p>
                 </div>
-                {credit.artistId && <FollowButton artistId={credit.artistId} />}
+                {credit.artistId && (
+                  <FollowButton
+                    artist={{
+                      name: data.artist.name,
+                      id: data.artist.id,
+                      imageId: data.artist.imageId,
+                    }}
+                  />
+                )}
               </div>
             ))}
           </div>
