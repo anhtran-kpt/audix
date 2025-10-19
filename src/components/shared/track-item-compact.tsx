@@ -2,26 +2,26 @@ import { cn } from "@/lib/utils";
 import { AppImage } from "./app-image";
 import { TrackItem } from "@/features/track/contracts/track-dto";
 import { TrackItemInfo } from "./track-item-info";
-import { RowPlayButton } from "./row-play-button";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 import { TrackDropdownDetails } from "../features/track-dropdown-details";
+import { ReactNode } from "react";
 
 type TrackItemCompactProps = {
   track: TrackItem;
   hasMoreDetails?: boolean;
   hasCover?: boolean;
   canHover?: boolean;
-  canPlay?: boolean;
   context?: StartPlaybackInput;
+  playBtn?: ReactNode;
 };
 
 export const TrackItemCompact = ({
+  playBtn,
   track,
   context,
   hasMoreDetails = true,
   canHover = true,
   hasCover = true,
-  canPlay = true,
 }: TrackItemCompactProps) => {
   return (
     <div
@@ -39,17 +39,10 @@ export const TrackItemCompact = ({
               containerClassName="size-12"
               sizes="48px"
               className={cn(
-                canPlay &&
-                  canHover &&
-                  "group-hover:brightness-65 transition-[brightness]"
+                canHover && "group-hover:brightness-65 transition-[brightness]"
               )}
             />
-            {context && canPlay && (
-              <RowPlayButton
-                context={context}
-                className="absolute top-1/2 left-1/2 -translate-1/2 opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity"
-              />
-            )}
+            {playBtn}
           </div>
         )}
         <TrackItemInfo

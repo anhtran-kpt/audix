@@ -5,7 +5,6 @@ import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { GlobeIcon, LockIcon, ShuffleIcon } from "lucide-react";
-import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 import { IconButton } from "@/components/ui/icon-button";
 import { AppImage } from "@/components/shared/app-image";
 import { NavLink } from "@/components/ui/nav-link";
@@ -16,6 +15,7 @@ import { UserImage } from "@/components/shared/user-image";
 import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dropdown";
 import { ToggleLikePlaylistButton } from "@/components/features/toggle-like-playlist-button";
 import EditPlaylistDetails from "@/components/features/edit-playlist-details";
+import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 
 export const BannerSection = ({ playlistId }: { playlistId: string }) => {
   const { data: playlist, status } = useQuery({
@@ -123,7 +123,7 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
       </div>
       <div className="flex items-center justify-between sm:justify-start max-sm:flex-row-reverse sm:gap-6">
         <div className="flex items-center gap-6 max-sm:flex-row-reverse">
-          <RoundedPlayButton
+          <RoundedPlayContextButton
             context={{
               contextType: "PLAYLIST",
               contextId: playlistId,

@@ -104,6 +104,7 @@ export const TrackList = ({
           >
             <TrackIndexCell
               context={{ contextId, contextType, startTrackId: track.id }}
+              trackId={track.id}
               index={index}
             />
             <div className="group flex items-center justify-between gap-4 min-w-0 w-full">

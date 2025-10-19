@@ -4,13 +4,12 @@ import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-
 import { EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { FollowersBadge } from "@/components/features/follow-badge";
-import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 import { IconButton } from "@/components/ui/icon-button";
 import { AppImage } from "@/components/shared/app-image";
 import { FollowButton } from "@/components/features/follow-button";
+import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 
 export const BannerSection = ({ artistId }: { artistId: string }) => {
   const { data: artist, status } = useQuery({
@@ -56,7 +55,7 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
       </div>
       <div className="flex items-center justify-between sm:justify-start max-sm:flex-row-reverse sm:gap-6">
         <div className="flex items-center gap-6 max-sm:flex-row-reverse">
-          <RoundedPlayButton
+          <RoundedPlayContextButton
             context={{
               contextType: "ARTIST",
               contextId: artistId,

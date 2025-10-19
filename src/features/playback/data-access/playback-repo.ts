@@ -46,18 +46,24 @@ const buildClientQueue = ({
     .sort((a, b) => a.position - b.position)
     .map((q) => q.track);
 
-  let contextQueue = snapshot.tracks
+  let remainingContextTracks = snapshot.tracks
     .filter((t) => t.index > contextIndex)
     .map((t) => t.track);
 
-  if (isShuffled) contextQueue = shuffleArray(contextQueue);
+  if (isShuffled) {
+    remainingContextTracks = shuffleArray(remainingContextTracks);
+  }
 
   const laterQueue = queue
     .filter((q) => q.kind === "LATER")
     .sort((a, b) => a.position - b.position)
     .map((q) => q.track);
 
-  return { next: nextQueue, context: contextQueue, later: laterQueue };
+  return {
+    next: nextQueue,
+    context: remainingContextTracks,
+    later: laterQueue,
+  };
 };
 
 const getPlaybackBoundaries = ({
@@ -214,6 +220,11 @@ async function ensureSnapshot({
           tracks: {
             select: {
               track: { select: trackItemSelect },
+            },
+            orderBy: {
+              track: {
+                playCount: "desc",
+              },
             },
           },
         },

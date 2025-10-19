@@ -4,8 +4,12 @@ import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
 
-export function usePlayContext(context: StartPlaybackInput) {
-  const { isPlaying, start, pause, resume, contextId, currentTrackId } =
+type UsePlayContextProps = {
+  context: StartPlaybackInput;
+};
+
+export const usePlayContext = ({ context }: UsePlayContextProps) => {
+  const { isPlaying, start, pause, resume, contextId, contextType } =
     usePlaybackStore(
       useShallow((s) => ({
         start: s.start,
@@ -13,24 +17,19 @@ export function usePlayContext(context: StartPlaybackInput) {
         resume: s.resume,
         isPlaying: s.isPlaying,
         contextId: s.session?.snapshot?.contextId,
-        currentTrackId: s.session?.currentTrackId,
+        contextType: s.session?.snapshot?.contextType,
       }))
     );
 
-  const isThisContext = contextId === context.contextId;
-  const isThisTrack = currentTrackId === context.startTrackId;
+  const isThisContext =
+    contextId === context.contextId && contextType === context.contextType;
 
   const handlePlay = () => {
     if (isThisContext) {
-      if (isThisTrack) {
-        return isPlaying ? pause() : resume();
-      } else {
-        return start(context);
-      }
+      return isPlaying ? pause() : resume();
     }
-
     return start(context);
   };
 
-  return { isPlaying, isThisContext, isThisTrack, handlePlay };
-}
+  return { isPlaying, isThisContext, handlePlay };
+};

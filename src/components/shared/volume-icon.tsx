@@ -6,6 +6,7 @@ export const VolumeIcon = () => {
       width="20"
       height="20"
       version="1.1"
+      className="shrink-0"
     >
       <defs id="SvgjsDefs1020" />
       <g id="SvgjsG1021">

@@ -24,7 +24,6 @@ import {
 import { useState } from "react";
 import { SidebarItemWrapper } from "../shared/sidebar-item-wrapper";
 import { usePlaybackStore } from "@/stores/use-playback-store";
-import { RowPlayButton } from "../shared/row-play-button";
 import { useShallow } from "zustand/react/shallow";
 import { VolumeIcon } from "../shared/volume-icon";
 import { AppImage } from "../shared/app-image";
@@ -38,6 +37,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { LibraryFilter, useLibraryItems } from "@/hooks/use-library-items";
+import { MiniPlayContextButton } from "./play/mini-play-context-button";
 
 export function AppSidebar() {
   const pathname = usePathname();
@@ -205,7 +205,7 @@ export function AppSidebar() {
                                 }
                                 containerClassName="size-10"
                               />
-                              <RowPlayButton
+                              <MiniPlayContextButton
                                 context={{
                                   contextType: item.type,
                                   contextId: item.id,

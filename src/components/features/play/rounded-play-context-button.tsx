@@ -6,15 +6,15 @@ import { usePlayContext } from "@/hooks/use-play-context";
 import { cn } from "@/lib/utils";
 import { PauseIcon, PlayIcon } from "lucide-react";
 
-type RoundedPlayButtonProps = {
+type RoundedPlayContextButtonProps = {
   context: StartPlaybackInput;
   className?: string;
 };
-export const RoundedPlayButton = ({
+export const RoundedPlayContextButton = ({
   context,
   className,
-}: RoundedPlayButtonProps) => {
-  const { handlePlay, isThisContext, isPlaying } = usePlayContext(context);
+}: RoundedPlayContextButtonProps) => {
+  const { handlePlay, isThisContext, isPlaying } = usePlayContext({ context });
 
   return (
     <Button

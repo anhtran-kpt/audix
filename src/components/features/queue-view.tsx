@@ -6,6 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useRecentTracks, useTracks } from "@/features/track/hooks/use-tracks";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { TrackItemCompact } from "../shared/track-item-compact";
+import { MiniPlayTrackButton } from "./play/mini-play-track-button";
 
 export default function QueueView() {
   const { queue, currentTrack, snapshot } = usePlaybackStore(
@@ -16,17 +17,21 @@ export default function QueueView() {
     }))
   );
 
-  const { data: queueNext } = useTracks(queue?.next.map((item) => item.id));
-  const { data: queueContext } = useTracks(
-    queue?.context.map((item) => item.id)
-  );
-  const { data: queueLater } = useTracks(queue?.later.map((item) => item.id));
+  const queueNextIds = queue?.next?.map((item) => item.id) ?? [];
+  const queueContextIds = queue?.context?.map((item) => item.id) ?? [];
+  const queueLaterIds = queue?.later?.map((item) => item.id) ?? [];
+
+  const { data: queueNext } = useTracks(queueNextIds);
+  const { data: queueContext } = useTracks(queueContextIds);
+  const { data: queueLater } = useTracks(queueLaterIds);
 
   const { data: recentTracks } = useRecentTracks();
 
-  if (!currentTrack) {
+  if (!currentTrack || !snapshot) {
     return null;
   }
+
+  console.log(queue);
 
   return (
     <Tabs defaultValue="queue" className="size-full">
@@ -46,14 +51,21 @@ export default function QueueView() {
               </p>
               <TrackItemCompact
                 track={currentTrack}
-                context={
-                  snapshot
-                    ? {
-                        contextType: snapshot.contextType,
-                        contextId: snapshot.contextId,
-                        startTrackId: currentTrack.id,
-                      }
-                    : undefined
+                context={{
+                  contextType: snapshot.contextType,
+                  contextId: snapshot.contextId,
+                  startTrackId: currentTrack.id,
+                }}
+                playBtn={
+                  <MiniPlayTrackButton
+                    context={{
+                      contextType: snapshot.contextType,
+                      contextId: snapshot.contextId,
+                      startTrackId: currentTrack.id,
+                    }}
+                    trackId={currentTrack.id}
+                    className="absolute top-1/2 left-1/2 -translate-1/2 opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity"
+                  />
                 }
               />
             </div>
@@ -68,14 +80,21 @@ export default function QueueView() {
                     <TrackItemCompact
                       key={track.id}
                       track={track}
-                      context={
-                        snapshot
-                          ? {
-                              contextType: snapshot.contextType,
-                              contextId: snapshot.contextId,
-                              startTrackId: track.id,
-                            }
-                          : undefined
+                      context={{
+                        contextType: snapshot.contextType,
+                        contextId: snapshot.contextId,
+                        startTrackId: track.id,
+                      }}
+                      playBtn={
+                        <MiniPlayTrackButton
+                          context={{
+                            contextType: snapshot.contextType,
+                            contextId: snapshot.contextId,
+                            startTrackId: track.id,
+                          }}
+                          trackId={track.id}
+                          className="absolute top-1/2 left-1/2 -translate-1/2 opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity"
+                        />
                       }
                     />
                   ))}
@@ -85,7 +104,7 @@ export default function QueueView() {
             {queueContext && (
               <div className="flex flex-col gap-2">
                 <p className="font-semibold text-[calc(15rem/16)] px-2">
-                  Next from: {currentTrack.title}
+                  Next from: {snapshot.name}
                 </p>
 
                 <div className="flex flex-col gap-1">
@@ -93,14 +112,21 @@ export default function QueueView() {
                     <TrackItemCompact
                       key={track.id}
                       track={track}
-                      context={
-                        snapshot
-                          ? {
-                              contextType: snapshot.contextType,
-                              contextId: snapshot.contextId,
-                              startTrackId: track.id,
-                            }
-                          : undefined
+                      context={{
+                        contextType: snapshot.contextType,
+                        contextId: snapshot.contextId,
+                        startTrackId: track.id,
+                      }}
+                      playBtn={
+                        <MiniPlayTrackButton
+                          context={{
+                            contextType: snapshot.contextType,
+                            contextId: snapshot.contextId,
+                            startTrackId: track.id,
+                          }}
+                          trackId={track.id}
+                          className="absolute top-1/2 left-1/2 -translate-1/2 opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity"
+                        />
                       }
                     />
                   ))}
@@ -118,15 +144,22 @@ export default function QueueView() {
                     <TrackItemCompact
                       key={track.id}
                       track={track}
-                      context={
-                        snapshot
-                          ? {
-                              contextType: snapshot.contextType,
-                              contextId: snapshot.contextId,
-                              startTrackId: track.id,
-                            }
-                          : undefined
+                      playBtn={
+                        <MiniPlayTrackButton
+                          context={{
+                            contextType: snapshot.contextType,
+                            contextId: snapshot.contextId,
+                            startTrackId: track.id,
+                          }}
+                          trackId={track.id}
+                          className="absolute top-1/2 left-1/2 -translate-1/2 opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity"
+                        />
                       }
+                      context={{
+                        contextType: snapshot.contextType,
+                        contextId: snapshot.contextId,
+                        startTrackId: track.id,
+                      }}
                     />
                   ))}
                 </div>
@@ -154,6 +187,17 @@ export default function QueueView() {
                     contextId: id,
                     startTrackId: track.id,
                   }}
+                  playBtn={
+                    <MiniPlayTrackButton
+                      context={{
+                        contextType: "HISTORY",
+                        contextId: id,
+                        startTrackId: track.id,
+                      }}
+                      trackId={track.id}
+                      className="absolute top-1/2 left-1/2 -translate-1/2 opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity"
+                    />
+                  }
                 />
               ))}
             </div>

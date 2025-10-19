@@ -11,10 +11,9 @@ export const useTrack = (trackId?: string) => {
   });
 };
 
-export const useTracks = (trackIds?: string[]) => {
+export const useTracks = (trackIds: string[]) => {
   return useQuery({
-    enabled: trackIds !== undefined && trackIds.length > 0,
-    queryKey: ["tracks", { ids: trackIds }],
+    queryKey: ["tracks", trackIds.join(",")],
     queryFn: () => postApi<TrackItem[]>(`/tracks`, { body: { trackIds } }),
   });
 };

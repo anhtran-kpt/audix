@@ -5,7 +5,6 @@ import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { EllipsisIcon, ShuffleIcon } from "lucide-react";
-import { RoundedPlayButton } from "@/components/shared/context-play-button/rounded-play-button";
 import { IconButton } from "@/components/ui/icon-button";
 import { AppImage } from "@/components/shared/app-image";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
@@ -15,6 +14,7 @@ import pluralize from "pluralize";
 import { formatDate } from "date-fns/format";
 import Dot from "@/components/ui/dot";
 import { ToggleLikeAlbumButton } from "@/components/shared/toggle-like-album-button";
+import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 
 export const BannerSection = ({ albumId }: { albumId: string }) => {
   const { data: album, status } = useQuery({
@@ -96,7 +96,7 @@ export const BannerSection = ({ albumId }: { albumId: string }) => {
       </div>
       <div className="flex items-center justify-between sm:justify-start max-sm:flex-row-reverse sm:gap-6">
         <div className="flex items-center gap-6 max-sm:flex-row-reverse">
-          <RoundedPlayButton
+          <RoundedPlayContextButton
             context={{
               contextType: "ALBUM",
               contextId: albumId,

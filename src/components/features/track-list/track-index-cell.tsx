@@ -1,18 +1,26 @@
 "use client";
+
 import WaveForm from "@/components/ui/wave-form";
 import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
-import { usePlayContext } from "@/hooks/use-play-context";
+import { usePlayTrack } from "@/hooks/use-play-track";
 import { cn } from "@/lib/utils";
 import { PauseIcon, PlayIcon } from "lucide-react";
 
 type TrackIndexCellProps = {
   context: StartPlaybackInput;
+  trackId: string;
   index: number;
 };
 
-export const TrackIndexCell = ({ context, index }: TrackIndexCellProps) => {
-  const { handlePlay, isThisContext, isPlaying, isThisTrack } =
-    usePlayContext(context);
+export const TrackIndexCell = ({
+  context,
+  index,
+  trackId,
+}: TrackIndexCellProps) => {
+  const { handlePlay, isThisContext, isPlaying, isThisTrack } = usePlayTrack({
+    context,
+    trackId,
+  });
 
   const isCurrentlyPlaying = isPlaying && isThisContext && isThisTrack;
 
