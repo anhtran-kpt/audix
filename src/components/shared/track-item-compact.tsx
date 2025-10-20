@@ -53,7 +53,7 @@ export const TrackItemCompact = ({
         />
       </div>
       {hasMoreDetails && (
-        <div className="flex items-center justify-center opacity-0 group-hover:opacity-100 select-none group-hover:select-auto transition-opacity">
+        <div className="flex items-center justify-center sm:opacity-0 group-hover:opacity-100 sm:select-none group-hover:select-auto transition-opacity">
           <TrackDropdownDetails
             track={track}
             contextType="ALBUM"

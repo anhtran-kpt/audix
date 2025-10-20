@@ -1,4 +1,4 @@
 export const trackEndpoints = {
-  list: (trackIds: string[]) => `/tracks/$}`
+  list: () => "/tracks" as const,
   credits: (trackId: string) => `/tracks/${trackId}/credits`,
 } as const;

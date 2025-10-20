@@ -3,10 +3,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import { useShallow } from "zustand/react/shallow";
-import { useRecentTracks, useTracks } from "@/features/track/hooks/use-tracks";
+import { useRecentTracks } from "@/features/track/hooks/use-tracks";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { TrackItemCompact } from "../shared/track-item-compact";
 import { MiniPlayTrackButton } from "./play/mini-play-track-button";
+import { useQuery } from "@tanstack/react-query";
+import { trackListOptions } from "@/features/track/api/track-options";
 
 export default function QueueView() {
   const { queue, currentTrack, snapshot } = usePlaybackStore(
@@ -21,17 +23,21 @@ export default function QueueView() {
   const queueContextIds = queue?.context?.map((item) => item.id) ?? [];
   const queueLaterIds = queue?.later?.map((item) => item.id) ?? [];
 
-  const { data: queueNext } = useTracks(queueNextIds);
-  const { data: queueContext } = useTracks(queueContextIds);
-  const { data: queueLater } = useTracks(queueLaterIds);
+  const { data: queueNext } = useQuery({
+    ...trackListOptions(queueNextIds),
+  });
+  const { data: queueContext } = useQuery({
+    ...trackListOptions(queueContextIds),
+  });
+  const { data: queueLater } = useQuery({
+    ...trackListOptions(queueLaterIds),
+  });
 
   const { data: recentTracks } = useRecentTracks();
 
   if (!currentTrack || !snapshot) {
     return null;
   }
-
-  console.log(queue);
 
   return (
     <Tabs defaultValue="queue" className="size-full">
@@ -69,7 +75,7 @@ export default function QueueView() {
                 }
               />
             </div>
-            {queueNext && (
+            {queueNext && queueNext.length > 0 && (
               <div className="flex flex-col gap-2">
                 <p className="font-semibold text-[calc(15rem/16)] px-2">
                   Next in queue:
@@ -101,7 +107,8 @@ export default function QueueView() {
                 </div>
               </div>
             )}
-            {queueContext && (
+
+            {queueContext && queueContext.length > 0 && (
               <div className="flex flex-col gap-2">
                 <p className="font-semibold text-[calc(15rem/16)] px-2">
                   Next from: {snapshot.name}
@@ -133,7 +140,8 @@ export default function QueueView() {
                 </div>
               </div>
             )}
-            {queueLater && (
+
+            {queueLater && queueLater.length > 0 && (
               <div className="flex flex-col gap-2">
                 <p className="font-semibold text-[calc(15rem/16)] px-2">
                   Later in queue:

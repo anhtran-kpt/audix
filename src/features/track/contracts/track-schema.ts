@@ -19,3 +19,10 @@ export const TrackItemSchema = TrackSchema.pick({
 export const MiniTrackItemSchema = TrackSchema.pick({
   id: true,
 });
+
+export const GetTracksQuerySchema = z.object({
+  ids: z
+    .string()
+    .transform((v) => v.split(","))
+    .refine((arr) => arr.length > 0, "At least one id is required"),
+});

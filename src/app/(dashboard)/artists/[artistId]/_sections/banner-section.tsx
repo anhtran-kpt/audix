@@ -10,6 +10,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import { AppImage } from "@/components/shared/app-image";
 import { FollowButton } from "@/components/features/follow-button";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
+import { VerifiedIcon } from "@/components/ui/verified-icon";
 
 export const BannerSection = ({ artistId }: { artistId: string }) => {
   const { data: artist, status } = useQuery({
@@ -39,17 +40,25 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
         <AppImage
           alt={artist.name}
           src={artist.imageId}
-          containerClassName="size-72 sm:size-42 md:size-48 lg:size-52 xl:size-56 max-sm:place-self-center rounded-full"
+          containerClassName="size-72 sm:size-42 md:size-48 lg:size-52 xl:size-56 max-sm:place-self-center rounded-full border border-white"
           className="rounded-full"
           sizes="(max-width: 768px) 50vw, 224px"
           onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
           priority
         />
         <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5 xl:gap-6 max-sm:mt-6">
-          <span className="max-sm:hidden">Artist</span>
-          <span className="font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
-            {artist.name}
-          </span>
+          <div className="max-sm:hidden flex items-center gap-2">
+            <VerifiedIcon />
+            <span>Verified Artist</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="sm:hidden">
+              <VerifiedIcon />
+            </div>
+            <span className="font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
+              {artist.name}
+            </span>
+          </div>
           <FollowersBadge artistId={artistId} />
         </div>
       </div>

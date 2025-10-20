@@ -30,13 +30,13 @@ export const TrackList = ({
 }: TrackListProps) => {
   const gridCols: Record<TrackListProps["contextType"], string> = {
     PLAYLIST:
-      "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_0.7fr_3rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_1fr_8rem_3rem_3rem_3rem]",
+      "grid-cols-[1fr_2rem_2rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_0.7fr_3rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_1fr_8rem_3rem_3rem_3rem]",
     ALBUM:
-      "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_12rem_6rem_3rem_3rem]",
+      "grid-cols-[1fr_2rem_2rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_12rem_6rem_3rem_3rem]",
     ARTIST:
-      "grid-cols-[1.5rem_1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_12rem_6rem_3rem_3rem]",
+      "grid-cols-[1.5rem_1fr_2rem_2rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_12rem_6rem_3rem_3rem]",
     SEARCH:
-      "grid-cols-[1fr_3rem_3rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_0.6fr_3rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_0.7fr_3rem_3rem_3rem]",
+      "grid-cols-[1fr_2rem_2rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_0.6fr_3rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_0.7fr_3rem_3rem_3rem]",
   };
 
   if (isLoading) {
@@ -149,13 +149,13 @@ export const TrackList = ({
                 </NavLink>
               </div>
             )}
-            <div className="flex justify-end items-center select-none opacity-0 group-hover/item:select-auto group-hover/item:opacity-100">
+            <div className="flex justify-end items-center select-none sm:opacity-0 group-hover/item:select-auto group-hover/item:opacity-100">
               <IconButton icon={PlusCircleIcon} />
             </div>
             <div className="hidden sm:flex justify-end items-center">
               {formatDuration(track.duration)}
             </div>
-            <div className="flex justify-end items-center select-none opacity-0 group-hover/item:select-auto group-hover/item:opacity-100 sm:pr-2">
+            <div className="flex justify-end items-center select-none sm:opacity-0 group-hover/item:select-auto group-hover/item:opacity-100 sm:pr-2">
               <TrackDropdownDetails
                 track={track}
                 contextId={contextId}
