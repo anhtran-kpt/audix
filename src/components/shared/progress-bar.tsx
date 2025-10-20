@@ -22,7 +22,7 @@ export function ProgressBar() {
 
   return (
     <div className="flex items-center gap-3 text-xs text-muted-foreground w-full max-w-xl">
-      <span className="w-10 text-right">{formatTime(currentValue)}</span>
+      <span className="text-right">{formatTime(currentValue)}</span>
 
       <Slider
         value={[currentValue]}
@@ -41,7 +41,7 @@ export function ProgressBar() {
         }}
       />
 
-      <span className="w-10 text-left">{formatTime(duration * 1000)}</span>
+      <span className="text-left">{formatTime(duration * 1000)}</span>
     </div>
   );
 }

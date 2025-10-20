@@ -40,7 +40,7 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
         <AppImage
           alt={artist.name}
           src={artist.imageId}
-          containerClassName="size-72 sm:size-42 md:size-48 lg:size-52 xl:size-56 max-sm:place-self-center rounded-full border border-white"
+          containerClassName="size-72 sm:size-42 md:size-48 lg:size-52 xl:size-56 max-sm:place-self-center rounded-full"
           className="rounded-full"
           sizes="(max-width: 768px) 50vw, 224px"
           onLoad={(e) => setImageUrl((e.target as HTMLImageElement).src)}
@@ -51,14 +51,11 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
             <VerifiedIcon />
             <span>Verified Artist</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="sm:hidden">
-              <VerifiedIcon />
-            </div>
-            <span className="font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
-              {artist.name}
-            </span>
-          </div>
+
+          <span className="font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
+            {artist.name}
+          </span>
+
           <FollowersBadge artistId={artistId} />
         </div>
       </div>

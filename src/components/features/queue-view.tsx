@@ -3,12 +3,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ScrollArea } from "../ui/scroll-area";
 import { useShallow } from "zustand/react/shallow";
-import { useRecentTracks } from "@/features/track/hooks/use-tracks";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { TrackItemCompact } from "../shared/track-item-compact";
 import { MiniPlayTrackButton } from "./play/mini-play-track-button";
 import { useQuery } from "@tanstack/react-query";
-import { trackListOptions } from "@/features/track/api/track-options";
+import { trackQueryOptions } from "@/features/track/api/track-query-options";
 
 export default function QueueView() {
   const { queue, currentTrack, snapshot } = usePlaybackStore(
@@ -24,20 +23,22 @@ export default function QueueView() {
   const queueLaterIds = queue?.later?.map((item) => item.id) ?? [];
 
   const { data: queueNext } = useQuery({
-    ...trackListOptions(queueNextIds),
+    ...trackQueryOptions.trackList(queueNextIds),
   });
   const { data: queueContext } = useQuery({
-    ...trackListOptions(queueContextIds),
+    ...trackQueryOptions.trackList(queueContextIds),
   });
   const { data: queueLater } = useQuery({
-    ...trackListOptions(queueLaterIds),
+    ...trackQueryOptions.trackList(queueLaterIds),
   });
 
-  const { data: recentTracks } = useRecentTracks();
+  const { data: recentTracks } = useQuery({ ...trackQueryOptions.history() });
 
   if (!currentTrack || !snapshot) {
     return null;
   }
+
+  console.log(recentTracks);
 
   return (
     <Tabs defaultValue="queue" className="size-full">

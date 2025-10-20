@@ -52,6 +52,7 @@ export const getRecentlyPlayedTracks = async (userId: string) => {
           select: trackItemSelect,
         },
       },
+      take: 20,
     })
     .then((data) =>
       data.map((item) => ({

@@ -9,7 +9,7 @@ import {
 import { Separator } from "../ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { ReactNode } from "react";
-import { trackCreditsOptions } from "@/features/track/api/track-options";
+import { trackQueryOptions } from "@/features/track/api/track-query-options";
 
 type CreditsDialogProps = {
   trackId: string;
@@ -21,7 +21,7 @@ export default function CreditsDialog({
   trigger,
 }: CreditsDialogProps) {
   const { data, status, error } = useQuery({
-    ...trackCreditsOptions(trackId),
+    ...trackQueryOptions.trackCredits(trackId),
   });
 
   if (status === "error") {

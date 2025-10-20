@@ -1,4 +1,4 @@
-import { HomeIcon, LibraryIcon, PlusIcon, SearchIcon } from "lucide-react";
+import { HomeIcon, LibraryIcon, SearchIcon, UserRoundIcon } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -16,8 +16,8 @@ export const Footer = () => {
         Library
       </div>
       <div className="flex flex-col items-center gap-1">
-        <PlusIcon />
-        Create
+        <UserRoundIcon />
+        Profile
       </div>
     </footer>
   );

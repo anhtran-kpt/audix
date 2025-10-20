@@ -18,9 +18,9 @@ import { useRightPanel } from "@/stores/use-right-panel";
 import { FollowersBadge } from "./follow-badge";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useQuery } from "@tanstack/react-query";
-import { trackCreditsOptions } from "@/features/track/api/track-options";
 import { useShallow } from "zustand/react/shallow";
 import { AppImage } from "../shared/app-image";
+import { trackQueryOptions } from "@/features/track/api/track-query-options";
 
 export const NowPlayingView = () => {
   const close = useRightPanel((s) => s.close);
@@ -32,7 +32,7 @@ export const NowPlayingView = () => {
   );
 
   const { data } = useQuery({
-    ...trackCreditsOptions(currentTrack?.id),
+    ...trackQueryOptions.trackCredits(currentTrack?.id),
   });
 
   if (!currentTrack || !snapshot || !data) {
