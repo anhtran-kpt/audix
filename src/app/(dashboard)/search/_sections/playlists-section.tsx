@@ -1,4 +1,4 @@
-import SectionHeading from "../../../../components/ui/section-heading";
+import SectionHeading from "@/components/ui/section-heading";
 import PlaylistGrid from "@/components/shared/playlist-grid";
 import { SearchResults } from "@/features/search/data-access/search-repo";
 

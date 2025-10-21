@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 import { IconButton } from "../ui/icon-button";
 import { NavLink } from "../ui/nav-link";
-import { FollowButton } from "./follow-button";
 import { buildCreditsByPerson } from "@/utils/credits-by-person";
 import { ScrollArea } from "../ui/scroll-area";
 import CreditDialog from "./credits-dialog";
@@ -21,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useShallow } from "zustand/react/shallow";
 import { AppImage } from "../shared/app-image";
 import { trackQueryOptions } from "@/features/track/api/track-query-options";
+import { ToggleFollowArtistButton } from "./toggle-follow-artist-button";
 
 export const NowPlayingView = () => {
   const close = useRightPanel((s) => s.close);
@@ -147,7 +147,7 @@ export const NowPlayingView = () => {
               </div>
               <div className="flex items-center gap-4 justify-between">
                 <FollowersBadge artistId={data.artist.id} />
-                <FollowButton
+                <ToggleFollowArtistButton
                   artist={{
                     name: data.artist.name,
                     id: data.artist.id,
@@ -206,7 +206,7 @@ export const NowPlayingView = () => {
                   </p>
                 </div>
                 {credit.artistId && (
-                  <FollowButton
+                  <ToggleFollowArtistButton
                     artist={{
                       name: data.artist.name,
                       id: data.artist.id,

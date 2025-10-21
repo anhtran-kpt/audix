@@ -3,7 +3,6 @@ import { AwaitedReturnType } from "@/utils/type";
 import { AppError } from "@/lib/errors";
 import { playlistItemSelect } from "@/features/playlist/data-access/playlist-select";
 import { artistItemSelect } from "@/features/artist/data-access/artist-select";
-import { userItemSelect } from "./user-select";
 
 export const getUserBanner = async (targetUserId: string) => {
   const user = await db.user.findUnique({
@@ -93,10 +92,14 @@ export const getUserFollowedUsers = async (targetUserId: string) => {
       id: targetUserId,
     },
     select: {
-      followers: {
+      following: {
         select: {
-          follower: {
-            select: userItemSelect,
+          following: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
           },
         },
         orderBy: {
@@ -110,7 +113,7 @@ export const getUserFollowedUsers = async (targetUserId: string) => {
     throw new AppError("NOT_FOUND", "User not found");
   }
 
-  const users = user.followers.map((item) => item.follower);
+  const users = user.following.map((item) => item.following);
 
   return users;
 };
@@ -128,7 +131,11 @@ export const getUserFollowers = async (targetUserId: string) => {
       followers: {
         select: {
           follower: {
-            select: userItemSelect,
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
           },
         },
         orderBy: {
@@ -182,3 +189,32 @@ export const getFollowStatus = async ({
 };
 
 export type FollowStatus = AwaitedReturnType<typeof getFollowStatus>;
+
+export const followUser = async ({
+  userId,
+  targetUserId,
+}: {
+  userId: string;
+  targetUserId: string;
+}) => {
+  await db.userFollow
+    .create({ data: { followerId: userId, followingId: targetUserId } })
+    .then(() => true)
+    .catch(() => false);
+
+  return { isFollowing: true };
+};
+
+export const unfollowUser = async ({
+  userId,
+  targetUserId,
+}: {
+  userId: string;
+  targetUserId: string;
+}) => {
+  await db.userFollow.deleteMany({
+    where: { followerId: userId, followingId: targetUserId },
+  });
+
+  return { isFollowing: false };
+};

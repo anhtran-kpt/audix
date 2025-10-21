@@ -1,5 +1,5 @@
 import { PlaylistSchema } from "@/app/generated/zod";
-import { MiniUserSchema } from "@/features/user/data-access/user-schema";
+import { MiniUserSchema } from "@/features/user/contracts/user-schema";
 import z from "zod";
 
 export const CreatePlaylistInputSchema = PlaylistSchema.pick({

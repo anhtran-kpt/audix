@@ -1,9 +1,11 @@
-import { getMyPlaylists } from "@/features/me/data-access/me-repo";
+import { UserParamsSchema } from "@/features/user/contracts/user-schema";
+import { getUserPlaylists } from "@/features/user/data-access/user-repo";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({
   auth: "required",
-  handler: async ({ userId }) => {
-    return getMyPlaylists(userId!);
+  params: UserParamsSchema,
+  handler: async ({ params }) => {
+    return getUserPlaylists(params.targetUserId);
   },
 });

@@ -1,4 +1,4 @@
-import SectionHeading from "../../../../components/ui/section-heading";
+import SectionHeading from "@/components/ui/section-heading";
 import ArtistGrid from "@/components/shared/artist-grid";
 import { SearchResults } from "@/features/search/data-access/search-repo";
 

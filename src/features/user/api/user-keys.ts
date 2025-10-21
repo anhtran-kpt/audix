@@ -5,6 +5,10 @@ export const userKeys = {
     [...userKeys.detail(targetUserId), "banner"] as const,
   playlists: (targetUserId: string) =>
     [...userKeys.detail(targetUserId), "playlists"] as const,
+  follow: (targetUserId: string) =>
+    [...userKeys.detail(targetUserId), "follow"] as const,
+  followStatus: (targetUserId: string) =>
+    [...userKeys.detail(targetUserId), "follow"] as const,
   followers: (targetUserId: string) =>
     [...userKeys.detail(targetUserId), "followers"] as const,
   followingUsers: (targetUserId: string) =>

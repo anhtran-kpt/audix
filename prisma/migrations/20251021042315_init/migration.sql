@@ -20,7 +20,7 @@ CREATE TYPE "public"."RepeatMode" AS ENUM ('OFF', 'ONE', 'ALL');
 CREATE TYPE "public"."QueueItemKind" AS ENUM ('NEXT', 'LATER');
 
 -- CreateEnum
-CREATE TYPE "public"."PlaybackContextType" AS ENUM ('PLAYLIST', 'ALBUM', 'ARTIST', 'HISTORY', 'SEARCH');
+CREATE TYPE "public"."PlaybackContextType" AS ENUM ('PLAYLIST', 'ALBUM', 'ARTIST', 'TRACK', 'HISTORY', 'SEARCH');
 
 -- CreateEnum
 CREATE TYPE "public"."ChartType" AS ENUM ('TOP_SONGS', 'TOP_ALBUMS', 'TOP_ARTISTS', 'TRENDING');

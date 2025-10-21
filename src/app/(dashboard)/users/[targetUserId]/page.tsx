@@ -5,6 +5,7 @@ import { getQueryClient } from "@/lib/query-client";
 import { userQueryOptions } from "@/features/user/api/user-query-options";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { FollowingUsersSection } from "./_sections/following-users-section";
+import { FollowersSection } from "./_sections/followers-section";
 
 export default async function UserPage({
   params,
@@ -18,6 +19,7 @@ export default async function UserPage({
   await Promise.all([
     qc.prefetchQuery({ ...userQueryOptions.banner(targetUserId) }),
     qc.prefetchQuery({ ...userQueryOptions.playlists(targetUserId) }),
+    qc.prefetchQuery({ ...userQueryOptions.followers(targetUserId) }),
     qc.prefetchQuery({ ...userQueryOptions.followingArtists(targetUserId) }),
     qc.prefetchQuery({ ...userQueryOptions.followingUsers(targetUserId) }),
   ]);
@@ -26,6 +28,7 @@ export default async function UserPage({
     <HydrationBoundary state={dehydrate(qc)}>
       <BannerSection userId={targetUserId} />
       <PlaylistSection userId={targetUserId} />
+      <FollowersSection userId={targetUserId} />
       <FollowingArtistsSection userId={targetUserId} />
       <FollowingUsersSection userId={targetUserId} />
     </HydrationBoundary>

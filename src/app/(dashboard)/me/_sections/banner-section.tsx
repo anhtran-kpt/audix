@@ -78,6 +78,11 @@ export const BannerSection = () => {
                 )}`}
               </span>
               <Dot />
+              <NavLink href={`/me/followers`} className="text-sm">
+                {me._count.followers}{" "}
+                {pluralize("follower", me._count.followers)}
+              </NavLink>
+              <Dot />
               <NavLink href={`/me/following`} className="text-sm">
                 {me._count.followedArtists} following
               </NavLink>

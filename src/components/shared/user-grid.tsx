@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { GridWrapper } from "./grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import { AppImage } from "./app-image";
-import { UserItem } from "@/features/user/data-access/user-dto";
+import { UserItem } from "@/features/user/contracts/user-dto";
 import Image from "next/image";
 
 type UserGridProps = {
@@ -13,6 +13,7 @@ type UserGridProps = {
 
 export default function UserGrid({ users }: UserGridProps) {
   const router = useRouter();
+
   return (
     <GridWrapper>
       {users.map((user) => (

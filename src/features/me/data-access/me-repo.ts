@@ -77,6 +77,7 @@ export const getMyBanner = async (userId: string) => {
         select: {
           playlists: true,
           followedArtists: true,
+          followers: true,
         },
       },
     },
@@ -109,6 +110,37 @@ export const getMyPlaylists = async (userId: string) => {
 
 export type MyPlaylists = AwaitedReturnType<typeof getMyPlaylists>;
 
+export const getMyFollowers = async (userId: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      followers: {
+        select: {
+          follower: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found");
+  }
+
+  const users = user.followers.map((item) => item.follower);
+
+  return users;
+};
+
+export type MyFollower = AwaitedReturnType<typeof getMyFollowers>[number];
+
 export const getMyFollowedArtists = async (userId: string) => {
   const user = await db.user.findUnique({
     where: {
@@ -138,6 +170,42 @@ export const getMyFollowedArtists = async (userId: string) => {
 };
 
 export type MyFollowedArtists = AwaitedReturnType<typeof getMyFollowedArtists>;
+
+export const getMyFollowedUsers = async (userId: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      id: userId,
+    },
+    select: {
+      following: {
+        select: {
+          following: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
+        orderBy: {
+          followedAt: "desc",
+        },
+      },
+    },
+  });
+
+  if (!user) {
+    throw new AppError("NOT_FOUND", "User not found");
+  }
+
+  const users = user.following.map((u) => u.following);
+
+  return users;
+};
+
+export type MyFollowedUser = AwaitedReturnType<
+  typeof getMyFollowedUsers
+>[number];
 
 export const getMyLikedAlbums = async (userId: string) => {
   const user = await db.user.findUnique({

@@ -9,5 +9,6 @@ export const userEndpoints = {
   followers: (targetUserId: string) =>
     `/users/${targetUserId}/followers` as const,
   followStatus: (targetUserId: string) =>
-    `/users/${targetUserId}/follow}` as const,
+    `/users/${targetUserId}/follow` as const,
+  follow: (targetUserId: string) => `/users/${targetUserId}/follow` as const,
 };

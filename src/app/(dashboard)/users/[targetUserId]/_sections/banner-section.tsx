@@ -11,6 +11,7 @@ import pluralize from "pluralize";
 import Dot from "@/components/ui/dot";
 import { userQueryOptions } from "@/features/user/api/user-query-options";
 import Image from "next/image";
+import { ToggleFollowUserButton } from "@/components/features/toggle-follow-user-button";
 
 export const BannerSection = ({ userId }: { userId: string }) => {
   const { data: user, status } = useQuery({
@@ -91,13 +92,7 @@ export const BannerSection = ({ userId }: { userId: string }) => {
         </div>
       </div>
       <div className="flex items-center justify-start gap-6">
-        <FollowButton
-          artist={{
-            name: artist.name,
-            imageId: artist.imageId,
-            id: artistId,
-          }}
-        />
+        <ToggleFollowUserButton user={user} />
         <IconButton
           icon={EditIcon}
           size="xl"

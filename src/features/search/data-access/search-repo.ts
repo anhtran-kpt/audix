@@ -8,6 +8,7 @@ import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 import { playlistItemSelect } from "@/features/playlist/data-access/playlist-select";
 import { fullTrackItemSelect } from "@/features/track/data-access/track-select";
 import { AwaitedReturnType } from "@/utils/type";
+import { getUserIdOrThrow } from "@/lib/auth";
 
 export type SearchResults = {
   topResult:
@@ -282,9 +283,10 @@ type PlaylistItem = AwaitedReturnType<typeof searchPlaylists>[number];
 
 export const searchProfiles = async (query: SearchQuery) => {
   const { q, limit, offset } = query;
+  const userId = await getUserIdOrThrow();
 
   return await db.user.findMany({
-    where: { name: { contains: q, mode: "insensitive" } },
+    where: { name: { contains: q, mode: "insensitive" }, id: { not: userId } },
     take: limit,
     skip: offset,
     select: {

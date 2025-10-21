@@ -1,13 +1,15 @@
 export const meEndpoints = {
   banner: () => `/me/banner` as const,
-  likedPlaylists: () => `/me/likes/playlists` as const,
+  followers: () => `/me/followers` as const,
+  likedPlaylists: () => `/me/like/playlists` as const,
   likedPlaylistStatus: (playlistId: string) =>
-    `/me/likes/playlists/${playlistId}` as const,
-  likedAlbums: () => `/me/likes/albums` as const,
-  likedAlbumStatus: (albumId: string) => `/me/likes/albums/${albumId}` as const,
-  followedArtists: () => `/me/artists` as const,
+    `/me/like/playlists/${playlistId}` as const,
+  likedAlbums: () => `/me/like/albums` as const,
+  likedAlbumStatus: (albumId: string) => `/me/like/albums/${albumId}` as const,
+  followedArtists: () => `/me/following/artists` as const,
+  followedUsers: () => `/me/following/users` as const,
   myPlaylists: () => `/me/playlists` as const,
-  toggleLikeAlbum: (albumId: string) => `/me/likes/albums/${albumId}` as const,
+  toggleLikeAlbum: (albumId: string) => `/me/like/albums/${albumId}` as const,
   toggleLikePlaylist: (playlistId: string) =>
-    `/me/likes/playlists/${playlistId}` as const,
+    `/me/like/playlists/${playlistId}` as const,
 };

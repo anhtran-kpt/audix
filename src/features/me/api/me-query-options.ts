@@ -9,14 +9,22 @@ import {
   LikedAlbumStatus,
   LikedPlaylistStatus,
   MyBanner,
+  MyFollower,
   MyPlaylists,
 } from "../data-access/me-repo";
+import { UserItem } from "@/features/user/contracts/user-dto";
 
 export const meQueryOptions = {
   banner: () =>
     queryOptions({
-      queryKey: meKeys.profile(),
+      queryKey: meKeys.banner(),
       queryFn: () => getApi<MyBanner>(meEndpoints.banner()),
+    }),
+
+  followers: () =>
+    queryOptions({
+      queryKey: meKeys.followers(),
+      queryFn: () => getApi<MyFollower[]>(meEndpoints.followers()),
     }),
 
   myPlaylists: () =>
@@ -57,5 +65,11 @@ export const meQueryOptions = {
     queryOptions({
       queryKey: meKeys.followedArtists(),
       queryFn: () => getApi<ArtistItem[]>(meEndpoints.followedArtists()),
+    }),
+
+  followedUsers: () =>
+    queryOptions({
+      queryKey: meKeys.followedUsers(),
+      queryFn: () => getApi<UserItem[]>(meEndpoints.followedUsers()),
     }),
 } as const;

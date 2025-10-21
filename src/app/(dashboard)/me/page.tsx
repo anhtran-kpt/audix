@@ -1,11 +1,13 @@
 import { requireAuth } from "@/lib/auth";
 import { PlaylistSection } from "./_sections/playlists-section";
-import { FollowingSection } from "./_sections/following-section";
 import { AlbumSection } from "./_sections/albums-section";
 import { BannerSection } from "./_sections/banner-section";
 import { getQueryClient } from "@/lib/query-client";
 import { meQueryOptions } from "@/features/me/api/me-query-options";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { FollowingArtistsSection } from "./_sections/following-artists-section";
+import { FollowingUsersSection } from "./_sections/following-users-section";
+import { FollowersSection } from "./_sections/followers-section";
 
 export default async function MePage() {
   await requireAuth();
@@ -16,7 +18,9 @@ export default async function MePage() {
     qc.prefetchQuery({ ...meQueryOptions.banner() }),
     qc.prefetchQuery({ ...meQueryOptions.myPlaylists() }),
     qc.prefetchQuery({ ...meQueryOptions.likedAlbums() }),
+    qc.prefetchQuery({ ...meQueryOptions.followers() }),
     qc.prefetchQuery({ ...meQueryOptions.followedArtists() }),
+    qc.prefetchQuery({ ...meQueryOptions.followedUsers() }),
   ]);
 
   return (
@@ -24,7 +28,9 @@ export default async function MePage() {
       <BannerSection />
       <PlaylistSection />
       <AlbumSection />
-      <FollowingSection />
+      <FollowersSection />
+      <FollowingArtistsSection />
+      <FollowingUsersSection />
     </HydrationBoundary>
   );
 }

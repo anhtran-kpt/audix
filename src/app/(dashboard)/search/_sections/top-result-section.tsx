@@ -8,9 +8,9 @@ import { SearchResults } from "@/features/search/data-access/search-repo";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { RoundedPlayContextButton } from "@/components/shared/context-play-button/rounded-play-context-button";
 import { PlaybackContextType } from "@/app/generated/prisma";
 import { formatDate } from "date-fns/format";
+import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 
 type TopResultSectionProps = {
   topResult: SearchResults["topResult"];

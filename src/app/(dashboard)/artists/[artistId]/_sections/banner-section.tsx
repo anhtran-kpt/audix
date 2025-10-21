@@ -8,7 +8,7 @@ import { EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { FollowersBadge } from "@/components/features/follow-badge";
 import { IconButton } from "@/components/ui/icon-button";
 import { AppImage } from "@/components/shared/app-image";
-import { FollowButton } from "@/components/features/follow-button";
+import { ToggleFollowArtistButton } from "@/components/features/toggle-follow-artist-button";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 import { VerifiedIcon } from "@/components/ui/verified-icon";
 
@@ -78,7 +78,7 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
           />
         </div>
         <div className="flex items-center gap-6">
-          <FollowButton
+          <ToggleFollowArtistButton
             artist={{
               name: artist.name,
               imageId: artist.imageId,

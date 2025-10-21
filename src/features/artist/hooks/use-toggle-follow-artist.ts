@@ -7,6 +7,7 @@ import { deleteApi, postApi } from "@/lib/http/api";
 import { meKeys } from "@/features/me/api/me-keys";
 import { MyFollowedArtists } from "@/features/me/data-access/me-repo";
 import { ArtistItem } from "../contracts/artist-dto";
+import { artistEndpoints } from "../api/artist-endpoints";
 
 export function useToggleFollowArtist(artist: ArtistItem) {
   const qc = useQueryClient();
@@ -14,8 +15,8 @@ export function useToggleFollowArtist(artist: ArtistItem) {
   return useMutation({
     mutationFn: async ({ nextIsFollowing }: { nextIsFollowing: boolean }) => {
       const res = nextIsFollowing
-        ? await postApi<FollowStatus>(`/artists/${artist.id}/follow`)
-        : await deleteApi<FollowStatus>(`/artists/${artist.id}/follow`);
+        ? await postApi<FollowStatus>(artistEndpoints.follow(artist.id))
+        : await deleteApi<FollowStatus>(artistEndpoints.follow(artist.id));
       return res;
     },
 
