@@ -14,6 +14,7 @@ import {
 import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
 import { meKeys } from "@/features/me/api/me-keys";
 import { useRouter } from "next/navigation";
+import { MyPlaylists } from "@/features/me/data-access/me-repo";
 
 export function useCreatePlaylist(
   onSuccess?: (res: CreatePlaylistOutput) => void
@@ -38,10 +39,10 @@ export function useCreatePlaylist(
     onMutate: async (vars) => {
       await Promise.all([
         qc.cancelQueries({ queryKey: meKeys.myPlaylists() }),
-        qc.cancelQueries({ queryKey: meKeys.profile() }),
+        qc.cancelQueries({ queryKey: meKeys.banner() }),
       ]);
 
-      const previousPlaylists = qc.getQueryData<PlaylistItem[]>(
+      const previousPlaylists = qc.getQueryData<MyPlaylists>(
         meKeys.myPlaylists()
       );
 
@@ -55,9 +56,27 @@ export function useCreatePlaylist(
         },
       };
 
-      qc.setQueryData<PlaylistItem[]>(meKeys.myPlaylists(), (old) =>
-        old ? [optimistic, ...old] : [optimistic]
-      );
+      qc.setQueryData<MyPlaylists>(meKeys.myPlaylists(), (old) => {
+        if (!old)
+          return {
+            items: [optimistic],
+            pagination: {
+              limit: 5,
+              offset: 0,
+              total: 1,
+              hasMore: false,
+            },
+          };
+
+        return {
+          ...old,
+          items: [optimistic, ...old.items],
+          pagination: {
+            ...old.pagination,
+            total: old.pagination.total + 1,
+          },
+        };
+      });
 
       return { previousPlaylists };
     },
@@ -68,19 +87,14 @@ export function useCreatePlaylist(
       toast.error(err.message);
     },
     onSuccess: (res) => {
-      qc.setQueryData<PlaylistItem[]>(meKeys.myPlaylists(), (old) => {
-        if (!old) return [res];
-        const filtered = old.filter((pl) => !pl.id.startsWith("optimistic-"));
-        return [res, ...filtered];
-      });
-
       form.reset();
       onSuccess?.(res);
       router.push(`/playlists/${res.id}`);
     },
 
     onSettled: () => {
-      qc.invalidateQueries({ queryKey: meKeys.profile() });
+      qc.invalidateQueries({ queryKey: meKeys.banner() });
+      qc.invalidateQueries({ queryKey: meKeys.myPlaylists() });
     },
   });
 

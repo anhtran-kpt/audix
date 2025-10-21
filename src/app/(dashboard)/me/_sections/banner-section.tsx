@@ -84,7 +84,7 @@ export const BannerSection = () => {
               </NavLink>
               <Dot />
               <NavLink href={`/me/following`} className="text-sm">
-                {me._count.followedArtists} following
+                {me._count.followedArtists + me._count.following} following
               </NavLink>
             </div>
           </div>

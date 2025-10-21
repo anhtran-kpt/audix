@@ -1,18 +1,19 @@
 import { queryOptions } from "@tanstack/react-query";
 import { meKeys } from "./me-keys";
-import { AlbumItem } from "@/features/album/contracts/album-dto";
 import { meEndpoints } from "./me-endpoints";
-import { ArtistItem } from "@/features/artist/contracts/artist-dto";
-import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { getApi } from "@/lib/http/api";
 import {
   LikedAlbumStatus,
   LikedPlaylistStatus,
   MyBanner,
-  MyFollower,
+  MyFollowedArtists,
+  MyFollowedUsers,
+  MyFollowers,
+  MyLikedAlbums,
+  MyLikedPlaylists,
   MyPlaylists,
 } from "../data-access/me-repo";
-import { UserItem } from "@/features/user/contracts/user-dto";
+import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 
 export const meQueryOptions = {
   banner: () =>
@@ -21,22 +22,22 @@ export const meQueryOptions = {
       queryFn: () => getApi<MyBanner>(meEndpoints.banner()),
     }),
 
-  followers: () =>
+  followers: (params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: meKeys.followers(),
-      queryFn: () => getApi<MyFollower[]>(meEndpoints.followers()),
+      queryKey: meKeys.followers(params),
+      queryFn: () => getApi<MyFollowers>(meEndpoints.followers()),
     }),
 
-  myPlaylists: () =>
+  myPlaylists: (params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: meKeys.myPlaylists(),
-      queryFn: () => getApi<MyPlaylists>(meEndpoints.myPlaylists()),
+      queryKey: meKeys.myPlaylists(params),
+      queryFn: () => getApi<MyPlaylists>(meEndpoints.myPlaylists(), { params }),
     }),
 
-  likedPlaylists: () =>
+  likedPlaylists: (params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: meKeys.likedPlaylists(),
-      queryFn: () => getApi<PlaylistItem[]>(meEndpoints.likedPlaylists()),
+      queryKey: meKeys.likedPlaylists(params),
+      queryFn: () => getApi<MyLikedPlaylists>(meEndpoints.likedPlaylists()),
     }),
 
   likedPlaylistStatus: (playlistId: string) =>
@@ -48,10 +49,10 @@ export const meQueryOptions = {
         ),
     }),
 
-  likedAlbums: () =>
+  likedAlbums: (params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: meKeys.likedAlbums(),
-      queryFn: () => getApi<AlbumItem[]>(meEndpoints.likedAlbums()),
+      queryKey: meKeys.likedAlbums(params),
+      queryFn: () => getApi<MyLikedAlbums>(meEndpoints.likedAlbums()),
     }),
 
   likedAlbumStatus: (albumId: string) =>
@@ -61,15 +62,17 @@ export const meQueryOptions = {
         getApi<LikedAlbumStatus>(meEndpoints.likedAlbumStatus(albumId)),
     }),
 
-  followedArtists: () =>
+  followedArtists: (params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: meKeys.followedArtists(),
-      queryFn: () => getApi<ArtistItem[]>(meEndpoints.followedArtists()),
+      queryKey: meKeys.followedArtists(params),
+      queryFn: () =>
+        getApi<MyFollowedArtists>(meEndpoints.followedArtists(), { params }),
     }),
 
-  followedUsers: () =>
+  followedUsers: (params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: meKeys.followedUsers(),
-      queryFn: () => getApi<UserItem[]>(meEndpoints.followedUsers()),
+      queryKey: meKeys.followedUsers(params),
+      queryFn: () =>
+        getApi<MyFollowedUsers>(meEndpoints.followedUsers(), { params }),
     }),
 } as const;

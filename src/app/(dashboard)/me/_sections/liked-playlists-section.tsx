@@ -1,15 +1,15 @@
 "use client";
 
-import UserGrid from "@/components/shared/user-grid";
+import PlaylistGrid from "@/components/shared/playlist-grid";
 import SectionHeading from "@/components/ui/section-heading";
-import { userQueryOptions } from "@/features/user/api/user-query-options";
+import { meQueryOptions } from "@/features/me/api/me-query-options";
 import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
 import { useQuery } from "@tanstack/react-query";
 
-export const FollowersSection = ({ userId }: { userId: string }) => {
+export const LikedPlaylistsSection = () => {
   const limit = useResponsiveLimit();
   const { data, status } = useQuery({
-    ...userQueryOptions.followers(userId, { limit }),
+    ...meQueryOptions.likedPlaylists({ limit }),
   });
 
   if (status === "pending") {
@@ -23,12 +23,10 @@ export const FollowersSection = ({ userId }: { userId: string }) => {
   return (
     <section>
       <SectionHeading
-        title="Followers"
-        showAllHref={
-          data.pagination.hasMore ? `/users/${userId}/followers` : undefined
-        }
+        title="Liked Playlists"
+        showAllHref={data.pagination.hasMore ? `/me/like/playlists` : undefined}
       />
-      <UserGrid users={data.items} />
+      <PlaylistGrid playlists={data.items} />
     </section>
   );
 };

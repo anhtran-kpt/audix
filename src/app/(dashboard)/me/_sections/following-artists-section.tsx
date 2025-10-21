@@ -3,11 +3,13 @@
 import ArtistGrid from "@/components/shared/artist-grid";
 import SectionHeading from "@/components/ui/section-heading";
 import { meQueryOptions } from "@/features/me/api/me-query-options";
+import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
 import { useQuery } from "@tanstack/react-query";
 
 export const FollowingArtistsSection = () => {
-  const { data: artists, status } = useQuery({
-    ...meQueryOptions.followedArtists(),
+  const limit = useResponsiveLimit();
+  const { data, status } = useQuery({
+    ...meQueryOptions.followedArtists({ limit }),
   });
 
   if (status === "pending") {
@@ -20,8 +22,13 @@ export const FollowingArtistsSection = () => {
 
   return (
     <section>
-      <SectionHeading title="Following Artists" />
-      <ArtistGrid artists={artists} />
+      <SectionHeading
+        title="Following Artists"
+        showAllHref={
+          data.pagination.hasMore ? `/me/following/artists` : undefined
+        }
+      />
+      <ArtistGrid artists={data.items} />
     </section>
   );
 };

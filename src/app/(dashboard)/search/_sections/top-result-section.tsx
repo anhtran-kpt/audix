@@ -60,7 +60,7 @@ export default function TopResultSection({ topResult }: TopResultSectionProps) {
             <span>Track</span>
             <Dot />
             <NavLink
-              href={`/albums/${item.album.artist.id}`}
+              href={`/artists/${item.album.artist.id}`}
               className="text-[calc(15rem/16)] truncate block w-full"
             >
               {item.album.artist.name}
@@ -192,7 +192,7 @@ export default function TopResultSection({ topResult }: TopResultSectionProps) {
           onClick={() => router.push(`/users/${item.id}`)}
         >
           {item.image && item.image.startsWith("https") ? (
-            <div className="rounded-full relative size-40 sm:size-48 lg:size-52 xl:size-56">
+            <div className="rounded-full relative size-40 sm:size-48 lg:size-52 xl:size-56 overflow-hidden">
               <Image
                 alt={item.name ?? "profile"}
                 src={item.image}

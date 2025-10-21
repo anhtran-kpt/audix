@@ -1,3 +1,4 @@
+import { PaginationParamsSchema } from "@/features/shared/contracts/shared-schema";
 import { UserParamsSchema } from "@/features/user/contracts/user-schema";
 import { getUserPlaylists } from "@/features/user/data-access/user-repo";
 import { makeGET } from "@/lib/route-factory";
@@ -5,7 +6,11 @@ import { makeGET } from "@/lib/route-factory";
 export const GET = makeGET({
   auth: "required",
   params: UserParamsSchema,
-  handler: async ({ params }) => {
-    return getUserPlaylists(params.targetUserId);
+  query: PaginationParamsSchema,
+  handler: async ({ params, query }) => {
+    return getUserPlaylists({
+      targetUserId: params.targetUserId,
+      params: query,
+    });
   },
 });

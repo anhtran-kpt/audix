@@ -17,11 +17,21 @@ export default async function UserPage({
   const qc = getQueryClient();
 
   await Promise.all([
-    qc.prefetchQuery({ ...userQueryOptions.banner(targetUserId) }),
-    qc.prefetchQuery({ ...userQueryOptions.playlists(targetUserId) }),
-    qc.prefetchQuery({ ...userQueryOptions.followers(targetUserId) }),
-    qc.prefetchQuery({ ...userQueryOptions.followingArtists(targetUserId) }),
-    qc.prefetchQuery({ ...userQueryOptions.followingUsers(targetUserId) }),
+    qc.prefetchQuery({
+      ...userQueryOptions.banner(targetUserId),
+    }),
+    qc.prefetchQuery({
+      ...userQueryOptions.playlists(targetUserId, { limit: 5 }),
+    }),
+    qc.prefetchQuery({
+      ...userQueryOptions.followers(targetUserId, { limit: 5 }),
+    }),
+    qc.prefetchQuery({
+      ...userQueryOptions.followingArtists(targetUserId, { limit: 5 }),
+    }),
+    qc.prefetchQuery({
+      ...userQueryOptions.followingUsers(targetUserId, { limit: 5 }),
+    }),
   ]);
 
   return (

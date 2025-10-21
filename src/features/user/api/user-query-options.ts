@@ -6,9 +6,10 @@ import { getApi } from "@/lib/http/api";
 import {
   FollowStatus,
   UserBanner,
-  UserPlaylist,
+  UserPlaylists,
 } from "../data-access/user-repo";
 import { UserItem } from "../contracts/user-dto";
+import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 
 export const userQueryOptions = {
   banner: (targetUserId: string) =>
@@ -17,30 +18,32 @@ export const userQueryOptions = {
       queryFn: () => getApi<UserBanner>(userEndpoints.banner(targetUserId)),
     }),
 
-  playlists: (targetUserId: string) =>
+  playlists: (targetUserId: string, params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: userKeys.playlists(targetUserId),
+      queryKey: userKeys.playlists(targetUserId, params),
       queryFn: () =>
-        getApi<UserPlaylist[]>(userEndpoints.playlists(targetUserId)),
+        getApi<UserPlaylists>(userEndpoints.playlists(targetUserId)),
     }),
 
-  followers: (targetUserId: string) =>
+  followers: (targetUserId: string, params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: userKeys.followers(targetUserId),
-      queryFn: () =>
-        getApi<UserItem[]>(userEndpoints.followers(targetUserId)),
+      queryKey: userKeys.followers(targetUserId, params),
+      queryFn: () => getApi<UserItem[]>(userEndpoints.followers(targetUserId)),
     }),
 
-  followingArtists: (targetUserId: string) =>
+  followingArtists: (
+    targetUserId: string,
+    params?: Partial<PaginationParams>
+  ) =>
     queryOptions({
-      queryKey: userKeys.followingArtists(targetUserId),
+      queryKey: userKeys.followingArtists(targetUserId, params),
       queryFn: () =>
         getApi<ArtistItem[]>(userEndpoints.followingArtists(targetUserId)),
     }),
 
-  followingUsers: (targetUserId: string) =>
+  followingUsers: (targetUserId: string, params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: userKeys.followingUsers(targetUserId),
+      queryKey: userKeys.followingUsers(targetUserId, params),
       queryFn: () =>
         getApi<UserItem[]>(userEndpoints.followingUsers(targetUserId)),
     }),

@@ -102,7 +102,7 @@ export function TrackDropdownDetails({
                           {queryStatus === "pending" ? (
                             <CommandItem>Loading...</CommandItem>
                           ) : (
-                            playlists.map((playlist) => (
+                            playlists.items.map((playlist) => (
                               <CommandItem
                                 key={playlist.id}
                                 value={playlist.id}

@@ -5,6 +5,8 @@ import { AwaitedReturnType } from "@/utils/type";
 import { playlistItemSelect } from "@/features/playlist/data-access/playlist-select";
 import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 import { albumItemSelect } from "@/features/album/data-access/album-select";
+import { PaginationParams } from "@/features/shared/contracts/shared-dto";
+import { getPaginationMeta } from "@/types/get-pagination-meta";
 
 export const getMyProfile = async (userId: string) => {
   const user = await db.user.findUnique({
@@ -78,6 +80,7 @@ export const getMyBanner = async (userId: string) => {
           playlists: true,
           followedArtists: true,
           followers: true,
+          following: true,
         },
       },
     },
@@ -92,92 +95,54 @@ export const getMyBanner = async (userId: string) => {
 
 export type MyBanner = AwaitedReturnType<typeof getMyBanner>;
 
-export const getMyPlaylists = async (userId: string) => {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: {
-      playlists: {
-        select: { ...playlistItemSelect, createdAt: true },
-        orderBy: { createdAt: "desc" },
+export const getMyPlaylists = async ({
+  userId,
+  params,
+}: {
+  userId: string;
+  params: PaginationParams;
+}) => {
+  const { offset, limit } = params;
+
+  const [playlists, total] = await Promise.all([
+    db.playlist.findMany({
+      where: {
+        userId,
       },
-    },
-  });
+      select: { ...playlistItemSelect },
+      orderBy: { createdAt: "desc" },
+    }),
 
-  if (!user) throw new AppError("NOT_FOUND", "User not found");
+    db.playlist.count({
+      where: {
+        userId,
+      },
+    }),
+  ]);
 
-  return user.playlists;
+  return {
+    items: playlists,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
 };
 
 export type MyPlaylists = AwaitedReturnType<typeof getMyPlaylists>;
 
-export const getMyFollowers = async (userId: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      followers: {
-        select: {
-          follower: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-            },
-          },
+export const getMyFollowers = async ({
+  userId,
+  params,
+}: {
+  userId: string;
+  params: PaginationParams;
+}) => {
+  const { offset, limit } = params;
+
+  const [users, total] = await Promise.all([
+    db.userFollow
+      .findMany({
+        where: {
+          followingId: userId,
         },
-      },
-    },
-  });
-
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
-
-  const users = user.followers.map((item) => item.follower);
-
-  return users;
-};
-
-export type MyFollower = AwaitedReturnType<typeof getMyFollowers>[number];
-
-export const getMyFollowedArtists = async (userId: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      followedArtists: {
-        select: {
-          artist: {
-            select: artistItemSelect,
-          },
-        },
-        orderBy: {
-          likedAt: "desc",
-        },
-      },
-    },
-  });
-
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
-
-  const artists = user.followedArtists.map((a) => a.artist);
-
-  return artists;
-};
-
-export type MyFollowedArtists = AwaitedReturnType<typeof getMyFollowedArtists>;
-
-export const getMyFollowedUsers = async (userId: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      following: {
         select: {
           following: {
             select: {
@@ -187,33 +152,131 @@ export const getMyFollowedUsers = async (userId: string) => {
             },
           },
         },
+        skip: offset,
+        take: limit,
+      })
+      .then((data) => data.map((item) => item.following)),
+
+    db.userFollow.count({
+      where: {
+        followingId: userId,
+      },
+    }),
+  ]);
+
+  return {
+    items: users,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
+};
+
+export type MyFollowers = AwaitedReturnType<typeof getMyFollowers>;
+
+export const getMyFollowedArtists = async ({
+  userId,
+  params,
+}: {
+  userId: string;
+  params: PaginationParams;
+}) => {
+  const { limit, offset } = params;
+
+  const [artists, total] = await Promise.all([
+    db.userFollowedArtist
+      .findMany({
+        where: {
+          userId,
+        },
+        skip: offset,
+        take: limit,
+        select: {
+          artist: {
+            select: artistItemSelect,
+          },
+        },
+        orderBy: {
+          likedAt: "desc",
+        },
+      })
+      .then((data) => data.map((item) => item.artist)),
+
+    db.userFollowedArtist.count({
+      where: {
+        userId,
+      },
+    }),
+  ]);
+
+  return {
+    items: artists,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
+};
+
+export type MyFollowedArtists = AwaitedReturnType<typeof getMyFollowedArtists>;
+
+export const getMyFollowedUsers = async ({
+  userId,
+  params,
+}: {
+  userId: string;
+  params: PaginationParams;
+}) => {
+  const { limit, offset } = params;
+
+  const [users, total] = await Promise.all([
+    db.userFollow
+      .findMany({
+        where: {
+          followerId: userId,
+        },
+        select: {
+          following: {
+            select: {
+              id: true,
+              name: true,
+              image: true,
+            },
+          },
+        },
+        take: limit,
+        skip: offset,
         orderBy: {
           followedAt: "desc",
         },
+      })
+      .then((data) => data.map((item) => item.following)),
+
+    db.userFollow.count({
+      where: {
+        followerId: userId,
       },
-    },
-  });
+    }),
+  ]);
 
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
-
-  const users = user.following.map((u) => u.following);
-
-  return users;
+  return {
+    items: users,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
 };
 
-export type MyFollowedUser = AwaitedReturnType<
-  typeof getMyFollowedUsers
->[number];
+export type MyFollowedUsers = AwaitedReturnType<typeof getMyFollowedUsers>;
 
-export const getMyLikedAlbums = async (userId: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      likedAlbums: {
+export const getMyLikedAlbums = async ({
+  userId,
+  params,
+}: {
+  userId: string;
+  params: PaginationParams;
+}) => {
+  const { offset, limit } = params;
+
+  const [albums, total] = await Promise.all([
+    db.userLikedAlbum
+      .findMany({
+        where: {
+          userId,
+        },
         select: {
           album: {
             select: albumItemSelect,
@@ -222,28 +285,41 @@ export const getMyLikedAlbums = async (userId: string) => {
         orderBy: {
           likedAt: "desc",
         },
+        skip: offset,
+        take: limit,
+      })
+      .then((data) => data.map((item) => item.album)),
+
+    db.userLikedAlbum.count({
+      where: {
+        userId,
       },
-    },
-  });
+    }),
+  ]);
 
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
-
-  const albums = user.likedAlbums.map((a) => a.album);
-
-  return albums;
+  return {
+    items: albums,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
 };
 
-export type MyLikedAlbum = AwaitedReturnType<typeof getMyLikedAlbums>[number];
+export type MyLikedAlbums = AwaitedReturnType<typeof getMyLikedAlbums>;
 
-export const getMyLikedPlaylists = async (userId: string) => {
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      likedPlaylists: {
+export const getMyLikedPlaylists = async ({
+  userId,
+  params,
+}: {
+  userId: string;
+  params: PaginationParams;
+}) => {
+  const { offset, limit } = params;
+
+  const [playlists, total] = await Promise.all([
+    db.userLikedPlaylist
+      .findMany({
+        where: {
+          userId,
+        },
         select: {
           playlist: {
             select: playlistItemSelect,
@@ -252,22 +328,25 @@ export const getMyLikedPlaylists = async (userId: string) => {
         orderBy: {
           likedAt: "desc",
         },
+        skip: offset,
+        take: limit,
+      })
+      .then((data) => data.map((item) => item.playlist)),
+
+    db.userLikedPlaylist.count({
+      where: {
+        userId,
       },
-    },
-  });
+    }),
+  ]);
 
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
-
-  const playlists = user.likedPlaylists.map((a) => a.playlist);
-
-  return playlists;
+  return {
+    items: playlists,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
 };
 
-export type MyLikedPlaylist = AwaitedReturnType<
-  typeof getMyLikedPlaylists
->[number];
+export type MyLikedPlaylists = AwaitedReturnType<typeof getMyLikedPlaylists>;
 
 export const getLikedPlaylistStatus = async ({
   userId,

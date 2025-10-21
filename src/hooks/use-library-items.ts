@@ -22,13 +22,13 @@ export const useLibraryItems = (filter: LibraryFilter) => {
 
   const playlists = useMemo(() => {
     const liked =
-      likedPlaylists?.map((p) => ({
+      likedPlaylists?.items?.map((p) => ({
         ...p,
         type: "PLAYLIST" as const,
         source: "liked" as const,
       })) ?? [];
     const mine =
-      myPlaylists?.map((p) => ({
+      myPlaylists?.items.map((p) => ({
         ...p,
         type: "PLAYLIST" as const,
         source: "mine" as const,
@@ -41,14 +41,26 @@ export const useLibraryItems = (filter: LibraryFilter) => {
       case "playlists":
         return playlists;
       case "artists":
-        return (artists ?? []).map((a) => ({ ...a, type: "ARTIST" as const }));
+        return (artists?.items ?? []).map((a) => ({
+          ...a,
+          type: "ARTIST" as const,
+        }));
       case "albums":
-        return (albums ?? []).map((a) => ({ ...a, type: "ALBUM" as const }));
+        return (albums?.items ?? []).map((a) => ({
+          ...a,
+          type: "ALBUM" as const,
+        }));
       case "all":
       default:
         return [
-          ...(artists ?? []).map((a) => ({ ...a, type: "ARTIST" as const })),
-          ...(albums ?? []).map((a) => ({ ...a, type: "ALBUM" as const })),
+          ...(artists?.items ?? []).map((a) => ({
+            ...a,
+            type: "ARTIST" as const,
+          })),
+          ...(albums?.items ?? []).map((a) => ({
+            ...a,
+            type: "ALBUM" as const,
+          })),
           ...playlists,
         ];
     }
