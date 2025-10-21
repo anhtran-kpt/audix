@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LikedPlaylistStatus, MyLikedPlaylist } from "../data-access/me-repo";
+import { LikedPlaylistStatus, MyLikedPlaylists } from "../data-access/me-repo";
 import { meKeys } from "../api/me-keys";
 import { deleteApi, putApi } from "@/lib/http/api";
 import { meEndpoints } from "../api/me-endpoints";
@@ -26,7 +26,7 @@ export function useToggleLikePlaylist(playlist: PlaylistItem) {
       ]);
 
       const prevData = {
-        likedPlaylists: qc.getQueryData<MyLikedPlaylist[]>(
+        likedPlaylists: qc.getQueryData<MyLikedPlaylists>(
           meKeys.likedPlaylists()
         ),
 
@@ -35,14 +35,32 @@ export function useToggleLikePlaylist(playlist: PlaylistItem) {
         ),
       };
 
-      qc.setQueryData<MyLikedPlaylist[]>(meKeys.likedPlaylists(), (old) => {
-        if (!old) return [playlist];
+      qc.setQueryData<MyLikedPlaylists>(meKeys.likedPlaylists(), (old) => {
+        if (!old)
+          return {
+            pagination: { offset: 0, limit: 5, hasMore: false, total: 1 },
+            items: [playlist],
+          };
 
-        const exists = old.some((p) => p.id === playlist.id);
+        const exists = old.items.some((item) => item.id === playlist.id);
 
         return exists
-          ? old.filter((p) => p.id !== playlist.id)
-          : [...old, playlist];
+          ? {
+              ...old,
+              pagination: {
+                ...old.pagination,
+                total: old.pagination.total - 1,
+              },
+              items: old.items.filter((item) => item.id !== playlist.id),
+            }
+          : {
+              ...old,
+              pagination: {
+                ...old.pagination,
+                total: old.pagination.total + 1,
+              },
+              items: [...old.items, playlist],
+            };
       });
 
       qc.setQueryData<LikedPlaylistStatus>(

@@ -55,14 +55,39 @@ export function useToggleFollowArtist(artist: ArtistItem) {
       );
 
       qc.setQueryData<MyFollowedArtists>(meKeys.followedArtists(), (old) => {
-        if (!old) return nextIsFollowing ? [artist] : [];
+        if (!old)
+          return nextIsFollowing
+            ? {
+                pagination: { limit: 5, offset: 0, total: 1, hasMore: false },
+                items: [artist],
+              }
+            : {
+                pagination: { limit: 5, offset: 0, total: 1, hasMore: false },
+                items: [],
+              };
 
         if (nextIsFollowing) {
-          const exists = old.some((a) => a.id === artist.id);
-          return exists ? old : [artist, ...old];
+          const exists = old.items.some((a) => a.id === artist.id);
+          return exists
+            ? old
+            : {
+                ...old,
+                pagination: {
+                  ...old.pagination,
+                  total: old.pagination.total + 1,
+                },
+                items: [artist, ...old.items],
+              };
         }
 
-        return old.filter((a) => a.id !== artist.id);
+        return {
+          ...old,
+          pagination: {
+            ...old.pagination,
+            total: old.pagination.total - 1,
+          },
+          items: old.items.filter((a) => a.id !== artist.id),
+        };
       });
 
       return { prevData };

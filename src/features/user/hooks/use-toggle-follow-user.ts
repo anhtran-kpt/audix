@@ -4,14 +4,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   FollowStatus,
   UserBanner,
-  UserFollower,
+  UserFollowers,
 } from "../data-access/user-repo";
 import { userKeys } from "../api/user-keys";
 import { deleteApi, postApi } from "@/lib/http/api";
 import { meKeys } from "@/features/me/api/me-keys";
 import { UserItem } from "../contracts/user-dto";
 import { userEndpoints } from "../api/user-endpoints";
-import { MyBanner, MyFollowedUser } from "@/features/me/data-access/me-repo";
+import { MyBanner, MyFollowedUsers } from "@/features/me/data-access/me-repo";
 
 export function useToggleFollowUser(user: UserItem) {
   const qc = useQueryClient();
@@ -36,11 +36,9 @@ export function useToggleFollowUser(user: UserItem) {
         followStatus: qc.getQueryData<FollowStatus>(
           userKeys.followStatus(user.id)
         ),
-        followers: qc.getQueryData<UserFollower[]>(userKeys.followers(user.id)),
+        followers: qc.getQueryData<UserFollowers>(userKeys.followers(user.id)),
         userBanner: qc.getQueryData<UserBanner>(userKeys.banner(user.id)),
-        followedUsers: qc.getQueryData<MyFollowedUser[]>(
-          meKeys.followedUsers()
-        ),
+        followedUsers: qc.getQueryData<MyFollowedUsers>(meKeys.followedUsers()),
         myBanner: qc.getQueryData<MyBanner>(meKeys.banner()),
       };
 
@@ -48,26 +46,76 @@ export function useToggleFollowUser(user: UserItem) {
         return { isFollowing: nextIsFollowing };
       });
 
-      qc.setQueryData<UserFollower[]>(userKeys.followers(user.id), (old) => {
-        if (!old) return nextIsFollowing ? [user] : [];
+      qc.setQueryData<UserFollowers>(userKeys.followers(user.id), (old) => {
+        if (!old)
+          return nextIsFollowing
+            ? {
+                pagination: { limit: 5, offset: 0, total: 1, hasMore: false },
+                items: [user],
+              }
+            : {
+                pagination: { limit: 5, offset: 0, total: 1, hasMore: false },
+                items: [],
+              };
 
         if (nextIsFollowing) {
-          const exists = old.some((a) => a.id === user.id);
-          return exists ? old : [user, ...old];
+          const exists = old.items.some((item) => item.id === user.id);
+          return exists
+            ? old
+            : {
+                ...old,
+                pagination: {
+                  ...old.pagination,
+                  total: old.pagination.total + 1,
+                },
+                items: [user, ...old.items],
+              };
         }
 
-        return old.filter((a) => a.id !== user.id);
+        return {
+          ...old,
+          pagination: {
+            ...old.pagination,
+            total: old.pagination.total - 1,
+          },
+          items: old.items.filter((item) => item.id !== user.id),
+        };
       });
 
-      qc.setQueryData<MyFollowedUser[]>(meKeys.followedUsers(), (old) => {
-        if (!old) return nextIsFollowing ? [user] : [];
+      qc.setQueryData<MyFollowedUsers>(meKeys.followedUsers(), (old) => {
+        if (!old)
+          return nextIsFollowing
+            ? {
+                pagination: { limit: 5, offset: 0, total: 1, hasMore: false },
+                items: [user],
+              }
+            : {
+                pagination: { limit: 5, offset: 0, total: 1, hasMore: false },
+                items: [],
+              };
 
         if (nextIsFollowing) {
-          const exists = old.some((a) => a.id === user.id);
-          return exists ? old : [user, ...old];
+          const exists = old.items.some((item) => item.id === user.id);
+          return exists
+            ? old
+            : {
+                ...old,
+                pagination: {
+                  ...old.pagination,
+                  total: old.pagination.total + 1,
+                },
+                items: [user, ...old.items],
+              };
         }
 
-        return old.filter((a) => a.id !== user.id);
+        return {
+          ...old,
+          pagination: {
+            ...old.pagination,
+            total: old.pagination.total - 1,
+          },
+          items: old.items.filter((item) => item.id !== user.id),
+        };
       });
 
       qc.setQueryData<UserBanner>(userKeys.banner(user.id), (old) => {

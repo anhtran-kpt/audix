@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LikedAlbumStatus, MyLikedAlbum } from "../data-access/me-repo";
+import { LikedAlbumStatus, MyLikedAlbums } from "../data-access/me-repo";
 import { meKeys } from "../api/me-keys";
 import { deleteApi, putApi } from "@/lib/http/api";
 import { meEndpoints } from "../api/me-endpoints";
@@ -26,19 +26,39 @@ export function useToggleLikeAlbum(album: AlbumItem) {
       ]);
 
       const prevData = {
-        likedAlbums: qc.getQueryData<MyLikedAlbum[]>(meKeys.likedAlbums()),
+        likedAlbums: qc.getQueryData<MyLikedAlbums>(meKeys.likedAlbums()),
 
         likedAlbumStatus: qc.getQueryData<LikedAlbumStatus>(
           meKeys.likedAlbumStatus(album.id)
         ),
       };
 
-      qc.setQueryData<MyLikedAlbum[]>(meKeys.likedAlbums(), (old) => {
-        if (!old) return [album];
+      qc.setQueryData<MyLikedAlbums>(meKeys.likedAlbums(), (old) => {
+        if (!old)
+          return {
+            pagination: { offset: 0, limit: 5, hasMore: false, total: 1 },
+            items: [album],
+          };
 
-        const exists = old.some((p) => p.id === album.id);
+        const exists = old.items.some((item) => item.id === album.id);
 
-        return exists ? old.filter((p) => p.id !== album.id) : [...old, album];
+        return exists
+          ? {
+              ...old,
+              pagination: {
+                ...old.pagination,
+                total: old.pagination.total - 1,
+              },
+              items: old.items.filter((item) => item.id !== album.id),
+            }
+          : {
+              ...old,
+              pagination: {
+                ...old.pagination,
+                total: old.pagination.total + 1,
+              },
+              items: [...old.items, album],
+            };
       });
 
       qc.setQueryData<LikedAlbumStatus>(

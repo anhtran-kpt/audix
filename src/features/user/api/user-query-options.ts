@@ -1,14 +1,15 @@
 import { queryOptions } from "@tanstack/react-query";
 import { userKeys } from "./user-keys";
 import { userEndpoints } from "./user-endpoints";
-import { ArtistItem } from "@/features/artist/contracts/artist-dto";
 import { getApi } from "@/lib/http/api";
 import {
   FollowStatus,
   UserBanner,
+  UserFollowedArtists,
+  UserFollowedUsers,
+  UserFollowers,
   UserPlaylists,
 } from "../data-access/user-repo";
-import { UserItem } from "../contracts/user-dto";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 
 export const userQueryOptions = {
@@ -28,7 +29,8 @@ export const userQueryOptions = {
   followers: (targetUserId: string, params?: Partial<PaginationParams>) =>
     queryOptions({
       queryKey: userKeys.followers(targetUserId, params),
-      queryFn: () => getApi<UserItem[]>(userEndpoints.followers(targetUserId)),
+      queryFn: () =>
+        getApi<UserFollowers>(userEndpoints.followers(targetUserId)),
     }),
 
   followingArtists: (
@@ -38,14 +40,16 @@ export const userQueryOptions = {
     queryOptions({
       queryKey: userKeys.followingArtists(targetUserId, params),
       queryFn: () =>
-        getApi<ArtistItem[]>(userEndpoints.followingArtists(targetUserId)),
+        getApi<UserFollowedArtists>(
+          userEndpoints.followingArtists(targetUserId)
+        ),
     }),
 
   followingUsers: (targetUserId: string, params?: Partial<PaginationParams>) =>
     queryOptions({
       queryKey: userKeys.followingUsers(targetUserId, params),
       queryFn: () =>
-        getApi<UserItem[]>(userEndpoints.followingUsers(targetUserId)),
+        getApi<UserFollowedUsers>(userEndpoints.followingUsers(targetUserId)),
     }),
 
   followStatus: (targetUserId: string) =>
