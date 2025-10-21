@@ -35,12 +35,13 @@ export const authOptions: NextAuthOptions = {
         });
 
         if (!user || !user.passwordHash) {
-          throw new Error("Account not found");
+          throw new Error("Invalid credentials");
         }
 
         const isValid = await compare(credentials.password, user.passwordHash);
+
         if (!isValid) {
-          throw new Error("Incorrect password");
+          throw new Error("Invalid credentials");
         }
 
         return user;

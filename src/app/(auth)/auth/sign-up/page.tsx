@@ -21,9 +21,9 @@ import Google from "@/components/ui/google";
 import { Input } from "@/components/ui/input";
 import { NavLink } from "@/components/ui/nav-link";
 import { Separator } from "@/components/ui/separator";
-import { useSignUp } from "@/features/auth/api/hooks/use-sign-up";
 import { SignUpInput } from "@/features/auth/contracts/auth-dto";
 import { SignUpInputSchema } from "@/features/auth/contracts/auth-schema";
+import { useSignUp } from "@/features/auth/hooks/use-sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
@@ -31,17 +31,23 @@ import { useForm } from "react-hook-form";
 export default function SignUpPage() {
   const form = useForm<SignUpInput>({
     resolver: zodResolver(SignUpInputSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-    },
+    defaultValues: { name: "", email: "", password: "" },
   });
 
-  const { mutate: signUp } = useSignUp();
+  const { mutateAsync: signUp, isPending } = useSignUp();
 
-  const onSubmit = (values: SignUpInput) => {
-    signUp(values);
+  const onSubmit = async (values: SignUpInput) => {
+    try {
+      await signUp(values);
+    } catch (error: any) {
+      const message = error?.message || "Sign up failed. Please try again.";
+
+      if (message.toLowerCase().includes("email")) {
+        form.setError("email", { type: "manual", message });
+      } else {
+        form.setError("root", { type: "manual", message });
+      }
+    }
   };
 
   const { control, handleSubmit, formState } = form;
@@ -58,6 +64,13 @@ export default function SignUpPage() {
       <CardContent>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            {/* ⚠️ Hiển thị lỗi tổng quát nếu có */}
+            {formState.errors.root && (
+              <div className="text-destructive text-sm">
+                {formState.errors.root.message}
+              </div>
+            )}
+
             <FormField
               control={control}
               name="name"
@@ -71,6 +84,7 @@ export default function SignUpPage() {
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="email"
@@ -84,6 +98,7 @@ export default function SignUpPage() {
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="password"
@@ -103,24 +118,28 @@ export default function SignUpPage() {
                 </FormItem>
               )}
             />
+
             <Button
               type="submit"
               className="w-full"
-              disabled={formState.isLoading}
+              disabled={formState.isSubmitting || isPending}
             >
-              Sign up
+              {isPending ? "Signing up..." : "Sign up"}
             </Button>
+
             <div className="relative">
               <Separator />
               <div className="absolute top-1/2 left-1/2 -translate-1/2 bg-card px-4">
                 or
               </div>
             </div>
+
             <Button
               type="button"
               className="w-full"
               onClick={() => signIn("google", { callbackUrl: "/" })}
               variant="outline"
+              disabled={formState.isSubmitting || isPending}
             >
               <Google />
               Sign up with Google
@@ -128,6 +147,7 @@ export default function SignUpPage() {
           </form>
         </Form>
       </CardContent>
+
       <CardFooter className="flex items-center gap-1 justify-center">
         Already have an account?{" "}
         <NavLink href={`/auth/sign-in`} className="underline">

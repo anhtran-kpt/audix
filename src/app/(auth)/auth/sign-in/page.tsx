@@ -25,9 +25,12 @@ import { SignInInput } from "@/features/auth/contracts/auth-dto";
 import { SignInInputSchema } from "@/features/auth/contracts/auth-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export default function SignInPage() {
+  const router = useRouter();
   const form = useForm<SignInInput>({
     resolver: zodResolver(SignInInputSchema),
     defaultValues: {
@@ -37,15 +40,36 @@ export default function SignInPage() {
   });
 
   const onSubmit = async (values: SignInInput) => {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email: values.email,
       password: values.password,
-      redirect: true,
-      callbackUrl: "/",
+      redirect: false,
     });
+
+    if (result?.error) {
+      if (result.error === "Invalid credentials") {
+        form.setError("email", {
+          type: "manual",
+          message: "Incorrect email or password.",
+        });
+        form.setError("password", {
+          type: "manual",
+          message: "Incorrect email or password.",
+        });
+      } else {
+        form.setError("email", {
+          type: "manual",
+          message: "Sign in failed. Please try again.",
+        });
+      }
+      return;
+    }
+
+    toast.success("Sign in sucessful!");
+    router.push("/");
   };
 
-  const { control, handleSubmit } = form;
+  const { control, handleSubmit, formState } = form;
 
   return (
     <Card className="w-full max-w-md absolute top-1/2 left-1/2 -translate-1/2">
@@ -74,6 +98,7 @@ export default function SignInPage() {
                 </FormItem>
               )}
             />
+
             <div className="space-y-2">
               <FormField
                 control={control}
@@ -94,26 +119,35 @@ export default function SignInPage() {
                   </FormItem>
                 )}
               />
+
               <div className="text-end">
                 <NavLink href={`/auth/forgot-password`} className="underline">
                   Forgot password?
                 </NavLink>
               </div>
             </div>
-            <Button type="submit" className="w-full">
-              Sign in
+
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={formState.isSubmitting}
+            >
+              {formState.isSubmitting ? "Signing in..." : "Sign in"}
             </Button>
+
             <div className="relative">
               <Separator />
               <div className="absolute top-1/2 left-1/2 -translate-1/2 bg-card px-4">
                 or
               </div>
             </div>
+
             <Button
               type="button"
               className="w-full"
               onClick={() => signIn("google", { callbackUrl: "/" })}
               variant="outline"
+              disabled={formState.isSubmitting}
             >
               <Google />
               Sign in with Google
@@ -121,6 +155,7 @@ export default function SignInPage() {
           </form>
         </Form>
       </CardContent>
+
       <CardFooter className="flex items-center gap-1 justify-center">
         Don&apos;t have an account?{" "}
         <NavLink href={`/auth/sign-up`} className="underline">

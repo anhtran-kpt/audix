@@ -8,31 +8,50 @@ import { AppError } from "@/lib/errors";
 export const signUp = async (input: SignUpInput) => {
   const { email, name, password } = input;
 
-  const existing = await db.user.findUnique({ where: { email } });
-  if (existing) {
-    throw new AppError("CONFLICT", "This email in use");
+  try {
+    const existing = await db.user.findUnique({ where: { email } });
+    if (existing) {
+      throw new AppError("CONFLICT", "This email is already in use");
+    }
+
+    const passwordHash = await hash(password, 10);
+
+    const user = await db.user.create({
+      data: { email, name, passwordHash },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
+    });
+
+    await db.userSubscription.create({
+      data: {
+        userId: user.id,
+        type: "FREE",
+        status: "ACTIVE",
+      },
+    });
+
+    return {
+      success: true,
+      message: "Success! Your account has been created. Welcome aboard!",
+      data: user,
+    };
+  } catch (error) {
+    if (error instanceof AppError) {
+      return {
+        success: false,
+        message: error.message,
+      };
+    }
+
+    console.error("SignUp Error:", error);
+    return {
+      success: false,
+      message: "An unexpected error occurred, please try again.",
+    };
   }
-
-  const passwordHash = await hash(password, 10);
-
-  const user = await db.user.create({
-    data: { email, name, passwordHash },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-    },
-  });
-
-  await db.userSubscription.create({
-    data: {
-      userId: user.id,
-      type: "FREE",
-      status: "ACTIVE",
-    },
-  });
-
-  return user;
 };
 
 export type SignUpOutput = AwaitedReturnType<typeof signUp>;
