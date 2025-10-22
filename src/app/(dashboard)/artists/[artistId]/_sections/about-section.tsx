@@ -29,7 +29,6 @@ export const AboutSection = ({ artistId }: { artistId: string }) => {
           sizes="100vw"
           className="object-cover group-hover:scale-105 transition-transform duration-400 brightness-65"
           containerClassName="rounded-lg relative overflow-hidden aspect-[4/3] sm:aspect-[2/1] w-full"
-          quality={100}
         />
         <div className="absolute bottom-responsive left-responsive space-y-3 w-4/5">
           <div>

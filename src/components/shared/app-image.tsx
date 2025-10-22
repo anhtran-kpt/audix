@@ -38,6 +38,7 @@ export function AppImage({
         format="auto"
         style={{ opacity: isLoaded ? 1 : 0 }}
         onLoad={handleLoad}
+        sizes="256px"
         {...props}
       />
     </div>

@@ -31,7 +31,6 @@ export default function AlbumGrid({ albums }: AlbumGridProps) {
               alt={album.title}
               src={album.imageId}
               className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
-              sizes="20vw"
             />
             <RoundedPlayContextButton
               context={{ contextType: "ALBUM", contextId: album.id }}

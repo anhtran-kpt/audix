@@ -33,7 +33,6 @@ export default function PlaylistGrid({ playlists }: PlaylistGridProps) {
                 process.env.NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
               }
               className="group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
-              sizes="20vw"
             />
             <RoundedPlayContextButton
               context={{ contextType: "PLAYLIST", contextId: playlist.id }}

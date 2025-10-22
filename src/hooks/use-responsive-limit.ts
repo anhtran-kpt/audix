@@ -1,42 +1,64 @@
 "use client";
 
+import { useEffect, useState, useRef } from "react";
 import { useSidebar } from "@/components/ui/sidebar";
-import { RESPONSIVE_CONFIG } from "@/lib/config/responsive-config";
-import { useState, useEffect } from "react";
 
-export const useResponsiveLimit = () => {
-  const [limit, setLimit] = useState<number>(RESPONSIVE_CONFIG.lg.cols);
-  const { open, isMobile, state } = useSidebar();
+export const useResponsiveLimit = (options?: {
+  itemMaxWidth?: number;
+  itemGap?: number;
+  containerSelector?: string;
+}) => {
+  const {
+    itemMaxWidth = 256,
+    itemGap,
+    containerSelector = "section",
+  } = options || {};
+
+  const [limit, setLimit] = useState(5);
+  const containerRef = useRef<HTMLElement | null>(null);
+  const { state, isMobile } = useSidebar();
 
   useEffect(() => {
+    if (containerSelector) {
+      containerRef.current = document.querySelector(containerSelector);
+    } else {
+      containerRef.current = document.body;
+    }
+
     const calcLimit = () => {
-      const width = window.innerWidth;
+      const container = containerRef.current;
+      if (!container) return;
 
-      let newLimit: number = RESPONSIVE_CONFIG.lg.cols;
+      const containerWidth = container.clientWidth;
 
-      const keys = Object.keys(RESPONSIVE_CONFIG) as Array<
-        keyof typeof RESPONSIVE_CONFIG
-      >;
+      let currentGap = itemGap;
 
-      for (const key of keys) {
-        const bp = RESPONSIVE_CONFIG[key];
-        if (width >= bp.min && width <= bp.max) {
-          newLimit = bp.cols;
-          break;
-        }
+      if (currentGap === undefined) {
+        const isXL = window.innerWidth >= 1280;
+        currentGap = isXL ? 24 : 16;
       }
 
-      if (!isMobile && state === "expanded") {
-        newLimit -= 1;
-      }
+      const numItems = Math.ceil(
+        (containerWidth + currentGap) / (itemMaxWidth + currentGap)
+      );
 
-      setLimit(newLimit);
+      const bestNumItems = Math.max(1, Math.min(10, numItems));
+
+      setLimit(bestNumItems);
     };
 
     calcLimit();
+
+    const observer = new ResizeObserver(calcLimit);
+    if (containerRef.current) observer.observe(containerRef.current);
+
     window.addEventListener("resize", calcLimit);
-    return () => window.removeEventListener("resize", calcLimit);
-  }, [open, isMobile, state]);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", calcLimit);
+    };
+  }, [itemMaxWidth, itemGap, state, isMobile, containerSelector]);
 
   return limit;
 };

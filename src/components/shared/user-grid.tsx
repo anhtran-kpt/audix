@@ -32,17 +32,13 @@ export default function UserGrid({ users }: UserGridProps) {
                   src={user.image}
                   className="rounded-full object-cover group-hover:scale-105 transition-transform duration-300"
                   fill
-                  priority
-                  sizes="224px"
                 />
               </div>
             ) : (
               <AppImage
-                priority
                 alt={user.name ?? "profile"}
                 src={user.image ?? process.env.NEXT_PUBLIC_FALLBACK_USER_COVER!}
                 className="rounded-full group-hover:scale-105 transition-transform duration-300"
-                sizes="(max-width: 768px) 50vw, 224px"
                 containerClassName="rounded-full aspect-square"
               />
             )}

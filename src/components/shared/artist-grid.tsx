@@ -29,7 +29,6 @@ export default function ArtistGrid({ artists }: ArtistGridProps) {
               src={artist.imageId}
               className="rounded-full group-hover:brightness-65 group-hover:scale-105 transition-all duration-400"
               containerClassName="rounded-full"
-              sizes="20vw"
             />
             <RoundedPlayContextButton
               context={{ contextType: "ARTIST", contextId: artist.id }}
