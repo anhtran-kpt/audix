@@ -1,13 +1,14 @@
 import { AppSidebar } from "@/components/features/app-sidebar";
-import AudioPlayer from "@/components/features/audio-player";
+import { AudioElement } from "@/components/features/audio-element";
+import { DesktopPlayer } from "@/components/features/players/desktop-player";
 import { Header } from "@/components/features/header";
 import { PlayerOffsetSetter } from "@/components/features/player-offset-setter";
 import RightPanel from "@/components/features/right-panel";
 import { Footer } from "@/components/shared/footer";
-// import MobileAudioPlayer from "@/components/shared/mobile-audio-player";
 import { NewPlaylistDialog } from "@/components/shared/new-playlist-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { MobilePlayer } from "@/components/features/players/mobile-player";
 
 export default async function DashboardLayout({
   children,
@@ -42,9 +43,10 @@ export default async function DashboardLayout({
           <Footer />
         </ScrollArea>
       </SidebarInset>
+      <AudioElement />
       <RightPanel />
-      <AudioPlayer />
-      {/* <MobileAudioPlayer /> */}
+      <DesktopPlayer />
+      <MobilePlayer />
       <NewPlaylistDialog />
     </SidebarProvider>
   );

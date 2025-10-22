@@ -5,8 +5,17 @@ import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
 import { useState } from "react";
 import { formatTime } from "@/utils/date";
+import { cn } from "@/lib/utils";
 
-export function ProgressBar() {
+type AudioProgressBarProps = {
+  containerClassName?: string;
+  sliderClassName?: string;
+};
+
+export const AudioProgressBar = ({
+  sliderClassName,
+  containerClassName,
+}: AudioProgressBarProps) => {
   const { duration, seek, progressMs } = usePlaybackStore(
     useShallow((s) => ({
       duration: s.session?.currentTrack.duration ?? 0,
@@ -21,15 +30,22 @@ export function ProgressBar() {
   const currentValue = isDragging ? dragValue : progressMs;
 
   return (
-    <div className="flex items-center gap-3 text-xs text-muted-foreground w-full max-w-xl">
-      <span className="text-right">{formatTime(currentValue)}</span>
+    <div
+      className={cn(
+        "flex items-center sm:gap-3 text-xs text-muted-foreground grow sm:w-full sm:max-w-xl",
+        containerClassName
+      )}
+    >
+      <span className="text-right w-6 max-sm:hidden">
+        {formatTime(currentValue)}
+      </span>
 
       <Slider
         value={[currentValue]}
         min={0}
         max={duration * 1000}
         step={1000}
-        className="flex-1"
+        className={cn("flex-1", sliderClassName)}
         onValueChange={(value) => {
           setIsDragging(true);
           setDragValue(value[0]);
@@ -41,7 +57,9 @@ export function ProgressBar() {
         }}
       />
 
-      <span className="text-left">{formatTime(duration * 1000)}</span>
+      <span className="text-left w-6 max-sm:hidden">
+        {formatTime(duration * 1000)}
+      </span>
     </div>
   );
-}
+};

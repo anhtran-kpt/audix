@@ -20,21 +20,37 @@ import {
 import Google from "@/components/ui/google";
 import { Input } from "@/components/ui/input";
 import { NavLink } from "@/components/ui/nav-link";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Separator } from "@/components/ui/separator";
 import { SignUpInput } from "@/features/auth/contracts/auth-dto";
 import { SignUpInputSchema } from "@/features/auth/contracts/auth-schema";
 import { useSignUp } from "@/features/auth/hooks/use-sign-up";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 export default function SignUpPage() {
   const form = useForm<SignUpInput>({
     resolver: zodResolver(SignUpInputSchema),
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 
   const { mutateAsync: signUp, isPending } = useSignUp();
+
+  useEffect(() => {
+    const subscription = form.watch(({ name }) => {
+      if (name === "confirmPassword") {
+        form.trigger("confirmPassword");
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   const onSubmit = async (values: SignUpInput) => {
     try {
@@ -61,10 +77,10 @@ export default function SignUpPage() {
           favorite tracks to life, anytime, anywhere.
         </CardDescription>
       </CardHeader>
+
       <CardContent>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* ⚠️ Hiển thị lỗi tổng quát nếu có */}
             {formState.errors.root && (
               <div className="text-destructive text-sm">
                 {formState.errors.root.message}
@@ -85,6 +101,7 @@ export default function SignUpPage() {
               )}
             />
 
+            {/* Email */}
             <FormField
               control={control}
               name="email"
@@ -106,11 +123,27 @@ export default function SignUpPage() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
+                    <PasswordInput
                       placeholder="Enter your password"
                       {...field}
-                      type="password"
-                      autoCorrect="off"
+                      autoComplete="new-password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      placeholder="Re-enter your password"
+                      {...field}
                       autoComplete="new-password"
                     />
                   </FormControl>
