@@ -47,7 +47,7 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
           priority
         />
         <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5 xl:gap-6 max-sm:mt-6">
-          <div className="max-sm:hidden flex items-center gap-2">
+          <div className=" flex items-center gap-2">
             <VerifiedIcon />
             <span>Verified Artist</span>
           </div>

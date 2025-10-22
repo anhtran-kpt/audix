@@ -1,18 +1,19 @@
 "use client";
 
-import { HomeIcon } from "lucide-react";
+import { ArrowLeftIcon, ArrowRightIcon, HomeIcon } from "lucide-react";
 import { HeaderSearchBar } from "./search/header-search-bar";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
-import { AppNavigation } from "./app-navigation";
 import { UserProfile } from "./user-profile";
 import Link from "next/link";
 import { HeaderButton } from "../shared/header-button";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
   const [isAtTop, setIsAtTop] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
   const prevY = useRef(0);
+  const router = useRouter();
 
   useEffect(() => {
     const el = document.getElementById("app-scroll");
@@ -36,22 +37,32 @@ export const Header = () => {
     };
 
     onScroll();
-    el.addEventListener("scroll", onScroll, { passive: false });
+    el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
     <header
       className={cn(
-        "sticky left-0 top-0 z-10 w-full h-(--header-height) hidden sm:flex items-center justify-between gap-4 lg:gap-6 py-3 p-responsive group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)",
-        "transition-transform duration-300 ease-in-out bg-transparent",
-        isAtTop ? "" : "border-b backdrop-blur-md shadow-sm bg-background/90",
+        "sticky top-0 z-10 flex h-(--header-height) w-full items-center justify-between px-responsive gap-responsive transition-transform duration-300 ease-in-out",
+        "bg-transparent backdrop-blur-sm",
+        isAtTop ? "" : "border-b bg-background/90 shadow-sm",
         isVisible ? "translate-y-0" : "-translate-y-full pointer-events-none"
       )}
     >
-      <AppNavigation />
       <div className="flex items-center gap-4">
-        <Link href="/" className="flex items-center justify-center">
+        <HeaderButton icon={ArrowLeftIcon} onClick={() => router.back()} />
+        <HeaderButton
+          icon={ArrowRightIcon}
+          onClick={() => window.history.forward()}
+          className="hidden sm:inline-flex"
+        />
+        <Link href="/" className="sm:hidden">
+          <HeaderButton icon={HomeIcon} />
+        </Link>
+      </div>
+      <div className="flex-1 flex justify-end sm:justify-center gap-4">
+        <Link href="/" className="hidden sm:flex">
           <HeaderButton icon={HomeIcon} />
         </Link>
         <HeaderSearchBar />

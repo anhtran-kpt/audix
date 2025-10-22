@@ -31,7 +31,7 @@ export const MobilePlayer = () => {
     currentTrack &&
     session && (
       <div
-        className="sm:hidden fixed bottom-15 left-2 right-2 rounded-md z-60 px-2 pb-3 pt-2 transition-colors"
+        className="sm:hidden fixed bottom-0 left-0 right-0 z-60 px-4 pt-3 pb-2 transition-colors"
         style={{
           background: gradient
             ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.to} 100%)`
@@ -58,7 +58,7 @@ export const MobilePlayer = () => {
             />
           </div>
         </div>
-        <AudioProgressBar containerClassName="absolute bottom-0 left-2 right-2" />
+        <AudioProgressBar containerClassName="absolute top-0 left-0 right-0" />
         <AppImage
           alt={currentTrack.title}
           src={currentTrack.album.imageId}

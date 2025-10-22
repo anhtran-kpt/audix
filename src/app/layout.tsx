@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
@@ -31,17 +30,10 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="antialiased h-full">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <ReactQueryProvider>
-            <AuthProvider session={session}>{children}</AuthProvider>
-            <Toaster />
-          </ReactQueryProvider>
-        </ThemeProvider>
+        <ReactQueryProvider>
+          <AuthProvider session={session}>{children}</AuthProvider>
+          <Toaster />
+        </ReactQueryProvider>
       </body>
     </html>
   );

@@ -11,7 +11,7 @@ export function PlayerOffsetSetter() {
   useLayoutEffect(() => {
     const root = document.documentElement;
     if (session) {
-      root.style.setProperty("--player-offset", isMobile ? "128px" : "84px");
+      root.style.setProperty("--player-offset", isMobile ? "68px" : "84px");
     } else {
       root.style.removeProperty("--player-offset");
     }

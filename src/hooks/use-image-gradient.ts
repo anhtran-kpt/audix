@@ -6,7 +6,7 @@ type Gradient = { from: string; via?: string; to: string } | null;
 
 export const useImageGradient = (imageUrl: string | null) => {
   const [gradient, setGradient] = useState<Gradient>(null);
-  const [background, setBackground] = useState<string>("rgb(0,0,0)");
+  const [background, setBackground] = useState<string>("rgb(22,22,22");
 
   useEffect(() => {
     const getBackgroundFromCSS = () => {
