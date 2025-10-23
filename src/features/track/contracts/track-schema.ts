@@ -14,6 +14,7 @@ export const TrackItemSchema = TrackSchema.pick({
   artists: MiniArtistSchema.array(),
   album: MiniAlbumSchema,
   addedAt: z.date().optional(),
+  isLiked: z.boolean(),
 });
 
 export const MiniTrackItemSchema = TrackSchema.pick({
@@ -25,4 +26,8 @@ export const GetTracksQuerySchema = z.object({
     .string()
     .transform((v) => v.split(","))
     .refine((arr) => arr.length > 0, "At least one id is required"),
+});
+
+export const TrackParamsSchema = z.object({
+  trackId: z.cuid2(),
 });

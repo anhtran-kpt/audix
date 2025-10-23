@@ -25,13 +25,24 @@ export const signUp = async (input: SignUpInput) => {
       },
     });
 
-    await db.userSubscription.create({
-      data: {
-        userId: user.id,
-        type: "FREE",
-        status: "ACTIVE",
-      },
-    });
+    await Promise.all([
+      db.playlist.create({
+        data: {
+          title: "Liked Tracks",
+          isSystem: true,
+          systemType: "LIKED_TRACKS",
+          userId: user.id,
+        },
+      }),
+
+      db.userSubscription.create({
+        data: {
+          userId: user.id,
+          type: "FREE",
+          status: "ACTIVE",
+        },
+      }),
+    ]);
 
     return {
       success: true,

@@ -66,8 +66,14 @@ export const authOptions: NextAuthOptions = {
           include: { subscription: true },
         });
 
+        const likedPlaylist = await prisma.playlist.findFirst({
+          where: { userId: user.id, systemType: "LIKED_TRACKS" },
+          select: { id: true },
+        });
+
         token.subscription = dbUser?.subscription?.type ?? "FREE";
         token.subscriptionStatus = dbUser?.subscription?.status ?? "ACTIVE";
+        token.likedPlaylistId = likedPlaylist?.id ?? null;
       }
 
       if (trigger === "update" && session) {
@@ -87,6 +93,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name;
         session.user.subscription = token.subscription;
         session.user.subscriptionStatus = token.subscriptionStatus;
+        session.user.likedPlaylistId = token.likedPlaylistId;
       }
 
       return session;
@@ -105,6 +112,7 @@ export const authOptions: NextAuthOptions = {
           user.name = fallback;
         }
       }
+
       return (
         account?.provider === "google" || account?.provider === "credentials"
       );
@@ -113,22 +121,29 @@ export const authOptions: NextAuthOptions = {
 
   events: {
     async createUser({ user }) {
-      await prisma.userSubscription.create({
-        data: {
-          userId: user.id,
-          type: "FREE",
-          status: "ACTIVE",
-        },
-      });
+      await Promise.all([
+        prisma.userSubscription.create({
+          data: {
+            userId: user.id,
+            type: "FREE",
+            status: "ACTIVE",
+          },
+        }),
+
+        prisma.playlist.create({
+          data: {
+            title: "Liked Tracks",
+            isSystem: true,
+            systemType: "LIKED_TRACKS",
+            userId: user.id,
+          },
+        }),
+      ]);
     },
   },
 
   pages: {
-    signIn: "/auth/sign-in", // custom login page
-    // signOut: "/auth/signout", // (optional) custom signout
-    // error: "/auth/error",     // (optional) show errors
-    // verifyRequest: "/auth/verify", // (optional) for email provider
-    // newUser: "/onboarding"    // (optional) first login redirect
+    signIn: "/auth/sign-in",
   },
 };
 

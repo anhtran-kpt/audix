@@ -1,19 +1,15 @@
 "use client";
 
-import { TrackItem } from "@/features/track/contracts/track-dto";
-import { getApi, postApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
+import { postApi } from "@/lib/http/api";
+import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 import { toast } from "sonner";
 import {
   PlaylistBanner,
   PlaylistTracks,
 } from "@/features/playlist/data-access/playlist-repo";
-import { playlistKeys } from "@/features/playlist/api/playlist-keys";
-
-type RecommendedTrackItem = TrackItem & {
-  optimistic?: boolean;
-};
+import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
+import { TrackItem } from "@/features/track/contracts/track-dto";
 
 type AddTrackToPlaylist = {
   playlistId: string;
@@ -24,15 +20,11 @@ export function useAddTrackToPlaylist() {
   const qc = useQueryClient();
   const updateCoverMutation = useOptimisticCoverUpdate();
 
-  const recommendedKey = (playlistId: string) =>
-    ["playlists", playlistId, "recommended"] as const;
-
   return useMutation({
-    mutationFn: ({ playlistId, track }: AddTrackToPlaylist) => {
-      return postApi<TrackItem>(`/playlists/${playlistId}/tracks`, {
+    mutationFn: ({ playlistId, track }: AddTrackToPlaylist) =>
+      postApi<TrackItem>(`/playlists/${playlistId}/tracks`, {
         body: { trackId: track.id },
-      });
-    },
+      }),
 
     onMutate: async ({ playlistId, track }) => {
       await Promise.all([
@@ -43,147 +35,59 @@ export function useAddTrackToPlaylist() {
       const prevInfo = qc.getQueryData<PlaylistBanner>(
         playlistKeys.banner(playlistId)
       );
-
       const prevTracks = qc.getQueryData<PlaylistTracks>(
         playlistKeys.tracks(playlistId)
       )?.tracks;
 
       if (!prevTracks || !prevInfo) return null;
 
-      const optimistic: RecommendedTrackItem = {
+      const optimisticTrack = {
         ...track,
         addedAt: new Date(),
-        optimistic: true,
+        trackNumber: prevTracks.length + 1,
       };
 
-      const newTracks = [...prevTracks, optimistic];
+      const newTracks = [...prevTracks, optimisticTrack];
 
-      const newImageIds = newTracks.map((t) => t.album.imageId);
-      const imageIdSet = new Set(newImageIds);
+      const imageIds = newTracks.map((t) => t.album.imageId);
+      const uniqueIds = Array.from(new Set(imageIds));
 
-      const isFirstTrack = prevTracks.length === 0;
-      const has4UniqueImages = imageIdSet.size === 4;
-
-      if (isFirstTrack || has4UniqueImages) {
+      if (prevTracks.length === 0 || uniqueIds.length === 4) {
         updateCoverMutation.mutate({
           playlistId,
-          imageIds: isFirstTrack
-            ? [track.album.imageId]
-            : Array.from(imageIdSet).slice(0, 4),
+          imageIds:
+            prevTracks.length === 0
+              ? [track.album.imageId]
+              : uniqueIds.slice(0, 4),
         });
       }
 
-      qc.setQueryData(
+      qc.setQueryData<PlaylistTracks>(
         playlistKeys.tracks(playlistId),
-        (old: PlaylistTracks) => [...old.tracks, track]
+        (old) => old && { ...old, tracks: newTracks }
       );
 
-      qc.setQueryData(
+      qc.setQueryData<PlaylistBanner>(
         playlistKeys.banner(playlistId),
-        (old: PlaylistBanner) => ({
-          ...old,
-          totalTracks: old.totalTracks + 1,
-          duration: old.duration + track.duration,
-        })
+        (old) =>
+          old && {
+            ...old,
+            totalTracks: old.totalTracks + 1,
+            duration: old.duration + track.duration,
+          }
       );
 
-      return {
-        prevInfo,
-        prevTracks,
-        playlistId,
-        optimisticIndex: newTracks.length - 1,
-        trackId: track.id,
-      };
+      return { prevInfo, prevTracks, playlistId, track };
     },
 
     onError: (_, __, ctx) => {
-      if (ctx?.prevTracks) {
-        qc.setQueryData(playlistKeys.tracks(ctx.playlistId), ctx.prevTracks);
-        qc.setQueryData(playlistKeys.banner(ctx.playlistId), ctx.prevInfo);
-      }
+      if (!ctx) return;
+      qc.setQueryData(playlistKeys.tracks(ctx.playlistId), ctx.prevTracks);
+      qc.setQueryData(playlistKeys.banner(ctx.playlistId), ctx.prevInfo);
     },
 
-    onSuccess: async (newTrack, { playlistId }, ctx) => {
-      toast.success(`Added ${newTrack.title} to playlist.`);
-
-      // qc.setQueryData(
-      //   playlistKeys.tracks(playlistId),
-      //   (old: PlaylistTracks) => {
-      //     if (!old) return old;
-
-      //     const updated = [...old];
-      //     if (ctx && ctx.optimisticIndex !== undefined) {
-      //       updated[ctx.optimisticIndex] = newTrack;
-      //     } else {
-      //       const idx = updated.findIndex((t) => t.id === newTrack.id);
-      //       if (idx !== -1) updated[idx] = newTrack;
-      //       else updated.push(newTrack);
-      //     }
-
-      //     return {
-      //       ...old,
-      //       tracks: updated,
-      //       totalTracks: old.totalTracks + 1,
-      //       duration: old.duration + newTrack.duration,
-      //     };
-      //   }
-      // );
-
-      // qc.setQueryData(
-      //   playlistKeys.tracks(playlistId),
-      //   (old: PlaylistTracks | undefined) => {
-      //     if (!old) return old;
-
-      //     const updated = [...old];
-      //     if (ctx && ctx.optimisticIndex !== undefined) {
-      //       updated[ctx.optimisticIndex] = newTrack;
-      //     } else {
-      //       const idx = updated.findIndex((t) => t.id === newTrack.id);
-      //       if (idx !== -1) updated[idx] = newTrack;
-      //       else updated.push(newTrack);
-      //     }
-
-      //     return {
-      //       ...old,
-      //       tracks: updated,
-      //       totalTracks: old.totalTracks + 1,
-      //       duration: old.duration + newTrack.duration,
-      //     };
-      //   }
-      // );
-
-      qc.invalidateQueries({
-        queryKey: playlistKeys.list(),
-      });
-
-      const rk = recommendedKey(playlistId);
-      const currentRec =
-        qc.getQueryData<RecommendedTrackItem[] | undefined>(rk) ?? [];
-
-      const filteredRec = currentRec.filter((t) => t.id !== ctx?.trackId);
-      const excludeSet = new Set([
-        ...filteredRec.map((t) => t.id),
-        ctx?.trackId ?? "",
-      ]);
-
-      const BATCH = 8;
-      let replacement: RecommendedTrackItem | undefined;
-      try {
-        const candidates = await getApi<RecommendedTrackItem[]>(
-          `/playlists/${playlistId}/recommended?take=${BATCH}`
-        );
-        replacement = candidates.find((c) => !excludeSet.has(c.id));
-      } catch {}
-
-      if (replacement) {
-        filteredRec.unshift(replacement);
-      }
-
-      const deduped = Array.from(
-        new Map(filteredRec.map((t) => [t.id, t])).values()
-      );
-
-      qc.setQueryData(rk, deduped);
+    onSuccess: (track) => {
+      toast.success(`Added ${track.title} to playlist.`);
     },
   });
 }

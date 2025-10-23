@@ -202,7 +202,8 @@ CREATE TABLE "public"."playlists" (
     "description" TEXT,
     "imageId" TEXT,
     "isPublic" BOOLEAN NOT NULL DEFAULT true,
-    "isOfficial" BOOLEAN NOT NULL DEFAULT false,
+    "isSystem" BOOLEAN NOT NULL DEFAULT false,
+    "systemType" TEXT,
     "totalTracks" INTEGER NOT NULL DEFAULT 0,
     "duration" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -221,15 +222,6 @@ CREATE TABLE "public"."playlist_items" (
     "trackId" TEXT NOT NULL,
 
     CONSTRAINT "playlist_items_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "public"."user_liked_tracks" (
-    "userId" TEXT NOT NULL,
-    "trackId" TEXT NOT NULL,
-    "likedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "user_liked_tracks_pkey" PRIMARY KEY ("userId","trackId")
 );
 
 -- CreateTable
@@ -511,12 +503,6 @@ ALTER TABLE "public"."playlist_items" ADD CONSTRAINT "playlist_items_playlistId_
 
 -- AddForeignKey
 ALTER TABLE "public"."playlist_items" ADD CONSTRAINT "playlist_items_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."user_liked_tracks" ADD CONSTRAINT "user_liked_tracks_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."user_liked_tracks" ADD CONSTRAINT "user_liked_tracks_trackId_fkey" FOREIGN KEY ("trackId") REFERENCES "public"."tracks"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."user_liked_albums" ADD CONSTRAINT "user_liked_albums_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

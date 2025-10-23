@@ -12,4 +12,5 @@ export const meEndpoints = {
   toggleLikeAlbum: (albumId: string) => `/me/like/albums/${albumId}` as const,
   toggleLikePlaylist: (playlistId: string) =>
     `/me/like/playlists/${playlistId}` as const,
+  toggleLikeTrack: (trackId: string) => `/me/like/tracks/${trackId}` as const,
 };

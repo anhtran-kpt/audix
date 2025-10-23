@@ -9,6 +9,7 @@ import cloudinary from "@/lib/config/cloudinary";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { AwaitedReturnType } from "@/utils/type";
 import { AppError } from "@/lib/errors";
+import { attachIsLikedToTracks } from "@/lib/services/liked-decorator";
 
 export const authorizePlaylist = async ({
   userId,
@@ -368,13 +369,13 @@ export const getPlaylistTracks = async ({
     addedAt: track.addedAt,
   }));
 
-  const playlistTracks = tracks.map((track) => ({
+  const rawTracks = tracks.map((track) => ({
     ...track,
     artists: track.artists.map((a) => a.artist),
   }));
 
   return {
-    tracks: playlistTracks,
+    tracks: await attachIsLikedToTracks(userId, rawTracks),
     role: auth.role,
     canEdit: auth.canEdit,
     canView: auth.canView,

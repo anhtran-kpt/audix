@@ -41,7 +41,6 @@ model User {
   sessions Session[]
 
   playlists       Playlist[]
-  likedTracks     UserLikedTrack[]
   likedAlbums     UserLikedAlbum[]
   likedPlaylists  UserLikedPlaylist[]
   followedArtists UserFollowedArtist[]
@@ -202,7 +201,6 @@ model Track {
   artists               TrackArtist[]
   credits               TrackCredit[]
   genres                TrackGenre[]
-  likedBy               UserLikedTrack[]
   playlistItems         PlaylistTrack[]
   playHistory           PlayHistory[]
   playbackSnapshotTrack PlaybackSnapshotTrack[]
@@ -357,7 +355,8 @@ model Playlist {
   description String?  @db.Text
   imageId     String?
   isPublic    Boolean  @default(true)
-  isOfficial  Boolean  @default(false) // Playlist created by system
+  isSystem    Boolean  @default(false)
+  systemType  String?
   totalTracks Int      @default(0)
   duration    Int      @default(0)
   createdAt   DateTime @default(now())
@@ -390,18 +389,6 @@ model PlaylistTrack {
 // ================================
 // USER INTERACTIONS (LIKES/FOLLOWS)
 // ================================
-
-model UserLikedTrack {
-  userId  String
-  trackId String
-  likedAt DateTime @default(now())
-
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  track Track @relation(fields: [trackId], references: [id], onDelete: Cascade)
-
-  @@id([userId, trackId])
-  @@map("user_liked_tracks")
-}
 
 model UserLikedAlbum {
   userId  String

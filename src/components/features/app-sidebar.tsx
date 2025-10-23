@@ -204,6 +204,7 @@ export function AppSidebar() {
                                     .NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
                                 }
                                 containerClassName="size-10"
+                                priority
                               />
                               <MiniPlayContextButton
                                 context={{

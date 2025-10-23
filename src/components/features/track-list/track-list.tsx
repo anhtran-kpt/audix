@@ -2,16 +2,16 @@
 
 import { AppImage } from "@/components/shared/app-image";
 import { TrackItemInfo } from "@/components/shared/track-item-info";
-import { IconButton } from "@/components/ui/icon-button";
 import { NavLink } from "@/components/ui/nav-link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrackItem } from "@/features/track/contracts/track-dto";
 import { cn } from "@/lib/utils";
 import { formatDuration } from "@/utils/date";
 import { format } from "date-fns/format";
-import { Clock3Icon, PlusCircleIcon } from "lucide-react";
+import { Clock3Icon } from "lucide-react";
 import { TrackIndexCell } from "./track-index-cell";
 import { TrackDropdownDetails } from "../track-dropdown-details";
+import { ToggleLikeTrackButton } from "../toggle-like-track-button";
 
 type TrackListProps = {
   tracks: TrackItem[];
@@ -150,7 +150,7 @@ export const TrackList = ({
               </div>
             )}
             <div className="flex justify-end items-center select-none sm:opacity-0 group-hover/item:select-auto group-hover/item:opacity-100">
-              <IconButton icon={PlusCircleIcon} />
+              <ToggleLikeTrackButton track={track} />
             </div>
             <div className="hidden sm:flex justify-end items-center">
               {formatDuration(track.duration)}

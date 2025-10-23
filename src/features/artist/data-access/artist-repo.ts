@@ -6,6 +6,8 @@ import { artistItemSelect } from "./artist-select";
 import { AppError } from "@/lib/errors";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
+import { attachIsLikedToTracks } from "@/lib/services/liked-decorator";
+import { getUserIdOrThrow } from "@/lib/auth";
 
 export const getFollowStatus = async (userId: string, artistId: string) => {
   const [artist, link] = await Promise.all([
@@ -91,11 +93,12 @@ export type ArtistBannerReturn = AwaitedReturnType<typeof getArtistBanner>;
 
 export const getArtistPopularTracks = async (
   artistId: string,
-  paginationParams: PaginationParams
+  params: PaginationParams
 ) => {
-  const { limit, offset } = paginationParams;
+  const { limit, offset } = params;
+  const userId = await getUserIdOrThrow();
 
-  const [items, total] = await Promise.all([
+  const [rawTracks, total] = await Promise.all([
     db.trackArtist
       .findMany({
         where: {
@@ -128,8 +131,10 @@ export const getArtistPopularTracks = async (
     }),
   ]);
 
+  const tracks = await attachIsLikedToTracks(userId, rawTracks);
+
   return {
-    items,
+    items: tracks,
     pagination: getPaginationMeta({ limit, offset, total }),
   };
 };

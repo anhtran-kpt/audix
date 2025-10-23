@@ -7,6 +7,10 @@ import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 import { albumItemSelect } from "@/features/album/data-access/album-select";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
+import {
+  addTrackToPlaylist,
+  removeTrackFromPlaylist,
+} from "@/features/playlist/data-access/playlist-repo";
 
 export const getMyProfile = async (userId: string) => {
   const user = await db.user.findUnique({
@@ -104,24 +108,41 @@ export const getMyPlaylists = async ({
 }) => {
   const { offset, limit } = params;
 
-  const [playlists, total] = await Promise.all([
-    db.playlist.findMany({
-      where: {
-        userId,
-      },
-      select: { ...playlistItemSelect },
-      orderBy: { createdAt: "desc" },
-    }),
+  const likedSongs = await db.playlist.findFirst({
+    where: {
+      userId,
+      systemType: "LIKED_SONGS",
+    },
+    select: { ...playlistItemSelect },
+  });
 
-    db.playlist.count({
-      where: {
-        userId,
+  const others = await db.playlist.findMany({
+    where: {
+      userId,
+      NOT: {
+        systemType: "LIKED_SONGS",
       },
-    }),
-  ]);
+    },
+    select: { ...playlistItemSelect },
+    orderBy: {
+      createdAt: "desc",
+    },
+    skip: offset,
+    take: limit,
+  });
+
+  const total = await db.playlist.count({
+    where: {
+      userId,
+    },
+  });
+
+  const items = likedSongs
+    ? [likedSongs, ...others.slice(0, limit - 1)]
+    : others;
 
   return {
-    items: playlists,
+    items,
     pagination: getPaginationMeta({ limit, offset, total }),
   };
 };
@@ -529,3 +550,37 @@ export const unlikePlaylist = async ({
 };
 
 export type UnlikePlaylistOutput = AwaitedReturnType<typeof unlikePlaylist>;
+
+export const toggleLikeTrack = async ({
+  userId,
+  trackId,
+}: {
+  userId: string;
+  trackId: string;
+}) => {
+  const likedPlaylist = await db.playlist.findFirstOrThrow({
+    where: { userId, systemType: "LIKED_SONGS" },
+  });
+
+  const existing = await db.playlistTrack.findUnique({
+    where: {
+      playlistId_trackId: {
+        playlistId: likedPlaylist.id,
+        trackId,
+      },
+    },
+  });
+
+  if (existing) {
+    await removeTrackFromPlaylist({
+      playlistId: likedPlaylist.id,
+      trackId,
+    });
+    return { isLiked: false };
+  }
+
+  await addTrackToPlaylist(likedPlaylist.id, trackId);
+  return { isLiked: true };
+};
+
+export type ToggleLikeTrackOutput = AwaitedReturnType<typeof toggleLikeTrack>;

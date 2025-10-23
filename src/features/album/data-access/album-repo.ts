@@ -5,6 +5,8 @@ import { AppError } from "@/lib/errors";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
 import { albumItemSelect } from "./album-select";
+import { attachIsLikedToTracks } from "@/lib/services/liked-decorator";
+import { getUserIdOrThrow } from "@/lib/auth";
 
 export const getAlbumBanner = async (albumId: string) => {
   const album = await db.album.findUnique({
@@ -38,6 +40,8 @@ export const getAlbumBanner = async (albumId: string) => {
 export type AlbumBanner = AwaitedReturnType<typeof getAlbumBanner>;
 
 export const getAlbumTracks = async (albumId: string) => {
+  const userId = await getUserIdOrThrow();
+
   const album = await db.album.findUnique({
     where: {
       id: albumId,
@@ -78,10 +82,12 @@ export const getAlbumTracks = async (albumId: string) => {
     throw new AppError("NOT_FOUND", "Album not found");
   }
 
-  return album.tracks.map((track) => ({
+  const rawTracks = album.tracks.map((track) => ({
     ...track,
     artists: track.artists.map((a) => a.artist),
   }));
+
+  return await attachIsLikedToTracks(userId, rawTracks);
 };
 
 export type AlbumTracks = AwaitedReturnType<typeof getAlbumTracks>;
