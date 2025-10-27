@@ -8,6 +8,7 @@ import { TrackItemCompact } from "../shared/track-item-compact";
 import { MiniPlayTrackButton } from "./play/mini-play-track-button";
 import { useQuery } from "@tanstack/react-query";
 import { trackQueryOptions } from "@/features/track/api/track-query-options";
+import { playbackQueryOptions } from "@/features/playback/api/playback-query-options";
 
 export default function QueueView() {
   const { queue, currentTrack, snapshot } = usePlaybackStore(
@@ -32,13 +33,13 @@ export default function QueueView() {
     ...trackQueryOptions.trackList(queueLaterIds),
   });
 
-  const { data: recentTracks } = useQuery({ ...trackQueryOptions.history() });
+  const { data: recentTracks } = useQuery({
+    ...playbackQueryOptions.history(),
+  });
 
   if (!currentTrack || !snapshot) {
     return null;
   }
-
-  console.log(recentTracks);
 
   return (
     <Tabs defaultValue="queue" className="size-full">

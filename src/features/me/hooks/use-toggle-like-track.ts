@@ -6,9 +6,11 @@ import { useAddTrackToPlaylist } from "@/features/playlist/hooks/use-add-track-t
 import { useRemoveTrackFromPlaylist } from "@/features/playlist/hooks/use-remove-track-from-playlist";
 import { artistKeys } from "@/features/artist/api/artist-keys";
 import { albumKeys } from "@/features/album/api/album-keys";
+import { usePlaybackStore } from "@/stores/use-playback-store";
 
 export function useToggleLikeTrack() {
   const qc = useQueryClient();
+  const { updateTrackLikeStatus } = usePlaybackStore();
   const addTrack = useAddTrackToPlaylist();
   const removeTrack = useRemoveTrackFromPlaylist();
 
@@ -16,13 +18,11 @@ export function useToggleLikeTrack() {
     mutationFn: async ({
       track,
       likedPlaylistId,
-      isLiked,
     }: {
       track: TrackItem;
-      isLiked: boolean;
       likedPlaylistId: string;
     }) => {
-      if (isLiked) {
+      if (track.isLiked) {
         await removeTrack.mutateAsync({
           playlistId: likedPlaylistId,
           trackId: track.id,
@@ -38,11 +38,12 @@ export function useToggleLikeTrack() {
     },
 
     onSuccess: (response, { track }) => {
-      // Cập nhật các query phụ thuộc
       track.artists.forEach((artist) =>
         qc.invalidateQueries({ queryKey: artistKeys.popularTracks(artist.id) })
       );
       qc.invalidateQueries({ queryKey: albumKeys.tracks(track.album.id) });
+
+      updateTrackLikeStatus(track.id, response.isLiked);
     },
   });
 }

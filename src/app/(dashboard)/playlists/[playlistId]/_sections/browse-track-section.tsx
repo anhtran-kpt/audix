@@ -33,7 +33,7 @@ export const BrowseTrackSection = ({ playlistId }: BrowseTrackSectionProps) => {
   }
 
   if (!data.canView) {
-    return <div>You have no permission to see this content.</div>;
+    return <div>You do not have permission to see this content.</div>;
   }
 
   return (

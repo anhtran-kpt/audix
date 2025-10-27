@@ -6,9 +6,9 @@ import stringSimilarity from "string-similarity";
 import { getPaginationMeta, PaginationMeta } from "@/types/get-pagination-meta";
 import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 import { playlistItemSelect } from "@/features/playlist/data-access/playlist-select";
-import { fullTrackItemSelect } from "@/features/track/data-access/track-select";
 import { AwaitedReturnType } from "@/utils/type";
 import { getUserIdOrThrow } from "@/lib/auth";
+import { getFullTracks } from "@/features/track/data-access/track-repo";
 
 export type SearchResults = {
   topResult:
@@ -206,20 +206,18 @@ export const search = async (query: SearchQuery) => {
 
 export const searchTracks = async (query: SearchQuery) => {
   const { q, limit, offset } = query;
+  const userId = await getUserIdOrThrow();
 
-  return await db.track
-    .findMany({
-      where: { title: { contains: q, mode: "insensitive" } },
-      take: limit,
-      select: fullTrackItemSelect,
-      skip: offset,
-    })
-    .then((data) =>
-      data.map((item) => ({
-        ...item,
-        artists: item.artists.map((a) => a.artist),
-      }))
-    );
+  const rawTracks = await db.track.findMany({
+    where: { title: { contains: q, mode: "insensitive" } },
+    take: limit,
+    skip: offset,
+    select: {
+      id: true,
+    },
+  });
+
+  return await getFullTracks({ userId, trackIds: rawTracks.map((t) => t.id) });
 };
 
 type TrackItem = AwaitedReturnType<typeof searchTracks>[number];

@@ -10,6 +10,9 @@ export const useAudioPlayer = () => {
   const isLoadingNewTrack = useRef(false);
   const lastProgressUpdate = useRef(0);
 
+  const listenAccumulated = useRef(0);
+  const hasReportedListen = useRef(false);
+
   const {
     progressMs,
     isPlaying,
@@ -49,11 +52,36 @@ export const useAudioPlayer = () => {
   const handleTimeUpdate = useCallback(() => {
     if (!audioRef.current || isLoadingNewTrack.current) return;
 
-    const currentTimeMs = Math.floor(audioRef.current.currentTime * 1000);
+    const audio = audioRef.current;
+    const currentTimeSec = audio.currentTime;
+    const delta = currentTimeSec - lastProgressUpdate.current / 1000;
 
+    if (delta > 0 && !audio.paused && !audio.seeking) {
+      listenAccumulated.current += delta;
+    }
+
+    const currentTimeMs = Math.floor(currentTimeSec * 1000);
     if (Math.abs(currentTimeMs - lastProgressUpdate.current) >= 100) {
       lastProgressUpdate.current = currentTimeMs;
       seek(currentTimeMs);
+    }
+
+    const durationSec = audio.duration || 0;
+    const threshold30s = listenAccumulated.current >= 30;
+    const thresholdHalf =
+      durationSec > 0 && listenAccumulated.current >= durationSec * 0.5;
+
+    if (!hasReportedListen.current && (threshold30s || thresholdHalf)) {
+      hasReportedListen.current = true;
+
+      const historyId = usePlaybackStore.getState().session?.playHistoryId;
+      const listenedSec = Math.floor(listenAccumulated.current);
+
+      if (historyId) {
+        usePlaybackStore
+          .getState()
+          .updatePlayHistoryListen(historyId, listenedSec);
+      }
     }
   }, [seek]);
 
@@ -64,7 +92,6 @@ export const useAudioPlayer = () => {
   const handleError = useCallback(
     (e: Event) => {
       console.error("Audio playback error:", e);
-
       pause();
     },
     [pause]
@@ -119,7 +146,6 @@ export const useAudioPlayer = () => {
     if (audio.src !== newSrc) {
       audio.pause();
       audio.src = newSrc;
-
       const targetTime = progressMs / 1000;
 
       audio.load();
@@ -177,6 +203,11 @@ export const useAudioPlayer = () => {
   }, [progressMs]);
 
   useEffect(() => {
+    listenAccumulated.current = 0;
+    hasReportedListen.current = false;
+  }, [currentTrack?.id]);
+
+  useEffect(() => {
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -186,7 +217,5 @@ export const useAudioPlayer = () => {
     };
   }, []);
 
-  return {
-    audioRef,
-  };
+  return { audioRef };
 };

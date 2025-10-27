@@ -1,6 +1,6 @@
 import { meKeys } from "@/features/me/api/me-keys";
+import { MyPlaylists } from "@/features/me/data-access/me-repo";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
-import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
 import { deleteApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
@@ -28,9 +28,18 @@ export function useOptimisticPlaylistDelete() {
 
       const prevData = qc.getQueryData(meKeys.myPlaylists());
 
-      qc.setQueryData<PlaylistItem[]>(meKeys.myPlaylists(), (old = []) =>
-        old.filter((pl) => pl.id !== playlistId)
-      );
+      qc.setQueryData<MyPlaylists>(meKeys.myPlaylists(), (old) => {
+        if (!old) return;
+
+        return {
+          ...old,
+          pagination: {
+            ...old.pagination,
+            total: old.pagination.total - 1,
+          },
+          items: old?.items.filter((pl) => pl.id !== playlistId),
+        };
+      });
 
       return { prevData, playlistId };
     },

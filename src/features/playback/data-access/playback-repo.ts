@@ -10,9 +10,14 @@ import {
 } from "../contracts/playback-dto";
 import { NextResponse } from "next/server";
 import { playbackSessionSelect } from "./playback-select";
-import { PlaybackContextType, Prisma } from "@/app/generated/prisma";
+import { PlaybackContextType } from "@/app/generated/prisma";
 import { shuffleArray } from "@/utils/array";
 import { AppError } from "@/lib/errors";
+import {
+  getFullTrackOrThrow,
+  getFullTracks,
+} from "@/features/track/data-access/track-repo";
+import { AwaitedReturnType } from "@/utils/type";
 
 const generateHash = (
   userId: string,
@@ -24,13 +29,6 @@ const generateHash = (
     .update(JSON.stringify({ userId, contextType, contextId, trackIds }))
     .digest("hex");
 };
-
-const transformTrackItem = (
-  track: Prisma.TrackGetPayload<{ select: typeof trackItemSelect }>
-) => ({
-  ...track,
-  artists: track.artists.map((a) => a.artist),
-});
 
 const buildClientQueue = ({
   snapshot,
@@ -323,7 +321,10 @@ export const getClientPlaybackSession = async (userId: string) => {
     hasNext,
     hasPrevious,
     queue,
-    currentTrack: transformTrackItem(session.currentTrack),
+    currentTrack: await getFullTrackOrThrow({
+      userId,
+      trackId: session.currentTrack.id,
+    }),
   };
 };
 
@@ -352,36 +353,44 @@ export const startPlaybackSession = async ({
 
   const currentTrackId = snapshotTracks[contextIndex].trackId;
 
-  const session = await db.playbackSession
-    .upsert({
-      where: { userId },
-      create: { userId, snapshotId: snapshot.id, contextIndex, currentTrackId },
-      update: {
-        snapshotId: snapshot.id,
-        contextIndex,
-        currentTrackId,
-        version: { increment: 1 },
-      },
-      select: playbackSessionSelect,
-    })
-    .then((s) => ({
-      ...s,
-      currentTrack: transformTrackItem(s.currentTrack),
-    }));
+  const session = await db.playbackSession.upsert({
+    where: { userId },
+    create: { userId, snapshotId: snapshot.id, contextIndex, currentTrackId },
+    update: {
+      snapshotId: snapshot.id,
+      contextIndex,
+      currentTrackId,
+      version: { increment: 1 },
+    },
+    select: playbackSessionSelect,
+  });
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
   const queue = buildClientQueue(session);
 
-  await db.playHistory.create({
+  const playHistory = await db.playHistory.create({
     data: {
       snapshotId: snapshot.id,
       trackId: currentTrackId,
       userId,
       listenedSec: 0,
     },
+    select: {
+      id: true,
+    },
   });
 
-  return { ...session, hasNext, hasPrevious, queue };
+  return {
+    ...session,
+    currentTrack: await getFullTrackOrThrow({
+      userId,
+      trackId: session.currentTrack.id,
+    }),
+    hasNext,
+    hasPrevious,
+    queue,
+    playHistoryId: playHistory.id,
+  };
 };
 
 export const skipToNext = async (userId: string) => {
@@ -437,25 +446,20 @@ export const skipToNext = async (userId: string) => {
 
   if (!nextTrackId) return null;
 
-  const updated = await db.playbackSession
-    .update({
-      where: { userId },
-      data: {
-        currentTrackId: nextTrackId,
-        contextIndex,
-        version: { increment: 1 },
-      },
-      select: playbackSessionSelect,
-    })
-    .then((s) => ({
-      ...s,
-      currentTrack: transformTrackItem(s.currentTrack),
-    }));
+  const updated = await db.playbackSession.update({
+    where: { userId },
+    data: {
+      currentTrackId: nextTrackId,
+      contextIndex,
+      version: { increment: 1 },
+    },
+    select: playbackSessionSelect,
+  });
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
   const queueState = buildClientQueue(updated);
 
-  await db.playHistory.create({
+  const playHistory = await db.playHistory.create({
     data: {
       snapshotId: session.snapshotId,
       trackId: nextTrackId,
@@ -466,9 +470,14 @@ export const skipToNext = async (userId: string) => {
 
   return {
     ...updated,
+    currentTrack: await getFullTrackOrThrow({
+      userId,
+      trackId: updated.currentTrack.id,
+    }),
     hasNext,
     hasPrevious,
     queue: queueState,
+    playHistoryId: playHistory.id,
   };
 };
 
@@ -498,25 +507,20 @@ export const skipToPrevious = async (userId: string, progressMs = 0) => {
 
   const newTrackId = tracks[contextIndex].trackId;
 
-  const updated = await db.playbackSession
-    .update({
-      where: { userId },
-      data: {
-        currentTrackId: newTrackId,
-        contextIndex,
-        version: { increment: 1 },
-      },
-      select: playbackSessionSelect,
-    })
-    .then((s) => ({
-      ...s,
-      currentTrack: transformTrackItem(s.currentTrack),
-    }));
+  const updated = await db.playbackSession.update({
+    where: { userId },
+    data: {
+      currentTrackId: newTrackId,
+      contextIndex,
+      version: { increment: 1 },
+    },
+    select: playbackSessionSelect,
+  });
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(updated);
   const queue = buildClientQueue(updated);
 
-  await db.playHistory.create({
+  const playHistory = await db.playHistory.create({
     data: {
       snapshotId: session.snapshotId,
       trackId: newTrackId,
@@ -525,7 +529,17 @@ export const skipToPrevious = async (userId: string, progressMs = 0) => {
     },
   });
 
-  return { ...updated, hasNext, hasPrevious, queue };
+  return {
+    ...updated,
+    currentTrack: await getFullTrackOrThrow({
+      userId,
+      trackId: updated.currentTrack.id,
+    }),
+    hasNext,
+    hasPrevious,
+    queue,
+    playHistoryId: playHistory.id,
+  };
 };
 
 export const shufflePlayback = async (
@@ -567,4 +581,92 @@ export const repeatPlayback = async (
       repeatMode: true,
     },
   });
+};
+
+export const getHistoryTracks = async (userId: string) => {
+  const playHistory = await db.playHistory.findMany({
+    where: { userId },
+    orderBy: { playedAt: "desc" },
+    select: {
+      id: true,
+      trackId: true,
+      playedAt: true,
+    },
+    take: 20,
+  });
+
+  if (playHistory.length === 0) return [];
+
+  const fullTracks = await getFullTracks({
+    userId,
+    trackIds: Array.from(new Set(playHistory.map((p) => p.trackId))),
+  });
+
+  const trackMap = new Map(fullTracks.map((t) => [t.id, t]));
+
+  const order = new Map(playHistory.map((p, i) => [p.trackId, i]));
+
+  return playHistory
+    .map((entry) => ({
+      id: entry.id,
+      playedAt: entry.playedAt,
+      track: trackMap.get(entry.trackId)!,
+    }))
+    .sort((a, b) => order.get(a.track.id)! - order.get(b.track.id)!);
+};
+
+export type HistoryTracks = AwaitedReturnType<typeof getHistoryTracks>;
+
+export const updatePlayHistoryListen = async ({
+  userId,
+  historyId,
+  listenedSec,
+}: {
+  userId: string;
+  historyId: string;
+  listenedSec: number;
+}) => {
+  const history = await db.playHistory.findUnique({
+    where: { id: historyId },
+    select: {
+      id: true,
+      trackId: true,
+      listenedSec: true,
+      playedAt: true,
+      userId: true,
+    },
+  });
+
+  if (!history || history.userId !== userId) {
+    throw new AppError("NOT_FOUND", "Play history not found");
+  }
+
+  const updated = await db.playHistory.update({
+    where: { id: historyId },
+    data: {
+      listenedSec: Math.max(history.listenedSec, listenedSec),
+    },
+  });
+
+  const thresholdSec = 30;
+
+  const track = await db.track.findUnique({
+    where: { id: history.trackId },
+    select: { duration: true, playCount: true },
+  });
+
+  if (!track) {
+    throw new AppError("NOT_FOUND", "Track not found");
+  }
+
+  const isValidListen =
+    updated.listenedSec >= thresholdSec ||
+    (track.duration && updated.listenedSec >= track.duration * 0.5);
+
+  if (isValidListen) {
+    await db.track.update({
+      where: { id: history.trackId },
+      data: { playCount: { increment: 1 } },
+    });
+  }
 };

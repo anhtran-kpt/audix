@@ -108,10 +108,10 @@ export const getMyPlaylists = async ({
 }) => {
   const { offset, limit } = params;
 
-  const likedSongs = await db.playlist.findFirst({
+  const likedTracks = await db.playlist.findFirst({
     where: {
       userId,
-      systemType: "LIKED_SONGS",
+      systemType: "LIKED_TRACKS",
     },
     select: { ...playlistItemSelect },
   });
@@ -119,9 +119,7 @@ export const getMyPlaylists = async ({
   const others = await db.playlist.findMany({
     where: {
       userId,
-      NOT: {
-        systemType: "LIKED_SONGS",
-      },
+      OR: [{ systemType: null }, { systemType: { not: "LIKED_TRACKS" } }],
     },
     select: { ...playlistItemSelect },
     orderBy: {
@@ -134,11 +132,12 @@ export const getMyPlaylists = async ({
   const total = await db.playlist.count({
     where: {
       userId,
+      OR: [{ systemType: null }, { systemType: { not: "LIKED_TRACKS" } }],
     },
   });
 
-  const items = likedSongs
-    ? [likedSongs, ...others.slice(0, limit - 1)]
+  const items = likedTracks
+    ? [likedTracks, ...others.slice(0, limit - 1)]
     : others;
 
   return {
@@ -559,7 +558,7 @@ export const toggleLikeTrack = async ({
   trackId: string;
 }) => {
   const likedPlaylist = await db.playlist.findFirstOrThrow({
-    where: { userId, systemType: "LIKED_SONGS" },
+    where: { userId, systemType: "LIKED_TRACKS" },
   });
 
   const existing = await db.playlistTrack.findUnique({

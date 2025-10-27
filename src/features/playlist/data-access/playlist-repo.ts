@@ -4,12 +4,12 @@ import {
   UpdatePlaylistInput,
 } from "@/features/playlist/contracts/playlist-dto";
 import { trackItemSelect } from "@/features/track/data-access/track-select";
-import { Prisma } from "@/app/generated/prisma";
 import cloudinary from "@/lib/config/cloudinary";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { AwaitedReturnType } from "@/utils/type";
 import { AppError } from "@/lib/errors";
-import { attachIsLikedToTracks } from "@/lib/services/liked-decorator";
+import { getFullTracks } from "@/features/track/data-access/track-repo";
+import { shuffleArray } from "@/utils/array";
 
 export const authorizePlaylist = async ({
   userId,
@@ -25,14 +25,24 @@ export const authorizePlaylist = async ({
       title: true,
       userId: true,
       isPublic: true,
+      isSystem: true,
     },
   });
 
   if (!playlist) {
     return {
       playlist: null,
-      role: "NONE",
+      role: "NONE" as const,
       canView: false,
+      canEdit: false,
+    };
+  }
+
+  if (playlist.isSystem) {
+    return {
+      playlist,
+      role: "SYSTEM" as const,
+      canView: playlist.isPublic,
       canEdit: false,
     };
   }
@@ -42,7 +52,7 @@ export const authorizePlaylist = async ({
   if (isOwner) {
     return {
       playlist,
-      role: "OWNER",
+      role: "OWNER" as const,
       canView: true,
       canEdit: true,
     };
@@ -51,7 +61,7 @@ export const authorizePlaylist = async ({
   if (playlist.isPublic) {
     return {
       playlist,
-      role: "VIEWER",
+      role: "VIEWER" as const,
       canView: true,
       canEdit: false,
     };
@@ -59,7 +69,7 @@ export const authorizePlaylist = async ({
 
   return {
     playlist,
-    role: "NONE",
+    role: "NONE" as const,
     canView: false,
     canEdit: false,
   };
@@ -307,6 +317,7 @@ export const getPlaylistBanner = async ({
       duration: true,
       isPublic: true,
       description: true,
+      systemType: true,
       user: {
         select: {
           id: true,
@@ -344,7 +355,7 @@ export const getPlaylistTracks = async ({
     throw new AppError("FORBIDDEN", "Forbidden");
   }
 
-  const playlist = await db.playlist.findUnique({
+  const playlist = await db.playlist.findUniqueOrThrow({
     where: {
       id: playlistId,
     },
@@ -352,30 +363,29 @@ export const getPlaylistTracks = async ({
       tracks: {
         select: {
           addedAt: true,
-          track: {
-            select: trackItemSelect,
-          },
+          trackId: true,
         },
+        orderBy: { position: "asc" },
       },
     },
   });
 
-  if (!playlist) {
-    throw new AppError("NOT_FOUND", "Playlist not found");
-  }
+  const fullTracks = await getFullTracks({
+    userId,
+    trackIds: playlist.tracks.map((t) => t.trackId),
+  });
 
-  const tracks = playlist.tracks.map((track) => ({
-    ...track.track,
-    addedAt: track.addedAt,
-  }));
+  const addedAtMap = new Map(
+    playlist.tracks.map((t) => [t.trackId, t.addedAt])
+  );
 
-  const rawTracks = tracks.map((track) => ({
+  const mergedTracks = fullTracks.map((track) => ({
     ...track,
-    artists: track.artists.map((a) => a.artist),
+    addedAt: addedAtMap.get(track.id) ?? null,
   }));
 
   return {
-    tracks: await attachIsLikedToTracks(userId, rawTracks),
+    tracks: mergedTracks,
     role: auth.role,
     canEdit: auth.canEdit,
     canView: auth.canView,
@@ -391,23 +401,22 @@ export const getRecommendedTracks = async ({
 }: {
   userId: string;
   playlistId: string;
-  take: number;
+  take?: number;
 }) => {
   const auth = await authorizePlaylist({ userId, playlistId });
 
-  if (!auth.canView) {
-    throw new AppError("FORBIDDEN", "Forbidden");
-  }
+  if (!auth.canView) throw new AppError("FORBIDDEN", "Forbidden");
 
   const playlist = await db.playlist.findUniqueOrThrow({
     where: { id: playlistId },
     select: {
       tracks: {
         select: {
+          trackId: true,
           track: {
             select: {
               id: true,
-              genres: { select: { genre: { select: { id: true } } } },
+              genres: { select: { genreId: true } },
             },
           },
         },
@@ -416,114 +425,81 @@ export const getRecommendedTracks = async ({
   });
 
   const trackIds = playlist.tracks.map((t) => t.track.id);
-  const genreIds = playlist.tracks.flatMap((t) =>
-    t.track.genres.map((g) => g.genre.id)
-  );
+  const genreIds = [
+    ...new Set(
+      playlist.tracks.flatMap((t) => t.track.genres.map((g) => g.genreId))
+    ),
+  ];
 
-  let candidateIds: { id: string }[] = [];
+  if (trackIds.length === 0) {
+    const allTrackIds = await db.track.findMany({
+      select: { id: true },
+    });
 
-  if (genreIds.length > 0) {
-    candidateIds = await db.$queryRaw<Array<{ id: string }>>(Prisma.sql`
-      SELECT t.id
-      FROM "tracks" t
-      JOIN "track_genres" tg ON tg."trackId" = t.id
-      WHERE tg."genreId" IN (${
-        genreIds.length > 0 ? Prisma.join(genreIds) : Prisma.empty
-      })
-      ${
-        trackIds.length > 0
-          ? Prisma.sql`AND t.id NOT IN (${Prisma.join(trackIds)})`
-          : Prisma.empty
-      }
-      ORDER BY RANDOM()
-      LIMIT ${take}
-    `);
+    const randomIds = shuffleArray(allTrackIds)
+      .slice(0, take)
+      .map((t) => t.id);
+
+    const fullTracks = await getFullTracks({
+      userId,
+      trackIds: randomIds,
+    });
+
+    return { tracks: fullTracks, ...auth };
   }
 
-  if (candidateIds.length < take) {
-    const needed = take - candidateIds.length;
-
-    const fallbackIds = await db.$queryRaw<Array<{ id: string }>>(Prisma.sql`
-      SELECT id
-      FROM "tracks" t
-      ${
-        trackIds.length + candidateIds.length > 0
-          ? Prisma.sql`WHERE t.id NOT IN (${Prisma.join([
-              ...trackIds,
-              ...candidateIds.map((r) => r.id),
-            ])})`
-          : Prisma.empty
-      }
-      ORDER BY RANDOM()
-      LIMIT ${needed}
-    `);
-
-    candidateIds = [...candidateIds, ...fallbackIds];
-  }
-
-  let tracks = await db.track.findMany({
-    where: { id: { in: candidateIds.map((r) => r.id) } },
-    select: trackItemSelect,
+  const candidateIds = await db.track.findMany({
+    where: {
+      id: { notIn: trackIds },
+      genres:
+        genreIds.length > 0
+          ? { some: { genreId: { in: genreIds } } }
+          : undefined,
+    },
+    select: { id: true },
   });
 
-  if (tracks.length < take) {
-    const missing = take - tracks.length;
+  const shuffledCandidates = shuffleArray(candidateIds);
+  const selectedIds = shuffledCandidates.slice(0, take).map((t) => t.id);
 
-    const moreIds = await db.$queryRaw<Array<{ id: string }>>(Prisma.sql`
-      SELECT id
-      FROM "tracks" t
-      WHERE t.id NOT IN (${Prisma.join([
-        ...trackIds,
-        ...tracks.map((t) => t.id),
-      ])})
-      ORDER BY RANDOM()
-      LIMIT ${missing}
-    `);
+  if (selectedIds.length < take) {
+    const missing = take - selectedIds.length;
 
-    if (moreIds.length > 0) {
-      const moreTracks = await db.track.findMany({
-        where: { id: { in: moreIds.map((r) => r.id) } },
-        select: trackItemSelect,
-      });
+    const fallbackIds = await db.track.findMany({
+      where: {
+        id: { notIn: [...trackIds, ...selectedIds] },
+      },
+      select: { id: true },
+    });
 
-      tracks = [...tracks, ...moreTracks];
-    }
+    const shuffledFallback = shuffleArray(fallbackIds);
+    const additionalIds = shuffledFallback.slice(0, missing).map((t) => t.id);
+
+    selectedIds.push(...additionalIds);
   }
 
-  const recommendedTracks = tracks.map((track) => ({
-    ...track,
-    addedAt: new Date(),
-    artists: track.artists.map((a) => a.artist),
-  }));
+  const fullTracks = await getFullTracks({
+    userId,
+    trackIds: selectedIds,
+  });
 
   return {
-    tracks: recommendedTracks,
-    role: auth.role,
-    canEdit: auth.canEdit,
-    canView: auth.canView,
+    tracks: fullTracks,
+    ...auth,
   };
 };
 
-export type RecommendedTracks = AwaitedReturnType<typeof getRecommendedTracks>;
+export type RecommendedTracks = Awaited<
+  ReturnType<typeof getRecommendedTracks>
+>;
 
 export const uploadPlaylistCover = async ({
-  userId,
   playlistId,
   imageIds,
 }: {
-  userId: string;
   playlistId: string;
   imageIds: string[];
 }) => {
-  const auth = await authorizePlaylist({
-    playlistId,
-    userId,
-  });
-
-  if (!auth.canEdit) {
-    return new AppError("FORBIDDEN", "You cannot edit this playlist");
-  }
-
   try {
     if (imageIds.length === 1) {
       const [imageId] = imageIds;
@@ -567,7 +543,11 @@ export const uploadPlaylistCover = async ({
       });
     }
 
-    return null;
+    return await db.playlist.update({
+      where: { id: playlistId },
+      data: { imageId: process.env.NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER! },
+      select: { imageId: true },
+    });
   } catch (error) {
     console.error("Failed to upload playlist cover:", error);
     return null;

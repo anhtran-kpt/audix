@@ -17,6 +17,70 @@ export const getTrackOrThrow = async (trackId: string) => {
   return { ...track, artists: track.artists.map((item) => item.artist) };
 };
 
+export const getFullTrackOrThrow = async ({
+  userId,
+  trackId,
+}: {
+  userId: string;
+  trackId: string;
+}) => {
+  const track = await db.track.findUniqueOrThrow({
+    where: { id: trackId },
+    select: trackItemSelect,
+  });
+
+  const likedTrack = await db.playlistTrack.findFirst({
+    where: {
+      trackId,
+      playlist: {
+        userId,
+        systemType: "LIKED_TRACKS",
+      },
+    },
+    select: { id: true },
+  });
+
+  return {
+    ...track,
+    artists: track.artists.map((a) => a.artist),
+    isLiked: !!likedTrack,
+  };
+};
+
+export const getFullTracks = async ({
+  userId,
+  trackIds,
+}: {
+  userId: string;
+  trackIds: string[];
+}) => {
+  const tracks = await db.track.findMany({
+    where: {
+      id: { in: trackIds },
+    },
+    select: trackItemSelect,
+  });
+
+  const likedTracks = await db.playlistTrack.findMany({
+    where: {
+      playlist: {
+        userId,
+        systemType: "LIKED_TRACKS",
+      },
+      trackId: { in: tracks.map((t) => t.id) },
+    },
+    select: { trackId: true },
+  });
+
+  const likedSet = new Set(likedTracks.map((t) => t.trackId));
+
+  return tracks.map((track) => ({
+    ...track,
+    artists: track.artists.map((a) => a.artist),
+    isLiked: likedSet.has(track.id),
+  }));
+};
+
 export const getTrackListByIds = async (trackIds: string[]) => {
   const rows = await db.track
     .findMany({
@@ -36,38 +100,6 @@ export const getTrackListByIds = async (trackIds: string[]) => {
     .map((id) => byId.get(id))
     .filter((x): x is (typeof rows)[number] => !!x);
 };
-
-export const getRecentlyPlayedTracks = async (userId: string) => {
-  return db.playHistory
-    .findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        playedAt: "desc",
-      },
-      select: {
-        id: true,
-        track: {
-          select: trackItemSelect,
-        },
-      },
-      take: 20,
-    })
-    .then((data) =>
-      data.map((item) => ({
-        ...item,
-        track: {
-          ...item.track,
-          artists: item.track.artists.map((a) => a.artist),
-        },
-      }))
-    );
-};
-
-export type RecentlyPlayedTracks = AwaitedReturnType<
-  typeof getRecentlyPlayedTracks
->;
 
 export const getNewReleases = async () => {
   return await db.track.findMany({

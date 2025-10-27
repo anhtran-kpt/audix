@@ -27,6 +27,8 @@ export const useOptimisticCoverUpdate = () => {
       await qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) });
       await qc.cancelQueries({ queryKey: meKeys.myPlaylists() });
 
+      console.log("running");
+
       const prevData = {
         banner: qc.getQueryData<PlaylistBanner>(
           playlistKeys.banner(playlistId)
@@ -34,8 +36,15 @@ export const useOptimisticCoverUpdate = () => {
         myPlaylists: qc.getQueryData<MyPlaylists>(meKeys.myPlaylists()),
       };
 
-      const optimisticImageId =
-        imageIds.length === 1 ? imageIds[0] : buildPlaylistCoverUrl(imageIds);
+      let optimisticImageId;
+
+      if (imageIds.length === 0) {
+        optimisticImageId = process.env.NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!;
+      } else if (imageIds.length === 1) {
+        optimisticImageId = imageIds[0];
+      } else {
+        optimisticImageId = buildPlaylistCoverUrl(imageIds);
+      }
 
       qc.setQueryData<PlaylistBanner>(
         playlistKeys.banner(playlistId),

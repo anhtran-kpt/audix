@@ -1,13 +1,12 @@
 import "server-only";
 import db from "@/lib/db";
 import { AwaitedReturnType } from "@/utils/type";
-import { trackItemSelect } from "@/features/track/data-access/track-select";
 import { artistItemSelect } from "./artist-select";
 import { AppError } from "@/lib/errors";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
-import { attachIsLikedToTracks } from "@/lib/services/liked-decorator";
 import { getUserIdOrThrow } from "@/lib/auth";
+import { getFullTracks } from "@/features/track/data-access/track-repo";
 
 export const getFollowStatus = async (userId: string, artistId: string) => {
   const [artist, link] = await Promise.all([
@@ -98,32 +97,26 @@ export const getArtistPopularTracks = async (
   const { limit, offset } = params;
   const userId = await getUserIdOrThrow();
 
-  const [rawTracks, total] = await Promise.all([
-    db.trackArtist
-      .findMany({
-        where: {
-          artistId,
-        },
-        select: {
-          track: {
-            select: trackItemSelect,
+  const [artist, total] = await Promise.all([
+    db.artist.findUniqueOrThrow({
+      where: {
+        id: artistId,
+      },
+      select: {
+        tracks: {
+          select: {
+            trackId: true,
+          },
+          take: limit,
+          skip: offset,
+          orderBy: {
+            track: {
+              playCount: "asc",
+            },
           },
         },
-        take: limit,
-        skip: offset,
-        orderBy: {
-          track: {
-            playCount: "desc",
-          },
-        },
-      })
-      .then((tracks) =>
-        tracks.map((item) => ({
-          ...item.track,
-          artists: item.track.artists.map((a) => a.artist),
-        }))
-      ),
-
+      },
+    }),
     db.trackArtist.count({
       where: {
         artistId,
@@ -131,10 +124,15 @@ export const getArtistPopularTracks = async (
     }),
   ]);
 
-  const tracks = await attachIsLikedToTracks(userId, rawTracks);
+  console.log(artist.tracks);
+
+  const fullTracks = await getFullTracks({
+    userId,
+    trackIds: artist.tracks.map((t) => t.trackId),
+  });
 
   return {
-    items: tracks,
+    items: fullTracks,
     pagination: getPaginationMeta({ limit, offset, total }),
   };
 };

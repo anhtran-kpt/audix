@@ -32,6 +32,11 @@ interface PlaybackState {
   toggleShuffle: () => Promise<void>;
   cycleRepeatMode: (repeatMode: RepeatMode) => Promise<void>;
   setVolume: (volume: number) => void;
+  updateTrackLikeStatus: (trackId: string, liked: boolean) => void;
+  updatePlayHistoryListen: (
+    historyId: string,
+    listenedSec: number
+  ) => Promise<void>;
 }
 
 export const usePlaybackStore = create<PlaybackState>()(
@@ -62,6 +67,7 @@ export const usePlaybackStore = create<PlaybackState>()(
 
       async start(input) {
         set({ isLoading: true });
+
         try {
           const session = await postApi<ClientPlaybackSession>(
             "/playback/start",
@@ -193,6 +199,44 @@ export const usePlaybackStore = create<PlaybackState>()(
 
       setVolume(volume) {
         set({ volume });
+      },
+
+      updateTrackLikeStatus: (trackId, liked) =>
+        set((state) => {
+          const session = state.session;
+          if (!session) return state;
+
+          const currentTrack =
+            session.currentTrack?.id === trackId
+              ? { ...session.currentTrack, isLiked: liked }
+              : session.currentTrack;
+
+          const queue = {
+            next: session.queue.next,
+            context: session.queue.context,
+            later: session.queue.later,
+          };
+
+          return {
+            session: {
+              ...session,
+              currentTrack,
+              queue,
+            },
+          };
+        }),
+
+      updatePlayHistoryListen: async (
+        historyId: string,
+        listenedSec: number
+      ) => {
+        try {
+          await patchApi("/playback/history", {
+            body: { historyId, listenedSec },
+          });
+        } catch (err) {
+          console.error("Failed to update play history:", err);
+        }
       },
     }),
     {

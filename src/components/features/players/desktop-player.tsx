@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  PlusCircleIcon,
   SquarePlayIcon,
   ListMusicIcon,
   ShuffleIcon,
@@ -21,6 +20,7 @@ import { usePlaybackStore } from "@/stores/use-playback-store";
 import { cn } from "@/lib/utils";
 import { AudioProgressBar } from "../../shared/audio-progress-bar";
 import { TrackItemCompact } from "../../shared/track-item-compact";
+import { ToggleLikeTrackButton } from "../toggle-like-track-button";
 
 export const DesktopPlayer = () => {
   const {
@@ -72,15 +72,7 @@ export const DesktopPlayer = () => {
               hasMoreDetails={false}
             />
           </div>
-          <IconButton
-            className="hidden md:block ml-6"
-            icon={PlusCircleIcon}
-            tooltipContent={
-              <>
-                Add to <strong>Liked Songs</strong>
-              </>
-            }
-          />
+          <ToggleLikeTrackButton track={currentTrack} />
         </div>
         <div className="flex flex-col space-y-2 items-center grow">
           <div className="flex items-center gap-x-5 xl:gap-x-6">

@@ -5,8 +5,8 @@ import { AppError } from "@/lib/errors";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
 import { albumItemSelect } from "./album-select";
-import { attachIsLikedToTracks } from "@/lib/services/liked-decorator";
 import { getUserIdOrThrow } from "@/lib/auth";
+import { getFullTracks } from "@/features/track/data-access/track-repo";
 
 export const getAlbumBanner = async (albumId: string) => {
   const album = await db.album.findUnique({
@@ -42,7 +42,7 @@ export type AlbumBanner = AwaitedReturnType<typeof getAlbumBanner>;
 export const getAlbumTracks = async (albumId: string) => {
   const userId = await getUserIdOrThrow();
 
-  const album = await db.album.findUnique({
+  const album = await db.album.findUniqueOrThrow({
     where: {
       id: albumId,
     },
@@ -50,44 +50,15 @@ export const getAlbumTracks = async (albumId: string) => {
       tracks: {
         select: {
           id: true,
-          title: true,
-          audioId: true,
-          duration: true,
-          isExplicit: true,
-          playCount: true,
-          album: {
-            select: {
-              artistId: true,
-              id: true,
-              imageId: true,
-              title: true,
-            },
-          },
-          artists: {
-            select: {
-              artist: {
-                select: {
-                  id: true,
-                  name: true,
-                },
-              },
-            },
-          },
         },
       },
     },
   });
 
-  if (!album) {
-    throw new AppError("NOT_FOUND", "Album not found");
-  }
-
-  const rawTracks = album.tracks.map((track) => ({
-    ...track,
-    artists: track.artists.map((a) => a.artist),
-  }));
-
-  return await attachIsLikedToTracks(userId, rawTracks);
+  return await getFullTracks({
+    userId,
+    trackIds: album.tracks.map((track) => track.id),
+  });
 };
 
 export type AlbumTracks = AwaitedReturnType<typeof getAlbumTracks>;

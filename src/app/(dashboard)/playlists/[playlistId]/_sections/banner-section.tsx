@@ -140,16 +140,17 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
           />
         </div>
         <div className="flex items-center gap-6">
-          {playlist.role !== "OWNER" && (
-            <ToggleLikePlaylistButton
-              playlist={{
-                id: playlist.id,
-                title: playlist.title,
-                imageId: playlist.imageId,
-                user: playlist.user,
-              }}
-            />
-          )}
+          {playlist.role !== "OWNER" &&
+            playlist.systemType !== "LIKED_TRACKS" && (
+              <ToggleLikePlaylistButton
+                playlist={{
+                  id: playlist.id,
+                  title: playlist.title,
+                  imageId: playlist.imageId,
+                  user: playlist.user,
+                }}
+              />
+            )}
           {playlist.canEdit && <EditPlaylistDetails playlistId={playlistId} />}
           <PlaylistDetailDropdown
             playlistId={playlistId}

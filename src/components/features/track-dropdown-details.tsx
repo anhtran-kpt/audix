@@ -32,6 +32,7 @@ import { useRemoveTrackFromPlaylist } from "@/features/playlist/hooks/use-remove
 import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 import { meQueryOptions } from "@/features/me/api/me-query-options";
+import { useToggleLikeTrack } from "@/features/me/hooks/use-toggle-like-track";
 
 type TrackDropdownDetailsProps = {
   track: TrackItem;
@@ -48,8 +49,9 @@ export function TrackDropdownDetails({
 }: TrackDropdownDetailsProps) {
   const removeTrackMutation = useRemoveTrackFromPlaylist();
   const addTrackMutation = useAddTrackToPlaylist();
+  const toggleLikeTrackMutation = useToggleLikeTrack();
   const { openDialog } = useNewPlaylistDialog();
-  const { status } = useSession();
+  const { status, data: session } = useSession();
   const {
     data: playlists,
     status: queryStatus,
@@ -66,22 +68,23 @@ export function TrackDropdownDetails({
   }
 
   return (
-    <>
-      <DropdownMenu open={open} onOpenChange={setOpen}>
-        <DropdownMenuTrigger asChild>
-          <IconButton
-            icon={EllipsisIcon}
-            className="text-current"
-            tooltipContent={
-              <>
-                More options for <strong>{track.title}</strong>
-              </>
-            }
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-60" align="start">
-          <DropdownMenuGroup>
-            {status === "authenticated" && (
+    status === "authenticated" &&
+    session.user && (
+      <>
+        <DropdownMenu open={open} onOpenChange={setOpen}>
+          <DropdownMenuTrigger asChild>
+            <IconButton
+              icon={EllipsisIcon}
+              className="text-current"
+              tooltipContent={
+                <>
+                  More options for <strong>{track.title}</strong>
+                </>
+              }
+            />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-60" align="start">
+            <DropdownMenuGroup>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>Add to playlist</DropdownMenuSubTrigger>
                 <DropdownMenuPortal>
@@ -124,57 +127,69 @@ export function TrackDropdownDetails({
                   </DropdownMenuSubContent>
                 </DropdownMenuPortal>
               </DropdownMenuSub>
-            )}
-            <DropdownMenuItem>Save to Liked Songs</DropdownMenuItem>
-            <DropdownMenuItem>Add to queue</DropdownMenuItem>
-            {contextType === "PLAYLIST" && canEdit && (
+
               <DropdownMenuItem
                 onClick={() =>
-                  removeTrackMutation.mutate({
-                    playlistId: contextId,
-                    trackId: track.id,
+                  toggleLikeTrackMutation.mutate({
+                    track,
+                    likedPlaylistId: session.user.likedPlaylistId,
                   })
                 }
               >
-                Remove from this playlist
+                {track.isLiked
+                  ? "Remove from Liked Tracks"
+                  : "Save to Liked Tracks"}
               </DropdownMenuItem>
-            )}
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Go to artist</DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  {track.artists.map((artist) => (
-                    <DropdownMenuItem
-                      key={artist.id}
-                      onClick={() => router.push(`/artists/${artist.id}`)}
-                    >
-                      {artist.name}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-            {contextType !== "ALBUM" && (
-              <DropdownMenuItem
-                onClick={() => router.push(`/albums/${track.album.id}`)}
-              >
-                Go to album
-              </DropdownMenuItem>
-            )}
-            <CreditsDialog
-              trackId={track.id}
-              trigger={
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                  View credits
+              <DropdownMenuItem>Add to queue</DropdownMenuItem>
+              {contextType === "PLAYLIST" && canEdit && (
+                <DropdownMenuItem
+                  onClick={() =>
+                    removeTrackMutation.mutate({
+                      playlistId: contextId,
+                      trackId: track.id,
+                    })
+                  }
+                >
+                  Remove from this playlist
                 </DropdownMenuItem>
-              }
-            />
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </>
+              )}
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Go to artist</DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    {track.artists.map((artist) => (
+                      <DropdownMenuItem
+                        key={artist.id}
+                        onClick={() => router.push(`/artists/${artist.id}`)}
+                      >
+                        {artist.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+              {contextType !== "ALBUM" && (
+                <DropdownMenuItem
+                  onClick={() => router.push(`/albums/${track.album.id}`)}
+                >
+                  Go to album
+                </DropdownMenuItem>
+              )}
+              <CreditsDialog
+                trackId={track.id}
+                trigger={
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    View credits
+                  </DropdownMenuItem>
+                }
+              />
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </>
+    )
   );
 }

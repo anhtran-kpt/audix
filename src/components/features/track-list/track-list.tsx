@@ -149,7 +149,13 @@ export const TrackList = ({
                 </NavLink>
               </div>
             )}
-            <div className="flex justify-end items-center select-none sm:opacity-0 group-hover/item:select-auto group-hover/item:opacity-100">
+            <div
+              className={cn(
+                "flex justify-end items-center",
+                "select-none opacity-0 sm:group-hover/item:select-auto sm:group-hover/item:opacity-100",
+                track.isLiked && "select-auto opacity-100"
+              )}
+            >
               <ToggleLikeTrackButton track={track} />
             </div>
             <div className="hidden sm:flex justify-end items-center">

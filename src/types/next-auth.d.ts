@@ -7,13 +7,13 @@ declare module "next-auth" {
       id: string;
       subscription?: string;
       subscriptionStatus?: string;
-      likedPlaylistId?: string | null;
+      likedPlaylistId: string;
     } & DefaultSession["user"];
   }
 
   interface User extends DefaultUser {
     subscription?: string;
-    likedPlaylistId?: string | null;
+    likedPlaylistId: string;
   }
 }
 
@@ -21,6 +21,6 @@ declare module "next-auth/jwt" {
   interface JWT extends DefaultJWT {
     subscription?: string;
     subscriptionStatus?: string;
-    likedPlaylistId?: string | null;
+    likedPlaylistId: string;
   }
 }

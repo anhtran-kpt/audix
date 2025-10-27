@@ -20,9 +20,7 @@ export const ToggleLikeTrackButton = ({ track }: { track: TrackItem }) => {
     <IconButton
       icon={track.isLiked ? CheckCircle2Icon : PlusCircleIcon}
       disabled={toggleLikePending}
-      onClick={() =>
-        toggleLike({ track, likedPlaylistId, isLiked: track.isLiked })
-      }
+      onClick={() => toggleLike({ track, likedPlaylistId })}
       iconClassName="size-5"
       tooltipContent={
         track.isLiked ? (

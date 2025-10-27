@@ -6,6 +6,7 @@ import {
   PlaylistBanner,
   PlaylistTracks,
 } from "@/features/playlist/data-access/playlist-repo";
+import { toast } from "sonner";
 
 type RemoveTrackInput = {
   playlistId: string;
@@ -84,6 +85,10 @@ export function useRemoveTrackFromPlaylist() {
 
       qc.setQueryData(playlistKeys.banner(ctx.playlistId), ctx.prevBanner);
       qc.setQueryData(playlistKeys.tracks(ctx.playlistId), ctx.prevTracks);
+    },
+
+    onSuccess: () => {
+      toast.success(`Removed successfully!`);
     },
 
     onSettled: (_, __, { trackId }) => {

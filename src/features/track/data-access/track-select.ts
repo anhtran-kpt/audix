@@ -13,6 +13,13 @@ export const trackItemSelect = {
       id: true,
       imageId: true,
       title: true,
+      artist: {
+        select: {
+          id: true,
+          name: true,
+          imageId: true,
+        },
+      },
     },
   },
   artists: {
