@@ -14,7 +14,7 @@ export const HeaderButton = ({ icon: Icon, ...props }: HeaderButtonProps) => {
       size="icon"
       {...props}
       className={cn(
-        "rounded-full bg-muted/60 hover:bg-primary",
+        "rounded-full bg-muted/60 hover:bg-primary p-2",
         props.className
       )}
     >

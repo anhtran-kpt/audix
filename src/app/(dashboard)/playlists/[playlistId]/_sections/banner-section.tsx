@@ -5,7 +5,6 @@ import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { GlobeIcon, LockIcon, ShuffleIcon } from "lucide-react";
-import { IconButton } from "@/components/ui/icon-button";
 import { AppImage } from "@/components/shared/app-image";
 import { NavLink } from "@/components/ui/nav-link";
 import prettyMilliseconds from "pretty-ms";
@@ -16,6 +15,7 @@ import { PlaylistDetailDropdown } from "@/components/features/playlist-detail-dr
 import { ToggleLikePlaylistButton } from "@/components/features/toggle-like-playlist-button";
 import EditPlaylistDetails from "@/components/features/edit-playlist-details";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
+import { Button } from "@/components/ui/button";
 
 export const BannerSection = ({ playlistId }: { playlistId: string }) => {
   const { data: playlist, status } = useQuery({
@@ -129,15 +129,9 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
               contextId: playlistId,
             }}
           />
-          <IconButton
-            icon={ShuffleIcon}
-            size="xl"
-            tooltipContent={
-              <>
-                Enable shuffle for <strong>{playlist.title}</strong>
-              </>
-            }
-          />
+          <Button size="icon" variant="ghost">
+            <ShuffleIcon className="size-7" />
+          </Button>
         </div>
         <div className="flex items-center gap-6">
           {playlist.role !== "OWNER" &&

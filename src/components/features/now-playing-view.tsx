@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  CopyIcon,
-  EllipsisIcon,
-  Maximize2Icon,
-  PanelRightCloseIcon,
-  PlusCircleIcon,
-} from "lucide-react";
-import { IconButton } from "../ui/icon-button";
+import { EllipsisIcon, PanelRightCloseIcon } from "lucide-react";
 import { NavLink } from "../ui/nav-link";
 import { buildCreditsByPerson } from "@/utils/credits-by-person";
 import { ScrollArea } from "../ui/scroll-area";
@@ -21,6 +14,9 @@ import { useShallow } from "zustand/react/shallow";
 import { AppImage } from "../shared/app-image";
 import { trackQueryOptions } from "@/features/track/api/track-query-options";
 import { ToggleFollowArtistButton } from "./toggle-follow-artist-button";
+import { Button } from "../ui/button";
+import { ToggleLikeTrackButton } from "./toggle-like-track-button";
+import { CopyLinkButton } from "./copy-link-button";
 
 export const NowPlayingView = () => {
   const close = useRightPanel((s) => s.close);
@@ -50,34 +46,26 @@ export const NowPlayingView = () => {
       >
         <div className="flex items-center [--icon-w:1.25rem]">
           <div className="w-0 overflow-hidden transition-[width] duration-300 group-hover/np:w-[var(--icon-w)] flex items-center">
-            <IconButton
-              icon={PanelRightCloseIcon}
-              className="w-[var(--icon-w)] h-[var(--icon-w)] -translate-x-2 group-hover/np:translate-x-0 transition-transform duration-300"
-              aria-label="Close panel"
-              tooltipContent="Hide now playing view"
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={close}
-            />
+              className="w-[var(--icon-w)] h-[var(--icon-w)] -translate-x-2 group-hover/np:translate-x-0 transition-transform duration-300"
+            >
+              <PanelRightCloseIcon className="size-5" />
+            </Button>
           </div>
           <span className="truncate duration-300 group-hover/np:ml-2 font-semibold">
             {snapshot.name}
           </span>
         </div>
-        <div className="flex items-center gap-4">
-          <IconButton
-            icon={EllipsisIcon}
-            tooltipContent={
-              <>
-                More options for <strong>{currentTrack.title}</strong>
-              </>
-            }
-            className="opacity-0 pointer-events-none transition-opacity duration-300 group-hover/np:opacity-100 group-hover/np:pointer-events-auto"
-          />
-          <IconButton
-            icon={Maximize2Icon}
-            tooltipContent={<>Expand now playing view</>}
-            className="opacity-0 pointer-events-none transition-opacity duration-300 group-hover/np:opacity-100 group-hover/np:pointer-events-auto"
-          />
-        </div>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="opacity-0 pointer-events-none transition-opacity duration-300 group-hover/np:opacity-100 group-hover/np:pointer-events-auto"
+        >
+          <EllipsisIcon className="size-5" />
+        </Button>
       </header>
       <ScrollArea className="min-h-0 h-full">
         <div className="flex flex-col gap-5 p-4 pt-0">
@@ -87,7 +75,6 @@ export const NowPlayingView = () => {
             src={currentTrack.album.imageId}
             fill
             sizes="256px"
-            containerClassName=""
           />
 
           <div className="flex items-center justify-between gap-4">
@@ -106,19 +93,8 @@ export const NowPlayingView = () => {
               ))}
             </div>
             <div className="flex items-center gap-3">
-              <IconButton
-                icon={CopyIcon}
-                tooltipContent={<>Copy link to song</>}
-                className="opacity-0 pointer-events-none transition-opacity duration-300 group-hover/np:opacity-100 group-hover/np:pointer-events-auto"
-              />
-              <IconButton
-                icon={PlusCircleIcon}
-                tooltipContent={
-                  <>
-                    Add to <strong>Liked Songs</strong>
-                  </>
-                }
-              />
+              <CopyLinkButton className="opacity-0 pointer-events-none transition-opacity duration-300 group-hover/np:opacity-100 group-hover/np:pointer-events-auto" />
+              <ToggleLikeTrackButton track={currentTrack} />
             </div>
           </div>
 

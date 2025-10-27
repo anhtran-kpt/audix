@@ -13,7 +13,6 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import Dot from "../ui/dot";
 import { ScrollArea } from "../ui/scroll-area";
-import { IconButton } from "../ui/icon-button";
 import {
   PlusIcon,
   PanelLeftCloseIcon,
@@ -62,13 +61,14 @@ export function AppSidebar() {
             <div className="flex items-center justify-between">
               <div className="flex items-center [--icon-w:1.25rem]">
                 <div className="w-0 overflow-hidden transition-[width] duration-300 group-hover:w-[var(--icon-w)] flex items-center">
-                  <IconButton
-                    icon={PanelLeftCloseIcon}
-                    className="w-[var(--icon-w)] h-[var(--icon-w)] -translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
-                    aria-label="Close panel"
-                    tooltipContent="Collapse your library"
+                  <Button
+                    size="icon"
+                    variant="ghost"
                     onClick={toggleSidebar}
-                  />
+                    className="w-[var(--icon-w)] h-[var(--icon-w)] -translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
+                  >
+                    <PanelLeftCloseIcon className="size-5" />
+                  </Button>
                 </div>
 
                 <span className="truncate duration-300 group-hover:ml-2 font-semibold">
@@ -76,13 +76,9 @@ export function AppSidebar() {
                 </span>
               </div>
 
-              <IconButton
-                icon={PlusIcon}
-                aria-label="New playlist"
-                tooltipContent="New playlist"
-                iconClassName="size-6"
-                onClick={openDialog}
-              />
+              <Button size="icon" variant="ghost" onClick={openDialog}>
+                <PlusIcon className="size-6" />
+              </Button>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -127,22 +123,14 @@ export function AppSidebar() {
         ) : (
           <>
             <div className="flex items-center justify-center">
-              <IconButton
-                icon={PanelRightCloseIcon}
-                aria-label="Expand panel"
-                tooltipContent="Expand your library"
-                iconClassName="size-6"
-                onClick={toggleSidebar}
-              />
+              <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+                <PanelRightCloseIcon className="size-6" />
+              </Button>
             </div>
             <div className="flex items-center justify-center">
-              <IconButton
-                icon={PlusIcon}
-                aria-label="New playlist"
-                tooltipContent="New playlist"
-                iconClassName="size-6"
-                onClick={openDialog}
-              />
+              <Button variant="ghost" size="icon" onClick={openDialog}>
+                <PlusIcon className="size-6" />
+              </Button>
             </div>
           </>
         )}

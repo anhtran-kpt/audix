@@ -2,7 +2,6 @@
 
 import {
   SquarePlayIcon,
-  ListMusicIcon,
   ShuffleIcon,
   SkipBackIcon,
   Loader2Icon,
@@ -12,7 +11,6 @@ import {
   Repeat1Icon,
   RepeatIcon,
 } from "lucide-react";
-import { IconButton } from "../../ui/icon-button";
 import VolumeControl from "../volume-control";
 import { useRightPanel } from "@/stores/use-right-panel";
 import { useShallow } from "zustand/react/shallow";
@@ -21,6 +19,8 @@ import { cn } from "@/lib/utils";
 import { AudioProgressBar } from "../../shared/audio-progress-bar";
 import { TrackItemCompact } from "../../shared/track-item-compact";
 import { ToggleLikeTrackButton } from "../toggle-like-track-button";
+import { Button } from "@/components/ui/button";
+import { QueueIcon } from "@/components/ui/queue-icon";
 
 export const DesktopPlayer = () => {
   const {
@@ -76,102 +76,90 @@ export const DesktopPlayer = () => {
         </div>
         <div className="flex flex-col space-y-2 items-center grow">
           <div className="flex items-center gap-x-5 xl:gap-x-6">
-            <IconButton
-              icon={ShuffleIcon}
-              onClick={toggleShuffle}
-              tooltipContent={
-                session.isShuffled ? "Disable shuffle" : "Enable shuffle"
-              }
-              description={
-                session.isShuffled ? "Disable shuffle" : "Enable shuffle"
-              }
-              iconClassName={session.isShuffled ? "stroke-primary" : ""}
-              disabled={false}
-            />
-            <IconButton
-              icon={SkipBackIcon}
+            <Button variant="ghost" size="icon" onClick={toggleShuffle}>
+              <ShuffleIcon
+                className={cn("size-5", session.isShuffled && "stroke-primary")}
+              />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={previous}
-              iconClassName="fill-current"
-              tooltipContent="Previous"
               disabled={!hasPrevious}
-            />
-            <IconButton
-              icon={isLoading ? Loader2Icon : isPlaying ? PauseIcon : PlayIcon}
-              iconClassName={cn(
-                "fill-current stroke-0 size-6",
-                isLoading && "stroke-1.5 fill-none animate-spin"
-              )}
+            >
+              <SkipBackIcon
+                className={cn(
+                  "size-5 fill-current",
+                  session.isShuffled && "stroke-primary"
+                )}
+              />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               className="p-2.25 rounded-full bg-muted cursor-pointer"
-              tooltipContent={isPlaying ? "Pause" : "Resume"}
-              description="Toggle play"
               disabled={isLoading}
               onClick={isPlaying ? pause : resume}
-            />
-            <IconButton
-              icon={SkipForwardIcon}
-              onClick={next}
-              iconClassName="fill-current"
-              tooltipContent="Next"
-              disabled={!hasNext}
-            />
-            <IconButton
-              icon={session.repeatMode === "ONE" ? Repeat1Icon : RepeatIcon}
-              iconClassName={cn(
-                session.repeatMode !== "OFF" && "stroke-primary"
+            >
+              {isLoading ? (
+                <Loader2Icon className="animate-spin" />
+              ) : isPlaying ? (
+                <PauseIcon className="size-6 fill-current stroke-0" />
+              ) : (
+                <PlayIcon className="size-6 fill-current stroke-0" />
               )}
-              tooltipContent={
-                session.repeatMode === "ONE"
-                  ? "Disable repeat"
-                  : session.repeatMode === "OFF"
-                  ? "Enable repeat"
-                  : "Enable repeat one"
-              }
-              description={
-                session.repeatMode === "ONE"
-                  ? "Disable repeat"
-                  : session.repeatMode === "OFF"
-                  ? "Enable repeat"
-                  : "Enable repeat one"
-              }
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={next}
+              disabled={!hasNext}
+            >
+              <SkipForwardIcon
+                className={cn(
+                  "size-5 fill-current",
+                  session.isShuffled && "stroke-primary"
+                )}
+              />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => cycleRepeatMode(session.repeatMode)}
-            />
+            >
+              {session.repeatMode === "ONE" ? (
+                <Repeat1Icon className={cn("size-5", "stroke-primary")} />
+              ) : (
+                <RepeatIcon
+                  className={cn(
+                    "size-5",
+                    session.repeatMode !== "OFF" && "stroke-primary"
+                  )}
+                />
+              )}
+            </Button>
           </div>
           <AudioProgressBar />
         </div>
         <div className="flex items-center">
           <div className="flex items-center gap-x-3 lg:gap-x-4 xl:gap-x-5">
-            <IconButton
-              icon={SquarePlayIcon}
-              tooltipContent={
-                active === "now-playing" ? (
-                  <>
-                    Hide <strong>Now Playing View</strong>
-                  </>
-                ) : (
-                  <>
-                    Open <strong>Now Playing View</strong>
-                  </>
-                )
-              }
+            <Button
+              size="icon"
+              variant="ghost"
               onClick={() => toggle("now-playing")}
-              iconClassName={active === "now-playing" ? "text-primary" : ""}
-            />
-            <IconButton
-              icon={ListMusicIcon}
-              tooltipContent={
-                active === "queue" ? (
-                  <>
-                    Hide <strong>Queue</strong>
-                  </>
-                ) : (
-                  <>
-                    Open <strong>Queue</strong>
-                  </>
-                )
-              }
-              onClick={() => toggle("queue")}
-              iconClassName={active === "queue" ? "text-primary" : ""}
-            />
+            >
+              <SquarePlayIcon
+                className={cn(
+                  "size-5",
+                  active === "now-playing" && "stroke-primary"
+                )}
+              />
+            </Button>
+            <Button size="icon" variant="ghost" onClick={() => toggle("queue")}>
+              <QueueIcon
+                className={cn("size-5", active === "queue" && "fill-primary")}
+              />
+            </Button>
             <VolumeControl />
           </div>
         </div>

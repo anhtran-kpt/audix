@@ -1,10 +1,10 @@
 "use client";
 
 import { useToggleLikeTrack } from "@/features/me/hooks/use-toggle-like-track";
-import { IconButton } from "../ui/icon-button";
-import { CheckCircle2Icon, PlusCircleIcon } from "lucide-react";
+import { HeartIcon } from "lucide-react";
 import { TrackItem } from "@/features/track/contracts/track-dto";
 import { useSession } from "next-auth/react";
+import { Button } from "../ui/button";
 
 export const ToggleLikeTrackButton = ({ track }: { track: TrackItem }) => {
   const { mutate: toggleLike, isPending: toggleLikePending } =
@@ -17,22 +17,17 @@ export const ToggleLikeTrackButton = ({ track }: { track: TrackItem }) => {
   }
 
   return (
-    <IconButton
-      icon={track.isLiked ? CheckCircle2Icon : PlusCircleIcon}
+    <Button
+      variant="ghost"
+      size="icon"
       disabled={toggleLikePending}
       onClick={() => toggleLike({ track, likedPlaylistId })}
-      iconClassName="size-5"
-      tooltipContent={
-        track.isLiked ? (
-          <>
-            Remove from <strong>Liked Tracks</strong>
-          </>
-        ) : (
-          <>
-            Add to <strong>Liked Tracks</strong>
-          </>
-        )
-      }
-    />
+    >
+      {track.isLiked ? (
+        <HeartIcon className="stroke-0 fill-red-500 size-5" />
+      ) : (
+        <HeartIcon className="size-5" />
+      )}
+    </Button>
   );
 };

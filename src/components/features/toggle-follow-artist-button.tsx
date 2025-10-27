@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "../ui/button";
-import { Loader2Icon } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useToggleFollowArtist } from "@/features/artist/hooks/use-toggle-follow-artist";
@@ -34,13 +33,7 @@ export const ToggleFollowArtistButton = ({
       }
       disabled={toggle.isPending}
     >
-      {toggle.isPending ? (
-        <Loader2Icon className="animate-spin" />
-      ) : followStatus.isFollowing ? (
-        "Following"
-      ) : (
-        "Follow"
-      )}
+      {followStatus.isFollowing ? "Following" : "Follow"}
     </Button>
   );
 };

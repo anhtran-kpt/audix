@@ -6,10 +6,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon, ListPlusIcon, TrashIcon } from "lucide-react";
 import { useOptimisticPlaylistDelete } from "@/features/playlist/hooks/use-optimistic-playlist-delete";
 import { ConfirmDialog } from "./confirm-dialog";
+import { Button } from "../ui/button";
 
 type PlaylistDetailDropdownProps = {
   playlistId: string;
@@ -34,15 +34,9 @@ export function PlaylistDetailDropdown({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <IconButton
-            icon={EllipsisIcon}
-            size="xl"
-            tooltipContent={
-              <>
-                More options for <strong>{title}</strong>
-              </>
-            }
-          />
+          <Button variant="ghost" size="icon">
+            <EllipsisIcon className="size-7" />
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-48" align="start">
           <DropdownMenuGroup>

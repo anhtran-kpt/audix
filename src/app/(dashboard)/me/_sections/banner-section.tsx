@@ -3,14 +3,15 @@
 import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { CopyIcon, EditIcon } from "lucide-react";
-import { IconButton } from "@/components/ui/icon-button";
+import { EditIcon } from "lucide-react";
 import { AppImage } from "@/components/shared/app-image";
 import { NavLink } from "@/components/ui/nav-link";
 import pluralize from "pluralize";
 import Dot from "@/components/ui/dot";
 import { meQueryOptions } from "@/features/me/api/me-query-options";
 import Image from "next/image";
+import { CopyLinkButton } from "@/components/features/copy-link-button";
+import { Button } from "@/components/ui/button";
 
 export const BannerSection = () => {
   const { data: me, status } = useQuery({
@@ -91,16 +92,10 @@ export const BannerSection = () => {
         </div>
       </div>
       <div className="flex items-center justify-start gap-6">
-        <IconButton
-          icon={EditIcon}
-          size="xl"
-          tooltipContent={<>Edit profile</>}
-        />
-        <IconButton
-          icon={CopyIcon}
-          size="xl"
-          tooltipContent={<>Copy link to profile</>}
-        />
+        <Button size="icon" variant="ghost">
+          <EditIcon className="size-7" />
+        </Button>
+        <CopyLinkButton iconClassName="size-7" />
       </div>
     </section>
   );

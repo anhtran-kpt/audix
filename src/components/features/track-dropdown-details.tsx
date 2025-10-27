@@ -13,7 +13,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IconButton } from "../ui/icon-button";
 import { EllipsisIcon, PlusIcon } from "lucide-react";
 import CreditsDialog from "./credits-dialog";
 import {
@@ -33,6 +32,7 @@ import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
 import { meQueryOptions } from "@/features/me/api/me-query-options";
 import { useToggleLikeTrack } from "@/features/me/hooks/use-toggle-like-track";
+import { Button } from "../ui/button";
 
 type TrackDropdownDetailsProps = {
   track: TrackItem;
@@ -73,15 +73,9 @@ export function TrackDropdownDetails({
       <>
         <DropdownMenu open={open} onOpenChange={setOpen}>
           <DropdownMenuTrigger asChild>
-            <IconButton
-              icon={EllipsisIcon}
-              className="text-current"
-              tooltipContent={
-                <>
-                  More options for <strong>{track.title}</strong>
-                </>
-              }
-            />
+            <Button size="icon" variant="ghost" className="text-current">
+              <EllipsisIcon className="size-5" />
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-60" align="start">
             <DropdownMenuGroup>

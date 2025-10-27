@@ -5,7 +5,6 @@ import { useImageGradient } from "@/hooks/use-image-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { EllipsisIcon, ShuffleIcon } from "lucide-react";
-import { IconButton } from "@/components/ui/icon-button";
 import { AppImage } from "@/components/shared/app-image";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { NavLink } from "@/components/ui/nav-link";
@@ -15,6 +14,7 @@ import { formatDate } from "date-fns/format";
 import Dot from "@/components/ui/dot";
 import { ToggleLikeAlbumButton } from "@/components/shared/toggle-like-album-button";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
+import { Button } from "@/components/ui/button";
 
 export const BannerSection = ({ albumId }: { albumId: string }) => {
   const { data: album, status } = useQuery({
@@ -102,27 +102,15 @@ export const BannerSection = ({ albumId }: { albumId: string }) => {
               contextId: albumId,
             }}
           />
-          <IconButton
-            icon={ShuffleIcon}
-            size="xl"
-            tooltipContent={
-              <>
-                Enable shuffle for <strong>{album.title}</strong>
-              </>
-            }
-          />
+          <Button size="icon" variant="ghost">
+            <ShuffleIcon className="size-7" />
+          </Button>
         </div>
         <div className="flex items-center gap-6">
           <ToggleLikeAlbumButton album={{ ...album, id: albumId }} />
-          <IconButton
-            icon={EllipsisIcon}
-            size="xl"
-            tooltipContent={
-              <>
-                More options for <strong>{album.title}</strong>
-              </>
-            }
-          />
+          <Button size="icon" variant="ghost">
+            <EllipsisIcon className="size-7" />
+          </Button>
         </div>
       </div>
     </section>
