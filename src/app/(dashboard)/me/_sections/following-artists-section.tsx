@@ -5,9 +5,11 @@ import SectionHeading from "@/components/ui/section-heading";
 import { meQueryOptions } from "@/features/me/api/me-query-options";
 import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
 import { useQuery } from "@tanstack/react-query";
+import { useRef } from "react";
 
 export const FollowingArtistsSection = () => {
-  const limit = useResponsiveLimit();
+  const sectionRef = useRef<HTMLElement>(null);
+  const limit = useResponsiveLimit(sectionRef);
   const { data, status } = useQuery({
     ...meQueryOptions.followedArtists({ limit }),
   });
@@ -21,7 +23,7 @@ export const FollowingArtistsSection = () => {
   }
 
   return (
-    <section>
+    <section ref={sectionRef}>
       <SectionHeading
         title="Following Artists"
         showAllHref={

@@ -6,13 +6,35 @@ import { NavLink } from "../ui/nav-link";
 import { AppImage } from "./app-image";
 import { UserItem } from "@/features/user/contracts/user-dto";
 import Image from "next/image";
+import { Skeleton } from "../ui/skeleton";
 
 type UserGridProps = {
   users: UserItem[];
+  isLoading?: boolean;
 };
 
-export default function UserGrid({ users }: UserGridProps) {
+export default function UserGrid({ users, isLoading }: UserGridProps) {
   const router = useRouter();
+
+  if (isLoading) {
+    return (
+      <GridWrapper>
+        {users.map((user) => (
+          <div key={user.id} className="flex flex-col gap-2 overflow-hidden">
+            <div className="relative">
+              <Skeleton className="rounded-full size-full aspect-square" />
+            </div>
+            <div className="flex flex-col items-start w-full min-w-0 gap-1">
+              <Skeleton className="w-2/3 h-5" />
+              <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+                <Skeleton className="w-9 h-5" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </GridWrapper>
+    );
+  }
 
   return (
     <GridWrapper>
@@ -32,6 +54,7 @@ export default function UserGrid({ users }: UserGridProps) {
                   src={user.image}
                   className="rounded-full object-cover group-hover:scale-105 transition-transform duration-300"
                   fill
+                  sizes="256px"
                 />
               </div>
             ) : (
@@ -40,6 +63,7 @@ export default function UserGrid({ users }: UserGridProps) {
                 src={user.image ?? process.env.NEXT_PUBLIC_FALLBACK_USER_COVER!}
                 className="rounded-full group-hover:scale-105 transition-transform duration-300"
                 containerClassName="rounded-full aspect-square"
+                sizes="256px"
               />
             )}
           </div>

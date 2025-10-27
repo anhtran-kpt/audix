@@ -55,8 +55,6 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
 
   if (status === "error") return <p>Something went wrong</p>;
 
-  console.log(data);
-
   const hasNoResults =
     !data.topResult &&
     [

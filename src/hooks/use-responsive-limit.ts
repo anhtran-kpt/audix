@@ -3,11 +3,14 @@
 import { useEffect, useState, useRef } from "react";
 import { useSidebar } from "@/components/ui/sidebar";
 
-export const useResponsiveLimit = (options?: {
-  itemMaxWidth?: number;
-  itemGap?: number;
-  containerSelector?: string;
-}) => {
+export const useResponsiveLimit = (
+  elementRef: React.RefObject<HTMLElement | null>,
+  options?: {
+    itemMaxWidth?: number;
+    itemGap?: number;
+    containerSelector?: string;
+  }
+) => {
   const {
     itemMaxWidth = 256,
     itemGap,
@@ -19,8 +22,8 @@ export const useResponsiveLimit = (options?: {
   const { state, isMobile } = useSidebar();
 
   useEffect(() => {
-    if (containerSelector) {
-      containerRef.current = document.querySelector(containerSelector);
+    if (elementRef?.current) {
+      containerRef.current = elementRef?.current.closest(containerSelector);
     } else {
       containerRef.current = document.body;
     }
@@ -30,35 +33,25 @@ export const useResponsiveLimit = (options?: {
       if (!container) return;
 
       const containerWidth = container.clientWidth;
-
-      let currentGap = itemGap;
-
-      if (currentGap === undefined) {
-        const isXL = window.innerWidth >= 1280;
-        currentGap = isXL ? 24 : 16;
-      }
+      const currentGap = itemGap ?? (window.innerWidth >= 1280 ? 24 : 16);
 
       const numItems = Math.ceil(
         (containerWidth + currentGap) / (itemMaxWidth + currentGap)
       );
-
-      const bestNumItems = Math.max(1, Math.min(10, numItems));
-
-      setLimit(bestNumItems);
+      setLimit(Math.max(1, Math.min(10, numItems)));
     };
 
     calcLimit();
 
     const observer = new ResizeObserver(calcLimit);
     if (containerRef.current) observer.observe(containerRef.current);
-
     window.addEventListener("resize", calcLimit);
 
     return () => {
       observer.disconnect();
       window.removeEventListener("resize", calcLimit);
     };
-  }, [itemMaxWidth, itemGap, state, isMobile, containerSelector]);
+  }, [itemMaxWidth, itemGap, containerSelector, state, isMobile, elementRef]);
 
   return limit;
 };

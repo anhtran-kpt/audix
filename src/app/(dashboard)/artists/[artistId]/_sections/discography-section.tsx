@@ -6,9 +6,11 @@ import AlbumGrid from "@/components/shared/album-grid";
 import { useQuery } from "@tanstack/react-query";
 import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
 import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
+import { useRef } from "react";
 
 export const DiscographySection = ({ artistId }: { artistId: string }) => {
-  const limit = useResponsiveLimit();
+  const sectionRef = useRef<HTMLElement>(null);
+  const limit = useResponsiveLimit(sectionRef);
 
   const { data, status } = useQuery({
     ...artistQueryOptions.discography(artistId, { limit }),
@@ -33,7 +35,7 @@ export const DiscographySection = ({ artistId }: { artistId: string }) => {
   const defaultTab = availableTabs[0].key;
 
   return (
-    <section>
+    <section ref={sectionRef}>
       <SectionHeading
         title="Discography"
         showAllHref={

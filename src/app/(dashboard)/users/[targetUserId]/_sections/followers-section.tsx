@@ -5,9 +5,11 @@ import SectionHeading from "@/components/ui/section-heading";
 import { userQueryOptions } from "@/features/user/api/user-query-options";
 import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
 import { useQuery } from "@tanstack/react-query";
+import { useRef } from "react";
 
 export const FollowersSection = ({ userId }: { userId: string }) => {
-  const limit = useResponsiveLimit();
+  const sectionRef = useRef<HTMLElement>(null);
+  const limit = useResponsiveLimit(sectionRef);
   const { data, status } = useQuery({
     ...userQueryOptions.followers(userId, { limit }),
   });
@@ -21,7 +23,7 @@ export const FollowersSection = ({ userId }: { userId: string }) => {
   }
 
   return (
-    <section>
+    <section ref={sectionRef}>
       <SectionHeading
         title="Followers"
         showAllHref={

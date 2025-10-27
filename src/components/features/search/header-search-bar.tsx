@@ -111,7 +111,7 @@ export const HeaderSearchBar = () => {
   }
 
   return (
-    <div className="relative w-sm lg:w-md">
+    <div className="relative w-sm">
       <Label
         htmlFor="header-search-bar"
         className="absolute top-1/2 -translate-y-1/2 left-3"

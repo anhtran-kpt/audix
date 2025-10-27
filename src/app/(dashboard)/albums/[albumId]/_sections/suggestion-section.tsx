@@ -5,9 +5,11 @@ import SectionHeading from "@/components/ui/section-heading";
 import { albumQueryOptions } from "@/features/album/api/album-query-options";
 import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
 import { useQuery } from "@tanstack/react-query";
+import { useRef } from "react";
 
 export const SuggestionSection = ({ albumId }: { albumId: string }) => {
-  const limit = useResponsiveLimit();
+  const sectionRef = useRef<HTMLElement>(null);
+  const limit = useResponsiveLimit(sectionRef);
 
   const { data, status } = useQuery({
     ...albumQueryOptions.suggestions(albumId, { limit }),
@@ -23,7 +25,7 @@ export const SuggestionSection = ({ albumId }: { albumId: string }) => {
   }
 
   return (
-    <section>
+    <section ref={sectionRef}>
       <SectionHeading
         title={`More by ${data.artist.name}`}
         showAllHref={
