@@ -132,7 +132,7 @@ export function TrackDropdownDetails({
                 onClick={() =>
                   toggleLikeTrackMutation.mutate({
                     track,
-                    likedPlaylistId: session.user.likedPlaylistId,
+                    likedPlaylistId: session.user.likedPlaylistId!,
                   })
                 }
               >

@@ -67,18 +67,27 @@ export const getFullTracks = async ({
         userId,
         systemType: "LIKED_TRACKS",
       },
-      trackId: { in: tracks.map((t) => t.id) },
+      trackId: { in: trackIds },
     },
     select: { trackId: true },
   });
 
   const likedSet = new Set(likedTracks.map((t) => t.trackId));
 
-  return tracks.map((track) => ({
-    ...track,
-    artists: track.artists.map((a) => a.artist),
-    isLiked: likedSet.has(track.id),
-  }));
+  const trackMap = new Map(
+    tracks.map((track) => [
+      track.id,
+      {
+        ...track,
+        artists: track.artists.map((a) => a.artist),
+        isLiked: likedSet.has(track.id),
+      },
+    ])
+  );
+
+  return trackIds
+    .map((id) => trackMap.get(id))
+    .filter((t): t is NonNullable<typeof t> => !!t);
 };
 
 export const getTrackListByIds = async (trackIds: string[]) => {

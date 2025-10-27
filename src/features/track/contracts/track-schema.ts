@@ -1,6 +1,9 @@
 import { TrackSchema } from "@/app/generated/zod";
 import { MiniAlbumSchema } from "@/features/album/contracts/album-schema";
-import { MiniArtistSchema } from "@/features/artist/contracts/artist-schema";
+import {
+  ArtistItemSchema,
+  MiniArtistSchema,
+} from "@/features/artist/contracts/artist-schema";
 import z from "zod";
 
 export const TrackItemSchema = TrackSchema.pick({
@@ -12,8 +15,8 @@ export const TrackItemSchema = TrackSchema.pick({
   audioId: true,
 }).extend({
   artists: MiniArtistSchema.array(),
-  album: MiniAlbumSchema,
-  addedAt: z.date().optional(),
+  album: MiniAlbumSchema.extend({ artist: ArtistItemSchema }),
+  addedAt: z.date().nullish(),
   isLiked: z.boolean(),
 });
 

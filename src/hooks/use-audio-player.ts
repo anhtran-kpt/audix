@@ -4,6 +4,8 @@ import { useEffect, useRef, useCallback } from "react";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
 import { getAudioUrl } from "@/utils/string";
+import { useQueryClient } from "@tanstack/react-query";
+import { playbackKeys } from "@/features/playback/api/playback-keys";
 
 export const useAudioPlayer = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -12,6 +14,7 @@ export const useAudioPlayer = () => {
 
   const listenAccumulated = useRef(0);
   const hasReportedListen = useRef(false);
+  const qc = useQueryClient();
 
   const {
     progressMs,
@@ -205,7 +208,9 @@ export const useAudioPlayer = () => {
   useEffect(() => {
     listenAccumulated.current = 0;
     hasReportedListen.current = false;
-  }, [currentTrack?.id]);
+
+    qc.invalidateQueries({ queryKey: playbackKeys.history() });
+  }, [currentTrack?.id, qc]);
 
   useEffect(() => {
     return () => {

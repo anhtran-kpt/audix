@@ -343,9 +343,11 @@ export const startPlaybackSession = async ({
     where: { snapshotId: snapshot.id },
     orderBy: { index: "asc" },
   });
+
   if (snapshotTracks.length === 0) throw new Error("Snapshot has no tracks");
 
   let contextIndex = 0;
+
   if (startTrackId) {
     const found = snapshotTracks.findIndex((t) => t.trackId === startTrackId);
     if (found !== -1) contextIndex = found;
@@ -604,15 +606,13 @@ export const getHistoryTracks = async (userId: string) => {
 
   const trackMap = new Map(fullTracks.map((t) => [t.id, t]));
 
-  const order = new Map(playHistory.map((p, i) => [p.trackId, i]));
-
   return playHistory
     .map((entry) => ({
       id: entry.id,
       playedAt: entry.playedAt,
       track: trackMap.get(entry.trackId)!,
     }))
-    .sort((a, b) => order.get(a.track.id)! - order.get(b.track.id)!);
+    .sort((a, b) => b.playedAt.getTime() - a.playedAt.getTime());
 };
 
 export type HistoryTracks = AwaitedReturnType<typeof getHistoryTracks>;

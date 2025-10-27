@@ -111,7 +111,7 @@ export const getArtistPopularTracks = async (
           skip: offset,
           orderBy: {
             track: {
-              playCount: "asc",
+              playCount: "desc",
             },
           },
         },
@@ -123,8 +123,6 @@ export const getArtistPopularTracks = async (
       },
     }),
   ]);
-
-  console.log(artist.tracks);
 
   const fullTracks = await getFullTracks({
     userId,
