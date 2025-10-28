@@ -310,3 +310,26 @@ export const getArtistSuggestions = async (
 export type ArtistSuggestionsReturn = AwaitedReturnType<
   typeof getArtistSuggestions
 >;
+
+export const getHotArtists = async (params: PaginationParams) => {
+  const { offset, limit } = params;
+
+  const [items, total] = await Promise.all([
+    db.artist.findMany({
+      select: artistItemSelect,
+      take: limit,
+      orderBy: {
+        followersCount: "desc",
+      },
+    }),
+
+    db.artist.count(),
+  ]);
+
+  return {
+    items,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
+};
+
+export type HotArtists = AwaitedReturnType<typeof getHotArtists>;

@@ -102,7 +102,7 @@ export const DesktopPlayer = () => {
               onClick={isPlaying ? pause : resume}
             >
               {isLoading ? (
-                <Loader2Icon className="animate-spin" />
+                <Loader2Icon className="animate-spin size-6" />
               ) : isPlaying ? (
                 <PauseIcon className="size-6 fill-current stroke-0" />
               ) : (

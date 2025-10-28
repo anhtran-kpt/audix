@@ -1,5 +1,6 @@
 export const artistEndpoints = {
   list: () => `/artists` as const,
+  hotArtists: () => `/artists/hot-artists` as const,
   banner: (artistId: string) => `/artists/${artistId}/banner` as const,
   popularTracks: (artistId: string) =>
     `/artists/${artistId}/popular-tracks` as const,

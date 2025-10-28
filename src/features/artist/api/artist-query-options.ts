@@ -9,6 +9,7 @@ import {
   ArtistPopularTracksReturn,
   ArtistSuggestionsReturn,
   FollowStatus,
+  HotArtists,
 } from "../data-access/artist-repo";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getApi } from "@/lib/http/api";
@@ -78,5 +79,15 @@ export const artistQueryOptions = {
         }),
       placeholderData: keepPreviousData,
       enabled: !!artistId,
+    }),
+
+  hotArtists: (params?: Partial<PaginationParams>) =>
+    queryOptions({
+      queryKey: artistKeys.hotArtists(params),
+      queryFn: () =>
+        getApi<HotArtists>(artistEndpoints.hotArtists(), {
+          params,
+        }),
+      placeholderData: keepPreviousData,
     }),
 };

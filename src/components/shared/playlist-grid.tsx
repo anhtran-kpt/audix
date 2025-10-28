@@ -82,7 +82,7 @@ export default function PlaylistGrid({
                   <Dot />
                   <div className="space-x-1">
                     <span>By</span>
-                    <NavLink href={`users/${playlist.user.id}`}>
+                    <NavLink href={`/users/${playlist.user.id}`}>
                       {playlist.user.name}
                     </NavLink>
                   </div>

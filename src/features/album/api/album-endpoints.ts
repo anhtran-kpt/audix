@@ -1,5 +1,7 @@
 export const albumEndpoints = {
   list: () => `/albums` as const,
+  newReleases: () => `/albums/new-releases` as const,
+  popularAlbums: () => `/albums/popular-albums` as const,
   detail: (albumId: string) => `/albums/${albumId}` as const,
 
   banner: (albumId: string) => `/albums/${albumId}/banner` as const,

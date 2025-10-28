@@ -4,6 +4,8 @@ import { stableKey } from "@/utils/stable-keys";
 export const artistKeys = {
   base: ["artists"] as const,
   list: () => [...artistKeys.base, "list"] as const,
+  hotArtists: (params?: Partial<PaginationParams>) =>
+    [...artistKeys.base, "hot-artists", stableKey(params)] as const,
   detail: (artistId: string) => [...artistKeys.base, artistId] as const,
 
   followStatus: (artistId: string) =>

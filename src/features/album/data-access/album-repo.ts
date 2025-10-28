@@ -120,3 +120,51 @@ export const getAlbumSuggestions = async (
 };
 
 export type AlbumSuggestions = AwaitedReturnType<typeof getAlbumSuggestions>;
+
+export const getAlbumNewReleases = async (params: PaginationParams) => {
+  const { offset, limit } = params;
+
+  const [items, total] = await Promise.all([
+    db.album.findMany({
+      select: albumItemSelect,
+      take: limit,
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+
+    db.album.count(),
+  ]);
+
+  return {
+    items,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
+};
+
+export type AlbumNewReleases = AwaitedReturnType<typeof getAlbumNewReleases>;
+
+export const getPopularAlbums = async (params: PaginationParams) => {
+  const { offset, limit } = params;
+
+  const [items, total] = await Promise.all([
+    db.album.findMany({
+      select: albumItemSelect,
+      take: limit,
+      orderBy: {
+        likedBy: {
+          _count: "desc",
+        },
+      },
+    }),
+
+    db.album.count(),
+  ]);
+
+  return {
+    items,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
+};
+
+export type PopularAlbums = AwaitedReturnType<typeof getPopularAlbums>;

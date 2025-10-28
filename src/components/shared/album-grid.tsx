@@ -79,7 +79,7 @@ export default function AlbumGrid({ albums, isLoading }: AlbumGridProps) {
                   <span>{albumTypeMap[album.albumType]}</span>
                   <Dot />
                   <NavLink
-                    href={`/albums/${album.artist.id}`}
+                    href={`/artists/${album.artist.id}`}
                     className="text-[calc(13rem/16)] truncate block w-full"
                   >
                     {album.artist.name}

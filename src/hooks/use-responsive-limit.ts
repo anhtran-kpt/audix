@@ -12,7 +12,7 @@ export const useResponsiveLimit = (
   }
 ) => {
   const {
-    itemMaxWidth = 256,
+    itemMaxWidth = 240,
     itemGap,
     containerSelector = "section",
   } = options || {};

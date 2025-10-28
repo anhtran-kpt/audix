@@ -6,8 +6,10 @@ import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { albumKeys } from "./album-keys";
 import {
   AlbumBanner,
+  AlbumNewReleases,
   AlbumSuggestions,
   AlbumTracks,
+  PopularAlbums,
 } from "../data-access/album-repo";
 
 export const albumQueryOptions = {
@@ -29,6 +31,7 @@ export const albumQueryOptions = {
       staleTime: Infinity,
       enabled: !!albumId,
     }),
+
   tracks: (albumId: string) =>
     queryOptions({
       queryKey: albumKeys.tracks(albumId),
@@ -47,5 +50,25 @@ export const albumQueryOptions = {
         }),
       placeholderData: keepPreviousData,
       enabled: !!albumId,
+    }),
+
+  newReleases: (params?: Partial<PaginationParams>) =>
+    queryOptions({
+      queryKey: albumKeys.newReleases(params),
+      queryFn: () =>
+        getApi<AlbumNewReleases>(albumEndpoints.newReleases(), {
+          params,
+        }),
+      placeholderData: keepPreviousData,
+    }),
+
+  popularAlbums: (params?: Partial<PaginationParams>) =>
+    queryOptions({
+      queryKey: albumKeys.popularAlbums(params),
+      queryFn: () =>
+        getApi<PopularAlbums>(albumEndpoints.popularAlbums(), {
+          params,
+        }),
+      placeholderData: keepPreviousData,
     }),
 } as const;
