@@ -8,7 +8,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { IconButton } from "./icon-button";
 
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
@@ -121,7 +120,7 @@ function Carousel({
     >
       <div
         onKeyDownCapture={handleKeyDown}
-        className={cn("relative", className)}
+        className={cn("relative group/carousel", className)}
         role="region"
         aria-roledescription="carousel"
         data-slot="carousel"
@@ -174,57 +173,61 @@ function CarouselItem({ className, ...props }: React.ComponentProps<"div">) {
 
 function CarouselPrevious({
   className,
-  variant = "outline",
+  variant = "secondary",
   size = "icon",
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollPrev, canScrollPrev } = useCarousel();
 
   return (
-    <IconButton
-      icon={ChevronLeftIcon}
+    <Button
+      variant={variant}
+      size={size}
       data-slot="carousel-previous"
       onClick={scrollPrev}
       disabled={!canScrollPrev}
       className={cn(
-        "absolute p-1.5 bg-muted rounded-full",
+        "absolute p-1.5 rounded-full hover:bg-primary",
+        !canScrollPrev && "hidden",
         orientation === "horizontal"
           ? "top-1/2 -left-4 -translate-y-1/2"
           : "-top-4 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
-      description="Previous slide"
-      tooltipContent="Previous"
       {...props}
-    />
+    >
+      <ChevronLeftIcon className="size-5" />
+    </Button>
   );
 }
 
 function CarouselNext({
   className,
-  variant = "outline",
+  variant = "secondary",
   size = "icon",
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 
   return (
-    <IconButton
-      icon={ChevronRightIcon}
+    <Button
+      variant={variant}
+      size={size}
       data-slot="carousel-next"
       onClick={scrollNext}
       disabled={!canScrollNext}
       className={cn(
-        "absolute p-1.5 bg-muted rounded-full",
+        "absolute p-1.5 rounded-full hover:bg-primary",
+        !canScrollNext && "hidden",
         orientation === "horizontal"
           ? "top-1/2 -right-4 -translate-y-1/2"
           : "-bottom-4 right-1/2 -translate-x-1/2 rotate-90",
         className
       )}
-      description="Next slide"
-      tooltipContent="Next"
       {...props}
-    />
+    >
+      <ChevronRightIcon className="size-5" />
+    </Button>
   );
 }
 

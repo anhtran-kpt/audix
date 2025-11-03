@@ -1,9 +1,8 @@
 import { TracksSection } from "./_sections/tracks-section";
-import { BrowseTrackSection } from "./_sections/browse-track-section";
-import { getQueryClient } from "@/lib/query-client";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
 import { BannerSection } from "./_sections/banner-section";
+import { requireAuth } from "@/lib/auth";
+import { getPlaylistBanner } from "@/lib/data/playlist-data";
+import { BrowseTrackSection } from "./_sections/browse-track-section";
 
 export default async function PlaylistDetailPage({
   params,
@@ -11,19 +10,15 @@ export default async function PlaylistDetailPage({
   params: Promise<{ playlistId: string }>;
 }) {
   const { playlistId } = await params;
+  const user = await requireAuth();
 
-  const qc = getQueryClient();
-
-  await Promise.all([
-    qc.prefetchQuery({ ...playlistQueryOptions.banner(playlistId) }),
-    qc.prefetchQuery({ ...playlistQueryOptions.tracks(playlistId) }),
-  ]);
+  const data = await getPlaylistBanner({ playlistId, userId: user.id });
 
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
-      <BannerSection playlistId={playlistId} />
-      <TracksSection playlistId={playlistId} />
+    <>
+      <BannerSection initialData={data} />
+      <TracksSection playlistId={playlistId} userId={user.id} />
       <BrowseTrackSection playlistId={playlistId} />
-    </HydrationBoundary>
+    </>
   );
 }

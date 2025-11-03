@@ -1,34 +1,20 @@
-"use client";
+import { Suspense } from "react";
+import { LikedAlbumsSectionClient } from "./liked-albums-section-client";
+import { getMyLikedAlbums } from "@/lib/data/me-data";
+import { SectionSkeleton } from "@/components/shared/section-skeleton";
+import { AlbumGridSkeleton } from "@/components/shared/album-grid-skeleton";
 
-import AlbumGrid from "@/components/shared/album-grid";
-import SectionHeading from "@/components/ui/section-heading";
-import { meQueryOptions } from "@/features/me/api/me-query-options";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
-import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
-
-export const LikedAlbumsSection = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const limit = useResponsiveLimit(sectionRef);
-  const { data, status } = useQuery({
-    ...meQueryOptions.likedAlbums({ limit }),
+export const LikedAlbumsSection = async ({ userId }: { userId: string }) => {
+  const data = await getMyLikedAlbums({
+    userId,
+    params: { limit: 8, offset: 0 },
   });
 
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
-
   return (
-    <section ref={sectionRef}>
-      <SectionHeading
-        title="Liked Albums"
-        showAllHref={data.pagination.hasMore ? `/me/like/albums` : undefined}
-      />
-      <AlbumGrid albums={data.items} />
-    </section>
+    <Suspense
+      fallback={<SectionSkeleton childSkeleton={<AlbumGridSkeleton />} />}
+    >
+      <LikedAlbumsSectionClient initialData={data} />
+    </Suspense>
   );
 };

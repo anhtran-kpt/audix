@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useSidebar } from "@/components/ui/sidebar";
 
 export const useResponsiveLimit = (
   elementRef: React.RefObject<HTMLElement | null>,
@@ -19,7 +18,6 @@ export const useResponsiveLimit = (
 
   const [limit, setLimit] = useState(5);
   const containerRef = useRef<HTMLElement | null>(null);
-  const { state, isMobile } = useSidebar();
 
   useEffect(() => {
     if (elementRef?.current) {
@@ -51,7 +49,7 @@ export const useResponsiveLimit = (
       observer.disconnect();
       window.removeEventListener("resize", calcLimit);
     };
-  }, [itemMaxWidth, itemGap, containerSelector, state, isMobile, elementRef]);
+  }, [itemMaxWidth, itemGap, containerSelector, elementRef]);
 
   return limit;
 };

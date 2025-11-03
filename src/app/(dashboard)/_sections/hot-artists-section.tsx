@@ -1,38 +1,25 @@
 "use client";
 
-import ArtistGrid from "@/components/shared/artist-grid";
-import SectionHeading from "@/components/ui/section-heading";
-import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
-import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
+import { ArtistItem } from "@/components/features/entity-item/artist-item";
+import { EntityCarousel } from "@/components/shared/entity-carousel";
+import { Section } from "@/components/shared/section";
+import { HotArtists } from "@/lib/data/artist-data";
 
-export const HotArtistsSection = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const limit = useResponsiveLimit(sectionRef);
-
-  const { data, status } = useQuery({
-    ...artistQueryOptions.hotArtists({ limit }),
-    enabled: limit > 0,
-  });
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
-
+type HotArtistsSectionProps = {
+  initialData: HotArtists;
+};
+export const HotArtistsSection = ({ initialData }: HotArtistsSectionProps) => {
   return (
-    <section ref={sectionRef}>
-      <SectionHeading
-        title="Hot Artists"
-        isLoading={status === "pending"}
-        // showAllHref={
-        //   data?.pagination.hasMore ? `/artists/hot-artists` : undefined
-        // }
+    <Section
+      title="Hot Artists"
+      showAllHref={
+        initialData?.pagination.hasMore ? `/artists/hot-artists` : undefined
+      }
+    >
+      <EntityCarousel
+        data={initialData.items}
+        renderItem={(artist) => <ArtistItem artist={artist} />}
       />
-      <ArtistGrid
-        artists={data?.items ?? []}
-        isLoading={status === "pending"}
-      />
-    </section>
+    </Section>
   );
 };

@@ -1,36 +1,24 @@
-"use client";
+import { SectionSkeleton } from "@/components/shared/section-skeleton";
+import { UserGridSkeleton } from "@/components/shared/user-grid-skeleton";
+import { Suspense } from "react";
+import { FollowersSectionClient } from "./followers-section-client";
+import { getUserFollowers } from "@/lib/data/user-data";
 
-import UserGrid from "@/components/shared/user-grid";
-import SectionHeading from "@/components/ui/section-heading";
-import { userQueryOptions } from "@/features/user/api/user-query-options";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
-import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
-
-export const FollowersSection = ({ userId }: { userId: string }) => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const limit = useResponsiveLimit(sectionRef);
-  const { data, status } = useQuery({
-    ...userQueryOptions.followers(userId, { limit }),
+export const FollowersSection = async ({
+  targetUserId,
+}: {
+  targetUserId: string;
+}) => {
+  const data = await getUserFollowers({
+    targetUserId,
+    params: { limit: 8, offset: 0 },
   });
 
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
-
   return (
-    <section ref={sectionRef}>
-      <SectionHeading
-        title="Followers"
-        showAllHref={
-          data.pagination.hasMore ? `/users/${userId}/followers` : undefined
-        }
-      />
-      <UserGrid users={data.items} />
-    </section>
+    <Suspense
+      fallback={<SectionSkeleton childSkeleton={<UserGridSkeleton />} />}
+    >
+      <FollowersSectionClient initialData={data} userId={targetUserId} />
+    </Suspense>
   );
 };

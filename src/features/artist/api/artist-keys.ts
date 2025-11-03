@@ -23,6 +23,6 @@ export const artistKeys = {
     [...artistKeys.detail(artistId), "discography", stableKey(params)] as const,
   about: (artistId: string) =>
     [...artistKeys.detail(artistId), "about"] as const,
-  suggestions: (artistId: string, params?: Partial<PaginationParams>) =>
-    [...artistKeys.detail(artistId), "suggestions", stableKey(params)] as const,
+  related: (artistId: string, params?: Partial<PaginationParams>) =>
+    [...artistKeys.detail(artistId), "related", stableKey(params)] as const,
 } as const;

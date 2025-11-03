@@ -12,21 +12,16 @@ import { meQueryOptions } from "@/features/me/api/me-query-options";
 import Image from "next/image";
 import { CopyLinkButton } from "@/components/features/copy-link-button";
 import { Button } from "@/components/ui/button";
+import { MyOverview } from "@/lib/data/me-data";
 
-export const BannerSection = () => {
-  const { data: me, status } = useQuery({
+export const BannerSection = ({ initialData }: { initialData: MyOverview }) => {
+  const { data: me } = useQuery({
     ...meQueryOptions.banner(),
+    initialData,
+    initialDataUpdatedAt: Date.now(),
   });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
-
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
 
   return (
     <section

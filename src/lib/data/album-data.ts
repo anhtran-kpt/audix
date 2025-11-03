@@ -1,0 +1,168 @@
+import "server-only";
+import { unstable_cache } from "next/cache";
+import db from "../db";
+import { AwaitedReturnType } from "@/utils/type";
+import { getFullTracks } from "@/features/track/data-access/track-repo";
+import { PaginationParams } from "@/features/shared/contracts/shared-dto";
+import { albumItemSelect } from "@/features/album/data-access/album-select";
+import { getPaginationMeta } from "@/types/get-pagination-meta";
+
+export const getAlbumOverview = unstable_cache(
+  async ({ albumId, userId }: { albumId: string; userId: string }) => {
+    const album = await db.album.findUniqueOrThrow({
+      where: { id: albumId },
+      select: {
+        id: true,
+        imageId: true,
+        title: true,
+        albumType: true,
+        releaseDate: true,
+        artist: {
+          select: {
+            name: true,
+            id: true,
+            imageId: true,
+          },
+        },
+        totalTracks: true,
+        duration: true,
+        tracks: {
+          select: {
+            id: true,
+          },
+          orderBy: {
+            trackNumber: "asc",
+          },
+        },
+      },
+    });
+
+    const isLiked = await db.userLikedAlbum
+      .findUnique({
+        where: { userId_albumId: { userId, albumId } },
+      })
+      .then((data) => !!data);
+
+    const fullTracks = await getFullTracks({
+      userId,
+      trackIds: album.tracks.map((t) => t.id),
+    });
+
+    return {
+      ...album,
+      tracks: fullTracks,
+      isLiked: isLiked,
+    };
+  },
+  ["album-by-id"],
+  { tags: ["albums"], revalidate: 10 * 60 }
+);
+
+export type AlbumOverview = AwaitedReturnType<typeof getAlbumOverview>;
+
+export const getRelatedAlbums = unstable_cache(
+  async (albumId: string, params: PaginationParams) => {
+    const { offset, limit } = params;
+
+    const album = await db.album.findUniqueOrThrow({
+      where: {
+        id: albumId,
+      },
+      select: {
+        artist: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    const [items, total] = await Promise.all([
+      db.album.findMany({
+        where: {
+          artistId: album.artist.id,
+          id: {
+            not: albumId,
+          },
+        },
+        select: albumItemSelect,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+
+      db.album.count({
+        where: {
+          artistId: album.artist.id,
+          id: {
+            not: albumId,
+          },
+        },
+      }),
+    ]);
+
+    return {
+      artist: album.artist,
+      items,
+      pagination: getPaginationMeta({ limit, offset, total }),
+    };
+  },
+  ["album-by-id"],
+  { tags: ["albums"], revalidate: 10 * 60 }
+);
+
+export type RelatedAlbums = AwaitedReturnType<typeof getRelatedAlbums>;
+
+export const getAlbumNewReleases = unstable_cache(
+  async (params: PaginationParams) => {
+    const { offset, limit } = params;
+
+    const [items, total] = await Promise.all([
+      db.album.findMany({
+        select: albumItemSelect,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+
+      db.album.count(),
+    ]);
+
+    return {
+      items,
+      pagination: getPaginationMeta({ limit, offset, total }),
+    };
+  }
+);
+
+export type AlbumNewReleases = AwaitedReturnType<typeof getAlbumNewReleases>;
+
+export const getPopularAlbums = unstable_cache(
+  async (params: PaginationParams) => {
+    const { offset, limit } = params;
+
+    const [items, total] = await Promise.all([
+      db.album.findMany({
+        select: albumItemSelect,
+        take: limit,
+        orderBy: {
+          likedBy: {
+            _count: "desc",
+          },
+        },
+      }),
+
+      db.album.count(),
+    ]);
+
+    return {
+      items,
+      pagination: getPaginationMeta({ limit, offset, total }),
+    };
+  }
+);
+
+export type PopularAlbums = AwaitedReturnType<typeof getPopularAlbums>;

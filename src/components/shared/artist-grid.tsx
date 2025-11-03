@@ -6,35 +6,13 @@ import { NavLink } from "../ui/nav-link";
 import { AppImage } from "./app-image";
 import { ArtistItem } from "@/features/artist/contracts/artist-dto";
 import { RoundedPlayContextButton } from "../features/play/rounded-play-context-button";
-import { Skeleton } from "../ui/skeleton";
 
 type ArtistGridProps = {
   artists: ArtistItem[];
-  isLoading?: boolean;
 };
 
-export default function ArtistGrid({ artists, isLoading }: ArtistGridProps) {
+export default function ArtistGrid({ artists }: ArtistGridProps) {
   const router = useRouter();
-
-  if (isLoading) {
-    return (
-      <GridWrapper>
-        {artists.map((artist) => (
-          <div key={artist.id} className="flex flex-col gap-2 overflow-hidden">
-            <div className="relative">
-              <Skeleton className="rounded-full size-full aspect-square" />
-            </div>
-            <div className="flex flex-col items-start w-full min-w-0 gap-1">
-              <Skeleton className="w-2/3 h-5" />
-              <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
-                <Skeleton className="w-9 h-5" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </GridWrapper>
-    );
-  }
 
   return (
     <GridWrapper>

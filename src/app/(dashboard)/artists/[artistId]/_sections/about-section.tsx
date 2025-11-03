@@ -1,24 +1,12 @@
-"use client";
-
 import SectionHeading from "@/components/ui/section-heading";
 import { FollowersBadge } from "@/components/features/follow-badge";
 import { AppImage } from "@/components/shared/app-image";
-import { useQuery } from "@tanstack/react-query";
-import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
+import { ArtistOverview } from "@/lib/data/artist-data";
 
-export const AboutSection = ({ artistId }: { artistId: string }) => {
-  const { data: artist, status } = useQuery({
-    ...artistQueryOptions.about(artistId),
-  });
-
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
-
+type AboutSectionProps = {
+  artist: Omit<ArtistOverview, "tracks" | "imageId">;
+};
+export const AboutSection = ({ artist }: AboutSectionProps) => {
   return (
     <section>
       <SectionHeading title="About" />
@@ -32,7 +20,13 @@ export const AboutSection = ({ artistId }: { artistId: string }) => {
         />
         <div className="absolute bottom-responsive left-responsive space-y-3 w-4/5">
           <div>
-            <FollowersBadge artistId={artistId} />
+            <FollowersBadge
+              artistId={artist.id}
+              initialData={{
+                isFollowing: artist.isFollowing,
+                followersCount: artist.followersCount,
+              }}
+            />
           </div>
           <div className="text-[calc(15rem/16)] text-white line-clamp-4 xl:line-clamp-5">
             {artist.bio}

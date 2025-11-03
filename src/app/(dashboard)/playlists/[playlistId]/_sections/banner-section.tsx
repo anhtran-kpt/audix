@@ -16,21 +16,19 @@ import { ToggleLikePlaylistButton } from "@/components/features/toggle-like-play
 import EditPlaylistDetails from "@/components/features/edit-playlist-details";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 import { Button } from "@/components/ui/button";
+import { PlaylistBanner } from "@/lib/data/playlist-data";
 
-export const BannerSection = ({ playlistId }: { playlistId: string }) => {
-  const { data: playlist, status } = useQuery({
-    ...playlistQueryOptions.banner(playlistId),
+type BannerSectionProps = {
+  initialData: PlaylistBanner;
+};
+export const BannerSection = ({ initialData }: BannerSectionProps) => {
+  const { data: playlist } = useQuery({
+    ...playlistQueryOptions.banner(initialData.id),
+    initialData,
+    initialDataUpdatedAt: Date.now(),
   });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
-
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
 
   return (
     <section
@@ -126,7 +124,7 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
           <RoundedPlayContextButton
             context={{
               contextType: "PLAYLIST",
-              contextId: playlistId,
+              contextId: playlist.id,
             }}
           />
           <Button size="icon" variant="ghost">
@@ -145,9 +143,9 @@ export const BannerSection = ({ playlistId }: { playlistId: string }) => {
                 }}
               />
             )}
-          {playlist.canEdit && <EditPlaylistDetails playlistId={playlistId} />}
+          {playlist.canEdit && <EditPlaylistDetails playlistId={playlist.id} />}
           <PlaylistDetailDropdown
-            playlistId={playlistId}
+            playlistId={playlist.id}
             title={playlist.title}
             canEdit={playlist.canEdit}
           />

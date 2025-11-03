@@ -1,34 +1,20 @@
-"use client";
+import { PlaylistGridSkeleton } from "@/components/shared/playlist-grid-skeleton";
+import { SectionSkeleton } from "@/components/shared/section-skeleton";
+import { getMyLikedPlaylists } from "@/lib/data/me-data";
+import { Suspense } from "react";
+import { LikedPlaylistsSectionClient } from "./liked-playlists-section-client";
 
-import PlaylistGrid from "@/components/shared/playlist-grid";
-import SectionHeading from "@/components/ui/section-heading";
-import { meQueryOptions } from "@/features/me/api/me-query-options";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
-import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
-
-export const LikedPlaylistsSection = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const limit = useResponsiveLimit(sectionRef);
-  const { data, status } = useQuery({
-    ...meQueryOptions.likedPlaylists({ limit }),
+export const LikedPlaylistsSection = async ({ userId }: { userId: string }) => {
+  const data = await getMyLikedPlaylists({
+    userId,
+    params: { limit: 8, offset: 0 },
   });
 
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
-
   return (
-    <section ref={sectionRef}>
-      <SectionHeading
-        title="Liked Playlists"
-        showAllHref={data.pagination.hasMore ? `/me/like/playlists` : undefined}
-      />
-      <PlaylistGrid playlists={data.items} />
-    </section>
+    <Suspense
+      fallback={<SectionSkeleton childSkeleton={<PlaylistGridSkeleton />} />}
+    >
+      <LikedPlaylistsSectionClient initialData={data} />
+    </Suspense>
   );
 };

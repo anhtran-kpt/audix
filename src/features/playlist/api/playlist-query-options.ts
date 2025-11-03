@@ -12,6 +12,7 @@ export const playlistQueryOptions = {
       queryKey: playlistKeys.list(params),
       queryFn: () => getApi<PlaylistItem[]>(playlistEndpoints.list()),
     }),
+
   detail: (playlistId: string) =>
     queryOptions({
       queryKey: playlistKeys.detail(playlistId),
@@ -24,15 +25,14 @@ export const playlistQueryOptions = {
       queryKey: playlistKeys.banner(playlistId),
       queryFn: () =>
         getApi<PlaylistBanner>(playlistEndpoints.banner(playlistId)),
-      staleTime: Infinity,
       enabled: !!playlistId,
     }),
+
   tracks: (playlistId: string) =>
     queryOptions({
       queryKey: playlistKeys.tracks(playlistId),
       queryFn: () =>
         getApi<PlaylistTracks>(playlistEndpoints.tracks(playlistId)),
-      staleTime: Infinity,
       enabled: !!playlistId,
       placeholderData: keepPreviousData,
     }),

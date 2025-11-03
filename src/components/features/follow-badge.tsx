@@ -3,17 +3,25 @@
 import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 import { useQuery } from "@tanstack/react-query";
 import pluralize from "pluralize";
-import { Skeleton } from "../ui/skeleton";
+import { FollowStatus } from "@/features/artist/data-access/artist-repo";
 
-export function FollowersBadge({ artistId }: { artistId: string }) {
-  const { data, status } = useQuery(artistQueryOptions.followStatus(artistId));
+type FollowersBadgeProps = {
+  artistId: string;
+  initialData: FollowStatus;
+};
+
+export const FollowersBadge = ({
+  artistId,
+  initialData,
+}: FollowersBadgeProps) => {
+  const { data, status } = useQuery({
+    ...artistQueryOptions.followStatus(artistId),
+    initialData,
+    initialDataUpdatedAt: Date.now(),
+  });
 
   if (status === "error") {
     return null;
-  }
-
-  if (status === "pending") {
-    return <Skeleton className="w-16 h-5" />;
   }
 
   return (
@@ -21,4 +29,4 @@ export function FollowersBadge({ artistId }: { artistId: string }) {
       {data.followersCount} {pluralize("followers", data.followersCount)}
     </span>
   );
-}
+};

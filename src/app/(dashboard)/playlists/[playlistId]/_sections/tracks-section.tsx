@@ -1,35 +1,19 @@
-"use client";
+import { Suspense } from "react";
+import { TracksSectionClient } from "./tracks-section-client";
+import { getPlaylistTracks } from "@/features/playlist/data-access/playlist-repo";
 
-import { TrackList } from "@/components/features/track-list/track-list";
-import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
-import { useQuery } from "@tanstack/react-query";
-
-export const TracksSection = ({ playlistId }: { playlistId: string }) => {
-  const { data, status } = useQuery({
-    ...playlistQueryOptions.tracks(playlistId),
-  });
-
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
-
-  if (!data.canView) {
-    return <section>You have no permission to see this content.</section>;
-  }
+export const TracksSection = async ({
+  playlistId,
+  userId,
+}: {
+  playlistId: string;
+  userId: string;
+}) => {
+  const data = await getPlaylistTracks({ playlistId, userId });
 
   return (
-    <section>
-      <TrackList
-        contextId={playlistId}
-        tracks={data.tracks}
-        contextType="PLAYLIST"
-        isLoading={false}
-        canEdit={data.canEdit}
-      />
-    </section>
+    <Suspense fallback={<div>Loading...</div>}>
+      <TracksSectionClient initialData={data} playlistId={playlistId} />
+    </Suspense>
   );
 };

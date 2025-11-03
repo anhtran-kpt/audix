@@ -37,14 +37,15 @@ import {
 import { Button } from "../ui/button";
 import { LibraryFilter, useLibraryItems } from "@/hooks/use-library-items";
 import { MiniPlayContextButton } from "./play/mini-play-context-button";
+import { SidebarOverview } from "@/lib/data/me-data";
 
-export function AppSidebar() {
+export function AppSidebar({ initialData }: { initialData: SidebarOverview }) {
   const pathname = usePathname();
   const { openDialog } = useNewPlaylistDialog();
   const { toggleSidebar, open } = useSidebar();
   const router = useRouter();
   const [filter, setFilter] = useState<LibraryFilter>("all");
-  const { filteredItems } = useLibraryItems(filter);
+  const { filteredItems } = useLibraryItems({ filter, initialData });
 
   const { isPlaying, contextId } = usePlaybackStore(
     useShallow((s) => ({

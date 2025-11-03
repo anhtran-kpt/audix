@@ -1,9 +1,7 @@
-import { BannerSection } from "./_sections/banner-section";
-import { TracksSection } from "./_sections/tracks-section";
-import { SuggestionSection } from "./_sections/suggestion-section";
-import { getQueryClient } from "@/lib/query-client";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { albumQueryOptions } from "@/features/album/api/album-query-options";
+import { requireAuth } from "@/lib/auth";
+import { getAlbumOverview } from "@/lib/data/album-data";
+import { OverviewSection } from "./_sections/overview-section";
+import { RelatedAlbumsSection } from "./_sections/related-section";
 
 export default async function AlbumDetail({
   params,
@@ -11,20 +9,14 @@ export default async function AlbumDetail({
   params: Promise<{ albumId: string }>;
 }) {
   const { albumId } = await params;
+  const user = await requireAuth();
 
-  const qc = getQueryClient();
-
-  await Promise.all([
-    qc.prefetchQuery({ ...albumQueryOptions.banner(albumId) }),
-    qc.prefetchQuery({ ...albumQueryOptions.tracks(albumId) }),
-    qc.prefetchQuery({ ...albumQueryOptions.suggestions(albumId) }),
-  ]);
+  const album = await getAlbumOverview({ albumId, userId: user.id });
 
   return (
-    <HydrationBoundary state={dehydrate(qc)}>
-      <BannerSection albumId={albumId} />
-      <TracksSection albumId={albumId} />
-      <SuggestionSection albumId={albumId} />
-    </HydrationBoundary>
+    <>
+      <OverviewSection album={album} />
+      <RelatedAlbumsSection albumId={albumId} />
+    </>
   );
 }

@@ -7,8 +7,7 @@ export const artistEndpoints = {
   discography: (artistId: string) =>
     `/artists/${artistId}/discography` as const,
   about: (artistId: string) => `/artists/${artistId}/about` as const,
-  suggestions: (artistId: string) =>
-    `/artists/${artistId}/suggestions` as const,
+  related: (artistId: string) => `/artists/${artistId}/related` as const,
   followStatus: (artistId: string) => `/artists/${artistId}/follow` as const,
   follow: (artistId: string) => `/artists/${artistId}/follow` as const,
 } as const;

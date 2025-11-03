@@ -9,35 +9,13 @@ import { AppImage } from "./app-image";
 import { useRouter } from "next/navigation";
 import { AlbumItem } from "@/features/album/contracts/album-dto";
 import { RoundedPlayContextButton } from "../features/play/rounded-play-context-button";
-import { Skeleton } from "../ui/skeleton";
 
 type AlbumGridProps = {
   albums: AlbumItem[];
-  isLoading?: boolean;
 };
 
-export default function AlbumGrid({ albums, isLoading }: AlbumGridProps) {
+export default function AlbumGrid({ albums }: AlbumGridProps) {
   const router = useRouter();
-
-  if (isLoading) {
-    return (
-      <GridWrapper>
-        {albums.map((album) => (
-          <div key={album.id} className="flex flex-col gap-2 overflow-hidden">
-            <div className="relative">
-              <Skeleton className="rounded-sm size-full aspect-square" />
-            </div>
-            <div className="flex flex-col items-start w-full min-w-0 gap-1">
-              <Skeleton className="w-4/5 h-5" />
-              <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
-                <Skeleton className="w-32 h-5" />
-              </div>
-            </div>
-          </div>
-        ))}
-      </GridWrapper>
-    );
-  }
 
   return (
     <GridWrapper>

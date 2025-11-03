@@ -8,12 +8,21 @@ import { NewPlaylistDialog } from "@/components/shared/new-playlist-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { MobilePlayer } from "@/components/features/players/mobile-player";
+import { getSidebarOverview } from "@/lib/data/me-data";
+import { requireAuth } from "@/lib/auth";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const user = await requireAuth();
+
+  const data = await getSidebarOverview({
+    userId: user.id,
+    params: { limit: 5, offset: 0 },
+  });
+
   return (
     <SidebarProvider
       className="h-full"
@@ -23,7 +32,7 @@ export default async function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar />
+      <AppSidebar initialData={data} />
       <SidebarInset
         className="h-full transition-[width]"
         style={{

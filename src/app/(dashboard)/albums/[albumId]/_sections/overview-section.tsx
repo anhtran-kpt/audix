@@ -1,42 +1,34 @@
 "use client";
 
-import { albumQueryOptions } from "@/features/album/api/album-query-options";
-import { useImageGradient } from "@/hooks/use-image-gradient";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { EllipsisIcon, ShuffleIcon } from "lucide-react";
-import { AppImage } from "@/components/shared/app-image";
-import { albumTypeMap } from "@/lib/constants/enum-maps";
-import { NavLink } from "@/components/ui/nav-link";
-import prettyMilliseconds from "pretty-ms";
-import pluralize from "pluralize";
-import { formatDate } from "date-fns/format";
-import Dot from "@/components/ui/dot";
-import { ToggleLikeAlbumButton } from "@/components/shared/toggle-like-album-button";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
+import { TrackList } from "@/components/features/track-list/track-list";
+import { AppImage } from "@/components/shared/app-image";
+import { ToggleLikeAlbumButton } from "@/components/shared/toggle-like-album-button";
 import { Button } from "@/components/ui/button";
+import Dot from "@/components/ui/dot";
+import { NavLink } from "@/components/ui/nav-link";
+import { useImageGradient } from "@/hooks/use-image-gradient";
+import { albumTypeMap } from "@/lib/constants/enum-maps";
+import { AlbumOverview } from "@/lib/data/album-data";
+import { formatDate } from "date-fns/format";
+import { EllipsisIcon, ShuffleIcon } from "lucide-react";
+import pluralize from "pluralize";
+import prettyMilliseconds from "pretty-ms";
+import { useState } from "react";
 
-export const BannerSection = ({ albumId }: { albumId: string }) => {
-  const { data: album, status } = useQuery({
-    ...albumQueryOptions.banner(albumId),
-  });
+type OverviewSectionProps = {
+  album: AlbumOverview;
+};
+export const OverviewSection = ({ album }: OverviewSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
-
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
 
   return (
     <section
       className="transition-colors -mx-responsive -mt-[calc(var(--spacing-responsive)+var(--header-height))] px-responsive flex flex-col gap-6 xl:gap-8"
       style={{
         background: gradient
-          ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 60%, ${gradient.to} 100%)`
+          ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 20%, ${gradient.to} 80%)`
           : undefined,
       }}
     >
@@ -59,9 +51,9 @@ export const BannerSection = ({ albumId }: { albumId: string }) => {
               <AppImage
                 alt={album.artist.name}
                 src={album.artist.imageId}
-                containerClassName="size-9 rounded-full"
+                containerClassName="size-7 rounded-full"
                 className="rounded-full"
-                sizes="36px"
+                sizes="28px"
                 priority
               />
               <NavLink
@@ -99,7 +91,7 @@ export const BannerSection = ({ albumId }: { albumId: string }) => {
           <RoundedPlayContextButton
             context={{
               contextType: "ALBUM",
-              contextId: albumId,
+              contextId: album.id,
             }}
           />
           <Button size="icon" variant="ghost">
@@ -107,11 +99,19 @@ export const BannerSection = ({ albumId }: { albumId: string }) => {
           </Button>
         </div>
         <div className="flex items-center gap-6">
-          <ToggleLikeAlbumButton album={{ ...album, id: albumId }} />
+          <ToggleLikeAlbumButton album={{ ...album, id: album.id }} />
           <Button size="icon" variant="ghost">
             <EllipsisIcon className="size-7" />
           </Button>
         </div>
+      </div>
+      <div>
+        <TrackList
+          tracks={album.tracks}
+          isLoading={false}
+          contextId={album.id}
+          contextType="ALBUM"
+        />
       </div>
     </section>
   );

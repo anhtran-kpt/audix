@@ -12,21 +12,19 @@ import Dot from "@/components/ui/dot";
 import { userQueryOptions } from "@/features/user/api/user-query-options";
 import Image from "next/image";
 import { ToggleFollowUserButton } from "@/components/features/toggle-follow-user-button";
+import { UserOverview } from "@/lib/data/user-data";
 
-export const BannerSection = ({ userId }: { userId: string }) => {
-  const { data: user, status } = useQuery({
-    ...userQueryOptions.banner(userId),
+type BannerSectionProps = {
+  initialData: UserOverview;
+};
+export const BannerSection = ({ initialData }: BannerSectionProps) => {
+  const { data: user } = useQuery({
+    ...userQueryOptions.banner(initialData.id),
+    initialData,
+    initialDataUpdatedAt: Date.now(),
   });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
-
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
 
   return (
     <section
@@ -79,12 +77,12 @@ export const BannerSection = ({ userId }: { userId: string }) => {
                 )}`}
               </span>
               <Dot />
-              <NavLink href={`/users/${userId}/followers`} className="text-sm">
+              <NavLink href={`/users/${user.id}/followers`} className="text-sm">
                 {user._count.followers}{" "}
                 {pluralize("follower", user._count.followers)}
               </NavLink>
               <Dot />
-              <NavLink href={`/users/${userId}/following`} className="text-sm">
+              <NavLink href={`/users/${user.id}/following`} className="text-sm">
                 {user._count.followedArtists + user._count.following} following
               </NavLink>
             </div>

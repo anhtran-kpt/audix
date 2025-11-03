@@ -1,38 +1,27 @@
 "use client";
 
-import AlbumGrid from "@/components/shared/album-grid";
-import SectionHeading from "@/components/ui/section-heading";
-import { albumQueryOptions } from "@/features/album/api/album-query-options";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
-import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
+import { AlbumItem } from "@/components/features/entity-item/album-item";
+import { EntityCarousel } from "@/components/shared/entity-carousel";
+import { Section } from "@/components/shared/section";
+import { PopularAlbums } from "@/lib/data/album-data";
 
-export const PopularAlbumSections = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const limit = useResponsiveLimit(sectionRef);
-
-  const { data, status } = useQuery({
-    ...albumQueryOptions.popularAlbums({ limit }),
-    enabled: limit > 0,
-  });
-
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
-
+type PopularAlbumSectionsProps = {
+  initialData: PopularAlbums;
+};
+export const PopularAlbumSections = ({
+  initialData,
+}: PopularAlbumSectionsProps) => {
   return (
-    <section ref={sectionRef}>
-      <SectionHeading
-        title="Popular Albums"
-        // showAllHref={
-        //   data.pagination.hasMore ? `/albums/popular-albums` : undefined
-        // }
+    <Section
+      title="Popular Albums"
+      showAllHref={
+        initialData.pagination.hasMore ? `/albums/popular-albums` : undefined
+      }
+    >
+      <EntityCarousel
+        data={initialData.items}
+        renderItem={(album) => <AlbumItem album={album} />}
       />
-      <AlbumGrid albums={data.items} />
-    </section>
+    </Section>
   );
 };

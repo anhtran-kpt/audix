@@ -2,17 +2,10 @@ import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 import { artistKeys } from "./artist-keys";
 import { ArtistItem } from "../contracts/artist-dto";
 import { artistEndpoints } from "./artist-endpoints";
-import {
-  ArtistAboutReturn,
-  ArtistBannerReturn,
-  ArtistDiscographyReturn,
-  ArtistPopularTracksReturn,
-  ArtistSuggestionsReturn,
-  FollowStatus,
-  HotArtists,
-} from "../data-access/artist-repo";
+import { FollowStatus, HotArtists } from "../data-access/artist-repo";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getApi } from "@/lib/http/api";
+import { ArtistDiscography, RelatedArtists } from "@/lib/data/artist-data";
 
 export const artistQueryOptions = {
   list: () =>
@@ -30,51 +23,22 @@ export const artistQueryOptions = {
       enabled: !!artistId,
     }),
 
-  banner: (artistId: string) =>
-    queryOptions({
-      queryKey: artistKeys.banner(artistId),
-      queryFn: () =>
-        getApi<ArtistBannerReturn>(artistEndpoints.banner(artistId)),
-      staleTime: Infinity,
-      enabled: !!artistId,
-    }),
-
-  popularTracks: (artistId: string, params?: Partial<PaginationParams>) =>
-    queryOptions({
-      queryKey: artistKeys.popularTracks(artistId, params),
-      queryFn: () =>
-        getApi<ArtistPopularTracksReturn>(
-          artistEndpoints.popularTracks(artistId),
-          { params }
-        ),
-      placeholderData: keepPreviousData,
-      enabled: !!artistId,
-    }),
-
   discography: (artistId: string, params?: Partial<PaginationParams>) =>
     queryOptions({
       queryKey: artistKeys.discography(artistId, params),
       queryFn: () =>
-        getApi<ArtistDiscographyReturn>(artistEndpoints.discography(artistId), {
+        getApi<ArtistDiscography>(artistEndpoints.discography(artistId), {
           params,
         }),
       placeholderData: keepPreviousData,
       enabled: !!artistId,
     }),
 
-  about: (artistId: string) =>
+  related: (artistId: string, params?: Partial<PaginationParams>) =>
     queryOptions({
-      queryKey: artistKeys.about(artistId),
-      queryFn: () => getApi<ArtistAboutReturn>(artistEndpoints.about(artistId)),
-      enabled: !!artistId,
-      staleTime: Infinity,
-    }),
-
-  suggestions: (artistId: string, params?: Partial<PaginationParams>) =>
-    queryOptions({
-      queryKey: artistKeys.suggestions(artistId, params),
+      queryKey: artistKeys.related(artistId, params),
       queryFn: () =>
-        getApi<ArtistSuggestionsReturn>(artistEndpoints.suggestions(artistId), {
+        getApi<RelatedArtists>(artistEndpoints.related(artistId), {
           params,
         }),
       placeholderData: keepPreviousData,

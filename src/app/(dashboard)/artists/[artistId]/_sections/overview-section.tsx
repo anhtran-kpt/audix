@@ -1,38 +1,31 @@
 "use client";
 
-import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
-import { useImageGradient } from "@/hooks/use-image-gradient";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { FollowersBadge } from "@/components/features/follow-badge";
-import { IconButton } from "@/components/ui/icon-button";
-import { AppImage } from "@/components/shared/app-image";
-import { ToggleFollowArtistButton } from "@/components/features/toggle-follow-artist-button";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
+import { ToggleFollowArtistButton } from "@/components/features/toggle-follow-artist-button";
+import { TrackList } from "@/components/features/track-list/track-list";
+import { AppImage } from "@/components/shared/app-image";
+import { IconButton } from "@/components/ui/icon-button";
+import SectionHeading from "@/components/ui/section-heading";
 import { VerifiedIcon } from "@/components/ui/verified-icon";
+import { useImageGradient } from "@/hooks/use-image-gradient";
+import { ArtistOverview } from "@/lib/data/artist-data";
+import { EllipsisIcon, ShuffleIcon } from "lucide-react";
+import { useState } from "react";
 
-export const BannerSection = ({ artistId }: { artistId: string }) => {
-  const { data: artist, status } = useQuery({
-    ...artistQueryOptions.banner(artistId),
-  });
+type OverviewSectionProps = {
+  artist: ArtistOverview;
+};
+export const OverviewSection = ({ artist }: OverviewSectionProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
-
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
 
   return (
     <section
       className="transition-colors -mx-responsive -mt-[calc(var(--spacing-responsive)+var(--header-height))] px-responsive flex flex-col gap-6 xl:gap-8"
       style={{
         background: gradient
-          ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 60%, ${gradient.to} 100%)`
+          ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 20%, ${gradient.to} 80%)`
           : undefined,
       }}
     >
@@ -56,7 +49,13 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
             {artist.name}
           </span>
 
-          <FollowersBadge artistId={artistId} />
+          <FollowersBadge
+            artistId={artist.id}
+            initialData={{
+              isFollowing: artist.isFollowing,
+              followersCount: artist.followersCount,
+            }}
+          />
         </div>
       </div>
       <div className="flex items-center justify-between sm:justify-start max-sm:flex-row-reverse sm:gap-6">
@@ -64,7 +63,7 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
           <RoundedPlayContextButton
             context={{
               contextType: "ARTIST",
-              contextId: artistId,
+              contextId: artist.id,
             }}
           />
           <IconButton
@@ -82,7 +81,7 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
             artist={{
               name: artist.name,
               imageId: artist.imageId,
-              id: artistId,
+              id: artist.id,
             }}
           />
           <IconButton
@@ -95,6 +94,15 @@ export const BannerSection = ({ artistId }: { artistId: string }) => {
             }
           />
         </div>
+      </div>
+      <div>
+        <SectionHeading title="Popular" />
+        <TrackList
+          tracks={artist.tracks}
+          isLoading={false}
+          contextId={artist.id}
+          contextType="ARTIST"
+        />
       </div>
     </section>
   );

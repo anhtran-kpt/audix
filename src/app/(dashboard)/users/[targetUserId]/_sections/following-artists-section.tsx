@@ -1,38 +1,24 @@
-"use client";
+import { ArtistGridSkeleton } from "@/components/shared/artist-grid-skeleton";
+import { SectionSkeleton } from "@/components/shared/section-skeleton";
+import { getUserFollowedArtists } from "@/lib/data/user-data";
+import { Suspense } from "react";
+import { FollowingArtistsSectionClient } from "./following-artists-section-client";
 
-import ArtistGrid from "@/components/shared/artist-grid";
-import SectionHeading from "@/components/ui/section-heading";
-import { userQueryOptions } from "@/features/user/api/user-query-options";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
-import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
-
-export const FollowingArtistsSection = ({ userId }: { userId: string }) => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const limit = useResponsiveLimit(sectionRef);
-  const { data, status } = useQuery({
-    ...userQueryOptions.followingArtists(userId, { limit }),
+export const FollowingArtistsSection = async ({
+  targetUserId,
+}: {
+  targetUserId: string;
+}) => {
+  const data = await getUserFollowedArtists({
+    targetUserId,
+    params: { limit: 8, offset: 0 },
   });
 
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
-
   return (
-    <section ref={sectionRef}>
-      <SectionHeading
-        title="Following Artists"
-        showAllHref={
-          data.pagination.hasMore
-            ? `/users/${userId}/following/artists`
-            : undefined
-        }
-      />
-      <ArtistGrid artists={data.items} />
-    </section>
+    <Suspense
+      fallback={<SectionSkeleton childSkeleton={<ArtistGridSkeleton />} />}
+    >
+      <FollowingArtistsSectionClient initialData={data} userId={targetUserId} />
+    </Suspense>
   );
 };

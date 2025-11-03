@@ -1,36 +1,23 @@
-"use client";
+import { ArtistGridSkeleton } from "@/components/shared/artist-grid-skeleton";
+import { SectionSkeleton } from "@/components/shared/section-skeleton";
+import { Suspense } from "react";
+import { FollowingArtistsSectionClient } from "./following-artists-section-client";
+import { getMyFollowedArtists } from "@/lib/data/me-data";
 
-import ArtistGrid from "@/components/shared/artist-grid";
-import SectionHeading from "@/components/ui/section-heading";
-import { meQueryOptions } from "@/features/me/api/me-query-options";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
-import { useQuery } from "@tanstack/react-query";
-import { useRef } from "react";
-
-export const FollowingArtistsSection = () => {
-  const sectionRef = useRef<HTMLElement>(null);
-  const limit = useResponsiveLimit(sectionRef);
-  const { data, status } = useQuery({
-    ...meQueryOptions.followedArtists({ limit }),
+export const FollowingArtistsSection = async ({
+  userId,
+}: {
+  userId: string;
+}) => {
+  const data = await getMyFollowedArtists({
+    userId,
+    params: { limit: 8, offset: 0 },
   });
-
-  if (status === "pending") {
-    return <div>Loading...</div>;
-  }
-
-  if (status === "error") {
-    return <div>Error</div>;
-  }
-
   return (
-    <section ref={sectionRef}>
-      <SectionHeading
-        title="Following Artists"
-        showAllHref={
-          data.pagination.hasMore ? `/me/following/artists` : undefined
-        }
-      />
-      <ArtistGrid artists={data.items} />
-    </section>
+    <Suspense
+      fallback={<SectionSkeleton childSkeleton={<ArtistGridSkeleton />} />}
+    >
+      <FollowingArtistsSectionClient initialData={data} />
+    </Suspense>
   );
 };
