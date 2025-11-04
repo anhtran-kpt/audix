@@ -1,9 +1,9 @@
 import { ToggleLikePlaylistInputSchema } from "@/features/me/contracts/me-schema";
 import {
-  getLikedPlaylistStatus,
   likePlaylist,
   unlikePlaylist,
 } from "@/features/me/data-access/me-repo";
+import { getLikedPlaylistStatus } from "@/lib/data/me-data";
 import { makeDELETE, makeGET, makePUT } from "@/lib/route-factory";
 
 export const GET = makeGET({

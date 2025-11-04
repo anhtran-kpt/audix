@@ -38,6 +38,7 @@ import { Button } from "../ui/button";
 import { LibraryFilter, useLibraryItems } from "@/hooks/use-library-items";
 import { MiniPlayContextButton } from "./play/mini-play-context-button";
 import { SidebarOverview } from "@/lib/data/me-data";
+import { cn } from "@/lib/utils";
 
 export function AppSidebar({ initialData }: { initialData: SidebarOverview }) {
   const pathname = usePathname();
@@ -192,7 +193,10 @@ export function AppSidebar({ initialData }: { initialData: SidebarOverview }) {
                                   process.env
                                     .NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
                                 }
-                                containerClassName="size-10"
+                                containerClassName={cn(
+                                  "size-10",
+                                  isArtist && "rounded-full"
+                                )}
                                 priority
                               />
                               <MiniPlayContextButton

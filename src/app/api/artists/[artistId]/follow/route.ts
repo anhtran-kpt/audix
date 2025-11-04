@@ -1,8 +1,5 @@
-import {
-  followArtist,
-  getFollowStatus,
-  unfollowArtist,
-} from "@/features/artist/data-access/artist-repo";
+import { followArtist, unfollowArtist } from "@/lib/actions/artist-actions";
+import { getFollowStatus } from "@/lib/data/artist-data";
 import { makeDELETE, makeGET, makePOST } from "@/lib/route-factory";
 import z, { object } from "zod";
 

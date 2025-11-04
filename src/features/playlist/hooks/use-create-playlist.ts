@@ -14,7 +14,7 @@ import {
 import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
 import { meKeys } from "@/features/me/api/me-keys";
 import { useRouter } from "next/navigation";
-import { MyPlaylists } from "@/features/me/data-access/me-repo";
+import { MyPlaylists } from "@/lib/data/me-data";
 
 export function useCreatePlaylist(
   onSuccess?: (res: CreatePlaylistOutput) => void

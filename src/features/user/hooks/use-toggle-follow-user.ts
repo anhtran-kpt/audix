@@ -11,7 +11,7 @@ import { deleteApi, postApi } from "@/lib/http/api";
 import { meKeys } from "@/features/me/api/me-keys";
 import { UserItem } from "../contracts/user-dto";
 import { userEndpoints } from "../api/user-endpoints";
-import { MyBanner, MyFollowedUsers } from "@/features/me/data-access/me-repo";
+import { MyFollowedUsers } from "@/lib/data/me-data";
 
 export function useToggleFollowUser(user: UserItem) {
   const qc = useQueryClient();
@@ -39,7 +39,7 @@ export function useToggleFollowUser(user: UserItem) {
         followers: qc.getQueryData<UserFollowers>(userKeys.followers(user.id)),
         userBanner: qc.getQueryData<UserBanner>(userKeys.banner(user.id)),
         followedUsers: qc.getQueryData<MyFollowedUsers>(meKeys.followedUsers()),
-        myBanner: qc.getQueryData<MyBanner>(meKeys.banner()),
+        // myBanner: qc.getQueryData<MyBanner>(meKeys.banner()),
       };
 
       qc.setQueryData<FollowStatus>(userKeys.followStatus(user.id), () => {
@@ -132,19 +132,19 @@ export function useToggleFollowUser(user: UserItem) {
         };
       });
 
-      qc.setQueryData<MyBanner>(meKeys.banner(), (old) => {
-        if (!old) return;
+      // qc.setQueryData<MyBanner>(meKeys.banner(), (old) => {
+      //   if (!old) return;
 
-        return {
-          ...old,
-          _count: {
-            ...old._count,
-            followers: nextIsFollowing
-              ? old._count.followers + 1
-              : old._count.followers - 1,
-          },
-        };
-      });
+      //   return {
+      //     ...old,
+      //     _count: {
+      //       ...old._count,
+      //       followers: nextIsFollowing
+      //         ? old._count.followers + 1
+      //         : old._count.followers - 1,
+      //     },
+      //   };
+      // });
 
       return { prevData };
     },
@@ -157,7 +157,7 @@ export function useToggleFollowUser(user: UserItem) {
         ctx.prevData.followStatus
       );
       qc.setQueryData(userKeys.banner(user.id), ctx.prevData.userBanner);
-      qc.setQueryData(meKeys.banner(), ctx.prevData.myBanner);
+      // qc.setQueryData(meKeys.banner(), ctx.prevData.myBanner);
       qc.setQueryData(userKeys.followers(user.id), ctx.prevData.followers);
       qc.setQueryData(meKeys.followedUsers(), ctx.prevData.followedUsers);
     },

@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TrackItem } from "@/features/track/contracts/track-dto";
 import { useAddTrackToPlaylist } from "@/features/playlist/hooks/use-add-track-to-playlist";
 import { useRemoveTrackFromPlaylist } from "@/features/playlist/hooks/use-remove-track-from-playlist";
-import { artistKeys } from "@/features/artist/api/artist-keys";
 import { albumKeys } from "@/features/album/api/album-keys";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 
@@ -38,9 +37,6 @@ export function useToggleLikeTrack() {
     },
 
     onSuccess: (response, { track }) => {
-      track.artists.forEach((artist) =>
-        qc.invalidateQueries({ queryKey: artistKeys.popularTracks(artist.id) })
-      );
       qc.invalidateQueries({ queryKey: albumKeys.tracks(track.album.id) });
 
       updateTrackLikeStatus(track.id, response.isLiked);

@@ -1,6 +1,6 @@
 import { meKeys } from "@/features/me/api/me-keys";
-import { MyPlaylists } from "@/features/me/data-access/me-repo";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
+import { MyPlaylists } from "@/lib/data/me-data";
 import { deleteApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";

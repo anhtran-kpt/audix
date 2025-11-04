@@ -2,26 +2,24 @@
 
 import { Button } from "../ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
 import { useToggleFollowArtist } from "@/features/artist/hooks/use-toggle-follow-artist";
 import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
 import { ArtistItem } from "@/features/artist/contracts/artist-dto";
+import { Skeleton } from "../ui/skeleton";
 
 export const ToggleFollowArtistButton = ({
   artist,
 }: {
   artist: ArtistItem;
 }) => {
-  const { status } = useSession();
-
   const { data: followStatus } = useQuery({
     ...artistQueryOptions.followStatus(artist.id),
-    enabled: !!artist.id && status === "authenticated",
+    enabled: !!artist.id,
   });
 
   const toggle = useToggleFollowArtist(artist);
 
-  if (!followStatus) return null;
+  if (!followStatus) return <Skeleton className="w-20 h-9" />;
 
   return (
     <Button

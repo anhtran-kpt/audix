@@ -1,5 +1,4 @@
 import "server-only";
-import { unstable_cache } from "next/cache";
 import db from "../db";
 import { AwaitedReturnType } from "@/utils/type";
 import { getFullTracks } from "@/features/track/data-access/track-repo";
@@ -7,129 +6,130 @@ import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
 
-export const getArtistOverview = unstable_cache(
-  async ({ artistId, userId }: { artistId: string; userId: string }) => {
-    const artist = await db.artist.findUniqueOrThrow({
-      where: { id: artistId },
-      select: {
-        id: true,
-        name: true,
-        imageId: true,
-        followersCount: true,
-        bannerId: true,
-        bio: true,
-        tracks: {
-          select: {
-            trackId: true,
-          },
-          take: 5,
-          orderBy: {
-            track: {
-              playCount: "desc",
-            },
+export const getArtistOverview = async ({
+  artistId,
+  userId,
+}: {
+  artistId: string;
+  userId: string;
+}) => {
+  const artist = await db.artist.findUniqueOrThrow({
+    where: { id: artistId },
+    select: {
+      id: true,
+      name: true,
+      imageId: true,
+      followersCount: true,
+      bannerId: true,
+      bio: true,
+      tracks: {
+        select: {
+          trackId: true,
+        },
+        take: 5,
+        orderBy: {
+          track: {
+            playCount: "desc",
           },
         },
       },
-    });
+    },
+  });
 
-    const isFollowed = await db.userFollowedArtist
-      .findUnique({
-        where: { userId_artistId: { userId, artistId } },
-      })
-      .then((data) => !!data);
+  const isFollowed = await db.userFollowedArtist
+    .findUnique({
+      where: { userId_artistId: { userId, artistId } },
+    })
+    .then((data) => !!data);
 
-    const fullTracks = await getFullTracks({
-      userId,
-      trackIds: artist.tracks.map((t) => t.trackId),
-    });
+  const fullTracks = await getFullTracks({
+    userId,
+    trackIds: artist.tracks.map((t) => t.trackId),
+  });
 
-    return {
-      ...artist,
-      tracks: fullTracks,
-      isFollowing: isFollowed,
-      followersCount: artist.followersCount,
-    };
-  },
-  ["artist-by-id"],
-  { tags: ["artists"], revalidate: 10 * 60 }
-);
+  return {
+    ...artist,
+    tracks: fullTracks,
+    isFollowing: isFollowed,
+    followersCount: artist.followersCount,
+  };
+};
 
 export type ArtistOverview = AwaitedReturnType<typeof getArtistOverview>;
 
-export const getArtistDiscography = unstable_cache(
-  async (artistId: string, paginationParams: PaginationParams) => {
-    const { limit, offset } = paginationParams;
+export const getArtistDiscography = async (
+  artistId: string,
+  paginationParams: PaginationParams
+) => {
+  const { limit, offset } = paginationParams;
 
-    const [items, total] = await Promise.all([
-      db.$transaction(async (tx) => {
-        const [popular, albums, singlesAndEps] = await Promise.all([
-          tx.album.findMany({
-            where: { artistId },
-            orderBy: [
-              { likedBy: { _count: "desc" } },
-              { releaseDate: "desc" },
-              { id: "desc" },
-            ],
-            take: limit,
-            select: {
-              id: true,
-              title: true,
-              imageId: true,
-              albumType: true,
-              releaseDate: true,
-              artist: {
-                select: artistItemSelect,
-              },
-              _count: { select: { likedBy: true } },
+  const [items, total] = await Promise.all([
+    db.$transaction(async (tx) => {
+      const [popular, albums, singlesAndEps] = await Promise.all([
+        tx.album.findMany({
+          where: { artistId },
+          orderBy: [
+            { likedBy: { _count: "desc" } },
+            { releaseDate: "desc" },
+            { id: "desc" },
+          ],
+          take: limit,
+          select: {
+            id: true,
+            title: true,
+            imageId: true,
+            albumType: true,
+            releaseDate: true,
+            artist: {
+              select: artistItemSelect,
             },
-          }),
+            _count: { select: { likedBy: true } },
+          },
+        }),
 
-          tx.album.findMany({
-            where: { artistId, albumType: "ALBUM" },
-            orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
-            take: limit,
-            select: {
-              id: true,
-              title: true,
-              imageId: true,
-              albumType: true,
-              releaseDate: true,
-              artist: {
-                select: artistItemSelect,
-              },
+        tx.album.findMany({
+          where: { artistId, albumType: "ALBUM" },
+          orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
+          take: limit,
+          select: {
+            id: true,
+            title: true,
+            imageId: true,
+            albumType: true,
+            releaseDate: true,
+            artist: {
+              select: artistItemSelect,
             },
-          }),
+          },
+        }),
 
-          tx.album.findMany({
-            where: { artistId, albumType: { in: ["SINGLE", "EP"] } },
-            take: limit,
-            orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
-            select: {
-              id: true,
-              title: true,
-              imageId: true,
-              albumType: true,
-              releaseDate: true,
-              artist: {
-                select: artistItemSelect,
-              },
+        tx.album.findMany({
+          where: { artistId, albumType: { in: ["SINGLE", "EP"] } },
+          take: limit,
+          orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
+          select: {
+            id: true,
+            title: true,
+            imageId: true,
+            albumType: true,
+            releaseDate: true,
+            artist: {
+              select: artistItemSelect,
             },
-          }),
-        ]);
+          },
+        }),
+      ]);
 
-        return { popular, albums, singlesAndEps };
-      }),
+      return { popular, albums, singlesAndEps };
+    }),
 
-      db.album.count({
-        where: { artistId },
-      }),
-    ]);
+    db.album.count({
+      where: { artistId },
+    }),
+  ]);
 
-    return { items, pagination: getPaginationMeta({ limit, offset, total }) };
-  },
-  ["artist-by-id"],
-  { tags: ["artists"], revalidate: 10 * 60 }
-);
+  return { items, pagination: getPaginationMeta({ limit, offset, total }) };
+};
 
 export type ArtistDiscography = AwaitedReturnType<typeof getArtistDiscography>;
 
@@ -200,27 +200,41 @@ export const getRelatedArtists = async (
 
 export type RelatedArtists = AwaitedReturnType<typeof getRelatedArtists>;
 
-export const getHotArtists = unstable_cache(
-  async (params: PaginationParams) => {
-    const { offset, limit } = params;
+export const getHotArtists = async (params: PaginationParams) => {
+  const { offset, limit } = params;
 
-    const [items, total] = await Promise.all([
-      db.artist.findMany({
-        select: artistItemSelect,
-        take: limit,
-        orderBy: {
-          followersCount: "desc",
-        },
-      }),
+  const [items, total] = await Promise.all([
+    db.artist.findMany({
+      select: artistItemSelect,
+      take: limit,
+      orderBy: {
+        followersCount: "desc",
+      },
+    }),
 
-      db.artist.count(),
-    ]);
+    db.artist.count(),
+  ]);
 
-    return {
-      items,
-      pagination: getPaginationMeta({ limit, offset, total }),
-    };
-  }
-);
+  return {
+    items,
+    pagination: getPaginationMeta({ limit, offset, total }),
+  };
+};
 
 export type HotArtists = AwaitedReturnType<typeof getHotArtists>;
+
+export const getFollowStatus = async (userId: string, artistId: string) => {
+  const [artist, link] = await Promise.all([
+    db.artist.findUnique({
+      where: { id: artistId },
+      select: { followersCount: true },
+    }),
+    db.userFollowedArtist.findUnique({
+      where: { userId_artistId: { userId, artistId } },
+    }),
+  ]);
+
+  return { isFollowing: !!link, followersCount: artist?.followersCount ?? 0 };
+};
+
+export type FollowStatus = AwaitedReturnType<typeof getFollowStatus>;

@@ -1,22 +1,5 @@
 import "server-only";
-import db from "@/lib/db";
-import { AwaitedReturnType } from "@/utils/type";
-
-export const getFollowStatus = async (userId: string, artistId: string) => {
-  const [artist, link] = await Promise.all([
-    db.artist.findUnique({
-      where: { id: artistId },
-      select: { followersCount: true },
-    }),
-    db.userFollowedArtist.findUnique({
-      where: { userId_artistId: { userId, artistId } },
-    }),
-  ]);
-
-  return { isFollowing: !!link, followersCount: artist?.followersCount ?? 0 };
-};
-
-export type FollowStatus = AwaitedReturnType<typeof getFollowStatus>;
+import db from "../db";
 
 export const followArtist = async (userId: string, artistId: string) => {
   return await db.$transaction(async (tx) => {

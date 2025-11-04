@@ -1,9 +1,9 @@
 "use client";
 
 import { meKeys } from "@/features/me/api/me-keys";
-import { MyPlaylists } from "@/features/me/data-access/me-repo";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 import { PlaylistBanner } from "@/features/playlist/data-access/playlist-repo";
+import { MyPlaylists } from "@/lib/data/me-data";
 import { postApi } from "@/lib/http/api";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

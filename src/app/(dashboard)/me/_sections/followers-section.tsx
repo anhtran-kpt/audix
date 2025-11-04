@@ -2,10 +2,10 @@ import { SectionSkeleton } from "@/components/shared/section-skeleton";
 import { UserGridSkeleton } from "@/components/shared/user-grid-skeleton";
 import { Suspense } from "react";
 import { FollowersSectionClient } from "./followers-section-client";
-import { getMyFollowedUsers } from "@/lib/data/me-data";
+import { getMyFollowers } from "@/lib/data/me-data";
 
 export const FollowersSection = async ({ userId }: { userId: string }) => {
-  const data = await getMyFollowedUsers({
+  const data = await getMyFollowers({
     userId,
     params: { limit: 8, offset: 0 },
   });

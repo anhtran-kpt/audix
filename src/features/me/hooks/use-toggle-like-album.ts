@@ -1,11 +1,11 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LikedAlbumStatus, MyLikedAlbums } from "../data-access/me-repo";
 import { meKeys } from "../api/me-keys";
 import { deleteApi, putApi } from "@/lib/http/api";
 import { meEndpoints } from "../api/me-endpoints";
 import { AlbumItem } from "@/features/album/contracts/album-dto";
+import { LikedAlbumStatus, MyLikedAlbums } from "@/lib/data/me-data";
 
 export function useToggleLikeAlbum(album: AlbumItem) {
   const qc = useQueryClient();
@@ -57,7 +57,7 @@ export function useToggleLikeAlbum(album: AlbumItem) {
                 ...old.pagination,
                 total: old.pagination.total + 1,
               },
-              items: [...old.items, album],
+              items: [album, ...old.items],
             };
       });
 

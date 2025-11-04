@@ -1,19 +1,16 @@
 import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 import { artistKeys } from "./artist-keys";
-import { ArtistItem } from "../contracts/artist-dto";
 import { artistEndpoints } from "./artist-endpoints";
-import { FollowStatus, HotArtists } from "../data-access/artist-repo";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getApi } from "@/lib/http/api";
-import { ArtistDiscography, RelatedArtists } from "@/lib/data/artist-data";
+import {
+  ArtistDiscography,
+  FollowStatus,
+  HotArtists,
+  RelatedArtists,
+} from "@/lib/data/artist-data";
 
 export const artistQueryOptions = {
-  list: () =>
-    queryOptions({
-      queryKey: artistKeys.list(),
-      queryFn: () => getApi<ArtistItem[]>(artistEndpoints.list()),
-    }),
-
   followStatus: (artistId: string) =>
     queryOptions({
       queryKey: artistKeys.followStatus(artistId),

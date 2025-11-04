@@ -1,9 +1,6 @@
 import { ToggleLikeAlbumInputSchema } from "@/features/me/contracts/me-schema";
-import {
-  getLikedAlbumStatus,
-  likeAlbum,
-  unlikeAlbum,
-} from "@/features/me/data-access/me-repo";
+import { likeAlbum, unlikeAlbum } from "@/features/me/data-access/me-repo";
+import { getLikedAlbumStatus } from "@/lib/data/me-data";
 import { makeDELETE, makeGET, makePUT } from "@/lib/route-factory";
 
 export const GET = makeGET({

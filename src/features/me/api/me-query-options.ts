@@ -2,26 +2,19 @@ import { queryOptions } from "@tanstack/react-query";
 import { meKeys } from "./me-keys";
 import { meEndpoints } from "./me-endpoints";
 import { getApi } from "@/lib/http/api";
+import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import {
   LikedAlbumStatus,
   LikedPlaylistStatus,
-  MyBanner,
   MyFollowedArtists,
   MyFollowedUsers,
   MyFollowers,
   MyLikedAlbums,
   MyLikedPlaylists,
   MyPlaylists,
-} from "../data-access/me-repo";
-import { PaginationParams } from "@/features/shared/contracts/shared-dto";
+} from "@/lib/data/me-data";
 
 export const meQueryOptions = {
-  banner: () =>
-    queryOptions({
-      queryKey: meKeys.banner(),
-      queryFn: () => getApi<MyBanner>(meEndpoints.banner()),
-    }),
-
   followers: (params?: Partial<PaginationParams>) =>
     queryOptions({
       queryKey: meKeys.followers(params),

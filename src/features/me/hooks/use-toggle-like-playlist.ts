@@ -1,11 +1,11 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { LikedPlaylistStatus, MyLikedPlaylists } from "../data-access/me-repo";
 import { meKeys } from "../api/me-keys";
 import { deleteApi, putApi } from "@/lib/http/api";
 import { meEndpoints } from "../api/me-endpoints";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
+import { LikedPlaylistStatus, MyLikedPlaylists } from "@/lib/data/me-data";
 
 export function useToggleLikePlaylist(playlist: PlaylistItem) {
   const qc = useQueryClient();
@@ -59,7 +59,7 @@ export function useToggleLikePlaylist(playlist: PlaylistItem) {
                 ...old.pagination,
                 total: old.pagination.total + 1,
               },
-              items: [...old.items, playlist],
+              items: [playlist, ...old.items],
             };
       });
 

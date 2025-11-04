@@ -1,5 +1,5 @@
-import { getMyFollowedUsers } from "@/features/me/data-access/me-repo";
 import { PaginationParamsSchema } from "@/features/shared/contracts/shared-schema";
+import { getMyFollowedUsers } from "@/lib/data/me-data";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

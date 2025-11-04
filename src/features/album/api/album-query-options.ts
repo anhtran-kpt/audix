@@ -4,13 +4,7 @@ import { AlbumItem } from "../contracts/album-dto";
 import { albumEndpoints } from "./album-endpoints";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { albumKeys } from "./album-keys";
-import {
-  AlbumBanner,
-  AlbumNewReleases,
-  AlbumSuggestions,
-  AlbumTracks,
-  PopularAlbums,
-} from "../data-access/album-repo";
+import { AlbumSuggestions, AlbumTracks } from "../data-access/album-repo";
 
 export const albumQueryOptions = {
   list: (params?: Partial<PaginationParams>) =>
@@ -22,14 +16,6 @@ export const albumQueryOptions = {
     queryOptions({
       queryKey: albumKeys.detail(albumId),
       queryFn: () => getApi<AlbumItem[]>(albumEndpoints.detail(albumId)),
-    }),
-
-  banner: (albumId: string) =>
-    queryOptions({
-      queryKey: albumKeys.banner(albumId),
-      queryFn: () => getApi<AlbumBanner>(albumEndpoints.banner(albumId)),
-      staleTime: Infinity,
-      enabled: !!albumId,
     }),
 
   tracks: (albumId: string) =>
@@ -50,25 +36,5 @@ export const albumQueryOptions = {
         }),
       placeholderData: keepPreviousData,
       enabled: !!albumId,
-    }),
-
-  newReleases: (params?: Partial<PaginationParams>) =>
-    queryOptions({
-      queryKey: albumKeys.newReleases(params),
-      queryFn: () =>
-        getApi<AlbumNewReleases>(albumEndpoints.newReleases(), {
-          params,
-        }),
-      placeholderData: keepPreviousData,
-    }),
-
-  popularAlbums: (params?: Partial<PaginationParams>) =>
-    queryOptions({
-      queryKey: albumKeys.popularAlbums(params),
-      queryFn: () =>
-        getApi<PopularAlbums>(albumEndpoints.popularAlbums(), {
-          params,
-        }),
-      placeholderData: keepPreviousData,
     }),
 } as const;

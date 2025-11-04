@@ -10,7 +10,7 @@ export const DiscographySection = async ({
   artistId: string;
 }) => {
   const initialData = await getArtistDiscography(artistId, {
-    limit: 5,
+    limit: 8,
     offset: 0,
   });
 

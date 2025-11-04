@@ -1,25 +1,18 @@
 "use client";
 
 import { useImageGradient } from "@/hooks/use-image-gradient";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { EditIcon } from "lucide-react";
 import { AppImage } from "@/components/shared/app-image";
 import { NavLink } from "@/components/ui/nav-link";
 import pluralize from "pluralize";
 import Dot from "@/components/ui/dot";
-import { meQueryOptions } from "@/features/me/api/me-query-options";
 import Image from "next/image";
 import { CopyLinkButton } from "@/components/features/copy-link-button";
 import { Button } from "@/components/ui/button";
 import { MyOverview } from "@/lib/data/me-data";
 
 export const BannerSection = ({ initialData }: { initialData: MyOverview }) => {
-  const { data: me } = useQuery({
-    ...meQueryOptions.banner(),
-    initialData,
-    initialDataUpdatedAt: Date.now(),
-  });
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const { gradient } = useImageGradient(imageUrl);
 
@@ -33,11 +26,11 @@ export const BannerSection = ({ initialData }: { initialData: MyOverview }) => {
       }}
     >
       <div className="mt-[calc(var(--spacing-responsive)+var(--header-height))] flex flex-col sm:flex-row justify-start sm:items-end sm:gap-5 xl:gap-6">
-        {me.image && me.image.startsWith("https") ? (
+        {initialData.image && initialData.image.startsWith("https") ? (
           <div className="size-72 sm:size-42 md:size-48 lg:size-52 xl:size-56 max-sm:place-self-center rounded-full relative">
             <Image
-              alt={me.name ?? "profile"}
-              src={me.image}
+              alt={initialData.name ?? "profile"}
+              src={initialData.image}
               className="rounded-full size-56 object-cover"
               fill
               onLoad={(e) => {
@@ -50,8 +43,10 @@ export const BannerSection = ({ initialData }: { initialData: MyOverview }) => {
         ) : (
           <AppImage
             priority
-            alt={me.name ?? "profile"}
-            src={me.image ?? process.env.NEXT_PUBLIC_FALLBACK_USER_COVER!}
+            alt={initialData.name ?? "profile"}
+            src={
+              initialData.image ?? process.env.NEXT_PUBLIC_FALLBACK_USER_COVER!
+            }
             className="rounded-full"
             sizes="(max-width: 768px) 50vw, 224px"
             containerClassName="size-72 sm:size-42 md:size-48 lg:size-52 xl:size-56 max-sm:place-self-center rounded-full"
@@ -63,24 +58,26 @@ export const BannerSection = ({ initialData }: { initialData: MyOverview }) => {
         <div className="flex flex-col gap-3 sm:gap-4 lg:gap-5 xl:gap-6 max-sm:mt-6">
           <span className="max-sm:hidden">Profile</span>
           <span className="font-extrabold text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl">
-            {me.name}
+            {initialData.name}
           </span>
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-2">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">
-                {`${me._count.playlists} ${pluralize(
+                {`${initialData._count.playlists} ${pluralize(
                   "Playlist",
-                  me._count.playlists
+                  initialData._count.playlists
                 )}`}
               </span>
               <Dot />
               <NavLink href={`/me/followers`} className="text-sm">
-                {me._count.followers}{" "}
-                {pluralize("follower", me._count.followers)}
+                {initialData._count.followers}{" "}
+                {pluralize("follower", initialData._count.followers)}
               </NavLink>
               <Dot />
               <NavLink href={`/me/following`} className="text-sm">
-                {me._count.followedArtists + me._count.following} following
+                {initialData._count.followedArtists +
+                  initialData._count.following}{" "}
+                following
               </NavLink>
             </div>
           </div>
