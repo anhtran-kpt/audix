@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import prisma from "@/lib/db";
 import type { Adapter } from "next-auth/adapters";
 import { compare } from "bcryptjs";
+import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as Adapter,
@@ -67,7 +68,7 @@ export const authOptions: NextAuthOptions = {
         });
 
         const likedPlaylist = await prisma.playlist.findFirst({
-          where: { userId: user.id, systemType: "LIKED_TRACKS" },
+          where: { userId: user.id, systemType: DEFAULT_USER_PLAYLIST_TYPE },
           select: { id: true },
         });
 
@@ -132,9 +133,9 @@ export const authOptions: NextAuthOptions = {
 
         prisma.playlist.create({
           data: {
-            title: "Liked Tracks",
+            title: "Favorite Songs",
             isSystem: true,
-            systemType: "LIKED_TRACKS",
+            systemType: DEFAULT_USER_PLAYLIST_TYPE,
             userId: user.id,
           },
         }),

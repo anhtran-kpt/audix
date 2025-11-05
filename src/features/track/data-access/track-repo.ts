@@ -3,19 +3,7 @@ import db from "@/lib/db";
 import { AppError } from "@/lib/errors";
 import { trackItemSelect } from "./track-select";
 import { AwaitedReturnType } from "@/utils/type";
-
-export const getTrackOrThrow = async (trackId: string) => {
-  const track = await db.track.findUnique({
-    where: {
-      id: trackId,
-    },
-    select: trackItemSelect,
-  });
-
-  if (!track) throw new AppError("NOT_FOUND", "Track not found");
-
-  return { ...track, artists: track.artists.map((item) => item.artist) };
-};
+import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
 
 export const getFullTrackOrThrow = async ({
   userId,
@@ -34,7 +22,7 @@ export const getFullTrackOrThrow = async ({
       trackId,
       playlist: {
         userId,
-        systemType: "LIKED_TRACKS",
+        systemType: DEFAULT_USER_PLAYLIST_TYPE,
       },
     },
     select: { id: true },
@@ -65,7 +53,7 @@ export const getFullTracks = async ({
     where: {
       playlist: {
         userId,
-        systemType: "LIKED_TRACKS",
+        systemType: DEFAULT_USER_PLAYLIST_TYPE,
       },
       trackId: { in: trackIds },
     },

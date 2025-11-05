@@ -98,7 +98,7 @@ export const OverviewSection = ({ artist }: OverviewSectionProps) => {
       <div>
         <SectionHeading title="Popular" />
         <TrackList
-          tracks={artist.tracks}
+          initialData={artist.tracks}
           isLoading={false}
           contextId={artist.id}
           contextType="ARTIST"

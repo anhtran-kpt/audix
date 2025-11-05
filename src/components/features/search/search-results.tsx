@@ -99,7 +99,7 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
     }
     return (
       <TrackList
-        tracks={data.tracks.items}
+        initialData={data.tracks.items}
         contextId={q}
         contextType="SEARCH"
         isLoading={false}

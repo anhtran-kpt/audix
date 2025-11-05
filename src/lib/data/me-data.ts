@@ -6,6 +6,7 @@ import { albumItemSelect } from "@/features/album/data-access/album-select";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
 import { playlistItemSelect } from "@/features/playlist/data-access/playlist-select";
 import { artistItemSelect } from "@/features/artist/data-access/artist-select";
+import { DEFAULT_USER_PLAYLIST_TYPE } from "../constants";
 
 export const getMyOverview = async (userId: string) => {
   return await db.user.findUniqueOrThrow({
@@ -38,6 +39,7 @@ export const getSidebarOverview = async ({
   const { offset, limit } = params;
 
   const [
+    favoriteSongsPlaylist,
     likedAlbums,
     likedAlbumTotal,
     likedPlaylists,
@@ -47,6 +49,18 @@ export const getSidebarOverview = async ({
     myPlaylists,
     myPlaylistTotal,
   ] = await Promise.all([
+    db.playlist.findFirstOrThrow({
+      where: {
+        userId,
+        systemType: DEFAULT_USER_PLAYLIST_TYPE,
+      },
+      select: {
+        ...playlistItemSelect,
+        systemType: true,
+        totalTracks: true,
+      },
+    }),
+
     db.userLikedAlbum
       .findMany({
         where: {
@@ -122,7 +136,10 @@ export const getSidebarOverview = async ({
     db.playlist.findMany({
       where: {
         userId,
-        OR: [{ systemType: null }, { systemType: { not: "LIKED_TRACKS" } }],
+        OR: [
+          { systemType: null },
+          { systemType: { not: DEFAULT_USER_PLAYLIST_TYPE } },
+        ],
       },
       select: { ...playlistItemSelect },
       orderBy: {
@@ -135,12 +152,16 @@ export const getSidebarOverview = async ({
     db.playlist.count({
       where: {
         userId,
-        OR: [{ systemType: null }, { systemType: { not: "LIKED_TRACKS" } }],
+        OR: [
+          { systemType: null },
+          { systemType: { not: DEFAULT_USER_PLAYLIST_TYPE } },
+        ],
       },
     }),
   ]);
 
   return {
+    favoriteSongsPlaylist,
     likedAlbums: {
       items: likedAlbums,
       pagination: getPaginationMeta({
@@ -377,7 +398,7 @@ export const getMyPlaylists = async ({
   const likedTracks = await db.playlist.findFirst({
     where: {
       userId,
-      systemType: "LIKED_TRACKS",
+      systemType: DEFAULT_USER_PLAYLIST_TYPE,
     },
     select: { ...playlistItemSelect },
   });
@@ -385,7 +406,10 @@ export const getMyPlaylists = async ({
   const others = await db.playlist.findMany({
     where: {
       userId,
-      OR: [{ systemType: null }, { systemType: { not: "LIKED_TRACKS" } }],
+      OR: [
+        { systemType: null },
+        { systemType: { not: DEFAULT_USER_PLAYLIST_TYPE } },
+      ],
     },
     select: { ...playlistItemSelect },
     orderBy: {
@@ -398,7 +422,10 @@ export const getMyPlaylists = async ({
   const total = await db.playlist.count({
     where: {
       userId,
-      OR: [{ systemType: null }, { systemType: { not: "LIKED_TRACKS" } }],
+      OR: [
+        { systemType: null },
+        { systemType: { not: DEFAULT_USER_PLAYLIST_TYPE } },
+      ],
     },
   });
 
@@ -504,3 +531,21 @@ export const getMyFollowers = async ({
 };
 
 export type MyFollowers = AwaitedReturnType<typeof getMyFollowers>;
+
+export const getMyFavoriteSongsPlaylist = async (userId: string) => {
+  return await db.playlist.findFirstOrThrow({
+    where: {
+      userId,
+      systemType: DEFAULT_USER_PLAYLIST_TYPE,
+    },
+    select: {
+      ...playlistItemSelect,
+      systemType: true,
+      totalTracks: true,
+    },
+  });
+};
+
+export type MyFavoriteSongsPlaylist = AwaitedReturnType<
+  typeof getMyFavoriteSongsPlaylist
+>;

@@ -6,11 +6,11 @@ import { TrackCredits } from "../data-access/track-repo";
 import { TrackItem } from "../contracts/track-dto";
 
 export const trackQueryOptions = {
-  trackDetail: (trackId?: string) =>
+  trackDetail: (trackId: string) =>
     queryOptions({
       enabled: !!trackId,
-      queryKey: trackKeys.detail(trackId!),
-      queryFn: () => getApi<TrackItem>(trackEndpoints.detail(trackId!)),
+      queryKey: trackKeys.detail(trackId),
+      queryFn: () => getApi<TrackItem>(trackEndpoints.detail(trackId)),
     }),
 
   trackList: (trackIds: string[]) =>

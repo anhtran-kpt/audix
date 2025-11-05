@@ -13,4 +13,5 @@ export const meEndpoints = {
   toggleLikePlaylist: (playlistId: string) =>
     `/me/like/playlists/${playlistId}` as const,
   toggleLikeTrack: (trackId: string) => `/me/like/tracks/${trackId}` as const,
+  favoriteSongsPlaylist: () => `/me/favorite-songs-playlist` as const,
 };

@@ -23,4 +23,6 @@ export const meKeys = {
   likeAlbum: (albumId: string) => [...meKeys.base, "albums", albumId] as const,
   likePlaylist: (playlistId: string) =>
     [...meKeys.base, "playlists", playlistId] as const,
+  favoriteSongsPlaylist: () =>
+    [...meKeys.base, "playlists", "favorite-songs"] as const,
 } as const;

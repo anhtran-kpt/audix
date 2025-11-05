@@ -27,8 +27,6 @@ export const useOptimisticCoverUpdate = () => {
       await qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) });
       await qc.cancelQueries({ queryKey: meKeys.myPlaylists() });
 
-      console.log("running");
-
       const prevData = {
         banner: qc.getQueryData<PlaylistBanner>(
           playlistKeys.banner(playlistId)

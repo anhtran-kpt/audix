@@ -12,9 +12,12 @@ import { Clock3Icon } from "lucide-react";
 import { TrackIndexCell } from "./track-index-cell";
 import { TrackDropdownDetails } from "../track-dropdown-details";
 import { ToggleLikeTrackButton } from "../toggle-like-track-button";
+import { useQueries } from "@tanstack/react-query";
+import { trackQueryOptions } from "@/features/track/api/track-query-options";
+import { useMemo } from "react";
 
 type TrackListProps = {
-  tracks: TrackItem[];
+  initialData: TrackItem[];
   contextId: string;
   contextType: "PLAYLIST" | "ALBUM" | "ARTIST" | "SEARCH";
   isLoading: boolean;
@@ -22,12 +25,25 @@ type TrackListProps = {
 };
 
 export const TrackList = ({
-  tracks,
+  initialData,
   contextId,
   contextType,
   isLoading = true,
   canEdit = false,
 }: TrackListProps) => {
+  const trackQueries = useMemo(
+    () =>
+      initialData.map((track) => ({
+        ...trackQueryOptions.trackDetail(track.id),
+        initialData: initialData.find((t) => t.id === track.id),
+      })),
+    [initialData]
+  );
+
+  const trackResults = useQueries({ queries: trackQueries });
+
+  const tracks = trackResults.map((r) => r.data);
+
   const gridCols: Record<TrackListProps["contextType"], string> = {
     PLAYLIST:
       "grid-cols-[1fr_2rem_2rem] sm:grid-cols-[2rem_1fr_6rem_3rem_3rem] md:grid-cols-[2rem_minmax(12rem,1fr)_0.7fr_3rem_3rem_3rem] xl:grid-cols-[2rem_minmax(12rem,1fr)_1fr_8rem_3rem_3rem_3rem]",

@@ -6,6 +6,7 @@ import {
   addTrackToPlaylist,
   removeTrackFromPlaylist,
 } from "@/features/playlist/data-access/playlist-repo";
+import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
 
 export const likeAlbum = async ({
   userId,
@@ -131,7 +132,7 @@ export const toggleLikeTrack = async ({
   trackId: string;
 }) => {
   const likedPlaylist = await db.playlist.findFirstOrThrow({
-    where: { userId, systemType: "LIKED_TRACKS" },
+    where: { userId, systemType: DEFAULT_USER_PLAYLIST_TYPE },
   });
 
   const existing = await db.playlistTrack.findUnique({

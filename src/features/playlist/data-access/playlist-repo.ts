@@ -10,6 +10,7 @@ import { AwaitedReturnType } from "@/utils/type";
 import { AppError } from "@/lib/errors";
 import { getFullTracks } from "@/features/track/data-access/track-repo";
 import { shuffleArray } from "@/utils/array";
+import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
 
 export const authorizePlaylist = async ({
   userId,
@@ -196,8 +197,16 @@ export const removeTrackFromPlaylist = async ({
             track: { select: { album: { select: { imageId: true } } } },
           },
         },
+        systemType: true,
       },
     });
+
+    if (playlist.systemType === DEFAULT_USER_PLAYLIST_TYPE) {
+      return {
+        removedTrackId: trackId,
+        position,
+      };
+    }
 
     const imageIds = playlist.tracks.map((t) => t.track.album.imageId);
     const imageIdSet = new Set(imageIds);
@@ -226,71 +235,6 @@ export const removeTrackFromPlaylist = async ({
     };
   });
 };
-
-export const getPlaylistDetail = async (playlistId: string) => {
-  return await db.playlist
-    .findUniqueOrThrow({
-      where: {
-        id: playlistId,
-      },
-      select: {
-        id: true,
-        title: true,
-        imageId: true,
-        totalTracks: true,
-        duration: true,
-        isPublic: true,
-        description: true,
-        user: {
-          select: {
-            id: true,
-            name: true,
-            image: true,
-          },
-        },
-        tracks: {
-          select: {
-            addedAt: true,
-            track: {
-              select: {
-                id: true,
-                title: true,
-                duration: true,
-                playCount: true,
-                album: {
-                  select: {
-                    id: true,
-                    title: true,
-                    imageId: true,
-                  },
-                },
-                artists: {
-                  select: {
-                    artist: {
-                      select: {
-                        id: true,
-                        name: true,
-                      },
-                    },
-                  },
-                },
-                isExplicit: true,
-              },
-            },
-          },
-        },
-      },
-    })
-    .then((playlist) => ({
-      ...playlist,
-      tracks: playlist.tracks.map((track) => ({
-        ...track.track,
-        addedAt: track.addedAt,
-      })),
-    }));
-};
-
-export type PlaylistDetail = AwaitedReturnType<typeof getPlaylistDetail>;
 
 export const getPlaylistBanner = async ({
   userId,

@@ -23,7 +23,7 @@ export const TracksSectionClient = ({
     <section>
       <TrackList
         contextId={playlistId}
-        tracks={data.tracks}
+        initialData={data.tracks}
         contextType="PLAYLIST"
         isLoading={false}
         canEdit={data.canEdit}

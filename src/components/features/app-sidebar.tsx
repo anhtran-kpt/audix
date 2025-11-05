@@ -19,6 +19,7 @@ import {
   PanelRightCloseIcon,
   ChevronDownIcon,
   FilterIcon,
+  PinIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { SidebarItemWrapper } from "../shared/sidebar-item-wrapper";
@@ -39,6 +40,9 @@ import { LibraryFilter, useLibraryItems } from "@/hooks/use-library-items";
 import { MiniPlayContextButton } from "./play/mini-play-context-button";
 import { SidebarOverview } from "@/lib/data/me-data";
 import { cn } from "@/lib/utils";
+import pluralize from "pluralize";
+import { useQuery } from "@tanstack/react-query";
+import { meQueryOptions } from "@/features/me/api/me-query-options";
 
 export function AppSidebar({ initialData }: { initialData: SidebarOverview }) {
   const pathname = usePathname();
@@ -47,6 +51,11 @@ export function AppSidebar({ initialData }: { initialData: SidebarOverview }) {
   const router = useRouter();
   const [filter, setFilter] = useState<LibraryFilter>("all");
   const { filteredItems } = useLibraryItems({ filter, initialData });
+  const { data: favoriteSongsPlaylist } = useQuery({
+    ...meQueryOptions.favoriteSongsPlaylist(),
+    initialData: initialData.favoriteSongsPlaylist,
+    initialDataUpdatedAt: Date.now(),
+  });
 
   const { isPlaying, contextId } = usePlaybackStore(
     useShallow((s) => ({
@@ -142,6 +151,77 @@ export function AppSidebar({ initialData }: { initialData: SidebarOverview }) {
         <ScrollArea className="h-full min-h-0" scrollBarClassName="w-2">
           <SidebarGroup className="h-full">
             <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  size="lg"
+                  asChild
+                  isActive={
+                    pathname === `/playlists/${favoriteSongsPlaylist.id}`
+                  }
+                >
+                  <div
+                    className="cursor-pointer"
+                    onClick={() =>
+                      router.push(`/playlists/${favoriteSongsPlaylist.id}`)
+                    }
+                  >
+                    <SidebarItemWrapper
+                      open={open}
+                      image={
+                        <>
+                          <AppImage
+                            fill
+                            sizes="40px"
+                            className={`rounded-sm group-hover/menu-item:brightness-65`}
+                            alt={favoriteSongsPlaylist.title}
+                            src={
+                              favoriteSongsPlaylist.imageId ??
+                              process.env.NEXT_PUBLIC_FALLBACK_PLAYLIST_COVER!
+                            }
+                            containerClassName="size-10"
+                            priority
+                          />
+                          <MiniPlayContextButton
+                            context={{
+                              contextType: "PLAYLIST",
+                              contextId: favoriteSongsPlaylist.id,
+                            }}
+                            className="hidden group-hover/menu-item:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+                          />
+                        </>
+                      }
+                      info={
+                        <>
+                          <p className="font-medium text-[calc(13rem/16)] truncate">
+                            {favoriteSongsPlaylist.title}
+                          </p>
+                          <div className="flex items-center text-[calc(11rem/16)] text-muted-foreground gap-x-1 truncate">
+                            <div className="flex items-center gap-1">
+                              <PinIcon className="size-3 text-green-600 fill-green-600 rotate-45" />
+                              Playlist
+                            </div>
+
+                            <>
+                              <Dot />
+                              <span>
+                                {favoriteSongsPlaylist.totalTracks}{" "}
+                                {pluralize(
+                                  "song",
+                                  favoriteSongsPlaylist.totalTracks
+                                )}
+                              </span>
+                            </>
+                          </div>
+                        </>
+                      }
+                      right={
+                        isPlaying &&
+                        contextId === favoriteSongsPlaylist.id && <VolumeIcon />
+                      }
+                    />
+                  </div>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               {filteredItems.map((item) => {
                 const isArtist = "type" in item && item.type === "ARTIST";
                 const isAlbum = "type" in item && item.type === "ALBUM";

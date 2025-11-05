@@ -4,6 +4,7 @@ import { hash } from "bcryptjs";
 import { SignUpInput } from "../contracts/auth-dto";
 import { AwaitedReturnType } from "@/utils/type";
 import { AppError } from "@/lib/errors";
+import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
 
 export const signUp = async (input: SignUpInput) => {
   const { email, name, password } = input;
@@ -28,10 +29,11 @@ export const signUp = async (input: SignUpInput) => {
     await Promise.all([
       db.playlist.create({
         data: {
-          title: "Liked Tracks",
+          title: "Favorite Songs",
           isSystem: true,
-          systemType: "LIKED_TRACKS",
+          systemType: DEFAULT_USER_PLAYLIST_TYPE,
           userId: user.id,
+          imageId: process.env.NEXT_PUBLIC_FAVORITE_SONGS_COVER,
         },
       }),
 

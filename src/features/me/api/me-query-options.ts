@@ -6,6 +6,7 @@ import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import {
   LikedAlbumStatus,
   LikedPlaylistStatus,
+  MyFavoriteSongsPlaylist,
   MyFollowedArtists,
   MyFollowedUsers,
   MyFollowers,
@@ -67,5 +68,12 @@ export const meQueryOptions = {
       queryKey: meKeys.followedUsers(params),
       queryFn: () =>
         getApi<MyFollowedUsers>(meEndpoints.followedUsers(), { params }),
+    }),
+
+  favoriteSongsPlaylist: () =>
+    queryOptions({
+      queryKey: meKeys.favoriteSongsPlaylist(),
+      queryFn: () =>
+        getApi<MyFavoriteSongsPlaylist>(meEndpoints.favoriteSongsPlaylist()),
     }),
 } as const;

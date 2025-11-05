@@ -17,6 +17,7 @@ import EditPlaylistDetails from "@/components/features/edit-playlist-details";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 import { Button } from "@/components/ui/button";
 import { PlaylistBanner } from "@/lib/data/playlist-data";
+import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
 
 type BannerSectionProps = {
   initialData: PlaylistBanner;
@@ -133,7 +134,7 @@ export const BannerSection = ({ initialData }: BannerSectionProps) => {
         </div>
         <div className="flex items-center gap-6">
           {playlist.role !== "OWNER" &&
-            playlist.systemType !== "LIKED_TRACKS" && (
+            playlist.systemType !== DEFAULT_USER_PLAYLIST_TYPE && (
               <ToggleLikePlaylistButton
                 playlist={{
                   id: playlist.id,

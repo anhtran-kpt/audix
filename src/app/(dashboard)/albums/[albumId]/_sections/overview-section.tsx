@@ -107,7 +107,7 @@ export const OverviewSection = ({ album }: OverviewSectionProps) => {
       </div>
       <div>
         <TrackList
-          tracks={album.tracks}
+          initialData={album.tracks}
           isLoading={false}
           contextId={album.id}
           contextType="ALBUM"

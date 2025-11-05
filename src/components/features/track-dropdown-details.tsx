@@ -131,8 +131,8 @@ export function TrackDropdownDetails({
                 }
               >
                 {track.isLiked
-                  ? "Remove from Liked Tracks"
-                  : "Save to Liked Tracks"}
+                  ? "Remove from Favorite Songs"
+                  : "Save to Favorite Songs"}
               </DropdownMenuItem>
               <DropdownMenuItem>Add to queue</DropdownMenuItem>
               {contextType === "PLAYLIST" && canEdit && (
