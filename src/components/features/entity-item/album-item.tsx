@@ -35,26 +35,25 @@ export const AlbumItem = ({ album }: { album: AlbumItemType }) => {
         >
           {album.title}
         </NavLink>
-        <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
-          {album.releaseDate ? (
-            <>
-              <span>{formatDate(album.releaseDate, "yyyy")}</span>
-              <Dot />
-              <span>{albumTypeMap[album.albumType]}</span>
-            </>
-          ) : (
-            <>
-              <span>{albumTypeMap[album.albumType]}</span>
-              <Dot />
-              <NavLink
-                href={`/artists/${album.artist.id}`}
-                className="text-[calc(13rem/16)] truncate block w-full"
-              >
-                {album.artist.name}
-              </NavLink>
-            </>
-          )}
-        </div>
+
+        {album.releaseDate ? (
+          <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+            <span>{formatDate(album.releaseDate, "yyyy")}</span>
+            <Dot />
+            <span>{albumTypeMap[album.albumType]}</span>
+          </div>
+        ) : (
+          <div className="flex text-[calc(13rem/16)] text-muted-foreground items-center gap-1.5 mt-0.5">
+            <span>{albumTypeMap[album.albumType]}</span>
+            <Dot />
+            <NavLink
+              href={`/artists/${album.artist.id}`}
+              className="text-[calc(13rem/16)] truncate block w-full"
+            >
+              {album.artist.name}
+            </NavLink>
+          </div>
+        )}
       </div>
     </div>
   );

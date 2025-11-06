@@ -395,43 +395,33 @@ export const getMyPlaylists = async ({
 }) => {
   const { offset, limit } = params;
 
-  const likedTracks = await db.playlist.findFirst({
-    where: {
-      userId,
-      systemType: DEFAULT_USER_PLAYLIST_TYPE,
-    },
-    select: { ...playlistItemSelect },
-  });
+  const [items, total] = await Promise.all([
+    db.playlist.findMany({
+      where: {
+        userId,
+        OR: [
+          { systemType: null },
+          { systemType: { not: DEFAULT_USER_PLAYLIST_TYPE } },
+        ],
+      },
+      select: { ...playlistItemSelect },
+      orderBy: {
+        createdAt: "desc",
+      },
+      skip: offset,
+      take: limit,
+    }),
 
-  const others = await db.playlist.findMany({
-    where: {
-      userId,
-      OR: [
-        { systemType: null },
-        { systemType: { not: DEFAULT_USER_PLAYLIST_TYPE } },
-      ],
-    },
-    select: { ...playlistItemSelect },
-    orderBy: {
-      createdAt: "desc",
-    },
-    skip: offset,
-    take: limit,
-  });
-
-  const total = await db.playlist.count({
-    where: {
-      userId,
-      OR: [
-        { systemType: null },
-        { systemType: { not: DEFAULT_USER_PLAYLIST_TYPE } },
-      ],
-    },
-  });
-
-  const items = likedTracks
-    ? [likedTracks, ...others.slice(0, limit - 1)]
-    : others;
+    db.playlist.count({
+      where: {
+        userId,
+        OR: [
+          { systemType: null },
+          { systemType: { not: DEFAULT_USER_PLAYLIST_TYPE } },
+        ],
+      },
+    }),
+  ]);
 
   return {
     items,

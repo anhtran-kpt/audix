@@ -111,7 +111,7 @@ export const BannerSection = ({ initialData }: BannerSectionProps) => {
                 <Dot />
                 <span>
                   {`${playlist.totalTracks} ${pluralize(
-                    "tracks",
+                    "songs",
                     playlist.totalTracks
                   )}, ${prettyMilliseconds(playlist.duration * 1000)}`}
                 </span>

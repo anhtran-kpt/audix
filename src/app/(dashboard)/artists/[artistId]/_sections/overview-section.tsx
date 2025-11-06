@@ -3,7 +3,6 @@
 import { FollowersBadge } from "@/components/features/follow-badge";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 import { ToggleFollowArtistButton } from "@/components/features/toggle-follow-artist-button";
-import { TrackList } from "@/components/features/track-list/track-list";
 import { AppImage } from "@/components/shared/app-image";
 import { IconButton } from "@/components/ui/icon-button";
 import SectionHeading from "@/components/ui/section-heading";
@@ -12,6 +11,8 @@ import { useImageGradient } from "@/hooks/use-image-gradient";
 import { ArtistOverview } from "@/lib/data/artist-data";
 import { EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { useState } from "react";
+import { DataTable } from "@/components/features/tracks-table/artist/data-table";
+import { columns } from "@/components/features/tracks-table/artist/columns";
 
 type OverviewSectionProps = {
   artist: ArtistOverview;
@@ -25,7 +26,7 @@ export const OverviewSection = ({ artist }: OverviewSectionProps) => {
       className="transition-colors -mx-responsive -mt-[calc(var(--spacing-responsive)+var(--header-height))] px-responsive flex flex-col gap-6 xl:gap-8"
       style={{
         background: gradient
-          ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 20%, ${gradient.to} 80%)`
+          ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 8rem, ${gradient.to} 36rem)`
           : undefined,
       }}
     >
@@ -97,9 +98,9 @@ export const OverviewSection = ({ artist }: OverviewSectionProps) => {
       </div>
       <div>
         <SectionHeading title="Popular" />
-        <TrackList
-          initialData={artist.tracks}
-          isLoading={false}
+        <DataTable
+          columns={columns}
+          data={artist.tracks}
           contextId={artist.id}
           contextType="ARTIST"
         />

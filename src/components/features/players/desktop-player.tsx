@@ -64,7 +64,7 @@ export const DesktopPlayer = () => {
   return (
     <div className="max-sm:hidden fixed bottom-0 left-0 right-0 bg-player border z-60 px-4 py-2">
       <div className="flex items-center justify-between gap-6">
-        <div className="flex items-center">
+        <div className="flex items-center text-muted-foreground">
           <div className="w-fit lg:w-56 xl:w-64">
             <TrackItemCompact
               track={currentTrack}

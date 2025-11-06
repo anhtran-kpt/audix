@@ -22,11 +22,12 @@ export const ToggleLikeTrackButton = ({ track }: { track: TrackItem }) => {
       size="icon"
       disabled={toggleLikePending}
       onClick={() => toggleLike({ track, likedPlaylistId })}
+      className="text-current"
     >
       {track.isLiked ? (
         <HeartIcon className="stroke-0 fill-red-500 size-5" />
       ) : (
-        <HeartIcon className="size-5" />
+        <HeartIcon className="size-5 text-current" />
       )}
     </Button>
   );

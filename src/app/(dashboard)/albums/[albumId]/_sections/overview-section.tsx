@@ -1,7 +1,8 @@
 "use client";
 
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
-import { TrackList } from "@/components/features/track-list/track-list";
+import { columns } from "@/components/features/tracks-table/album/columns";
+import { DataTable } from "@/components/features/tracks-table/album/data-table";
 import { AppImage } from "@/components/shared/app-image";
 import { ToggleLikeAlbumButton } from "@/components/shared/toggle-like-album-button";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ export const OverviewSection = ({ album }: OverviewSectionProps) => {
       className="transition-colors -mx-responsive -mt-[calc(var(--spacing-responsive)+var(--header-height))] px-responsive flex flex-col gap-6 xl:gap-8"
       style={{
         background: gradient
-          ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 20%, ${gradient.to} 80%)`
+          ? `linear-gradient(180deg, ${gradient.from} 0%, ${gradient.via} 8rem, ${gradient.to} 36rem)`
           : undefined,
       }}
     >
@@ -75,7 +76,7 @@ export const OverviewSection = ({ album }: OverviewSectionProps) => {
                     <Dot />
                     <span>
                       {`${album.totalTracks} ${pluralize(
-                        "tracks",
+                        "songs",
                         album.totalTracks
                       )}, ${prettyMilliseconds(album.duration * 1000)}`}
                     </span>
@@ -106,9 +107,9 @@ export const OverviewSection = ({ album }: OverviewSectionProps) => {
         </div>
       </div>
       <div>
-        <TrackList
-          initialData={album.tracks}
-          isLoading={false}
+        <DataTable
+          columns={columns}
+          data={album.tracks}
           contextId={album.id}
           contextType="ALBUM"
         />

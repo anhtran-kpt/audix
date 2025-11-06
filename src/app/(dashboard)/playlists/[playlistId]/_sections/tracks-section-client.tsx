@@ -1,6 +1,7 @@
 "use client";
 
-import { TrackList } from "@/components/features/track-list/track-list";
+import { columns } from "@/components/features/tracks-table/playlist/columns";
+import { DataTable } from "@/components/features/tracks-table/playlist/data-table";
 import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
 import { PlaylistTracks } from "@/lib/data/playlist-data";
 import { useQuery } from "@tanstack/react-query";
@@ -21,12 +22,11 @@ export const TracksSectionClient = ({
 
   return (
     <section>
-      <TrackList
-        contextId={playlistId}
-        initialData={data.tracks}
+      <DataTable
+        columns={columns}
+        data={data.tracks}
         contextType="PLAYLIST"
-        isLoading={false}
-        canEdit={data.canEdit}
+        contextId={playlistId}
       />
     </section>
   );

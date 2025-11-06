@@ -25,13 +25,13 @@ export const TrackIndexCell = ({
   const isCurrentlyPlaying = isPlaying && isThisContext && isThisTrack;
 
   const iconClassName = "size-4 fill-foreground stroke-0";
-  const hiddenOnHoverClass = "group-hover/item:hidden";
-  const shownOnHoverClass = "hidden group-hover/item:flex";
+  const hiddenOnHoverClass = "group-hover/table-row:hidden";
+  const shownOnHoverClass = "hidden group-hover/table-row:flex";
 
   return (
     <div
       className={cn(
-        "items-center justify-center font-semibold text-muted-foreground sm:group-hover/item:text-foreground text-base",
+        "items-center justify-center font-semibold text-muted-foreground sm:group-hover/table-row:text-foreground text-base",
         context.contextType !== "ARTIST" ? "hidden sm:flex" : "flex"
       )}
     >
@@ -50,7 +50,7 @@ export const TrackIndexCell = ({
           handlePlay();
         }}
         className={cn(
-          "cursor-pointer hidden group-hover/item:block",
+          "cursor-pointer hidden group-hover/table-row:block",
           isCurrentlyPlaying && "block"
         )}
       >
@@ -60,7 +60,10 @@ export const TrackIndexCell = ({
               <WaveForm />
             </div>
             <PauseIcon
-              className={cn("hidden group-hover/item:block", iconClassName)}
+              className={cn(
+                "hidden group-hover/table-row:block",
+                iconClassName
+              )}
             />
           </>
         ) : (

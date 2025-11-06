@@ -46,5 +46,5 @@ export const usePlayTrack = ({ context, trackId }: UsePlayTrackProps) => {
     return start({ ...context, startTrackId: trackId });
   };
 
-  return { isPlaying, isThisContext, isThisTrack, handlePlay };
+  return { isPlaying, isThisContext, isThisTrack, handlePlay, start };
 };
