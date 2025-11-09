@@ -11,7 +11,6 @@ import pluralize from "pluralize";
 import Dot from "@/components/ui/dot";
 import { userQueryOptions } from "@/features/user/api/user-query-options";
 import Image from "next/image";
-import { ToggleFollowUserButton } from "@/components/features/toggle-follow-user-button";
 import { UserOverview } from "@/lib/data/user-data";
 
 type BannerSectionProps = {
@@ -19,7 +18,7 @@ type BannerSectionProps = {
 };
 export const BannerSection = ({ initialData }: BannerSectionProps) => {
   const { data: user } = useQuery({
-    ...userQueryOptions.banner(initialData.id),
+    ...userQueryOptions.overview(initialData.id),
     initialData,
     initialDataUpdatedAt: Date.now(),
   });
@@ -71,26 +70,20 @@ export const BannerSection = ({ initialData }: BannerSectionProps) => {
           <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-2">
             <div className="flex items-center gap-2">
               <span className="text-muted-foreground">
-                {`${user._count.playlists} ${pluralize(
+                {`${user._count.playlists} Public ${pluralize(
                   "Playlist",
                   user._count.playlists
                 )}`}
               </span>
               <Dot />
-              <NavLink href={`/users/${user.id}/followers`} className="text-sm">
-                {user._count.followers}{" "}
-                {pluralize("follower", user._count.followers)}
-              </NavLink>
-              <Dot />
               <NavLink href={`/users/${user.id}/following`} className="text-sm">
-                {user._count.followedArtists + user._count.following} following
+                {user._count.followedArtists} following
               </NavLink>
             </div>
           </div>
         </div>
       </div>
       <div className="flex items-center justify-start gap-6">
-        <ToggleFollowUserButton user={user} />
         <IconButton
           icon={EditIcon}
           size="xl"

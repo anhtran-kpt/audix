@@ -13,11 +13,8 @@ import { playbackSessionSelect } from "./playback-select";
 import { PlaybackContextType } from "@/app/generated/prisma";
 import { shuffleArray } from "@/utils/array";
 import { AppError } from "@/lib/errors";
-import {
-  getFullTrackOrThrow,
-  getFullTracks,
-} from "@/features/track/data-access/track-repo";
 import { AwaitedReturnType } from "@/utils/type";
+import { getFullTrackById, getFullTracksByIds } from "@/lib/data/track-data";
 
 const generateHash = (
   userId: string,
@@ -315,16 +312,17 @@ export const getClientPlaybackSession = async (userId: string) => {
   }
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
+
   const queue = buildClientQueue(session);
+
+  const currentTrack = await getFullTrackById(session.currentTrack.id);
+
   return {
     ...session,
     hasNext,
     hasPrevious,
     queue,
-    currentTrack: await getFullTrackOrThrow({
-      userId,
-      trackId: session.currentTrack.id,
-    }),
+    currentTrack,
   };
 };
 
@@ -382,12 +380,11 @@ export const startPlaybackSession = async ({
     },
   });
 
+  const currentTrack = await getFullTrackById(session.currentTrack.id);
+
   return {
     ...session,
-    currentTrack: await getFullTrackOrThrow({
-      userId,
-      trackId: session.currentTrack.id,
-    }),
+    currentTrack,
     hasNext,
     hasPrevious,
     queue,
@@ -470,12 +467,11 @@ export const skipToNext = async (userId: string) => {
     },
   });
 
+  const currentTrack = await getFullTrackById(updated.currentTrack.id);
+
   return {
     ...updated,
-    currentTrack: await getFullTrackOrThrow({
-      userId,
-      trackId: updated.currentTrack.id,
-    }),
+    currentTrack,
     hasNext,
     hasPrevious,
     queue: queueState,
@@ -531,12 +527,11 @@ export const skipToPrevious = async (userId: string, progressMs = 0) => {
     },
   });
 
+  const currentTrack = await getFullTrackById(updated.currentTrack.id);
+
   return {
     ...updated,
-    currentTrack: await getFullTrackOrThrow({
-      userId,
-      trackId: updated.currentTrack.id,
-    }),
+    currentTrack,
     hasNext,
     hasPrevious,
     queue,
@@ -599,10 +594,9 @@ export const getHistoryTracks = async (userId: string) => {
 
   if (playHistory.length === 0) return [];
 
-  const fullTracks = await getFullTracks({
-    userId,
-    trackIds: Array.from(new Set(playHistory.map((p) => p.trackId))),
-  });
+  const fullTracks = await getFullTracksByIds(
+    Array.from(new Set(playHistory.map((p) => p.trackId)))
+  );
 
   const trackMap = new Map(fullTracks.map((t) => [t.id, t]));
 

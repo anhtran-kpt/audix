@@ -1,5 +1,6 @@
 export const userEndpoints = {
-  banner: (targetUserId: string) => `/users/${targetUserId}/banner` as const,
+  overview: (targetUserId: string) =>
+    `/users/${targetUserId}/overview` as const,
   playlists: (targetUserId: string) =>
     `/users/${targetUserId}/playlists` as const,
   followingArtists: (targetUserId: string) =>
@@ -8,7 +9,7 @@ export const userEndpoints = {
     `/users/${targetUserId}/following/users` as const,
   followers: (targetUserId: string) =>
     `/users/${targetUserId}/followers` as const,
-  followStatus: (targetUserId: string) =>
+  followersCount: (targetUserId: string) =>
     `/users/${targetUserId}/follow` as const,
   follow: (targetUserId: string) => `/users/${targetUserId}/follow` as const,
 };

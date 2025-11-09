@@ -8,9 +8,9 @@ import cloudinary from "@/lib/config/cloudinary";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { AwaitedReturnType } from "@/utils/type";
 import { AppError } from "@/lib/errors";
-import { getFullTracks } from "@/features/track/data-access/track-repo";
 import { shuffleArray } from "@/utils/array";
 import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
+import { getFullTracksByIds } from "@/lib/data/track-data";
 
 export const authorizePlaylist = async ({
   userId,
@@ -286,58 +286,6 @@ export const getPlaylistBanner = async ({
 
 export type PlaylistBanner = AwaitedReturnType<typeof getPlaylistBanner>;
 
-export const getPlaylistTracks = async ({
-  userId,
-  playlistId,
-}: {
-  userId: string;
-  playlistId: string;
-}) => {
-  const auth = await authorizePlaylist({ userId, playlistId });
-
-  if (!auth.canView) {
-    throw new AppError("FORBIDDEN", "Forbidden");
-  }
-
-  const playlist = await db.playlist.findUniqueOrThrow({
-    where: {
-      id: playlistId,
-    },
-    select: {
-      tracks: {
-        select: {
-          addedAt: true,
-          trackId: true,
-        },
-        orderBy: { position: "asc" },
-      },
-    },
-  });
-
-  const fullTracks = await getFullTracks({
-    userId,
-    trackIds: playlist.tracks.map((t) => t.trackId),
-  });
-
-  const addedAtMap = new Map(
-    playlist.tracks.map((t) => [t.trackId, t.addedAt])
-  );
-
-  const mergedTracks = fullTracks.map((track) => ({
-    ...track,
-    addedAt: addedAtMap.get(track.id) ?? null,
-  }));
-
-  return {
-    tracks: mergedTracks,
-    role: auth.role,
-    canEdit: auth.canEdit,
-    canView: auth.canView,
-  };
-};
-
-export type PlaylistTracks = AwaitedReturnType<typeof getPlaylistTracks>;
-
 export const getRecommendedTracks = async ({
   userId,
   playlistId,
@@ -384,10 +332,7 @@ export const getRecommendedTracks = async ({
       .slice(0, take)
       .map((t) => t.id);
 
-    const fullTracks = await getFullTracks({
-      userId,
-      trackIds: randomIds,
-    });
+    const fullTracks = await getFullTracksByIds(randomIds);
 
     return { tracks: fullTracks, ...auth };
   }
@@ -422,10 +367,7 @@ export const getRecommendedTracks = async ({
     selectedIds.push(...additionalIds);
   }
 
-  const fullTracks = await getFullTracks({
-    userId,
-    trackIds: selectedIds,
-  });
+  const fullTracks = await getFullTracksByIds(selectedIds);
 
   return {
     tracks: fullTracks,

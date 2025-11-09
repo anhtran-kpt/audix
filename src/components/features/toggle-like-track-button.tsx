@@ -5,10 +5,22 @@ import { HeartIcon } from "lucide-react";
 import { TrackItem } from "@/features/track/contracts/track-dto";
 import { useSession } from "next-auth/react";
 import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
-export const ToggleLikeTrackButton = ({ track }: { track: TrackItem }) => {
-  const { mutate: toggleLike, isPending: toggleLikePending } =
-    useToggleLikeTrack();
+type ToggleLikeTrackButtonProps = {
+  track: TrackItem;
+  className?: string;
+};
+
+export const ToggleLikeTrackButton = ({
+  track,
+  className,
+}: ToggleLikeTrackButtonProps) => {
+  const {
+    toggleLike,
+    isPending: toggleLikePending,
+    isLiked,
+  } = useToggleLikeTrack();
   const { data: session } = useSession();
   const likedPlaylistId = session?.user?.likedPlaylistId;
 
@@ -22,10 +34,10 @@ export const ToggleLikeTrackButton = ({ track }: { track: TrackItem }) => {
       size="icon"
       disabled={toggleLikePending}
       onClick={() => toggleLike({ track, likedPlaylistId })}
-      className="text-current"
+      className={cn("text-current", className)}
     >
-      {track.isLiked ? (
-        <HeartIcon className="stroke-0 fill-red-500 size-5" />
+      {isLiked(track.id) ? (
+        <HeartIcon className="stroke-0 fill-primary size-5" />
       ) : (
         <HeartIcon className="size-5 text-current" />
       )}

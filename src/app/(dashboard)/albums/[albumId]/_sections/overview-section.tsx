@@ -1,7 +1,6 @@
 "use client";
 
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
-import { columns } from "@/components/features/tracks-table/album/columns";
 import { DataTable } from "@/components/features/tracks-table/album/data-table";
 import { AppImage } from "@/components/shared/app-image";
 import { ToggleLikeAlbumButton } from "@/components/shared/toggle-like-album-button";
@@ -108,7 +107,6 @@ export const OverviewSection = ({ album }: OverviewSectionProps) => {
       </div>
       <div>
         <DataTable
-          columns={columns}
           data={album.tracks}
           contextId={album.id}
           contextType="ALBUM"

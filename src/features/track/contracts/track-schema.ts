@@ -17,7 +17,6 @@ export const TrackItemSchema = TrackSchema.pick({
   artists: MiniArtistSchema.array(),
   album: MiniAlbumSchema.extend({ artist: ArtistItemSchema }),
   addedAt: z.date().nullish(),
-  isLiked: z.boolean(),
 });
 
 export const MiniTrackItemSchema = TrackSchema.pick({

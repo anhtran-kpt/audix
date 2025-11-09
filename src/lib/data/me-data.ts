@@ -17,10 +17,17 @@ export const getMyOverview = async (userId: string) => {
       image: true,
       _count: {
         select: {
-          playlists: true,
+          playlists: {
+            where: {
+              isPublic: true,
+              isSystem: false,
+              OR: [
+                { systemType: null },
+                { systemType: { not: DEFAULT_USER_PLAYLIST_TYPE } },
+              ],
+            },
+          },
           followedArtists: true,
-          followers: true,
-          following: true,
         },
       },
     },
@@ -431,97 +438,6 @@ export const getMyPlaylists = async ({
 
 export type MyPlaylists = AwaitedReturnType<typeof getMyPlaylists>;
 
-export const getMyFollowedUsers = async ({
-  userId,
-  params,
-}: {
-  userId: string;
-  params: PaginationParams;
-}) => {
-  const { limit, offset } = params;
-
-  const [users, total] = await Promise.all([
-    db.userFollow
-      .findMany({
-        where: {
-          followerId: userId,
-        },
-        select: {
-          following: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-            },
-          },
-        },
-        take: limit,
-        skip: offset,
-        orderBy: {
-          followedAt: "desc",
-        },
-      })
-      .then((data) => data.map((item) => item.following)),
-
-    db.userFollow.count({
-      where: {
-        followerId: userId,
-      },
-    }),
-  ]);
-
-  return {
-    items: users,
-    pagination: getPaginationMeta({ limit, offset, total }),
-  };
-};
-
-export type MyFollowedUsers = AwaitedReturnType<typeof getMyFollowedUsers>;
-
-export const getMyFollowers = async ({
-  userId,
-  params,
-}: {
-  userId: string;
-  params: PaginationParams;
-}) => {
-  const { offset, limit } = params;
-
-  const [users, total] = await Promise.all([
-    db.userFollow
-      .findMany({
-        where: {
-          followingId: userId,
-        },
-        select: {
-          following: {
-            select: {
-              id: true,
-              name: true,
-              image: true,
-            },
-          },
-        },
-        skip: offset,
-        take: limit,
-      })
-      .then((data) => data.map((item) => item.following)),
-
-    db.userFollow.count({
-      where: {
-        followingId: userId,
-      },
-    }),
-  ]);
-
-  return {
-    items: users,
-    pagination: getPaginationMeta({ limit, offset, total }),
-  };
-};
-
-export type MyFollowers = AwaitedReturnType<typeof getMyFollowers>;
-
 export const getMyFavoriteSongsPlaylist = async (userId: string) => {
   return await db.playlist.findFirstOrThrow({
     where: {
@@ -539,3 +455,61 @@ export const getMyFavoriteSongsPlaylist = async (userId: string) => {
 export type MyFavoriteSongsPlaylist = AwaitedReturnType<
   typeof getMyFavoriteSongsPlaylist
 >;
+
+export const getMyLikedTrackIds = async (userId: string) => {
+  const playlist = await db.playlist.findFirstOrThrow({
+    where: {
+      userId,
+      systemType: DEFAULT_USER_PLAYLIST_TYPE,
+      isSystem: true,
+    },
+    select: {
+      tracks: {
+        select: {
+          trackId: true,
+        },
+      },
+    },
+  });
+
+  return Object.fromEntries(playlist.tracks.map((t) => [t.trackId, true]));
+};
+
+export const getMyFollowedArtistIds = async (userId: string) => {
+  const followedArtists = await db.userFollowedArtist.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      artistId: true,
+    },
+  });
+
+  return Object.fromEntries(followedArtists.map((a) => [a.artistId, true]));
+};
+
+export const getMyLikedAlbumIds = async (userId: string) => {
+  const likedAlbums = await db.userLikedAlbum.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      albumId: true,
+    },
+  });
+
+  return Object.fromEntries(likedAlbums.map((a) => [a.albumId, true]));
+};
+
+export const getMyLikedPlaylistIds = async (userId: string) => {
+  const likedPlaylists = await db.userLikedPlaylist.findMany({
+    where: {
+      userId,
+    },
+    select: {
+      playlistId: true,
+    },
+  });
+
+  return Object.fromEntries(likedPlaylists.map((a) => [a.playlistId, true]));
+};

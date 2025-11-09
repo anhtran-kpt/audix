@@ -2,21 +2,18 @@ import { queryOptions } from "@tanstack/react-query";
 import { userKeys } from "./user-keys";
 import { userEndpoints } from "./user-endpoints";
 import { getApi } from "@/lib/http/api";
-import {
-  FollowStatus,
-  UserBanner,
-  UserFollowedArtists,
-  UserFollowedUsers,
-  UserFollowers,
-  UserPlaylists,
-} from "../data-access/user-repo";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
+import {
+  UserFollowedArtists,
+  UserOverview,
+  UserPlaylists,
+} from "@/lib/data/user-data";
 
 export const userQueryOptions = {
-  banner: (targetUserId: string) =>
+  overview: (targetUserId: string) =>
     queryOptions({
-      queryKey: userKeys.banner(targetUserId),
-      queryFn: () => getApi<UserBanner>(userEndpoints.banner(targetUserId)),
+      queryKey: userKeys.overview(targetUserId),
+      queryFn: () => getApi<UserOverview>(userEndpoints.overview(targetUserId)),
     }),
 
   playlists: (targetUserId: string, params?: Partial<PaginationParams>) =>
@@ -24,13 +21,6 @@ export const userQueryOptions = {
       queryKey: userKeys.playlists(targetUserId, params),
       queryFn: () =>
         getApi<UserPlaylists>(userEndpoints.playlists(targetUserId)),
-    }),
-
-  followers: (targetUserId: string, params?: Partial<PaginationParams>) =>
-    queryOptions({
-      queryKey: userKeys.followers(targetUserId, params),
-      queryFn: () =>
-        getApi<UserFollowers>(userEndpoints.followers(targetUserId)),
     }),
 
   followingArtists: (
@@ -43,19 +33,5 @@ export const userQueryOptions = {
         getApi<UserFollowedArtists>(
           userEndpoints.followingArtists(targetUserId)
         ),
-    }),
-
-  followingUsers: (targetUserId: string, params?: Partial<PaginationParams>) =>
-    queryOptions({
-      queryKey: userKeys.followingUsers(targetUserId, params),
-      queryFn: () =>
-        getApi<UserFollowedUsers>(userEndpoints.followingUsers(targetUserId)),
-    }),
-
-  followStatus: (targetUserId: string) =>
-    queryOptions({
-      queryKey: userKeys.followStatus(targetUserId),
-      queryFn: () =>
-        getApi<FollowStatus>(userEndpoints.followStatus(targetUserId)),
     }),
 } as const;

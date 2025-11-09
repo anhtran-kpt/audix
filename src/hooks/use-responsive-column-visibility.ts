@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 type Breakpoint = "sm" | "md" | "lg" | "xl" | "2xl";
 
-interface BreakpointConfig {
+export interface BreakpointConfig {
   [key: string]: Breakpoint;
 }
 

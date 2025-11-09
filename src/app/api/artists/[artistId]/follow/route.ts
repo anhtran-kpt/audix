@@ -1,5 +1,5 @@
 import { followArtist, unfollowArtist } from "@/lib/actions/artist-actions";
-import { getFollowStatus } from "@/lib/data/artist-data";
+import { getArtistFollowersCount } from "@/lib/data/artist-data";
 import { makeDELETE, makeGET, makePOST } from "@/lib/route-factory";
 import z, { object } from "zod";
 
@@ -9,7 +9,7 @@ export const GET = makeGET({
   auth: "required",
   params: FollowParamsSchema,
   handler: async ({ userId, params }) => {
-    return await getFollowStatus(userId!, params.artistId);
+    return await getArtistFollowersCount(userId!, params.artistId);
   },
 });
 

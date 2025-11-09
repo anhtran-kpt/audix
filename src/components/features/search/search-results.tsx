@@ -11,7 +11,6 @@ import { LoaderCircleIcon } from "lucide-react";
 import { searchOptions } from "@/features/search/api/search-options";
 import { useEffect } from "react";
 import { DataTable } from "../tracks-table/search/data-table";
-import { columns } from "../tracks-table/search/columns";
 
 type Props = {
   q: string;
@@ -99,12 +98,7 @@ export function SearchResults({ q, type, onDataLoad }: Props) {
       return <p className="text-muted-foreground">No tracks found.</p>;
     }
     return (
-      <DataTable
-        data={data.tracks.items}
-        columns={columns}
-        contextId={q}
-        contextType="SEARCH"
-      />
+      <DataTable data={data.tracks.items} contextId={q} contextType="SEARCH" />
     );
   }
 

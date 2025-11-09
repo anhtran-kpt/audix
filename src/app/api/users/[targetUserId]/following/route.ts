@@ -1,7 +1,7 @@
-import { getUserFollowedArtists } from "@/features/user/data-access/user-repo";
 import { UserParamsSchema } from "@/features/user/contracts/user-schema";
 import { makeGET } from "@/lib/route-factory";
 import { PaginationParamsSchema } from "@/features/shared/contracts/shared-schema";
+import { getUserFollowedArtists } from "@/lib/data/user-data";
 
 export const GET = makeGET({
   auth: "required",

@@ -252,15 +252,6 @@ CREATE TABLE "public"."user_liked_playlists" (
 );
 
 -- CreateTable
-CREATE TABLE "public"."user_follows" (
-    "followerId" TEXT NOT NULL,
-    "followingId" TEXT NOT NULL,
-    "followedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "user_follows_pkey" PRIMARY KEY ("followerId","followingId")
-);
-
--- CreateTable
 CREATE TABLE "public"."playback_sessions" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
@@ -521,12 +512,6 @@ ALTER TABLE "public"."user_liked_playlists" ADD CONSTRAINT "user_liked_playlists
 
 -- AddForeignKey
 ALTER TABLE "public"."user_liked_playlists" ADD CONSTRAINT "user_liked_playlists_playlistId_fkey" FOREIGN KEY ("playlistId") REFERENCES "public"."playlists"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."user_follows" ADD CONSTRAINT "user_follows_followerId_fkey" FOREIGN KEY ("followerId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."user_follows" ADD CONSTRAINT "user_follows_followingId_fkey" FOREIGN KEY ("followingId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."playback_sessions" ADD CONSTRAINT "playback_sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "public"."users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

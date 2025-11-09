@@ -5,86 +5,82 @@ import { meKeys } from "../api/me-keys";
 import { deleteApi, putApi } from "@/lib/http/api";
 import { meEndpoints } from "../api/me-endpoints";
 import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
-import { LikedPlaylistStatus, MyLikedPlaylists } from "@/lib/data/me-data";
+import { MyLikedPlaylists } from "@/lib/data/me-data";
+import { useBaseUserOverlay } from "@/hooks/use-base-user-overlay";
 
-export function useToggleLikePlaylist(playlist: PlaylistItem) {
+export function useToggleLikePlaylist() {
   const qc = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (isLiked: boolean) => {
-      if (isLiked) {
-        await deleteApi(meEndpoints.toggleLikePlaylist(playlist.id));
-      } else {
-        await putApi(meEndpoints.toggleLikePlaylist(playlist.id));
-      }
+  const { map, optimisticToggle, revert, getPrev } =
+    useBaseUserOverlay("playlists");
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      playlist,
+      isCurrentlyLiked,
+    }: {
+      playlist: PlaylistItem;
+      isCurrentlyLiked: boolean;
+    }) => {
+      return isCurrentlyLiked
+        ? await deleteApi(meEndpoints.toggleLikePlaylist(playlist.id))
+        : await putApi(meEndpoints.toggleLikePlaylist(playlist.id));
     },
 
-    onMutate: async () => {
-      await Promise.all([
-        qc.cancelQueries({ queryKey: meKeys.likedPlaylists() }),
-        qc.cancelQueries({ queryKey: meKeys.likedPlaylistStatus(playlist.id) }),
-      ]);
+    onMutate: async ({ playlist }) => {
+      await qc.cancelQueries({ queryKey: meKeys.likedPlaylists() });
 
-      const prevData = {
-        likedPlaylists: qc.getQueryData<MyLikedPlaylists>(
-          meKeys.likedPlaylists()
-        ),
+      const prevLikes = getPrev();
+      const isCurrentlyLiked = !!prevLikes[playlist.id];
+      const optimisticLiked = !isCurrentlyLiked;
 
-        likedPlaylistStatus: qc.getQueryData<LikedPlaylistStatus>(
-          meKeys.likedPlaylistStatus(playlist.id)
-        ),
-      };
+      optimisticToggle(playlist.id);
+
+      const prevLikedPlaylists = qc.getQueryData<MyLikedPlaylists>(
+        meKeys.likedPlaylists()
+      );
 
       qc.setQueryData<MyLikedPlaylists>(meKeys.likedPlaylists(), (old) => {
-        if (!old)
-          return {
-            pagination: { offset: 0, limit: 5, hasMore: false, total: 1 },
-            items: [playlist],
-          };
+        if (!old) return;
 
-        const exists = old.items.some((item) => item.id === playlist.id);
-
-        return exists
+        return optimisticLiked
           ? {
-              ...old,
-              pagination: {
-                ...old.pagination,
-                total: old.pagination.total - 1,
-              },
-              items: old.items.filter((item) => item.id !== playlist.id),
-            }
-          : {
               ...old,
               pagination: {
                 ...old.pagination,
                 total: old.pagination.total + 1,
               },
               items: [playlist, ...old.items],
+            }
+          : {
+              ...old,
+              pagination: {
+                ...old.pagination,
+                total: old.pagination.total - 1,
+              },
+              items: old.items.filter((item) => item.id !== playlist.id),
             };
       });
 
-      qc.setQueryData<LikedPlaylistStatus>(
-        meKeys.likedPlaylistStatus(playlist.id),
-        (old) => ({ isLiked: !old?.isLiked })
-      );
-
-      return { prevData };
+      return { prevLikedPlaylists, prevLikes };
     },
     onError: (_err, _vars, ctx) => {
       if (!ctx) return;
-
-      qc.setQueryData(meKeys.likedPlaylists(), ctx.prevData.likedPlaylists);
-      qc.setQueryData(
-        meKeys.likedPlaylistStatus(playlist.id),
-        ctx.prevData.likedPlaylistStatus
-      );
+      revert(ctx.prevLikes);
+      qc.setQueryData(meKeys.likedPlaylists(), ctx.prevLikedPlaylists);
     },
 
     onSettled: () => {
       qc.invalidateQueries({ queryKey: meKeys.likedPlaylists() });
-      qc.invalidateQueries({
-        queryKey: meKeys.likedPlaylistStatus(playlist.id),
-      });
     },
   });
+
+  return {
+    isLiked: (id: string) => !!map[id],
+    isPending: mutation.isPending,
+    toggleLike: (playlist: PlaylistItem) => {
+      const isCurrentlyLiked = !!map[playlist.id];
+      mutation.mutate({ playlist, isCurrentlyLiked });
+    },
+  };
 }

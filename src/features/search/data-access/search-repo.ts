@@ -8,7 +8,8 @@ import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 import { playlistItemSelect } from "@/features/playlist/data-access/playlist-select";
 import { AwaitedReturnType } from "@/utils/type";
 import { getUserIdOrThrow } from "@/lib/auth";
-import { getFullTracks } from "@/features/track/data-access/track-repo";
+import { trackItemSelect } from "@/features/track/data-access/track-select";
+import { getFullTracksByIds } from "@/lib/data/track-data";
 
 export type SearchResults = {
   topResult:
@@ -136,7 +137,7 @@ export const search = async (query: SearchQuery) => {
     ...profiles.map((profile) => ({
       type: "profiles" as const,
       name: profile.name,
-      popularity: profile._count.followers ?? 0,
+      popularity: profile._count.playlists ?? 0,
       item: profile,
     })),
   ];
@@ -206,18 +207,15 @@ export const search = async (query: SearchQuery) => {
 
 export const searchTracks = async (query: SearchQuery) => {
   const { q, limit, offset } = query;
-  const userId = await getUserIdOrThrow();
 
   const rawTracks = await db.track.findMany({
     where: { title: { contains: q, mode: "insensitive" } },
     take: limit,
     skip: offset,
-    select: {
-      id: true,
-    },
+    select: trackItemSelect,
   });
 
-  return await getFullTracks({ userId, trackIds: rawTracks.map((t) => t.id) });
+  return await getFullTracksByIds(rawTracks.map((t) => t.id));
 };
 
 type TrackItem = AwaitedReturnType<typeof searchTracks>[number];
@@ -293,7 +291,7 @@ export const searchProfiles = async (query: SearchQuery) => {
       name: true,
       _count: {
         select: {
-          followers: true,
+          playlists: true,
         },
       },
     },

@@ -1,6 +1,5 @@
 "use client";
 
-import { columns } from "@/components/features/tracks-table/playlist/columns";
 import { DataTable } from "@/components/features/tracks-table/playlist/data-table";
 import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
 import { PlaylistTracks } from "@/lib/data/playlist-data";
@@ -23,7 +22,6 @@ export const TracksSectionClient = ({
   return (
     <section>
       <DataTable
-        columns={columns}
         data={data.tracks}
         contextType="PLAYLIST"
         contextId={playlistId}

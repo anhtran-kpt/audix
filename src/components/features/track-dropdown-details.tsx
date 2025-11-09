@@ -49,7 +49,7 @@ export function TrackDropdownDetails({
 }: TrackDropdownDetailsProps) {
   const removeTrackMutation = useRemoveTrackFromPlaylist();
   const addTrackMutation = useAddTrackToPlaylist();
-  const toggleLikeTrackMutation = useToggleLikeTrack();
+  const { isLiked, isPending, toggleLike } = useToggleLikeTrack();
   const { openDialog } = useNewPlaylistDialog();
   const { status, data: session } = useSession();
   const {
@@ -124,13 +124,14 @@ export function TrackDropdownDetails({
 
               <DropdownMenuItem
                 onClick={() =>
-                  toggleLikeTrackMutation.mutate({
+                  toggleLike({
                     track,
                     likedPlaylistId: session.user.likedPlaylistId!,
                   })
                 }
+                disabled={isPending}
               >
-                {track.isLiked
+                {isLiked(track.id)
                   ? "Remove from Favorite Songs"
                   : "Save to Favorite Songs"}
               </DropdownMenuItem>

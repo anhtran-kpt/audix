@@ -5,8 +5,6 @@ import { getMyOverview } from "@/lib/data/me-data";
 import { MyPlaylistsSection } from "./_sections/my-playlists-section";
 import { LikedPlaylistsSection } from "./_sections/liked-playlists-section";
 import { FollowingArtistsSection } from "./_sections/following-artists-section";
-import { FollowingUsersSection } from "./_sections/following-users-section";
-import { FollowersSection } from "./_sections/followers-section";
 
 export default async function MePage() {
   const user = await requireAuth();
@@ -19,8 +17,6 @@ export default async function MePage() {
       <LikedPlaylistsSection userId={user.id} />
       <LikedAlbumsSection userId={user.id} />
       <FollowingArtistsSection userId={user.id} />
-      <FollowingUsersSection userId={user.id} />
-      <FollowersSection userId={user.id} />
     </>
   );
 }

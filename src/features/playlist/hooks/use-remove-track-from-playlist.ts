@@ -2,11 +2,9 @@ import { deleteApi } from "@/lib/http/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
-import {
-  PlaylistBanner,
-  PlaylistTracks,
-} from "@/features/playlist/data-access/playlist-repo";
+import { PlaylistBanner } from "@/features/playlist/data-access/playlist-repo";
 import { toast } from "sonner";
+import { PlaylistTracks } from "@/lib/data/playlist-data";
 
 type RemoveTrackInput = {
   playlistId: string;

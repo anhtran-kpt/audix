@@ -4,12 +4,8 @@ import { stableKey } from "@/utils/stable-keys";
 export const meKeys = {
   base: ["me"] as const,
   banner: () => [...meKeys.base, "banner"] as const,
-  followers: (params?: Partial<PaginationParams>) =>
-    [...meKeys.base, "followers", stableKey(params)] as const,
   followedArtists: (params?: Partial<PaginationParams>) =>
     [...meKeys.base, "artists", stableKey(params)] as const,
-  followedUsers: (params?: Partial<PaginationParams>) =>
-    [...meKeys.base, "users", stableKey(params)] as const,
   likedPlaylists: (params?: Partial<PaginationParams>) =>
     [...meKeys.base, "like", "playlists", stableKey(params)] as const,
   likedPlaylistStatus: (playlistId: string) =>

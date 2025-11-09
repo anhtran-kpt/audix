@@ -4,7 +4,8 @@ import { PlaylistItem } from "../contracts/playlist-dto";
 import { playlistEndpoints } from "./playlist-endpoints";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { playlistKeys } from "./playlist-keys";
-import { PlaylistBanner, PlaylistTracks } from "../data-access/playlist-repo";
+import { PlaylistBanner } from "../data-access/playlist-repo";
+import { PlaylistTracks } from "@/lib/data/playlist-data";
 
 export const playlistQueryOptions = {
   list: (params?: Partial<PaginationParams>) =>

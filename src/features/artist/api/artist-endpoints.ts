@@ -5,6 +5,6 @@ export const artistEndpoints = {
     `/artists/${artistId}/discography` as const,
   about: (artistId: string) => `/artists/${artistId}/about` as const,
   related: (artistId: string) => `/artists/${artistId}/related` as const,
-  followStatus: (artistId: string) => `/artists/${artistId}/follow` as const,
+  followersCount: (artistId: string) => `/artists/${artistId}/follow` as const,
   follow: (artistId: string) => `/artists/${artistId}/follow` as const,
 } as const;

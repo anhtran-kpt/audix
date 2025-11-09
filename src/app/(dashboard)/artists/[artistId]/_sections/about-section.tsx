@@ -1,7 +1,7 @@
 import SectionHeading from "@/components/ui/section-heading";
-import { FollowersBadge } from "@/components/features/follow-badge";
 import { AppImage } from "@/components/shared/app-image";
 import { ArtistOverview } from "@/lib/data/artist-data";
+import { ArtistFollowersBadge } from "@/components/features/artist-follow-badge";
 
 type AboutSectionProps = {
   artist: Omit<ArtistOverview, "tracks" | "imageId">;
@@ -20,12 +20,9 @@ export const AboutSection = ({ artist }: AboutSectionProps) => {
         />
         <div className="absolute bottom-responsive left-responsive space-y-3 w-4/5">
           <div>
-            <FollowersBadge
+            <ArtistFollowersBadge
               artistId={artist.id}
-              initialData={{
-                isFollowing: artist.isFollowing,
-                followersCount: artist.followersCount,
-              }}
+              initialData={artist.followersCount}
             />
           </div>
           <div className="text-[calc(15rem/16)] text-white line-clamp-4 xl:line-clamp-5">

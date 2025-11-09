@@ -48,9 +48,6 @@ model User {
   playHistory   PlayHistory[]
   searchHistory SearchHistory[]
 
-  following UserFollow[] @relation("UserFollows")
-  followers UserFollow[] @relation("UserFollowedBy")
-
   playbackSession         PlaybackSession[]
   playbackContextSnapshot PlaybackContextSnapshot[]
 
@@ -424,18 +421,6 @@ model UserLikedPlaylist {
 
   @@id([userId, playlistId])
   @@map("user_liked_playlists")
-}
-
-model UserFollow {
-  followerId  String
-  followingId String
-  followedAt  DateTime @default(now())
-
-  follower  User @relation("UserFollows", fields: [followerId], references: [id], onDelete: Cascade)
-  following User @relation("UserFollowedBy", fields: [followingId], references: [id], onDelete: Cascade)
-
-  @@id([followerId, followingId])
-  @@map("user_follows")
 }
 
 // ================================

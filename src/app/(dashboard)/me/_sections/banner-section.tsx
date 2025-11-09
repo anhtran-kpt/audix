@@ -69,15 +69,8 @@ export const BannerSection = ({ initialData }: { initialData: MyOverview }) => {
                 )}`}
               </span>
               <Dot />
-              <NavLink href={`/me/followers`} className="text-sm">
-                {initialData._count.followers}{" "}
-                {pluralize("follower", initialData._count.followers)}
-              </NavLink>
-              <Dot />
               <NavLink href={`/me/following`} className="text-sm">
-                {initialData._count.followedArtists +
-                  initialData._count.following}{" "}
-                following
+                {initialData._count.followedArtists} following
               </NavLink>
             </div>
           </div>

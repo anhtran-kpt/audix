@@ -8,7 +8,7 @@ export default withAuth(
 
     if (!token?.sub) {
       const loginUrl = req.nextUrl.clone();
-      loginUrl.pathname = "/auth/login";
+      loginUrl.pathname = "/auth/sign-in";
       loginUrl.searchParams.set("from", pathname);
       return NextResponse.redirect(loginUrl);
     }
@@ -34,10 +34,6 @@ export default withAuth(
   }
 );
 
-// ⚙️ 5️⃣ Middleware Config
 export const config = {
-  matcher: [
-    // Áp dụng cho tất cả route ngoại trừ auth, api auth, static assets
-    "/((?!api/auth|auth|_next|static|favicon.ico).*)",
-  ],
+  matcher: ["/((?!api/auth|auth|_next|static|favicon.ico).*)"],
 };

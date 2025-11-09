@@ -8,20 +8,12 @@ import {
   LikedPlaylistStatus,
   MyFavoriteSongsPlaylist,
   MyFollowedArtists,
-  MyFollowedUsers,
-  MyFollowers,
   MyLikedAlbums,
   MyLikedPlaylists,
   MyPlaylists,
 } from "@/lib/data/me-data";
 
 export const meQueryOptions = {
-  followers: (params?: Partial<PaginationParams>) =>
-    queryOptions({
-      queryKey: meKeys.followers(params),
-      queryFn: () => getApi<MyFollowers>(meEndpoints.followers()),
-    }),
-
   myPlaylists: (params?: Partial<PaginationParams>) =>
     queryOptions({
       queryKey: meKeys.myPlaylists(params),
@@ -61,13 +53,6 @@ export const meQueryOptions = {
       queryKey: meKeys.followedArtists(params),
       queryFn: () =>
         getApi<MyFollowedArtists>(meEndpoints.followedArtists(), { params }),
-    }),
-
-  followedUsers: (params?: Partial<PaginationParams>) =>
-    queryOptions({
-      queryKey: meKeys.followedUsers(params),
-      queryFn: () =>
-        getApi<MyFollowedUsers>(meEndpoints.followedUsers(), { params }),
     }),
 
   favoriteSongsPlaylist: () =>

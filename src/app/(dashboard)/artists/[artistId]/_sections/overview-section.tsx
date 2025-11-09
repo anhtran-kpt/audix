@@ -1,6 +1,5 @@
 "use client";
 
-import { FollowersBadge } from "@/components/features/follow-badge";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 import { ToggleFollowArtistButton } from "@/components/features/toggle-follow-artist-button";
 import { AppImage } from "@/components/shared/app-image";
@@ -12,7 +11,7 @@ import { ArtistOverview } from "@/lib/data/artist-data";
 import { EllipsisIcon, ShuffleIcon } from "lucide-react";
 import { useState } from "react";
 import { DataTable } from "@/components/features/tracks-table/artist/data-table";
-import { columns } from "@/components/features/tracks-table/artist/columns";
+import { ArtistFollowersBadge } from "@/components/features/artist-follow-badge";
 
 type OverviewSectionProps = {
   artist: ArtistOverview;
@@ -50,12 +49,9 @@ export const OverviewSection = ({ artist }: OverviewSectionProps) => {
             {artist.name}
           </span>
 
-          <FollowersBadge
+          <ArtistFollowersBadge
             artistId={artist.id}
-            initialData={{
-              isFollowing: artist.isFollowing,
-              followersCount: artist.followersCount,
-            }}
+            initialData={artist.followersCount}
           />
         </div>
       </div>
@@ -99,7 +95,6 @@ export const OverviewSection = ({ artist }: OverviewSectionProps) => {
       <div>
         <SectionHeading title="Popular" />
         <DataTable
-          columns={columns}
           data={artist.tracks}
           contextId={artist.id}
           contextType="ARTIST"

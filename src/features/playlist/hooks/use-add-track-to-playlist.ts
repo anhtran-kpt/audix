@@ -4,12 +4,10 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { postApi } from "@/lib/http/api";
 import { playlistKeys } from "@/features/playlist/api/playlist-keys";
 import { toast } from "sonner";
-import {
-  PlaylistBanner,
-  PlaylistTracks,
-} from "@/features/playlist/data-access/playlist-repo";
+import { PlaylistBanner } from "@/features/playlist/data-access/playlist-repo";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { TrackItem } from "@/features/track/contracts/track-dto";
+import { PlaylistTracks } from "@/lib/data/playlist-data";
 
 type AddTrackToPlaylist = {
   playlistId: string;

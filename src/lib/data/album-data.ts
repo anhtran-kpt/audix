@@ -1,10 +1,10 @@
 import "server-only";
 import db from "../db";
 import { AwaitedReturnType } from "@/utils/type";
-import { getFullTracks } from "@/features/track/data-access/track-repo";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { albumItemSelect } from "@/features/album/data-access/album-select";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
+import { trackItemSelect } from "@/features/track/data-access/track-select";
 
 export const getAlbumOverview = async ({
   albumId,
@@ -31,9 +31,7 @@ export const getAlbumOverview = async ({
       totalTracks: true,
       duration: true,
       tracks: {
-        select: {
-          id: true,
-        },
+        select: trackItemSelect,
         orderBy: {
           trackNumber: "asc",
         },
@@ -47,14 +45,12 @@ export const getAlbumOverview = async ({
     })
     .then((data) => !!data);
 
-  const fullTracks = await getFullTracks({
-    userId,
-    trackIds: album.tracks.map((t) => t.id),
-  });
-
   return {
     ...album,
-    tracks: fullTracks,
+    tracks: album.tracks.map((track) => ({
+      ...track,
+      artists: track.artists.map((ta) => ta.artist),
+    })),
     isLiked: isLiked,
   };
 };

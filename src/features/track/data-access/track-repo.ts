@@ -3,80 +3,6 @@ import db from "@/lib/db";
 import { AppError } from "@/lib/errors";
 import { trackItemSelect } from "./track-select";
 import { AwaitedReturnType } from "@/utils/type";
-import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
-
-export const getFullTrackOrThrow = async ({
-  userId,
-  trackId,
-}: {
-  userId: string;
-  trackId: string;
-}) => {
-  const track = await db.track.findUniqueOrThrow({
-    where: { id: trackId },
-    select: trackItemSelect,
-  });
-
-  const likedTrack = await db.playlistTrack.findFirst({
-    where: {
-      trackId,
-      playlist: {
-        userId,
-        systemType: DEFAULT_USER_PLAYLIST_TYPE,
-      },
-    },
-    select: { id: true },
-  });
-
-  return {
-    ...track,
-    artists: track.artists.map((a) => a.artist),
-    isLiked: !!likedTrack,
-  };
-};
-
-export const getFullTracks = async ({
-  userId,
-  trackIds,
-}: {
-  userId: string;
-  trackIds: string[];
-}) => {
-  const tracks = await db.track.findMany({
-    where: {
-      id: { in: trackIds },
-    },
-    select: trackItemSelect,
-  });
-
-  const likedTracks = await db.playlistTrack.findMany({
-    where: {
-      playlist: {
-        userId,
-        systemType: DEFAULT_USER_PLAYLIST_TYPE,
-      },
-      trackId: { in: trackIds },
-    },
-    select: { trackId: true },
-  });
-
-  const likedSet = new Set(likedTracks.map((t) => t.trackId));
-
-  const trackMap = new Map(
-    tracks.map((track) => [
-      track.id,
-      {
-        ...track,
-        artists: track.artists.map((a) => a.artist),
-        isLiked: likedSet.has(track.id),
-      },
-    ])
-  );
-
-  return trackIds
-    .map((id) => trackMap.get(id))
-    .filter((t): t is NonNullable<typeof t> => !!t);
-};
 
 export const getTrackListByIds = async (trackIds: string[]) => {
   const rows = await db.track
@@ -190,6 +116,11 @@ export const getTrackCredits = async (trackId: string) => {
               bannerId: true,
               imageId: true,
               bio: true,
+              _count: {
+                select: {
+                  followedBy: true,
+                },
+              },
             },
           },
         },

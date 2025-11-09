@@ -9,21 +9,27 @@ import { PlaylistBanner, PlaylistTracks } from "@/lib/data/playlist-data";
 import { meKeys } from "../api/me-keys";
 import { MyFavoriteSongsPlaylist } from "@/lib/data/me-data";
 import { trackKeys } from "@/features/track/api/track-keys";
+import { useBaseUserOverlay } from "@/hooks/use-base-user-overlay";
 
 export function useToggleLikeTrack() {
   const qc = useQueryClient();
   const { updateTrackLikeStatus } = usePlaybackStore();
 
-  return useMutation({
+  const { map, optimisticToggle, revert, getPrev } =
+    useBaseUserOverlay("tracks");
+
+  const mutation = useMutation({
     mutationKey: ["toggle-like-track"],
     mutationFn: async ({
       likedPlaylistId,
       track,
+      isCurrentlyLiked,
     }: {
       track: TrackItem;
       likedPlaylistId: string;
+      isCurrentlyLiked: boolean;
     }) => {
-      return track.isLiked
+      return isCurrentlyLiked
         ? deleteApi(`/playlists/${likedPlaylistId}/tracks/${track.id}`)
         : postApi(`/playlists/${likedPlaylistId}/tracks`, {
             body: { trackId: track.id },
@@ -43,52 +49,50 @@ export function useToggleLikeTrack() {
         qc.cancelQueries({ queryKey: trackKeys.detail(track.id) }),
       ]);
 
+      const prevLikes = getPrev();
+      const isCurrentlyLiked = !!prevLikes[track.id];
+      const optimisticLiked = !isCurrentlyLiked;
+
+      optimisticToggle(track.id);
+      updateTrackLikeStatus(track.id, optimisticLiked);
+
+      qc.setQueryData(
+        trackKeys.detail(track.id),
+        (old: TrackItem | undefined) =>
+          old ? { ...old, isLiked: optimisticLiked } : old
+      );
+
       const prevInfo = qc.getQueryData<PlaylistBanner>(
         playlistKeys.banner(likedPlaylistId)
       );
-
       const prevTracks = qc.getQueryData<PlaylistTracks>(
         playlistKeys.tracks(likedPlaylistId)
       )?.tracks;
-
       const prevFavoriteSongsPlaylist =
         qc.getQueryData<MyFavoriteSongsPlaylist>(
           meKeys.favoriteSongsPlaylist()
         );
 
-      const prevTrack = qc.getQueryData<TrackItem>(trackKeys.detail(track.id));
+      if (!prevTracks || !prevInfo || !prevFavoriteSongsPlaylist) return null;
 
-      if (!prevTracks || !prevInfo || !prevFavoriteSongsPlaylist || !prevTrack)
-        return null;
-
-      if (track.isLiked) {
-        const newTracks = prevTracks.filter((t) => t.id !== track.id);
-        const removedTrack = prevTracks.find((t) => t.id === track.id);
-        const removedTrackDuration = removedTrack?.duration ?? 0;
+      if (isCurrentlyLiked) {
+        qc.setQueryData<PlaylistTracks>(
+          playlistKeys.tracks(likedPlaylistId),
+          (old) =>
+            old && {
+              ...old,
+              tracks: old.tracks.filter((t) => t.id !== track.id),
+            }
+        );
 
         qc.setQueryData<PlaylistBanner>(
           playlistKeys.banner(likedPlaylistId),
-          (old) => {
-            if (!old) return;
-
-            return {
+          (old) =>
+            old && {
               ...old,
-              totalTracks: (old.totalTracks ?? prevTracks.length) - 1,
-              duration:
-                (old.duration ??
-                  prevTracks.reduce((a, t) => a + t.duration, 0)) -
-                removedTrackDuration,
-            };
-          }
-        );
-
-        qc.setQueryData<PlaylistTracks>(
-          playlistKeys.tracks(likedPlaylistId),
-          (old) => {
-            if (!old) return;
-
-            return { ...old, tracks: newTracks };
-          }
+              totalTracks: old.totalTracks - 1,
+              duration: old.duration - track.duration,
+            }
         );
 
         qc.setQueryData<MyFavoriteSongsPlaylist>(
@@ -96,18 +100,21 @@ export function useToggleLikeTrack() {
           (old) => old && { ...old, totalTracks: old.totalTracks - 1 }
         );
       } else {
-        const optimisticTrack = {
-          ...track,
-          addedAt: new Date(),
-          trackNumber: prevTracks.length + 1,
-          isLiked: !track.isLiked,
-        };
-
-        const newTracks = [...prevTracks, optimisticTrack];
-
         qc.setQueryData<PlaylistTracks>(
           playlistKeys.tracks(likedPlaylistId),
-          (old) => old && { ...old, tracks: newTracks }
+          (old) =>
+            old && {
+              ...old,
+              tracks: [
+                ...old.tracks,
+                {
+                  ...track,
+                  addedAt: new Date(),
+                  trackNumber: prevTracks.length + 1,
+                  isLiked: true,
+                },
+              ],
+            }
         );
 
         qc.setQueryData<PlaylistBanner>(
@@ -126,36 +133,30 @@ export function useToggleLikeTrack() {
         );
       }
 
-      updateTrackLikeStatus(track.id, !track.isLiked);
-      qc.setQueryData(
-        trackKeys.detail(track.id),
-        (old: TrackItem | undefined) =>
-          old ? { ...old, isLiked: !old.isLiked } : old
-      );
-
       return {
-        prevInfo,
+        prevLikes,
         prevTracks,
+        prevInfo,
         prevFavoriteSongsPlaylist,
-        prevTrack,
-        likedPlaylistId,
         track,
+        likedPlaylistId,
+        isCurrentlyLiked,
       };
     },
 
     onError: (_, __, ctx) => {
-      if (ctx) {
-        qc.setQueryData(
-          playlistKeys.tracks(ctx.likedPlaylistId),
-          ctx.prevTracks
-        );
-        qc.setQueryData(playlistKeys.banner(ctx.likedPlaylistId), ctx.prevInfo);
-        qc.setQueryData(
-          meKeys.favoriteSongsPlaylist(),
-          ctx.prevFavoriteSongsPlaylist
-        );
-        qc.setQueryData(trackKeys.detail(ctx.track.id), ctx.prevTrack);
-      }
+      if (!ctx) return;
+      revert(ctx.prevLikes);
+      qc.setQueryData(playlistKeys.tracks(ctx.likedPlaylistId), {
+        tracks: ctx.prevTracks,
+      });
+      qc.setQueryData(playlistKeys.banner(ctx.likedPlaylistId), ctx.prevInfo);
+      qc.setQueryData(
+        meKeys.favoriteSongsPlaylist(),
+        ctx.prevFavoriteSongsPlaylist
+      );
+      qc.setQueryData(trackKeys.detail(ctx.track.id), ctx.track);
+      updateTrackLikeStatus(ctx.track.id, ctx.isCurrentlyLiked);
     },
 
     onSettled: (_res, _err, { likedPlaylistId, track }) => {
@@ -165,4 +166,19 @@ export function useToggleLikeTrack() {
       qc.invalidateQueries({ queryKey: trackKeys.detail(track.id) });
     },
   });
+
+  return {
+    isLiked: (id: string) => !!map[id],
+    isPending: mutation.isPending,
+    toggleLike: ({
+      likedPlaylistId,
+      track,
+    }: {
+      likedPlaylistId: string;
+      track: TrackItem;
+    }) => {
+      const isCurrentlyLiked = !!map[track.id];
+      mutation.mutate({ likedPlaylistId, track, isCurrentlyLiked });
+    },
+  };
 }

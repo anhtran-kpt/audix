@@ -1,9 +1,9 @@
 import "server-only";
 import db from "../db";
 import { AwaitedReturnType } from "@/utils/type";
-import { getFullTracks } from "@/features/track/data-access/track-repo";
 import { authorizePlaylist } from "@/features/playlist/data-access/playlist-repo";
 import { AppError } from "../errors";
+import { trackItemSelect } from "@/features/track/data-access/track-select";
 
 export const getPlaylistBanner = async ({
   playlistId,
@@ -77,25 +77,23 @@ export const getPlaylistTracks = async ({
       tracks: {
         select: {
           addedAt: true,
-          trackId: true,
+          track: {
+            select: trackItemSelect,
+          },
         },
         orderBy: { position: "asc" },
       },
     },
   });
 
-  const fullTracks = await getFullTracks({
-    userId,
-    trackIds: playlist.tracks.map((t) => t.trackId),
-  });
-
   const addedAtMap = new Map(
-    playlist.tracks.map((t) => [t.trackId, t.addedAt])
+    playlist.tracks.map((t) => [t.track.id, t.addedAt])
   );
 
-  const mergedTracks = fullTracks.map((track) => ({
-    ...track,
-    addedAt: addedAtMap.get(track.id) ?? null,
+  const mergedTracks = playlist.tracks.map((pt) => ({
+    ...pt.track,
+    artists: pt.track.artists.map((ta) => ta.artist),
+    addedAt: addedAtMap.get(pt.track.id) ?? null,
   }));
 
   return {

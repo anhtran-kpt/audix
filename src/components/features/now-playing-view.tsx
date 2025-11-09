@@ -7,7 +7,6 @@ import { ScrollArea } from "../ui/scroll-area";
 import CreditDialog from "./credits-dialog";
 import { cn } from "@/lib/utils";
 import { useRightPanel } from "@/stores/use-right-panel";
-import { FollowersBadge } from "./follow-badge";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useQuery } from "@tanstack/react-query";
 import { useShallow } from "zustand/react/shallow";
@@ -17,6 +16,7 @@ import { ToggleFollowArtistButton } from "./toggle-follow-artist-button";
 import { Button } from "../ui/button";
 import { ToggleLikeTrackButton } from "./toggle-like-track-button";
 import { CopyLinkButton } from "./copy-link-button";
+import { ArtistFollowersBadge } from "./artist-follow-badge";
 
 export const NowPlayingView = () => {
   const close = useRightPanel((s) => s.close);
@@ -94,7 +94,10 @@ export const NowPlayingView = () => {
             </div>
             <div className="flex items-center gap-3">
               <CopyLinkButton className="opacity-0 pointer-events-none transition-opacity duration-300 group-hover/np:opacity-100 group-hover/np:pointer-events-auto" />
-              <ToggleLikeTrackButton track={currentTrack} />
+              <ToggleLikeTrackButton
+                track={currentTrack}
+                className="text-muted-foreground"
+              />
             </div>
           </div>
 
@@ -122,7 +125,10 @@ export const NowPlayingView = () => {
                 </NavLink>
               </div>
               <div className="flex items-center gap-4 justify-between">
-                <FollowersBadge artistId={data.artist.id} />
+                <ArtistFollowersBadge
+                  artistId={data.artist.id}
+                  initialData={data.artist._count.followedBy}
+                />
                 <ToggleFollowArtistButton
                   artist={{
                     name: data.artist.name,

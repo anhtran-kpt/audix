@@ -5,17 +5,17 @@ import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getApi } from "@/lib/http/api";
 import {
   ArtistDiscography,
-  FollowStatus,
+  ArtistFollowersCount,
   HotArtists,
   RelatedArtists,
 } from "@/lib/data/artist-data";
 
 export const artistQueryOptions = {
-  followStatus: (artistId: string) =>
+  followersCount: (artistId: string) =>
     queryOptions({
-      queryKey: artistKeys.followStatus(artistId),
+      queryKey: artistKeys.followersCount(artistId),
       queryFn: () =>
-        getApi<FollowStatus>(artistEndpoints.followStatus(artistId)),
+        getApi<ArtistFollowersCount>(artistEndpoints.followersCount(artistId)),
       staleTime: 30_000,
       enabled: !!artistId,
     }),

@@ -1,17 +1,16 @@
 "use client";
 
-import { ToggleLikeTrackButton } from "@/components/features/toggle-like-track-button";
 import { TrackDropdownDetails } from "@/components/features/track-dropdown-details";
-import { TrackIndexCell } from "@/components/features/track-list/track-index-cell";
+import { TrackIndexCell } from "@/components/features/track-index-cell";
 import { AppImage } from "@/components/shared/app-image";
 import { TrackItemInfo } from "@/components/shared/track-item-info";
 import { NavLink } from "@/components/ui/nav-link";
 import { TrackItem } from "@/features/track/contracts/track-dto";
-import { cn } from "@/lib/utils";
 import { formatDuration } from "@/utils/date";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns/format";
 import { Clock3Icon } from "lucide-react";
+import { TrackLikeCell } from "../../track-like-cell";
 
 export const columns: ColumnDef<TrackItem>[] = [
   {
@@ -105,17 +104,7 @@ export const columns: ColumnDef<TrackItem>[] = [
       cellClassName: "w-14",
     },
     cell: ({ row }) => {
-      return (
-        <div
-          className={cn(
-            "flex justify-end items-center",
-            "select-none opacity-0 sm:group-hover/table-row:select-auto sm:group-hover/table-row:opacity-100",
-            row.original.isLiked && "select-auto opacity-100"
-          )}
-        >
-          <ToggleLikeTrackButton track={row.original} />
-        </div>
-      );
+      return <TrackLikeCell track={row.original} />;
     },
   },
   {

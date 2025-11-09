@@ -5,84 +5,83 @@ import { meKeys } from "../api/me-keys";
 import { deleteApi, putApi } from "@/lib/http/api";
 import { meEndpoints } from "../api/me-endpoints";
 import { AlbumItem } from "@/features/album/contracts/album-dto";
-import { LikedAlbumStatus, MyLikedAlbums } from "@/lib/data/me-data";
+import { MyLikedAlbums } from "@/lib/data/me-data";
+import { useBaseUserOverlay } from "@/hooks/use-base-user-overlay";
 
-export function useToggleLikeAlbum(album: AlbumItem) {
+export function useToggleLikeAlbum() {
   const qc = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (isLiked: boolean) => {
-      if (isLiked) {
-        await deleteApi(meEndpoints.toggleLikeAlbum(album.id));
-      } else {
-        await putApi(meEndpoints.toggleLikeAlbum(album.id));
-      }
+  const { map, optimisticToggle, revert, getPrev } =
+    useBaseUserOverlay("albums");
+
+  const mutation = useMutation({
+    mutationFn: async ({
+      album,
+      isCurrentlyLiked,
+    }: {
+      album: AlbumItem;
+      isCurrentlyLiked: boolean;
+    }) => {
+      return isCurrentlyLiked
+        ? await deleteApi(meEndpoints.toggleLikeAlbum(album.id))
+        : await putApi(meEndpoints.toggleLikeAlbum(album.id));
     },
 
-    onMutate: async () => {
-      await Promise.all([
-        qc.cancelQueries({ queryKey: meKeys.likedAlbums() }),
-        qc.cancelQueries({ queryKey: meKeys.likedAlbumStatus(album.id) }),
-      ]);
+    onMutate: async ({ album }) => {
+      await qc.cancelQueries({ queryKey: meKeys.likedAlbums() });
 
-      const prevData = {
-        likedAlbums: qc.getQueryData<MyLikedAlbums>(meKeys.likedAlbums()),
+      const prevLikes = getPrev();
+      const isCurrentlyLiked = !!prevLikes[album.id];
+      const optimisticLiked = !isCurrentlyLiked;
 
-        likedAlbumStatus: qc.getQueryData<LikedAlbumStatus>(
-          meKeys.likedAlbumStatus(album.id)
-        ),
-      };
+      optimisticToggle(album.id);
+
+      const prevLikedAlbums = qc.getQueryData<MyLikedAlbums>(
+        meKeys.likedAlbums()
+      );
 
       qc.setQueryData<MyLikedAlbums>(meKeys.likedAlbums(), (old) => {
-        if (!old)
-          return {
-            pagination: { offset: 0, limit: 5, hasMore: false, total: 1 },
-            items: [album],
-          };
+        if (!old) return;
 
-        const exists = old.items.some((item) => item.id === album.id);
-
-        return exists
+        return optimisticLiked
           ? {
-              ...old,
-              pagination: {
-                ...old.pagination,
-                total: old.pagination.total - 1,
-              },
-              items: old.items.filter((item) => item.id !== album.id),
-            }
-          : {
               ...old,
               pagination: {
                 ...old.pagination,
                 total: old.pagination.total + 1,
               },
               items: [album, ...old.items],
+            }
+          : {
+              ...old,
+              pagination: {
+                ...old.pagination,
+                total: old.pagination.total - 1,
+              },
+              items: old.items.filter((item) => item.id !== album.id),
             };
       });
 
-      qc.setQueryData<LikedAlbumStatus>(
-        meKeys.likedAlbumStatus(album.id),
-        (old) => ({ isLiked: !old?.isLiked })
-      );
-
-      return { prevData };
+      return { prevLikes, prevLikedAlbums };
     },
+
     onError: (_err, _vars, ctx) => {
       if (!ctx) return;
-
-      qc.setQueryData(meKeys.likedAlbums(), ctx.prevData.likedAlbums);
-      qc.setQueryData(
-        meKeys.likedAlbumStatus(album.id),
-        ctx.prevData.likedAlbumStatus
-      );
+      revert(ctx.prevLikes);
+      qc.setQueryData(meKeys.likedAlbums(), ctx.prevLikedAlbums);
     },
 
     onSettled: () => {
       qc.invalidateQueries({ queryKey: meKeys.likedAlbums() });
-      qc.invalidateQueries({
-        queryKey: meKeys.likedAlbumStatus(album.id),
-      });
     },
   });
+
+  return {
+    isLiked: (id: string) => !!map[id],
+    isPending: mutation.isPending,
+    toggleLike: (album: AlbumItem) => {
+      const isCurrentlyLiked = !!map[album.id];
+      mutation.mutate({ album, isCurrentlyLiked });
+    },
+  };
 }

@@ -5,8 +5,7 @@ import { AppError } from "@/lib/errors";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
 import { albumItemSelect } from "./album-select";
-import { getUserIdOrThrow } from "@/lib/auth";
-import { getFullTracks } from "@/features/track/data-access/track-repo";
+import { getFullTracksByIds } from "@/lib/data/track-data";
 
 export const getAlbumBanner = async (albumId: string) => {
   const album = await db.album.findUnique({
@@ -40,8 +39,6 @@ export const getAlbumBanner = async (albumId: string) => {
 export type AlbumBanner = AwaitedReturnType<typeof getAlbumBanner>;
 
 export const getAlbumTracks = async (albumId: string) => {
-  const userId = await getUserIdOrThrow();
-
   const album = await db.album.findUniqueOrThrow({
     where: {
       id: albumId,
@@ -55,10 +52,7 @@ export const getAlbumTracks = async (albumId: string) => {
     },
   });
 
-  return await getFullTracks({
-    userId,
-    trackIds: album.tracks.map((track) => track.id),
-  });
+  return await getFullTracksByIds(album.tracks.map((track) => track.id));
 };
 
 export type AlbumTracks = AwaitedReturnType<typeof getAlbumTracks>;

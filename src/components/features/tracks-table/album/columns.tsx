@@ -1,14 +1,13 @@
 "use client";
 
-import { ToggleLikeTrackButton } from "@/components/features/toggle-like-track-button";
 import { TrackDropdownDetails } from "@/components/features/track-dropdown-details";
-import { TrackIndexCell } from "@/components/features/track-list/track-index-cell";
 import { TrackItemInfo } from "@/components/shared/track-item-info";
 import { TrackItem } from "@/features/track/contracts/track-dto";
-import { cn } from "@/lib/utils";
 import { formatDuration } from "@/utils/date";
 import { ColumnDef } from "@tanstack/react-table";
 import { Clock3Icon } from "lucide-react";
+import { TrackLikeCell } from "../../track-like-cell";
+import { TrackIndexCell } from "../../track-index-cell";
 
 export const columns: ColumnDef<TrackItem>[] = [
   {
@@ -71,17 +70,7 @@ export const columns: ColumnDef<TrackItem>[] = [
     accessorKey: "like",
     header: "",
     cell: ({ row }) => {
-      return (
-        <div
-          className={cn(
-            "flex justify-end items-center",
-            "select-none opacity-0 sm:group-hover/table-row:select-auto sm:group-hover/table-row:opacity-100",
-            row.original.isLiked && "select-auto opacity-100"
-          )}
-        >
-          <ToggleLikeTrackButton track={row.original} />
-        </div>
-      );
+      return <TrackLikeCell track={row.original} />;
     },
   },
   {

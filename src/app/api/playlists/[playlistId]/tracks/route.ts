@@ -2,10 +2,8 @@ import {
   AddTrackToPlaylistInputSchema,
   PlaylistParamsSchema,
 } from "@/features/playlist/contracts/playlist-schema";
-import {
-  addTrackToPlaylist,
-  getPlaylistTracks,
-} from "@/features/playlist/data-access/playlist-repo";
+import { addTrackToPlaylist } from "@/features/playlist/data-access/playlist-repo";
+import { getPlaylistTracks } from "@/lib/data/playlist-data";
 import { makeGET, makePOST } from "@/lib/route-factory";
 
 export const POST = makePOST({

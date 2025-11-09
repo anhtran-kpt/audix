@@ -1,10 +1,11 @@
 import "server-only";
 import db from "../db";
 import { AwaitedReturnType } from "@/utils/type";
-import { getFullTracks } from "@/features/track/data-access/track-repo";
 import { PaginationParams } from "@/features/shared/contracts/shared-dto";
 import { artistItemSelect } from "@/features/artist/data-access/artist-select";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
+import { trackItemSelect } from "@/features/track/data-access/track-select";
+import { AppError } from "../errors";
 
 export const getArtistOverview = async ({
   artistId,
@@ -13,7 +14,7 @@ export const getArtistOverview = async ({
   artistId: string;
   userId: string;
 }) => {
-  const artist = await db.artist.findUniqueOrThrow({
+  const artist = await db.artist.findUnique({
     where: { id: artistId },
     select: {
       id: true,
@@ -24,7 +25,9 @@ export const getArtistOverview = async ({
       bio: true,
       tracks: {
         select: {
-          trackId: true,
+          track: {
+            select: trackItemSelect,
+          },
         },
         take: 5,
         orderBy: {
@@ -36,20 +39,24 @@ export const getArtistOverview = async ({
     },
   });
 
+  if (!artist) {
+    throw new AppError("NOT_FOUND", "Artist not found!");
+  }
+
   const isFollowed = await db.userFollowedArtist
     .findUnique({
       where: { userId_artistId: { userId, artistId } },
     })
-    .then((data) => !!data);
-
-  const fullTracks = await getFullTracks({
-    userId,
-    trackIds: artist.tracks.map((t) => t.trackId),
-  });
+    .then((link) => !!link);
 
   return {
     ...artist,
-    tracks: fullTracks,
+    tracks: artist.tracks
+      .map((at) => at.track)
+      .map((track) => ({
+        ...track,
+        artists: track.artists.map((ta) => ta.artist),
+      })),
     isFollowing: isFollowed,
     followersCount: artist.followersCount,
   };
@@ -223,18 +230,18 @@ export const getHotArtists = async (params: PaginationParams) => {
 
 export type HotArtists = AwaitedReturnType<typeof getHotArtists>;
 
-export const getFollowStatus = async (userId: string, artistId: string) => {
-  const [artist, link] = await Promise.all([
-    db.artist.findUnique({
-      where: { id: artistId },
-      select: { followersCount: true },
-    }),
-    db.userFollowedArtist.findUnique({
-      where: { userId_artistId: { userId, artistId } },
-    }),
-  ]);
+export const getArtistFollowersCount = async (
+  userId: string,
+  artistId: string
+) => {
+  const artist = await db.artist.findUniqueOrThrow({
+    where: { id: artistId },
+    select: { followersCount: true },
+  });
 
-  return { isFollowing: !!link, followersCount: artist?.followersCount ?? 0 };
+  return artist.followersCount;
 };
 
-export type FollowStatus = AwaitedReturnType<typeof getFollowStatus>;
+export type ArtistFollowersCount = AwaitedReturnType<
+  typeof getArtistFollowersCount
+>;

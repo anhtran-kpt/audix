@@ -6,105 +6,106 @@ import { deleteApi, postApi } from "@/lib/http/api";
 import { meKeys } from "@/features/me/api/me-keys";
 import { ArtistItem } from "../contracts/artist-dto";
 import { artistEndpoints } from "../api/artist-endpoints";
-import { FollowStatus } from "@/lib/data/artist-data";
 import { MyFollowedArtists } from "@/lib/data/me-data";
+import { useBaseUserOverlay } from "@/hooks/use-base-user-overlay";
+import { ArtistFollowersCount } from "@/lib/data/artist-data";
 
-export function useToggleFollowArtist(artist: ArtistItem) {
+export function useToggleFollowArtist() {
   const qc = useQueryClient();
 
-  return useMutation({
-    mutationFn: async ({ nextIsFollowing }: { nextIsFollowing: boolean }) => {
-      const res = nextIsFollowing
-        ? await postApi<FollowStatus>(artistEndpoints.follow(artist.id))
-        : await deleteApi<FollowStatus>(artistEndpoints.follow(artist.id));
-      return res;
+  const { map, optimisticToggle, revert, getPrev } =
+    useBaseUserOverlay("artists");
+
+  const mutation = useMutation({
+    mutationKey: ["toggle-follow-artist"],
+    mutationFn: async ({
+      artist,
+      isCurrentlyFollowed,
+    }: {
+      artist: ArtistItem;
+      isCurrentlyFollowed: boolean;
+    }) => {
+      return isCurrentlyFollowed
+        ? await deleteApi<boolean>(artistEndpoints.follow(artist.id))
+        : await postApi<boolean>(artistEndpoints.follow(artist.id));
     },
 
-    onMutate: async ({ nextIsFollowing }) => {
+    onMutate: async ({ artist }) => {
       await Promise.all([
-        qc.cancelQueries({ queryKey: artistKeys.followStatus(artist.id) }),
+        qc.cancelQueries({ queryKey: artistKeys.followersCount(artist.id) }),
         qc.cancelQueries({ queryKey: meKeys.followedArtists() }),
       ]);
 
-      const prevData = {
-        followStatus: qc.getQueryData<FollowStatus>(
-          artistKeys.followStatus(artist.id)
-        ),
-        followedArtists: qc.getQueryData<MyFollowedArtists>(
-          meKeys.followedArtists()
-        ),
-      };
+      const prevFollows = getPrev();
+      const isCurrentlyFollowed = !!prevFollows[artist.id];
+      const optimisticFollowed = !isCurrentlyFollowed;
 
-      qc.setQueryData<FollowStatus>(
-        artistKeys.followStatus(artist.id),
-        (old) => {
-          const base = old ?? { isFollowing: false, followersCount: 0 };
-          const delta = nextIsFollowing
-            ? base.isFollowing
-              ? 0
-              : 1
-            : base.isFollowing
-            ? -1
-            : 0;
+      optimisticToggle(artist.id);
 
-          return {
-            isFollowing: nextIsFollowing,
-            followersCount: Math.max(0, (base.followersCount ?? 0) + delta),
-          };
-        }
+      const prevFollowersCount = qc.getQueryData<ArtistFollowersCount>(
+        artistKeys.followersCount(artist.id)
+      );
+
+      const prevFollowedArtists = qc.getQueryData<MyFollowedArtists>(
+        meKeys.followedArtists()
+      );
+
+      if (!prevFollowersCount || !prevFollowedArtists) return null;
+
+      qc.setQueryData<ArtistFollowersCount>(
+        artistKeys.followersCount(artist.id),
+        (old) => old && old + (optimisticFollowed ? 1 : -1)
       );
 
       qc.setQueryData<MyFollowedArtists>(meKeys.followedArtists(), (old) => {
-        if (!old)
-          return nextIsFollowing
-            ? {
-                pagination: { limit: 5, offset: 0, total: 1, hasMore: false },
-                items: [artist],
-              }
-            : {
-                pagination: { limit: 5, offset: 0, total: 1, hasMore: false },
-                items: [],
-              };
+        if (!old) return;
 
-        if (nextIsFollowing) {
-          const exists = old.items.some((a) => a.id === artist.id);
-          return exists
-            ? old
-            : {
-                ...old,
-                pagination: {
-                  ...old.pagination,
-                  total: old.pagination.total + 1,
-                },
-                items: [artist, ...old.items],
-              };
-        }
-
-        return {
-          ...old,
-          pagination: {
-            ...old.pagination,
-            total: old.pagination.total - 1,
-          },
-          items: old.items.filter((a) => a.id !== artist.id),
-        };
+        return isCurrentlyFollowed
+          ? {
+              ...old,
+              pagination: {
+                ...old.pagination,
+                total: old.pagination.total - 1,
+              },
+              items: old.items.filter((a) => a.id !== artist.id),
+            }
+          : {
+              ...old,
+              pagination: {
+                ...old.pagination,
+                total: old.pagination.total + 1,
+              },
+              items: [artist, ...old.items],
+            };
       });
 
-      return { prevData };
+      return { prevFollowersCount, prevFollows, prevFollowedArtists };
     },
 
-    onError: (_err, _vars, ctx) => {
+    onError: (_err, vars, ctx) => {
       if (!ctx) return;
+      revert(ctx.prevFollows);
       qc.setQueryData(
-        artistKeys.followStatus(artist.id),
-        ctx.prevData.followStatus
+        artistKeys.followersCount(vars.artist.id),
+        ctx.prevFollowersCount
       );
-      qc.setQueryData(meKeys.followedArtists(), ctx.prevData.followedArtists);
+      qc.setQueryData(meKeys.followedArtists(), ctx.prevFollowedArtists);
     },
 
-    onSettled: () => {
-      qc.invalidateQueries({ queryKey: artistKeys.followStatus(artist.id) });
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({
+        queryKey: artistKeys.followersCount(vars.artist.id),
+      });
       qc.invalidateQueries({ queryKey: meKeys.followedArtists() });
     },
   });
+
+  return {
+    isFollowed: (id: string) => !!map[id],
+    isPending: mutation.isPending,
+    toggleFollow: (artist: ArtistItem) => {
+      const isCurrentlyFollowed = !!map[artist.id];
+      mutation.mutate({ artist, isCurrentlyFollowed });
+    },
+  };
 }
