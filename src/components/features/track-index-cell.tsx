@@ -1,8 +1,8 @@
 "use client";
 
 import WaveForm from "@/components/ui/wave-form";
-import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
-import { usePlayTrack } from "@/hooks/use-play-track";
+import { StartPlaybackInput } from "@/features/playback/playback-types";
+import { usePlayTrack } from "@/features/playback/hooks/use-play-track";
 import { cn } from "@/lib/utils";
 import { PauseIcon, PlayIcon } from "lucide-react";
 

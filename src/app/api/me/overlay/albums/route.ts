@@ -1,4 +1,4 @@
-import { getMyLikedAlbumIds } from "@/lib/data/me-data";
+import { getMyLikedAlbumIds } from "@/features/me/me-data";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

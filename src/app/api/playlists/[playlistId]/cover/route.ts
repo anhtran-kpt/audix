@@ -1,5 +1,5 @@
-import { PlaylistParamsSchema } from "@/features/playlist/contracts/playlist-schema";
-import { uploadPlaylistCover } from "@/features/playlist/data-access/playlist-repo";
+import { PlaylistParamsSchema } from "@/features/playlist/playlist-schemas";
+import { uploadPlaylistCover } from "@/features/playlist/playlist-actions";
 import { makePOST } from "@/lib/route-factory";
 import z, { object } from "zod";
 

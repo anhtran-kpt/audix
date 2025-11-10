@@ -1,7 +1,7 @@
 "use client";
 
 import { useToggleLikeAlbum } from "@/features/me/hooks/use-toggle-like-album";
-import { AlbumItem } from "@/features/album/contracts/album-dto";
+import { AlbumItem } from "@/features/album/album-types";
 import { ToggleLikeButton } from "../ui/toggle-like-button";
 
 export const ToggleLikeAlbumButton = ({ album }: { album: AlbumItem }) => {

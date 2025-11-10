@@ -11,12 +11,12 @@ import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useQuery } from "@tanstack/react-query";
 import { useShallow } from "zustand/react/shallow";
 import { AppImage } from "../shared/app-image";
-import { trackQueryOptions } from "@/features/track/api/track-query-options";
 import { ToggleFollowArtistButton } from "./toggle-follow-artist-button";
 import { Button } from "../ui/button";
 import { ToggleLikeTrackButton } from "./toggle-like-track-button";
 import { CopyLinkButton } from "./copy-link-button";
 import { ArtistFollowersBadge } from "./artist-follow-badge";
+import { trackQueryOptions } from "@/features/track/track-query-options";
 
 export const NowPlayingView = () => {
   const close = useRightPanel((s) => s.close);

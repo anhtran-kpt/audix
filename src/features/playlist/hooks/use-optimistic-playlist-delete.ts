@@ -1,10 +1,12 @@
-import { meKeys } from "@/features/me/api/me-keys";
-import { playlistKeys } from "@/features/playlist/api/playlist-keys";
-import { MyPlaylists } from "@/lib/data/me-data";
-import { deleteApi } from "@/lib/http/api";
+"use client";
+
+import { MyPlaylists } from "@/features/me/me-data";
+import { deleteApi } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { playlistKeys } from "../playlist-keys";
+import { meKeys } from "@/features/me/me-keys";
 
 type DeletePlaylistInput = {
   playlistId: string;
@@ -21,7 +23,7 @@ export function useOptimisticPlaylistDelete() {
 
     onMutate: async ({ playlistId }) => {
       await Promise.all([
-        qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) }),
+        qc.cancelQueries({ queryKey: playlistKeys.overview(playlistId) }),
         qc.cancelQueries({ queryKey: playlistKeys.tracks(playlistId) }),
         qc.cancelQueries({ queryKey: meKeys.myPlaylists() }),
       ]);

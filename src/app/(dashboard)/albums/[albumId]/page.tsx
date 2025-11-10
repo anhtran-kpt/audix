@@ -1,7 +1,6 @@
-import { requireAuth } from "@/lib/auth";
-import { getAlbumOverview } from "@/lib/data/album-data";
 import { OverviewSection } from "./_sections/overview-section";
 import { RelatedAlbumsSection } from "./_sections/related-section";
+import { getAlbumOverview } from "@/features/album/album-data";
 
 export default async function AlbumDetail({
   params,
@@ -9,9 +8,8 @@ export default async function AlbumDetail({
   params: Promise<{ albumId: string }>;
 }) {
   const { albumId } = await params;
-  const user = await requireAuth();
 
-  const album = await getAlbumOverview({ albumId, userId: user.id });
+  const album = await getAlbumOverview(albumId);
 
   return (
     <>

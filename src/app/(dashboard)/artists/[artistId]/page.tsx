@@ -1,6 +1,6 @@
 import { DiscographySection } from "./_sections/discography-section";
 import { AboutSection } from "./_sections/about-section";
-import { getArtistOverview } from "@/lib/data/artist-data";
+import { getArtistOverview } from "@/features/artist/artist-data";
 import { OverviewSection } from "./_sections/overview-section";
 import { requireAuth } from "@/lib/auth";
 import { RelatedArtistsSection } from "./_sections/related-artists-section";

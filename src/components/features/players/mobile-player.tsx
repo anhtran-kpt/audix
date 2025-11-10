@@ -9,7 +9,7 @@ import { TrackItemCompact } from "../../shared/track-item-compact";
 import { AudioProgressBar } from "@/components/shared/audio-progress-bar";
 import { AppImage } from "@/components/shared/app-image";
 import { useState } from "react";
-import { useImageGradient } from "@/hooks/use-image-gradient";
+import { useImageGradient } from "@/features/shared/hooks/use-image-gradient";
 
 export const MobilePlayer = () => {
   const { session, resume, pause, isLoading, currentTrack, isPlaying } =

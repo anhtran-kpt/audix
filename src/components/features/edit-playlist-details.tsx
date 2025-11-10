@@ -18,7 +18,6 @@ import { Textarea } from "../ui/textarea";
 import { useOptimisticPlaylistUpdate } from "@/features/playlist/hooks/use-optimistic-playlist-update";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UpdatePlaylistInput } from "@/features/playlist/contracts/playlist-dto";
 import {
   Form,
   FormControl,
@@ -28,9 +27,10 @@ import {
   FormMessage,
 } from "../ui/form";
 import { useEffect, useState } from "react";
-import { UpdatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
+import { UpdatePlaylistInputSchema } from "@/features/playlist/playlist-schemas";
 import { AppImage } from "../shared/app-image";
-import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
+import { playlistQueryOptions } from "@/features/playlist/playlist-query-options";
+import { UpdatePlaylistInput } from "@/features/playlist/playlist-types";
 
 export default function EditPlaylistDetails({
   playlistId,
@@ -40,7 +40,7 @@ export default function EditPlaylistDetails({
   const [open, setOpen] = useState(false);
 
   const { data: playlist, status } = useQuery({
-    ...playlistQueryOptions.banner(playlistId),
+    ...playlistQueryOptions.overview(playlistId),
     select: (data) => ({
       imageId: data.imageId,
       title: data.title,

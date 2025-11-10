@@ -1,5 +1,5 @@
-import { GetTracksQuerySchema } from "@/features/track/contracts/track-schema";
-import { getTrackListByIds } from "@/features/track/data-access/track-repo";
+import { GetTracksQuerySchema } from "@/features/track/track-schemas";
+import { getTrackListByIds } from "@/features/track/track-actions";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

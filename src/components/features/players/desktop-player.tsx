@@ -87,12 +87,7 @@ export const DesktopPlayer = () => {
               onClick={previous}
               disabled={!hasPrevious}
             >
-              <SkipBackIcon
-                className={cn(
-                  "size-5 fill-current",
-                  session.isShuffled && "stroke-primary"
-                )}
-              />
+              <SkipBackIcon className="size-5 fill-current" />
             </Button>
             <Button
               variant="ghost"
@@ -115,12 +110,7 @@ export const DesktopPlayer = () => {
               onClick={next}
               disabled={!hasNext}
             >
-              <SkipForwardIcon
-                className={cn(
-                  "size-5 fill-current",
-                  session.isShuffled && "stroke-primary"
-                )}
-              />
+              <SkipForwardIcon className="size-5 fill-current" />
             </Button>
             <Button
               variant="ghost"

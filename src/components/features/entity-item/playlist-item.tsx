@@ -1,7 +1,7 @@
 "use client";
 
 import { AppImage } from "@/components/shared/app-image";
-import { PlaylistItem as PlaylistItemType } from "@/features/playlist/contracts/playlist-dto";
+import { PlaylistItem as PlaylistItemType } from "@/features/playlist/playlist-types";
 import { useRouter } from "next/navigation";
 import { RoundedPlayContextButton } from "../play/rounded-play-context-button";
 import { NavLink } from "@/components/ui/nav-link";

@@ -1,7 +1,7 @@
 import { requireAuth } from "@/lib/auth";
 import { LikedAlbumsSection } from "./_sections/liked-albums-section";
 import { BannerSection } from "./_sections/banner-section";
-import { getMyOverview } from "@/lib/data/me-data";
+import { getMyOverview } from "@/features/me/me-data";
 import { MyPlaylistsSection } from "./_sections/my-playlists-section";
 import { LikedPlaylistsSection } from "./_sections/liked-playlists-section";
 import { FollowingArtistsSection } from "./_sections/following-artists-section";

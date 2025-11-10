@@ -7,9 +7,9 @@ import { ToggleLikeAlbumButton } from "@/components/shared/toggle-like-album-but
 import { Button } from "@/components/ui/button";
 import Dot from "@/components/ui/dot";
 import { NavLink } from "@/components/ui/nav-link";
-import { useImageGradient } from "@/hooks/use-image-gradient";
+import { AlbumOverview } from "@/features/album/album-types";
+import { useImageGradient } from "@/features/shared/hooks/use-image-gradient";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
-import { AlbumOverview } from "@/lib/data/album-data";
 import { formatDate } from "date-fns/format";
 import { EllipsisIcon, ShuffleIcon } from "lucide-react";
 import pluralize from "pluralize";

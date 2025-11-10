@@ -3,18 +3,18 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postApi } from "@/lib/http/api";
+import { postApi } from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import { CreatePlaylistInputSchema } from "@/features/playlist/playlist-schemas";
+import { useRouter } from "next/navigation";
+import { MyPlaylists } from "@/features/me/me-data";
 import {
   CreatePlaylistInput,
   CreatePlaylistOutput,
   PlaylistItem,
-} from "@/features/playlist/contracts/playlist-dto";
-import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
-import { meKeys } from "@/features/me/api/me-keys";
-import { useRouter } from "next/navigation";
-import { MyPlaylists } from "@/lib/data/me-data";
+} from "../playlist-types";
+import { meKeys } from "@/features/me/me-keys";
 
 export function useCreatePlaylist(
   onSuccess?: (res: CreatePlaylistOutput) => void

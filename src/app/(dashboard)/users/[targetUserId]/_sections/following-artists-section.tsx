@@ -1,6 +1,6 @@
 import { ArtistGridSkeleton } from "@/components/shared/artist-grid-skeleton";
 import { SectionSkeleton } from "@/components/shared/section-skeleton";
-import { getUserFollowedArtists } from "@/lib/data/user-data";
+import { getUserFollowedArtists } from "@/features/user/user-data";
 import { Suspense } from "react";
 import { FollowingArtistsSectionClient } from "./following-artists-section-client";
 

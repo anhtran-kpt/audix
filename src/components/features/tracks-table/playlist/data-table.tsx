@@ -1,8 +1,8 @@
 "use client";
 
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/features/shared/hooks/use-mobile";
 import { usePlaybackStore } from "@/stores/use-playback-store";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
 import { TrackListContextType } from "@/lib/constants";
 import { DataTableBase } from "@/components/ui/data-table-base";
 import { columns } from "./columns";

@@ -1,10 +1,7 @@
-import { ToggleLikePlaylistInputSchema } from "@/features/me/contracts/me-schema";
-import {
-  likePlaylist,
-  unlikePlaylist,
-} from "@/features/me/data-access/me-repo";
-import { getLikedPlaylistStatus } from "@/lib/data/me-data";
+import { ToggleLikePlaylistInputSchema } from "@/features/me/me-schemas";
+import { getLikedPlaylistStatus } from "@/features/me/me-data";
 import { makeDELETE, makeGET, makePUT } from "@/lib/route-factory";
+import { likePlaylist, unlikePlaylist } from "@/features/me/me-actions";
 
 export const GET = makeGET({
   auth: "required",

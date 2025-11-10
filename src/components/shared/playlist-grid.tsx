@@ -3,7 +3,7 @@
 import { GridWrapper } from "./grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import Dot from "../ui/dot";
-import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
+import { PlaylistItem } from "@/features/playlist/playlist-types";
 import { AppImage } from "./app-image";
 import { useRouter } from "next/navigation";
 import { RoundedPlayContextButton } from "../features/play/rounded-play-context-button";

@@ -2,8 +2,8 @@
 
 import { useAddTrackToPlaylist } from "./use-add-track-to-playlist";
 import { useQueryClient } from "@tanstack/react-query";
-import { getApi } from "@/lib/http/api";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { getApi } from "@/lib/api";
+import { TrackItem } from "@/features/track/track-types";
 
 type RecommendedTrackItem = TrackItem & { optimistic?: boolean };
 

@@ -7,7 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
+import { useResponsiveLimit } from "@/features/shared/hooks/use-responsive-limit";
 import { useRef } from "react";
 
 type EntityCarouselProps<T extends { id: string }> = {

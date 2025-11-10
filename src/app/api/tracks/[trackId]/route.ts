@@ -1,4 +1,4 @@
-import { getFullTrackById } from "@/lib/data/track-data";
+import { getFullTrackById } from "@/features/track/track-data";
 import { makeGET } from "@/lib/route-factory";
 import { cuid2, object } from "zod";
 

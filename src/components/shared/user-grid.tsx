@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { GridWrapper } from "./grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import { AppImage } from "./app-image";
-import { UserItem } from "@/features/user/contracts/user-dto";
+import { UserItem } from "@/features/user/user-types";
 import Image from "next/image";
 import { Skeleton } from "../ui/skeleton";
 

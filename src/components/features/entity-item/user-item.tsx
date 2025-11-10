@@ -1,6 +1,6 @@
 "use client";
 
-import { UserItem as UserItemType } from "@/features/user/contracts/user-dto";
+import { UserItem as UserItemType } from "@/features/user/user-types";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { AppImage } from "@/components/shared/app-image";

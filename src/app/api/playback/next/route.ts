@@ -1,4 +1,4 @@
-import { skipToNext } from "@/features/playback/data-access/playback-repo";
+import { skipToNext } from "@/features/playback/playback-actions";
 import { makePOST } from "@/lib/route-factory";
 
 export const POST = makePOST({

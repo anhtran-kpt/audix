@@ -1,6 +1,6 @@
 "use client";
 
-import { useImageGradient } from "@/hooks/use-image-gradient";
+import { useImageGradient } from "@/features/shared/hooks/use-image-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { CopyIcon, EditIcon } from "lucide-react";
@@ -9,9 +9,9 @@ import { AppImage } from "@/components/shared/app-image";
 import { NavLink } from "@/components/ui/nav-link";
 import pluralize from "pluralize";
 import Dot from "@/components/ui/dot";
-import { userQueryOptions } from "@/features/user/api/user-query-options";
 import Image from "next/image";
-import { UserOverview } from "@/lib/data/user-data";
+import { UserOverview } from "@/features/user/user-data";
+import { userQueryOptions } from "@/features/user/user-query-options";
 
 type BannerSectionProps = {
   initialData: UserOverview;

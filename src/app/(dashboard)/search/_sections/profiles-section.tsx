@@ -1,6 +1,7 @@
-import UserGrid from "@/components/shared/user-grid";
-import SectionHeading from "@/components/ui/section-heading";
-import { SearchResults } from "@/features/search/data-access/search-repo";
+import { UserItem } from "@/components/features/entity-item/user-item";
+import { EntityCarousel } from "@/components/shared/entity-carousel";
+import { Section } from "@/components/shared/section";
+import { SearchResults } from "@/features/search/search-actions";
 
 export default function ProfilesSection({
   data,
@@ -10,16 +11,18 @@ export default function ProfilesSection({
   q?: string;
 }) {
   return (
-    <section>
-      <SectionHeading
-        title="Profiles"
-        showAllHref={
-          data.pagination.hasMore && q
-            ? `/search?q=${q}&type=profiles`
-            : undefined
-        }
+    <Section
+      title="Profiles"
+      showAllHref={
+        data.pagination.hasMore && q
+          ? `/search?q=${q}&type=profiles`
+          : undefined
+      }
+    >
+      <EntityCarousel
+        data={data.items}
+        renderItem={(user) => <UserItem user={user} />}
       />
-      <UserGrid users={data.items} />
-    </section>
+    </Section>
   );
 }

@@ -9,7 +9,7 @@ import {
 import { Separator } from "../ui/separator";
 import { useQuery } from "@tanstack/react-query";
 import { ReactNode } from "react";
-import { trackQueryOptions } from "@/features/track/api/track-query-options";
+import { trackQueryOptions } from "@/features/track/track-query-options";
 
 type CreditsDialogProps = {
   trackId: string;

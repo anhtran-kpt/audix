@@ -1,7 +1,7 @@
-import { ToggleLikeAlbumInputSchema } from "@/features/me/contracts/me-schema";
-import { likeAlbum, unlikeAlbum } from "@/features/me/data-access/me-repo";
-import { getLikedAlbumStatus } from "@/lib/data/me-data";
+import { ToggleLikeAlbumInputSchema } from "@/features/me/me-schemas";
+import { getLikedAlbumStatus } from "@/features/me/me-data";
 import { makeDELETE, makeGET, makePUT } from "@/lib/route-factory";
+import { likeAlbum, unlikeAlbum } from "@/features/me/me-actions";
 
 export const GET = makeGET({
   auth: "required",

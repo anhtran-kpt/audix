@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArtistDiscography } from "@/lib/data/artist-data";
+import { ArtistDiscography } from "@/features/artist/artist-data";
 import { Section } from "@/components/shared/section";
 import { EntityCarousel } from "@/components/shared/entity-carousel";
 import { AlbumItem } from "@/components/features/entity-item/album-item";

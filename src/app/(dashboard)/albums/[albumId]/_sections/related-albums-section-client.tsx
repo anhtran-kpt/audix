@@ -3,7 +3,7 @@
 import { AlbumItem } from "@/components/features/entity-item/album-item";
 import { EntityCarousel } from "@/components/shared/entity-carousel";
 import { Section } from "@/components/shared/section";
-import { RelatedAlbums } from "@/lib/data/album-data";
+import { RelatedAlbums } from "@/features/album/album-types";
 
 type RelatedAlbumsSectionClient = {
   initialData: RelatedAlbums;

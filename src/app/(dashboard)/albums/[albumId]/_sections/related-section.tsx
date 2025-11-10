@@ -1,8 +1,8 @@
 import { AlbumGridSkeleton } from "@/components/shared/album-grid-skeleton";
 import { SectionSkeleton } from "@/components/shared/section-skeleton";
-import { getRelatedAlbums } from "@/lib/data/album-data";
 import { Suspense } from "react";
 import { RelatedAlbumsSectionClient } from "./related-albums-section-client";
+import { getRelatedAlbums } from "@/features/album/album-data";
 
 export const RelatedAlbumsSection = async ({
   albumId,

@@ -5,7 +5,7 @@ import { TrackIndexCell } from "@/components/features/track-index-cell";
 import { AppImage } from "@/components/shared/app-image";
 import { TrackItemInfo } from "@/components/shared/track-item-info";
 import { NavLink } from "@/components/ui/nav-link";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
 import { formatDuration } from "@/utils/date";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns/format";

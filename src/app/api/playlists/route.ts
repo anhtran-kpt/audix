@@ -1,5 +1,5 @@
-import { CreatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
-import { createPlaylist } from "@/features/playlist/data-access/playlist-repo";
+import { CreatePlaylistInputSchema } from "@/features/playlist/playlist-schemas";
+import { createPlaylist } from "@/features/playlist/playlist-actions";
 import { makePOST } from "@/lib/route-factory";
 
 export const POST = makePOST({

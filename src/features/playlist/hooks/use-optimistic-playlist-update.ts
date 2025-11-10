@@ -1,13 +1,15 @@
-import { playlistKeys } from "@/features/playlist/api/playlist-keys";
-import {
-  PlaylistItem,
-  UpdatePlaylistInput,
-  UpdatePlaylistOutput,
-} from "@/features/playlist/contracts/playlist-dto";
-import { PlaylistBanner } from "@/features/playlist/data-access/playlist-repo";
-import { patchApi } from "@/lib/http/api";
+"use client";
+
+import { patchApi } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import {
+  PlaylistItem,
+  PlaylistOverview,
+  UpdatePlaylistInput,
+  UpdatePlaylistOutput,
+} from "../playlist-types";
+import { playlistKeys } from "../playlist-keys";
 
 export const useOptimisticPlaylistUpdate = () => {
   const qc = useQueryClient();
@@ -25,20 +27,22 @@ export const useOptimisticPlaylistUpdate = () => {
       }),
 
     onMutate: async ({ playlistId, input }) => {
-      await qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) });
+      await qc.cancelQueries({ queryKey: playlistKeys.overview(playlistId) });
 
-      const prev = qc.getQueryData<PlaylistBanner>(
-        playlistKeys.banner(playlistId)
+      const prev = qc.getQueryData<PlaylistOverview>(
+        playlistKeys.overview(playlistId)
       );
 
-      qc.setQueryData<PlaylistBanner>(playlistKeys.banner(playlistId), (prev) =>
-        prev
-          ? {
-              ...prev,
-              title: input.title ?? prev.title,
-              description: input.description ?? prev.description,
-            }
-          : prev
+      qc.setQueryData<PlaylistOverview>(
+        playlistKeys.overview(playlistId),
+        (prev) =>
+          prev
+            ? {
+                ...prev,
+                title: input.title ?? prev.title,
+                description: input.description ?? prev.description,
+              }
+            : prev
       );
 
       qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (prev) =>
@@ -59,20 +63,22 @@ export const useOptimisticPlaylistUpdate = () => {
 
     onError: (_err, { playlistId }, ctx) => {
       if (ctx?.prev) {
-        qc.setQueryData(playlistKeys.banner(playlistId), ctx.prev);
+        qc.setQueryData(playlistKeys.overview(playlistId), ctx.prev);
       }
     },
 
     onSuccess: (updatedPlaylist, { playlistId }) => {
       toast.success("Playlist updated successful!");
-      qc.setQueryData<PlaylistBanner>(playlistKeys.banner(playlistId), (prev) =>
-        prev
-          ? {
-              ...prev,
-              title: updatedPlaylist.title ?? prev.title,
-              description: updatedPlaylist.description ?? prev.description,
-            }
-          : prev
+      qc.setQueryData<PlaylistOverview>(
+        playlistKeys.overview(playlistId),
+        (prev) =>
+          prev
+            ? {
+                ...prev,
+                title: updatedPlaylist.title ?? prev.title,
+                description: updatedPlaylist.description ?? prev.description,
+              }
+            : prev
       );
 
       qc.setQueryData<PlaylistItem[]>(playlistKeys.list(), (prev) =>

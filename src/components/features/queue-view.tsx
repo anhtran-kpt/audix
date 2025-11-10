@@ -7,8 +7,8 @@ import { usePlaybackStore } from "@/stores/use-playback-store";
 import { TrackItemCompact } from "../shared/track-item-compact";
 import { MiniPlayTrackButton } from "./play/mini-play-track-button";
 import { useQuery } from "@tanstack/react-query";
-import { trackQueryOptions } from "@/features/track/api/track-query-options";
-import { playbackQueryOptions } from "@/features/playback/api/playback-query-options";
+import { trackQueryOptions } from "@/features/track/track-query-options";
+import { playbackQueryOptions } from "@/features/playback/playback-query-options";
 
 export default function QueueView() {
   const { queue, currentTrack, snapshot } = usePlaybackStore(

@@ -4,7 +4,7 @@ import { AppImage } from "@/components/shared/app-image";
 import Dot from "@/components/ui/dot";
 import { NavLink } from "@/components/ui/nav-link";
 import SectionHeading from "@/components/ui/section-heading";
-import { SearchResults } from "@/features/search/data-access/search-repo";
+import { SearchResults } from "@/features/search/search-actions";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { useRouter } from "next/navigation";
 import Image from "next/image";

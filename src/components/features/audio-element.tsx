@@ -1,6 +1,6 @@
 "use client";
 
-import { useAudioPlayer } from "@/hooks/use-audio-player";
+import { useAudioPlayer } from "@/features/playback/hooks/use-audio-player";
 
 export const AudioElement = () => {
   const { audioRef } = useAudioPlayer();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useImageGradient } from "@/hooks/use-image-gradient";
+import { useImageGradient } from "@/features/shared/hooks/use-image-gradient";
 import { useState } from "react";
 import { EditIcon } from "lucide-react";
 import { AppImage } from "@/components/shared/app-image";
@@ -10,7 +10,7 @@ import Dot from "@/components/ui/dot";
 import Image from "next/image";
 import { CopyLinkButton } from "@/components/features/copy-link-button";
 import { Button } from "@/components/ui/button";
-import { MyOverview } from "@/lib/data/me-data";
+import { MyOverview } from "@/features/me/me-data";
 
 export const BannerSection = ({ initialData }: { initialData: MyOverview }) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);

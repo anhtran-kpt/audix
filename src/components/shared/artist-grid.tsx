@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { GridWrapper } from "./grid-wrapper";
 import { NavLink } from "../ui/nav-link";
 import { AppImage } from "./app-image";
-import { ArtistItem } from "@/features/artist/contracts/artist-dto";
+import { ArtistItem } from "@/features/artist/artist-types";
 import { RoundedPlayContextButton } from "../features/play/rounded-play-context-button";
 
 type ArtistGridProps = {

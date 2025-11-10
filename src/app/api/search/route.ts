@@ -1,5 +1,5 @@
-import { searchQuerySchema } from "@/features/search/contracts/search-schema";
-import { search } from "@/features/search/data-access/search-repo";
+import { searchQuerySchema } from "@/features/search/search-schemas";
+import { search } from "@/features/search/search-actions";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

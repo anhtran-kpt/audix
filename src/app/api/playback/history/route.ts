@@ -1,7 +1,7 @@
 import {
   getHistoryTracks,
   updatePlayHistoryListen,
-} from "@/features/playback/data-access/playback-repo";
+} from "@/features/playback/playback-actions";
 import { makeGET, makePATCH } from "@/lib/route-factory";
 import z from "zod";
 

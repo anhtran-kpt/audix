@@ -1,4 +1,4 @@
-import { removeTrackFromPlaylist } from "@/features/playlist/data-access/playlist-repo";
+import { removeTrackFromPlaylist } from "@/features/playlist/playlist-actions";
 import { makeDELETE } from "@/lib/route-factory";
 import z, { object } from "zod";
 

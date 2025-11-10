@@ -1,12 +1,12 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { meKeys } from "../api/me-keys";
-import { deleteApi, putApi } from "@/lib/http/api";
-import { meEndpoints } from "../api/me-endpoints";
-import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
-import { MyLikedPlaylists } from "@/lib/data/me-data";
-import { useBaseUserOverlay } from "@/hooks/use-base-user-overlay";
+import { deleteApi, putApi } from "@/lib/api";
+import { MyLikedPlaylists } from "@/features/me/me-data";
+import { meKeys } from "../me-keys";
+import { meEndpoints } from "../me-endpoints";
+import { PlaylistItem } from "@/features/playlist/playlist-types";
+import { useBaseUserOverlay } from "@/features/shared/hooks/use-base-user-overlay";
 
 export function useToggleLikePlaylist() {
   const qc = useQueryClient();

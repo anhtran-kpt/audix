@@ -3,7 +3,7 @@
 import { ArtistItem } from "@/components/features/entity-item/artist-item";
 import { EntityCarousel } from "@/components/shared/entity-carousel";
 import { Section } from "@/components/shared/section";
-import { RelatedArtists } from "@/lib/data/artist-data";
+import { RelatedArtists } from "@/features/artist/artist-data";
 
 type RelatedArtistsClient = {
   artistId: string;

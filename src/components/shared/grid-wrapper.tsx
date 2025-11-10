@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useRef } from "react";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
+import { useResponsiveLimit } from "@/features/shared/hooks/use-responsive-limit";
 import { cn } from "@/lib/utils";
 
 interface GridWrapperProps {

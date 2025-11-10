@@ -1,6 +1,7 @@
-import SectionHeading from "@/components/ui/section-heading";
-import AlbumGrid from "@/components/shared/album-grid";
-import { SearchResults } from "@/features/search/data-access/search-repo";
+import { SearchResults } from "@/features/search/search-actions";
+import { EntityCarousel } from "@/components/shared/entity-carousel";
+import { AlbumItem } from "@/components/features/entity-item/album-item";
+import { Section } from "@/components/shared/section";
 
 export default function AlbumsSection({
   data,
@@ -10,16 +11,16 @@ export default function AlbumsSection({
   q?: string;
 }) {
   return (
-    <section>
-      <SectionHeading
-        title="Albums"
-        showAllHref={
-          data.pagination.hasMore && q
-            ? `/search?q=${q}&type=albums`
-            : undefined
-        }
+    <Section
+      title="Albums"
+      showAllHref={
+        data.pagination.hasMore && q ? `/search?q=${q}&type=albums` : undefined
+      }
+    >
+      <EntityCarousel
+        data={data.items}
+        renderItem={(album) => <AlbumItem album={album} />}
       />
-      <AlbumGrid albums={data.items} />
-    </section>
+    </Section>
   );
 }

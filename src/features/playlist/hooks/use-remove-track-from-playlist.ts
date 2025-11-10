@@ -1,10 +1,9 @@
-import { deleteApi } from "@/lib/http/api";
+import { deleteApi } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
-import { playlistKeys } from "@/features/playlist/api/playlist-keys";
-import { PlaylistBanner } from "@/features/playlist/data-access/playlist-repo";
 import { toast } from "sonner";
-import { PlaylistTracks } from "@/lib/data/playlist-data";
+import { playlistKeys } from "../playlist-keys";
+import { PlaylistOverview, PlaylistTracks } from "../playlist-types";
 
 type RemoveTrackInput = {
   playlistId: string;
@@ -21,19 +20,19 @@ export function useRemoveTrackFromPlaylist() {
 
     onMutate: async ({ playlistId, trackId }) => {
       await Promise.all([
-        qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) }),
+        qc.cancelQueries({ queryKey: playlistKeys.overview(playlistId) }),
         qc.cancelQueries({ queryKey: playlistKeys.tracks(playlistId) }),
       ]);
 
-      const prevBanner = qc.getQueryData<PlaylistBanner>(
-        playlistKeys.banner(playlistId)
+      const prevOverview = qc.getQueryData<PlaylistOverview>(
+        playlistKeys.overview(playlistId)
       );
 
       const prevTracks = qc.getQueryData<PlaylistTracks>(
         playlistKeys.tracks(playlistId)
       )?.tracks;
 
-      if (!prevTracks || !prevBanner) return null;
+      if (!prevTracks || !prevOverview) return null;
 
       const newTracks = prevTracks.filter((t) => t.id !== trackId);
       const newImageIds = newTracks.map((t) => t.album.imageId);
@@ -51,8 +50,8 @@ export function useRemoveTrackFromPlaylist() {
       const removedTrack = prevTracks.find((t) => t.id === trackId);
       const removedTrackDuration = removedTrack?.duration ?? 0;
 
-      qc.setQueryData<PlaylistBanner>(
-        playlistKeys.banner(playlistId),
+      qc.setQueryData<PlaylistOverview>(
+        playlistKeys.overview(playlistId),
         (old) => {
           if (!old) return;
 
@@ -75,13 +74,13 @@ export function useRemoveTrackFromPlaylist() {
         }
       );
 
-      return { prevTracks, prevBanner, playlistId };
+      return { prevTracks, prevOverview, playlistId };
     },
 
     onError: (_err, _input, ctx) => {
       if (!ctx) return null;
 
-      qc.setQueryData(playlistKeys.banner(ctx.playlistId), ctx.prevBanner);
+      qc.setQueryData(playlistKeys.overview(ctx.playlistId), ctx.prevOverview);
       qc.setQueryData(playlistKeys.tracks(ctx.playlistId), ctx.prevTracks);
     },
 
@@ -91,7 +90,7 @@ export function useRemoveTrackFromPlaylist() {
 
     onSettled: (_, __, { trackId }) => {
       qc.invalidateQueries({
-        queryKey: playlistKeys.banner(trackId),
+        queryKey: playlistKeys.overview(trackId),
       });
       qc.invalidateQueries({
         queryKey: playlistKeys.tracks(trackId),

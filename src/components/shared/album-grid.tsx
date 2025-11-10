@@ -7,7 +7,7 @@ import { formatDate } from "date-fns/format";
 import { albumTypeMap } from "@/lib/constants/enum-maps";
 import { AppImage } from "./app-image";
 import { useRouter } from "next/navigation";
-import { AlbumItem } from "@/features/album/contracts/album-dto";
+import { AlbumItem } from "@/features/album/album-types";
 import { RoundedPlayContextButton } from "../features/play/rounded-play-context-button";
 
 type AlbumGridProps = {

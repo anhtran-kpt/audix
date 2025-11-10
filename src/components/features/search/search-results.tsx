@@ -8,9 +8,9 @@ import AlbumsSection from "@/app/(dashboard)/search/_sections/albums-section";
 import PlaylistsSection from "@/app/(dashboard)/search/_sections/playlists-section";
 import ProfilesSection from "@/app/(dashboard)/search/_sections/profiles-section";
 import { LoaderCircleIcon } from "lucide-react";
-import { searchOptions } from "@/features/search/api/search-options";
 import { useEffect } from "react";
 import { DataTable } from "../tracks-table/search/data-table";
+import { searchQueryOptions } from "@/features/search/seach-query-options";
 
 type Props = {
   q: string;
@@ -20,7 +20,7 @@ type Props = {
 
 export function SearchResults({ q, type, onDataLoad }: Props) {
   const { data, status } = useQuery({
-    ...searchOptions(
+    ...searchQueryOptions(
       q,
       type === "all"
         ? ["tracks", "artists", "albums", "playlists", "profiles"]

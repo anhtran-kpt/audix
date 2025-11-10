@@ -2,7 +2,7 @@
 
 import { Button } from "../ui/button";
 import { useToggleFollowArtist } from "@/features/artist/hooks/use-toggle-follow-artist";
-import { ArtistItem } from "@/features/artist/contracts/artist-dto";
+import { ArtistItem } from "@/features/artist/artist-types";
 
 export const ToggleFollowArtistButton = ({
   artist,

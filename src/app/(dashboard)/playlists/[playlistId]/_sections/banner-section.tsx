@@ -1,7 +1,6 @@
 "use client";
 
-import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
-import { useImageGradient } from "@/hooks/use-image-gradient";
+import { useImageGradient } from "@/features/shared/hooks/use-image-gradient";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { GlobeIcon, LockIcon, ShuffleIcon } from "lucide-react";
@@ -16,15 +15,16 @@ import { ToggleLikePlaylistButton } from "@/components/features/toggle-like-play
 import EditPlaylistDetails from "@/components/features/edit-playlist-details";
 import { RoundedPlayContextButton } from "@/components/features/play/rounded-play-context-button";
 import { Button } from "@/components/ui/button";
-import { PlaylistBanner } from "@/lib/data/playlist-data";
 import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
+import { playlistQueryOptions } from "@/features/playlist/playlist-query-options";
+import { PlaylistOverview } from "@/features/playlist/playlist-types";
 
 type BannerSectionProps = {
-  initialData: PlaylistBanner;
+  initialData: PlaylistOverview;
 };
 export const BannerSection = ({ initialData }: BannerSectionProps) => {
   const { data: playlist } = useQuery({
-    ...playlistQueryOptions.banner(initialData.id),
+    ...playlistQueryOptions.overview(initialData.id),
     initialData,
     initialDataUpdatedAt: Date.now(),
   });

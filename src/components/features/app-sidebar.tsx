@@ -36,13 +36,16 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { LibraryFilter, useLibraryItems } from "@/hooks/use-library-items";
 import { MiniPlayContextButton } from "./play/mini-play-context-button";
-import { SidebarOverview } from "@/lib/data/me-data";
+import { SidebarOverview } from "@/features/me/me-data";
 import { cn } from "@/lib/utils";
 import pluralize from "pluralize";
 import { useQuery } from "@tanstack/react-query";
-import { meQueryOptions } from "@/features/me/api/me-query-options";
+import {
+  LibraryFilter,
+  useLibraryItems,
+} from "@/features/shared/hooks/use-library-items";
+import { meQueryOptions } from "@/features/me/me-query-options";
 
 export function AppSidebar({ initialData }: { initialData: SidebarOverview }) {
   const pathname = usePathname();

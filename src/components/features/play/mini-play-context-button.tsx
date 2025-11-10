@@ -1,9 +1,9 @@
 "use client";
 
 import { PauseIcon, PlayIcon } from "lucide-react";
-import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
+import { StartPlaybackInput } from "@/features/playback/playback-types";
 import { cn } from "@/lib/utils";
-import { usePlayContext } from "@/hooks/use-play-context";
+import { usePlayContext } from "@/features/playback/hooks/use-play-context";
 
 type MiniPlayContextButtonProps = {
   context: StartPlaybackInput;

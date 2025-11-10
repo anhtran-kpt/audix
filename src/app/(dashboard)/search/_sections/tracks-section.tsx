@@ -1,6 +1,6 @@
 import SectionHeading from "../../../../components/ui/section-heading";
 import { TrackItemCompact } from "@/components/shared/track-item-compact";
-import { SearchResults } from "@/features/search/data-access/search-repo";
+import { SearchResults } from "@/features/search/search-actions";
 
 export default function TracksSection({
   data,

@@ -4,7 +4,7 @@ import { TrackDropdownDetails } from "@/components/features/track-dropdown-detai
 import { TrackIndexCell } from "@/components/features/track-index-cell";
 import { AppImage } from "@/components/shared/app-image";
 import { TrackItemInfo } from "@/components/shared/track-item-info";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
 import { formatDuration } from "@/utils/date";
 import { ColumnDef } from "@tanstack/react-table";
 import { Clock3Icon } from "lucide-react";

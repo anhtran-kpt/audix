@@ -2,7 +2,7 @@
 
 import { TrackDropdownDetails } from "@/components/features/track-dropdown-details";
 import { TrackItemInfo } from "@/components/shared/track-item-info";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
 import { formatDuration } from "@/utils/date";
 import { ColumnDef } from "@tanstack/react-table";
 import { Clock3Icon } from "lucide-react";

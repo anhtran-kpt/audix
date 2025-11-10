@@ -1,5 +1,5 @@
-import { SignUpInputSchema } from "@/features/auth/contracts/auth-schema";
-import { signUp } from "@/features/auth/data-access/auth-repo";
+import { signUp } from "@/features/auth/auth-actions";
+import { SignUpInputSchema } from "@/features/auth/auth-schemas";
 import { makePOST } from "@/lib/route-factory";
 
 export const POST = makePOST({

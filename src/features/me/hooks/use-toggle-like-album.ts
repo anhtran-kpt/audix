@@ -1,12 +1,12 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { meKeys } from "../api/me-keys";
-import { deleteApi, putApi } from "@/lib/http/api";
-import { meEndpoints } from "../api/me-endpoints";
-import { AlbumItem } from "@/features/album/contracts/album-dto";
-import { MyLikedAlbums } from "@/lib/data/me-data";
-import { useBaseUserOverlay } from "@/hooks/use-base-user-overlay";
+import { deleteApi, putApi } from "@/lib/api";
+import { MyLikedAlbums } from "@/features/me/me-data";
+import { AlbumItem } from "@/features/album/album-types";
+import { meEndpoints } from "../me-endpoints";
+import { meKeys } from "../me-keys";
+import { useBaseUserOverlay } from "@/features/shared/hooks/use-base-user-overlay";
 
 export function useToggleLikeAlbum() {
   const qc = useQueryClient();

@@ -1,5 +1,5 @@
-import { toggleLikeTrack } from "@/features/me/data-access/me-repo";
-import { TrackParamsSchema } from "@/features/track/contracts/track-schema";
+import { toggleLikeTrack } from "@/features/me/me-actions";
+import { TrackParamsSchema } from "@/features/track/track-schemas";
 import { makePUT } from "@/lib/route-factory";
 
 export const PUT = makePUT({

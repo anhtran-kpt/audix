@@ -1,7 +1,7 @@
 "use client";
 
-import { artistQueryOptions } from "@/features/artist/api/artist-query-options";
-import { ArtistFollowersCount } from "@/lib/data/artist-data";
+import { ArtistFollowersCount } from "@/features/artist/artist-data";
+import { artistQueryOptions } from "@/features/artist/artist-query-options";
 import { useQuery } from "@tanstack/react-query";
 import pluralize from "pluralize";
 

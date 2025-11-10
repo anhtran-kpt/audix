@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import {
   BreakpointConfig,
   useResponsiveColumnVisibility,
-} from "@/hooks/use-responsive-column-visibility";
+} from "@/features/shared/hooks/use-responsive-column-visibility";
 
 interface DataTableBaseProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

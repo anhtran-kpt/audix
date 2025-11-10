@@ -1,7 +1,7 @@
-import { UserParamsSchema } from "@/features/user/contracts/user-schema";
+import { UserParamsSchema } from "@/features/user/user-schemas";
 import { makeGET } from "@/lib/route-factory";
-import { PaginationParamsSchema } from "@/features/shared/contracts/shared-schema";
-import { getUserFollowedArtists } from "@/lib/data/user-data";
+import { PaginationParamsSchema } from "@/features/shared/shared-schemas";
+import { getUserFollowedArtists } from "@/features/user/user-data";
 
 export const GET = makeGET({
   auth: "required",

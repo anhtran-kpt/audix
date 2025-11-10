@@ -1,10 +1,10 @@
 import { cn } from "@/lib/utils";
 import ExplicitIcon from "../ui/explicit-icon";
 import { NavLink } from "../ui/nav-link";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
 import { usePlaybackStore } from "@/stores/use-playback-store";
 import { useShallow } from "zustand/react/shallow";
-import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
+import { StartPlaybackInput } from "@/features/playback/playback-types";
 
 type TrackInfoProps = {
   title: string;

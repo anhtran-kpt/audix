@@ -1,14 +1,14 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { artistKeys } from "../api/artist-keys";
-import { deleteApi, postApi } from "@/lib/http/api";
-import { meKeys } from "@/features/me/api/me-keys";
-import { ArtistItem } from "../contracts/artist-dto";
-import { artistEndpoints } from "../api/artist-endpoints";
-import { MyFollowedArtists } from "@/lib/data/me-data";
-import { useBaseUserOverlay } from "@/hooks/use-base-user-overlay";
-import { ArtistFollowersCount } from "@/lib/data/artist-data";
+import { deleteApi, postApi } from "@/lib/api";
+import { MyFollowedArtists } from "@/features/me/me-data";
+import { ArtistFollowersCount } from "@/features/artist/artist-data";
+import { ArtistItem } from "../artist-types";
+import { artistEndpoints } from "../artist-endpoints";
+import { artistKeys } from "../artist-keys";
+import { useBaseUserOverlay } from "@/features/shared/hooks/use-base-user-overlay";
+import { meKeys } from "@/features/me/me-keys";
 
 export function useToggleFollowArtist() {
   const qc = useQueryClient();

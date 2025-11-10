@@ -3,11 +3,11 @@
 import { PlaylistItem } from "@/components/features/entity-item/playlist-item";
 import { EntityCarousel } from "@/components/shared/entity-carousel";
 import { Section } from "@/components/shared/section";
-import { meQueryOptions } from "@/features/me/api/me-query-options";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
-import { MyPlaylists } from "@/lib/data/me-data";
+import { useResponsiveLimit } from "@/features/shared/hooks/use-responsive-limit";
+import { MyPlaylists } from "@/features/me/me-data";
 import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
+import { meQueryOptions } from "@/features/me/me-query-options";
 
 export const MyPlaylistsSectionClient = ({
   initialData,

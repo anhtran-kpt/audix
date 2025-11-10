@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { LikedAlbumsSectionClient } from "./liked-albums-section-client";
-import { getMyLikedAlbums } from "@/lib/data/me-data";
+import { getMyLikedAlbums } from "@/features/me/me-data";
 import { SectionSkeleton } from "@/components/shared/section-skeleton";
 import { AlbumGridSkeleton } from "@/components/shared/album-grid-skeleton";
 

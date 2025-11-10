@@ -1,4 +1,4 @@
-import { getTrackCredits } from "@/features/track/data-access/track-repo";
+import { getTrackCredits } from "@/features/track/track-actions";
 import { makeGET } from "@/lib/route-factory";
 import z, { object } from "zod";
 

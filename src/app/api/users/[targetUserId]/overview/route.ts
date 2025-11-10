@@ -1,5 +1,5 @@
-import { UserParamsSchema } from "@/features/user/contracts/user-schema";
-import { getUserOverview } from "@/lib/data/user-data";
+import { UserParamsSchema } from "@/features/user/user-schemas";
+import { getUserOverview } from "@/features/user/user-data";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

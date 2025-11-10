@@ -1,5 +1,5 @@
-import { followArtist, unfollowArtist } from "@/lib/actions/artist-actions";
-import { getArtistFollowersCount } from "@/lib/data/artist-data";
+import { followArtist, unfollowArtist } from "@/features/artist/artist-actions";
+import { getArtistFollowersCount } from "@/features/artist/artist-data";
 import { makeDELETE, makeGET, makePOST } from "@/lib/route-factory";
 import z, { object } from "zod";
 

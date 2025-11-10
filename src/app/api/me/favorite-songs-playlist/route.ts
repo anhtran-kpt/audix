@@ -1,4 +1,4 @@
-import { getMyFavoriteSongsPlaylist } from "@/lib/data/me-data";
+import { getMyFavoriteSongsPlaylist } from "@/features/me/me-data";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

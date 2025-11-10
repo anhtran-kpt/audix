@@ -1,12 +1,11 @@
 "use client";
 
-import { postApi } from "@/lib/http/api";
+import { postApi } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
-import { SignUpOutput } from "@/features/auth/data-access/auth-repo";
-import { SignUpInput } from "@/features/auth/contracts/auth-dto";
+import { SignUpInput, SignUpOutput } from "@/features/auth/auth-types";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { authEndpoints } from "../api/auth-endpoints";
+import { authEndpoints } from "../auth-endpoints";
 
 export const useSignUp = () => {
   const router = useRouter();

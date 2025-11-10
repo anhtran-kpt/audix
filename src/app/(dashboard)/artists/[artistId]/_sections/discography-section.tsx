@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { DiscographyClient } from "./discography-client";
-import { getArtistDiscography } from "@/lib/data/artist-data";
+import { getArtistDiscography } from "@/features/artist/artist-data";
 import { SectionSkeleton } from "@/components/shared/section-skeleton";
 import { AlbumGridSkeleton } from "@/components/shared/album-grid-skeleton";
 

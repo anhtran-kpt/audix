@@ -1,6 +1,6 @@
 "use client";
 
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
 import { Button } from "../ui/button";
 import { useAddRecommendedTrackToPlaylist } from "@/features/playlist/hooks/use-add-recommended-track-to-playlist";
 

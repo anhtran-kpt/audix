@@ -5,9 +5,9 @@ import { IconButton } from "../../ui/icon-button";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { useEffect, useState, useRef } from "react";
-import { useDebounce } from "@/hooks/use-debounce";
+import { useDebounce } from "@/features/shared/hooks/use-debounce";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/features/shared/hooks/use-mobile";
 import {
   Sheet,
   SheetClose,

@@ -1,5 +1,5 @@
-import { RepeatPlaybackInputSchema } from "@/features/playback/contracts/playback-schema";
-import { repeatPlayback } from "@/features/playback/data-access/playback-repo";
+import { RepeatPlaybackInputSchema } from "@/features/playback/playback-schemas";
+import { repeatPlayback } from "@/features/playback/playback-actions";
 import { makePATCH } from "@/lib/route-factory";
 
 export const PATCH = makePATCH({

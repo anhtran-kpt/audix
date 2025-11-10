@@ -1,5 +1,5 @@
-import { ShufflePlaybackInputSchema } from "@/features/playback/contracts/playback-schema";
-import { shufflePlayback } from "@/features/playback/data-access/playback-repo";
+import { ShufflePlaybackInputSchema } from "@/features/playback/playback-schemas";
+import { shufflePlayback } from "@/features/playback/playback-actions";
 import { makePATCH } from "@/lib/route-factory";
 
 export const PATCH = makePATCH({

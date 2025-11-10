@@ -25,14 +25,14 @@ import {
 } from "../ui/command";
 import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
 import { useAddTrackToPlaylist } from "@/features/playlist/hooks/use-add-track-to-playlist";
 import { useRemoveTrackFromPlaylist } from "@/features/playlist/hooks/use-remove-track-from-playlist";
 import { useRouter } from "next/navigation";
 import { useNewPlaylistDialog } from "@/stores/use-new-playlist-dialog";
-import { meQueryOptions } from "@/features/me/api/me-query-options";
 import { useToggleLikeTrack } from "@/features/me/hooks/use-toggle-like-track";
 import { Button } from "../ui/button";
+import { meQueryOptions } from "@/features/me/me-query-options";
 
 type TrackDropdownDetailsProps = {
   track: TrackItem;

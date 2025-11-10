@@ -3,9 +3,9 @@
 import { ArtistItem } from "@/components/features/entity-item/artist-item";
 import { EntityCarousel } from "@/components/shared/entity-carousel";
 import { Section } from "@/components/shared/section";
-import { userQueryOptions } from "@/features/user/api/user-query-options";
-import { useResponsiveLimit } from "@/hooks/use-responsive-limit";
-import { UserFollowedArtists } from "@/lib/data/user-data";
+import { useResponsiveLimit } from "@/features/shared/hooks/use-responsive-limit";
+import { UserFollowedArtists } from "@/features/user/user-data";
+import { userQueryOptions } from "@/features/user/user-query-options";
 import { useQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 

@@ -1,5 +1,5 @@
 import { BannerSection } from "./_sections/banner-section";
-import { getUserOverview } from "@/lib/data/user-data";
+import { getUserOverview } from "@/features/user/user-data";
 import { UserPlaylistsSection } from "./_sections/user-playlists-section";
 import { FollowingArtistsSection } from "./_sections/following-artists-section";
 

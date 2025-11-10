@@ -1,7 +1,7 @@
 "use client";
 
 import { useToggleLikePlaylist } from "@/features/me/hooks/use-toggle-like-playlist";
-import { PlaylistItem } from "@/features/playlist/contracts/playlist-dto";
+import { PlaylistItem } from "@/features/playlist/playlist-types";
 import { ToggleLikeButton } from "../ui/toggle-like-button";
 
 export const ToggleLikePlaylistButton = ({

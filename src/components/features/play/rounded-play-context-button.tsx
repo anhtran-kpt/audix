@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
-import { usePlayContext } from "@/hooks/use-play-context";
+import { StartPlaybackInput } from "@/features/playback/playback-types";
+import { usePlayContext } from "@/features/playback/hooks/use-play-context";
 import { cn } from "@/lib/utils";
 import { PauseIcon, PlayIcon } from "lucide-react";
 

@@ -1,6 +1,6 @@
 import { PlaylistGridSkeleton } from "@/components/shared/playlist-grid-skeleton";
 import { SectionSkeleton } from "@/components/shared/section-skeleton";
-import { getMyLikedPlaylists } from "@/lib/data/me-data";
+import { getMyLikedPlaylists } from "@/features/me/me-data";
 import { Suspense } from "react";
 import { LikedPlaylistsSectionClient } from "./liked-playlists-section-client";
 

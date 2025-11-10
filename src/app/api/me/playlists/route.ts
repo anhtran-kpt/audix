@@ -1,5 +1,5 @@
-import { PaginationParamsSchema } from "@/features/shared/contracts/shared-schema";
-import { getMyPlaylists } from "@/lib/data/me-data";
+import { PaginationParamsSchema } from "@/features/shared/shared-schemas";
+import { getMyPlaylists } from "@/features/me/me-data";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

@@ -1,6 +1,6 @@
-import { PaginationParamsSchema } from "@/features/shared/contracts/shared-schema";
-import { UserParamsSchema } from "@/features/user/contracts/user-schema";
-import { getUserPlaylists } from "@/lib/data/user-data";
+import { PaginationParamsSchema } from "@/features/shared/shared-schemas";
+import { UserParamsSchema } from "@/features/user/user-schemas";
+import { getUserPlaylists } from "@/features/user/user-data";
 import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({

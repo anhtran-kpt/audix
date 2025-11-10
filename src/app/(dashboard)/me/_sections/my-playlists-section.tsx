@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { MyPlaylistsSectionClient } from "./my-playlists-section-client";
 import { SectionSkeleton } from "@/components/shared/section-skeleton";
 import { PlaylistGridSkeleton } from "@/components/shared/playlist-grid-skeleton";
-import { getMyPlaylists } from "@/lib/data/me-data";
+import { getMyPlaylists } from "@/features/me/me-data";
 
 export const MyPlaylistsSection = async ({ userId }: { userId: string }) => {
   const data = await getMyPlaylists({

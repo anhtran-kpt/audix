@@ -1,8 +1,8 @@
 "use client";
 
 import { DataTable } from "@/components/features/tracks-table/playlist/data-table";
-import { playlistQueryOptions } from "@/features/playlist/api/playlist-query-options";
-import { PlaylistTracks } from "@/lib/data/playlist-data";
+import { playlistQueryOptions } from "@/features/playlist/playlist-query-options";
+import { PlaylistTracks } from "@/features/playlist/playlist-types";
 import { useQuery } from "@tanstack/react-query";
 
 type TracksSectionClientProps = {

@@ -1,8 +1,5 @@
-import { ToggleLikePlaylistInputSchema } from "@/features/me/contracts/me-schema";
-import {
-  likePlaylist,
-  unlikePlaylist,
-} from "@/features/me/data-access/me-repo";
+import { likePlaylist, unlikePlaylist } from "@/features/me/me-actions";
+import { ToggleLikePlaylistInputSchema } from "@/features/me/me-schemas";
 import { makeDELETE, makePUT } from "@/lib/route-factory";
 
 export const PUT = makePUT({

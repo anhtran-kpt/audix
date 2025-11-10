@@ -2,7 +2,7 @@
 
 import { useToggleLikeTrack } from "@/features/me/hooks/use-toggle-like-track";
 import { HeartIcon } from "lucide-react";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
 import { useSession } from "next-auth/react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";

@@ -1,7 +1,7 @@
 "use client";
 
 import { AppImage } from "@/components/shared/app-image";
-import { ArtistItem as ArtistItemType } from "@/features/artist/contracts/artist-dto";
+import { ArtistItem as ArtistItemType } from "@/features/artist/artist-types";
 import { useRouter } from "next/navigation";
 import { RoundedPlayContextButton } from "../play/rounded-play-context-button";
 import { NavLink } from "@/components/ui/nav-link";

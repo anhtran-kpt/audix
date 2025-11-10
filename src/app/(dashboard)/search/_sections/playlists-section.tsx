@@ -1,6 +1,7 @@
-import SectionHeading from "@/components/ui/section-heading";
-import PlaylistGrid from "@/components/shared/playlist-grid";
-import { SearchResults } from "@/features/search/data-access/search-repo";
+import { SearchResults } from "@/features/search/search-actions";
+import { EntityCarousel } from "@/components/shared/entity-carousel";
+import { PlaylistItem } from "@/components/features/entity-item/playlist-item";
+import { Section } from "@/components/shared/section";
 
 export default function PlaylistsSection({
   data,
@@ -10,16 +11,18 @@ export default function PlaylistsSection({
   q?: string;
 }) {
   return (
-    <section>
-      <SectionHeading
-        title="Playlists"
-        showAllHref={
-          data.pagination.hasMore && q
-            ? `/search?q=${q}&type=playlists`
-            : undefined
-        }
+    <Section
+      title="Playlists"
+      showAllHref={
+        data.pagination.hasMore && q
+          ? `/search?q=${q}&type=playlists`
+          : undefined
+      }
+    >
+      <EntityCarousel
+        data={data.items}
+        renderItem={(playlist) => <PlaylistItem playlist={playlist} />}
       />
-      <PlaylistGrid playlists={data.items} />
-    </section>
+    </Section>
   );
 }

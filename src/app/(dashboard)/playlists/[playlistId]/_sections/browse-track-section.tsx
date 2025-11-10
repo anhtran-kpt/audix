@@ -7,8 +7,8 @@ import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NavLink } from "@/components/ui/nav-link";
-import { RecommendedTracks } from "@/features/playlist/data-access/playlist-repo";
-import { getApi } from "@/lib/http/api";
+import { RecommendedTracks } from "@/features/playlist/playlist-types";
+import { getApi } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { RefreshCcwIcon, SearchIcon } from "lucide-react";
 

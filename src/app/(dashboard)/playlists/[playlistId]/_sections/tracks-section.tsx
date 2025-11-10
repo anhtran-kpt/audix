@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { TracksSectionClient } from "./tracks-section-client";
-import { getPlaylistTracks } from "@/lib/data/playlist-data";
+import { getPlaylistTracks } from "@/features/playlist/playlist-data";
 
 export const TracksSection = async ({
   playlistId,

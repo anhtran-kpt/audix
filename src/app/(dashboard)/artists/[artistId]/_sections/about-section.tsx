@@ -1,6 +1,6 @@
 import SectionHeading from "@/components/ui/section-heading";
 import { AppImage } from "@/components/shared/app-image";
-import { ArtistOverview } from "@/lib/data/artist-data";
+import { ArtistOverview } from "@/features/artist/artist-data";
 import { ArtistFollowersBadge } from "@/components/features/artist-follow-badge";
 
 type AboutSectionProps = {

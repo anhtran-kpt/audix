@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { useTrackLikeState } from "@/hooks/use-track-like-state";
 import { cn } from "@/lib/utils";
 import { ToggleLikeTrackButton } from "./toggle-like-track-button";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
+import { useTrackLikeState } from "@/features/shared/hooks/use-track-like-state";
 
 export function TrackLikeCell({ track }: { track: TrackItem }) {
   const isLiked = useTrackLikeState(track.id);

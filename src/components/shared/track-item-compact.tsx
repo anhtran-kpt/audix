@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 import { AppImage } from "./app-image";
-import { TrackItem } from "@/features/track/contracts/track-dto";
+import { TrackItem } from "@/features/track/track-types";
 import { TrackItemInfo } from "./track-item-info";
-import { StartPlaybackInput } from "@/features/playback/contracts/playback-dto";
+import { StartPlaybackInput } from "@/features/playback/playback-types";
 import { TrackDropdownDetails } from "../features/track-dropdown-details";
 import { ReactNode } from "react";
 

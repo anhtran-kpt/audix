@@ -1,8 +1,8 @@
-import { UpdatePlaylistInputSchema } from "@/features/playlist/contracts/playlist-schema";
+import { UpdatePlaylistInputSchema } from "@/features/playlist/playlist-schemas";
 import {
   deletePlaylist,
   updatePlaylistInfo,
-} from "@/features/playlist/data-access/playlist-repo";
+} from "@/features/playlist/playlist-actions";
 import { makeDELETE, makePATCH } from "@/lib/route-factory";
 import z, { object } from "zod";
 

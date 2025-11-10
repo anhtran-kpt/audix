@@ -2,14 +2,14 @@
 
 import { RepeatMode } from "@/app/generated/prisma";
 import {
-  NextPlaybackOutput,
   ClientPlaybackSession,
+  NextPlaybackOutput,
   PreviousPlaybackOutput,
   RepeatPlaybackOutput,
   ShufflePlaybackOutput,
   StartPlaybackInput,
-} from "@/features/playback/contracts/playback-dto";
-import { getApi, patchApi, postApi } from "@/lib/http/api";
+} from "@/features/playback/playback-types";
+import { getApi, patchApi, postApi } from "@/lib/api";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

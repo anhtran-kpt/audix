@@ -1,13 +1,12 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postApi } from "@/lib/http/api";
-import { playlistKeys } from "@/features/playlist/api/playlist-keys";
+import { postApi } from "@/lib/api";
 import { toast } from "sonner";
-import { PlaylistBanner } from "@/features/playlist/data-access/playlist-repo";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
-import { TrackItem } from "@/features/track/contracts/track-dto";
-import { PlaylistTracks } from "@/lib/data/playlist-data";
+import { TrackItem } from "@/features/track/track-types";
+import { playlistKeys } from "../playlist-keys";
+import { PlaylistOverview, PlaylistTracks } from "../playlist-types";
 
 type AddTrackToPlaylist = {
   playlistId: string;
@@ -26,12 +25,12 @@ export function useAddTrackToPlaylist() {
 
     onMutate: async ({ playlistId, track }) => {
       await Promise.all([
-        qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) }),
+        qc.cancelQueries({ queryKey: playlistKeys.overview(playlistId) }),
         qc.cancelQueries({ queryKey: playlistKeys.tracks(playlistId) }),
       ]);
 
-      const prevInfo = qc.getQueryData<PlaylistBanner>(
-        playlistKeys.banner(playlistId)
+      const prevInfo = qc.getQueryData<PlaylistOverview>(
+        playlistKeys.overview(playlistId)
       );
       const prevTracks = qc.getQueryData<PlaylistTracks>(
         playlistKeys.tracks(playlistId)
@@ -65,8 +64,8 @@ export function useAddTrackToPlaylist() {
         (old) => old && { ...old, tracks: newTracks }
       );
 
-      qc.setQueryData<PlaylistBanner>(
-        playlistKeys.banner(playlistId),
+      qc.setQueryData<PlaylistOverview>(
+        playlistKeys.overview(playlistId),
         (old) =>
           old && {
             ...old,
@@ -81,7 +80,7 @@ export function useAddTrackToPlaylist() {
     onError: (_, __, ctx) => {
       if (!ctx) return;
       qc.setQueryData(playlistKeys.tracks(ctx.playlistId), ctx.prevTracks);
-      qc.setQueryData(playlistKeys.banner(ctx.playlistId), ctx.prevInfo);
+      qc.setQueryData(playlistKeys.overview(ctx.playlistId), ctx.prevInfo);
     },
 
     onSuccess: (track) => {

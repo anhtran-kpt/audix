@@ -1,5 +1,5 @@
-import { PreviousPlaybackInputSchema } from "@/features/playback/contracts/playback-schema";
-import { skipToPrevious } from "@/features/playback/data-access/playback-repo";
+import { PreviousPlaybackInputSchema } from "@/features/playback/playback-schemas";
+import { skipToPrevious } from "@/features/playback/playback-actions";
 import { makePOST } from "@/lib/route-factory";
 
 export const POST = makePOST({

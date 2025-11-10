@@ -1,4 +1,4 @@
-import { getRecommendedTracks } from "@/features/playlist/data-access/playlist-repo";
+import { getRecommendedTracks } from "@/features/playlist/playlist-data";
 import { makeGET } from "@/lib/route-factory";
 import z, { object } from "zod";
 

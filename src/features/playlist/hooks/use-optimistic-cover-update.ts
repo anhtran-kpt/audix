@@ -1,12 +1,12 @@
 "use client";
 
-import { meKeys } from "@/features/me/api/me-keys";
-import { playlistKeys } from "@/features/playlist/api/playlist-keys";
-import { PlaylistBanner } from "@/features/playlist/data-access/playlist-repo";
-import { MyPlaylists } from "@/lib/data/me-data";
-import { postApi } from "@/lib/http/api";
+import { MyPlaylists } from "@/features/me/me-data";
+import { postApi } from "@/lib/api";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { playlistKeys } from "../playlist-keys";
+import { meKeys } from "@/features/me/me-keys";
+import { PlaylistOverview } from "../playlist-types";
 
 export const useOptimisticCoverUpdate = () => {
   const qc = useQueryClient();
@@ -24,12 +24,12 @@ export const useOptimisticCoverUpdate = () => {
       }),
 
     onMutate: async ({ playlistId, imageIds }) => {
-      await qc.cancelQueries({ queryKey: playlistKeys.banner(playlistId) });
+      await qc.cancelQueries({ queryKey: playlistKeys.overview(playlistId) });
       await qc.cancelQueries({ queryKey: meKeys.myPlaylists() });
 
       const prevData = {
-        banner: qc.getQueryData<PlaylistBanner>(
-          playlistKeys.banner(playlistId)
+        overview: qc.getQueryData<PlaylistOverview>(
+          playlistKeys.overview(playlistId)
         ),
         myPlaylists: qc.getQueryData<MyPlaylists>(meKeys.myPlaylists()),
       };
@@ -44,12 +44,12 @@ export const useOptimisticCoverUpdate = () => {
         optimisticImageId = buildPlaylistCoverUrl(imageIds);
       }
 
-      qc.setQueryData<PlaylistBanner>(
-        playlistKeys.banner(playlistId),
-        (prevBanner) =>
-          prevBanner
-            ? { ...prevBanner, imageId: optimisticImageId }
-            : prevBanner
+      qc.setQueryData<PlaylistOverview>(
+        playlistKeys.overview(playlistId),
+        (prevoverview) =>
+          prevoverview
+            ? { ...prevoverview, imageId: optimisticImageId }
+            : prevoverview
       );
 
       qc.setQueryData<MyPlaylists>(meKeys.myPlaylists(), (prev) =>
@@ -71,12 +71,12 @@ export const useOptimisticCoverUpdate = () => {
     onError: (_err, { playlistId }, ctx) => {
       if (!ctx) return;
 
-      qc.setQueryData(playlistKeys.banner(playlistId), ctx.prevData.banner);
+      qc.setQueryData(playlistKeys.overview(playlistId), ctx.prevData.overview);
       qc.setQueryData(meKeys.myPlaylists(), ctx.prevData.myPlaylists);
     },
 
     onSettled: (_, __, { playlistId }) => {
-      qc.invalidateQueries({ queryKey: playlistKeys.banner(playlistId) });
+      qc.invalidateQueries({ queryKey: playlistKeys.overview(playlistId) });
       qc.invalidateQueries({ queryKey: meKeys.myPlaylists() });
     },
   });

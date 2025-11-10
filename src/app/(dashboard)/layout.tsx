@@ -14,7 +14,7 @@ import {
   getMyLikedPlaylistIds,
   getMyLikedTrackIds,
   getSidebarOverview,
-} from "@/lib/data/me-data";
+} from "@/features/me/me-data";
 import { requireAuth } from "@/lib/auth";
 import { getQueryClient } from "@/lib/query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
