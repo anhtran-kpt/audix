@@ -1,4 +1,4 @@
-import { requireAuth } from "@/lib/auth";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { LikedAlbumsSection } from "./_sections/liked-albums-section";
 import { BannerSection } from "./_sections/banner-section";
 import { getMyOverview } from "@/features/me/me-data";
@@ -7,7 +7,7 @@ import { LikedPlaylistsSection } from "./_sections/liked-playlists-section";
 import { FollowingArtistsSection } from "./_sections/following-artists-section";
 
 export default async function MePage() {
-  const user = await requireAuth();
+  const user = await getAuthenticatedUser();
   const data = await getMyOverview(user.id);
 
   return (

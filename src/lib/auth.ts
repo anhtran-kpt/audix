@@ -30,7 +30,7 @@ export async function getUserId() {
 }
 
 export async function requirePremium() {
-  const user = await requireAuth();
+  const user = await getAuthenticatedUser();
 
   if (user.subscription !== "PREMIUM" && user.subscription !== "FAMILY") {
     redirect("/subscription/upgrade");
@@ -50,3 +50,8 @@ export async function getUserIdOrNull() {
   const s = await getServerSession(authOptions);
   return s?.user?.id ?? null;
 }
+
+export const getAuthenticatedUser = async () => {
+  const session = await getServerSession(authOptions);
+  return session!.user!;
+};

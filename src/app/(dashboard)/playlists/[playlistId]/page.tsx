@@ -1,8 +1,8 @@
 import { TracksSection } from "./_sections/tracks-section";
 import { BannerSection } from "./_sections/banner-section";
-import { requireAuth } from "@/lib/auth";
 import { getPlaylistOverview } from "@/features/playlist/playlist-data";
 import { BrowseTrackSection } from "./_sections/browse-track-section";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 export default async function PlaylistDetailPage({
   params,
@@ -10,7 +10,7 @@ export default async function PlaylistDetailPage({
   params: Promise<{ playlistId: string }>;
 }) {
   const { playlistId } = await params;
-  const user = await requireAuth();
+  const user = await getAuthenticatedUser();
 
   const data = await getPlaylistOverview({ playlistId, userId: user.id });
 

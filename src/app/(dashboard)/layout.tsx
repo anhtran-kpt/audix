@@ -15,16 +15,16 @@ import {
   getMyLikedTrackIds,
   getSidebarOverview,
 } from "@/features/me/me-data";
-import { requireAuth } from "@/lib/auth";
 import { getQueryClient } from "@/lib/query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { getAuthenticatedUser } from "@/lib/auth";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await requireAuth();
+  const user = await getAuthenticatedUser();
 
   const data = await getSidebarOverview({
     userId: user.id,
