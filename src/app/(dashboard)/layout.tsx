@@ -30,14 +30,21 @@ export default async function DashboardLayout({
 
   const qc = getQueryClient();
 
-  qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
-  qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
-  qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
-  qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
-
-  console.log(
-    "likedTracksMap keys:",
-    Object.keys(overlayData.likedTracks).slice(0, 5)
+  qc.setQueryData(
+    ["me", "overlay", "tracks"],
+    Object.fromEntries(overlayData.likedTracks.map((id) => [id, true]))
+  );
+  qc.setQueryData(
+    ["me", "overlay", "artists"],
+    Object.fromEntries(overlayData.followedArtists.map((id) => [id, true]))
+  );
+  qc.setQueryData(
+    ["me", "overlay", "albums"],
+    Object.fromEntries(overlayData.likedAlbums.map((id) => [id, true]))
+  );
+  qc.setQueryData(
+    ["me", "overlay", "playlists"],
+    Object.fromEntries(overlayData.likedPlaylists.map((id) => [id, true]))
   );
 
   return (
