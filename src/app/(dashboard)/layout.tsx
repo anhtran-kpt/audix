@@ -35,6 +35,11 @@ export default async function DashboardLayout({
   qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
   qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
 
+  console.log(
+    "likedTracksMap keys:",
+    Object.keys(overlayData.likedTracks).slice(0, 5)
+  );
+
   return (
     <SidebarProvider
       className="h-full"

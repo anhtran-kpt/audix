@@ -472,11 +472,7 @@ export const getMyLikedTrackIds = async (userId: string) => {
     },
   });
 
-  return JSON.parse(
-    JSON.stringify(
-      Object.fromEntries(playlist.tracks.map((t) => [String(t.trackId), true]))
-    )
-  );
+  return Object.fromEntries(playlist.tracks.map((t) => [t.trackId, true]));
 };
 
 export const getMyFollowedArtistIds = async (userId: string) => {
@@ -489,11 +485,7 @@ export const getMyFollowedArtistIds = async (userId: string) => {
     },
   });
 
-  return JSON.parse(
-    JSON.stringify(
-      Object.fromEntries(followedArtists.map((a) => [a.artistId, true]))
-    )
-  );
+  return Object.fromEntries(followedArtists.map((a) => [a.artistId, true]));
 };
 
 export const getMyLikedAlbumIds = async (userId: string) => {
@@ -506,11 +498,7 @@ export const getMyLikedAlbumIds = async (userId: string) => {
     },
   });
 
-  return JSON.parse(
-    JSON.stringify(
-      Object.fromEntries(likedAlbums.map((a) => [a.albumId, true]))
-    )
-  );
+  return Object.fromEntries(likedAlbums.map((a) => [a.albumId, true]));
 };
 
 export const getMyLikedPlaylistIds = async (userId: string) => {
@@ -523,9 +511,5 @@ export const getMyLikedPlaylistIds = async (userId: string) => {
     },
   });
 
-  return JSON.parse(
-    JSON.stringify(
-      Object.fromEntries(likedPlaylists.map((a) => [a.playlistId, true]))
-    )
-  );
+  return Object.fromEntries(likedPlaylists.map((a) => [a.playlistId, true]));
 };
