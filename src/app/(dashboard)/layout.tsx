@@ -8,16 +8,11 @@ import { NewPlaylistDialog } from "@/components/shared/new-playlist-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { MobilePlayer } from "@/components/features/players/mobile-player";
-import {
-  getMyFollowedArtistIds,
-  getMyLikedAlbumIds,
-  getMyLikedPlaylistIds,
-  getMyLikedTrackIds,
-  getSidebarOverview,
-} from "@/features/me/me-data";
+import { getSidebarOverview } from "@/features/me/me-data";
 import { getQueryClient } from "@/lib/query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getAuthenticatedUser } from "@/lib/auth";
+import { getOverlayData } from "@/features/shared/shared-actions";
 
 export default async function DashboardLayout({
   children,
@@ -26,29 +21,19 @@ export default async function DashboardLayout({
 }) {
   const user = await getAuthenticatedUser();
 
-  const data = await getSidebarOverview({
+  const sidebarData = await getSidebarOverview({
     userId: user.id,
     params: { limit: 5, offset: 0 },
   });
 
-  const [
-    likedTracksMap,
-    followedArtistsMap,
-    likedAlbumsMap,
-    likedPlaylistsMap,
-  ] = await Promise.all([
-    getMyLikedTrackIds(user.id),
-    getMyFollowedArtistIds(user.id),
-    getMyLikedAlbumIds(user.id),
-    getMyLikedPlaylistIds(user.id),
-  ]);
+  const overlayData = await getOverlayData(user.id);
 
   const qc = getQueryClient();
 
-  qc.setQueryData(["me", "overlay", "tracks"], likedTracksMap);
-  qc.setQueryData(["me", "overlay", "artists"], followedArtistsMap);
-  qc.setQueryData(["me", "overlay", "albums"], likedAlbumsMap);
-  qc.setQueryData(["me", "overlay", "playlists"], likedPlaylistsMap);
+  qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
+  qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
+  qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
+  qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
 
   return (
     <SidebarProvider
@@ -59,7 +44,7 @@ export default async function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar initialData={data} />
+      <AppSidebar initialData={sidebarData} />
       <SidebarInset
         className="h-full transition-[width]"
         style={{
