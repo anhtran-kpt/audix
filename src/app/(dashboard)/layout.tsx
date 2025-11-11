@@ -9,7 +9,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { MobilePlayer } from "@/components/features/players/mobile-player";
 import { getSidebarOverview } from "@/features/me/me-data";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getAuthenticatedUser } from "@/lib/auth";
+import { getOverlayData } from "@/features/shared/shared-actions";
+import { getQueryClient } from "@/lib/query-client";
 
 export default async function DashboardLayout({
   children,
@@ -23,14 +26,14 @@ export default async function DashboardLayout({
     params: { limit: 5, offset: 0 },
   });
 
-  // const overlayData = await getOverlayData(user.id);
+  const overlayData = await getOverlayData(user.id);
 
-  // const qc = getQueryClient();
+  const qc = getQueryClient();
 
-  // qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
-  // qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
-  // qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
-  // qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
+  qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
+  qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
+  qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
+  qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
 
   return (
     <SidebarProvider
@@ -54,7 +57,9 @@ export default async function DashboardLayout({
           <div className="flex flex-col flex-1 p-responsive">
             <div className="@container/main flex flex-1 flex-col gap-8">
               <PlayerOffsetSetter />
-              {children}
+              <HydrationBoundary state={dehydrate(qc)}>
+                {children}
+              </HydrationBoundary>
             </div>
           </div>
         </ScrollArea>
