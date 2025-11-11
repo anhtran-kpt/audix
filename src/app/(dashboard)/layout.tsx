@@ -14,6 +14,7 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { getOverlayData } from "@/features/shared/shared-actions";
 import { getQueryClient } from "@/lib/query-client";
 
+export const runtime = "nodejs";
 export default async function DashboardLayout({
   children,
 }: {
