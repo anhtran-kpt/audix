@@ -9,12 +9,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { MobilePlayer } from "@/components/features/players/mobile-player";
 import { getSidebarOverview } from "@/features/me/me-data";
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getAuthenticatedUser } from "@/lib/auth";
-import { getOverlayData } from "@/features/shared/shared-actions";
-import { getQueryClient } from "@/lib/query-client";
 
-export const runtime = "nodejs";
 export default async function DashboardLayout({
   children,
 }: {
@@ -29,7 +25,7 @@ export default async function DashboardLayout({
 
   // const overlayData = await getOverlayData(user.id);
 
-  const qc = getQueryClient();
+  // const qc = getQueryClient();
 
   // qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
   // qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
