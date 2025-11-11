@@ -9,10 +9,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { MobilePlayer } from "@/components/features/players/mobile-player";
 import { getSidebarOverview } from "@/features/me/me-data";
-import { getQueryClient } from "@/lib/query-client";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getAuthenticatedUser } from "@/lib/auth";
 import { getOverlayData } from "@/features/shared/shared-actions";
+import { getServerQueryClient } from "@/lib/server-query-client";
 
 export default async function DashboardLayout({
   children,
@@ -28,24 +28,12 @@ export default async function DashboardLayout({
 
   const overlayData = await getOverlayData(user.id);
 
-  const qc = getQueryClient();
+  const qc = getServerQueryClient();
 
-  qc.setQueryData(
-    ["me", "overlay", "tracks"],
-    Object.fromEntries(overlayData.likedTracks.map((id) => [id, true]))
-  );
-  qc.setQueryData(
-    ["me", "overlay", "artists"],
-    Object.fromEntries(overlayData.followedArtists.map((id) => [id, true]))
-  );
-  qc.setQueryData(
-    ["me", "overlay", "albums"],
-    Object.fromEntries(overlayData.likedAlbums.map((id) => [id, true]))
-  );
-  qc.setQueryData(
-    ["me", "overlay", "playlists"],
-    Object.fromEntries(overlayData.likedPlaylists.map((id) => [id, true]))
-  );
+  qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
+  qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
+  qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
+  qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
 
   return (
     <SidebarProvider

@@ -9,11 +9,8 @@ export function useBaseUserOverlay(type: OverlayType) {
 
   const { data: map = {} } = useQuery({
     queryKey: key,
-    queryFn: async () => {
-      const res = await getApi<string[]>(`/me/overlay/${type}`);
-
-      return Object.fromEntries(res.map((id) => [id, true]));
-    },
+    queryFn: async () =>
+      await getApi<Record<string, boolean>>(`/me/overlay/${type}`),
     staleTime: Infinity,
   });
 
