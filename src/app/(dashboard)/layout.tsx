@@ -57,9 +57,8 @@ export default async function DashboardLayout({
           <div className="flex flex-col flex-1 p-responsive">
             <div className="@container/main flex flex-1 flex-col gap-8">
               <PlayerOffsetSetter />
-              <HydrationBoundary state={dehydrate(qc)}>
-                {children}
-              </HydrationBoundary>
+
+              {children}
             </div>
           </div>
         </ScrollArea>
