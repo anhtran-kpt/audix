@@ -14,7 +14,6 @@ import { getAuthenticatedUser } from "@/lib/auth";
 import { getOverlayData } from "@/features/shared/shared-actions";
 import { getQueryClient } from "@/lib/query-client";
 
-export const runtime = "nodejs";
 export default async function DashboardLayout({
   children,
 }: {
@@ -27,14 +26,14 @@ export default async function DashboardLayout({
     params: { limit: 5, offset: 0 },
   });
 
-  const overlayData = await getOverlayData(user.id);
+  // const overlayData = await getOverlayData(user.id);
 
   const qc = getQueryClient();
 
-  qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
-  qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
-  qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
-  qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
+  // qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
+  // qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
+  // qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
+  // qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
 
   return (
     <SidebarProvider
