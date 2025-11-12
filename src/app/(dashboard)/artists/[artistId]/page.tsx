@@ -7,7 +7,7 @@ import {
 import { OverviewSection } from "./components/overview-section";
 import { RelatedArtistsSection } from "./components/related-artists-section";
 
-export const revalidate = 60 * 60;
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
   const artists = await getAllArtists();
