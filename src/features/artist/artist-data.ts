@@ -1,19 +1,24 @@
 import "server-only";
-import db from "../../lib/db";
+import db from "@/lib/db";
 import { AwaitedReturnType } from "@/utils/type";
 import { PaginationParams } from "@/features/shared/shared-types";
 import { artistItemSelect } from "@/features/artist/artist-selects";
 import { getPaginationMeta } from "@/types/get-pagination-meta";
 import { trackItemSelect } from "@/features/track/track-selects";
-import { AppError } from "../../lib/errors";
+import { AppError } from "@/lib/errors";
+import { requireAuth } from "@/lib/auth";
 
-export const getArtistOverview = async ({
-  artistId,
-  userId,
-}: {
-  artistId: string;
-  userId: string;
-}) => {
+export const getAllArtists = async () => {
+  return await db.artist.findMany({
+    select: {
+      id: true,
+    },
+  });
+};
+
+export const getArtistOverview = async (artistId: string) => {
+  const user = await requireAuth();
+
   const artist = await db.artist.findUnique({
     where: { id: artistId },
     select: {
@@ -45,7 +50,7 @@ export const getArtistOverview = async ({
 
   const isFollowed = await db.userFollowedArtist
     .findUnique({
-      where: { userId_artistId: { userId, artistId } },
+      where: { userId_artistId: { userId: user.id, artistId } },
     })
     .then((link) => !!link);
 

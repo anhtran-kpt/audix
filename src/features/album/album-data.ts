@@ -5,6 +5,14 @@ import { getPaginationMeta } from "@/types/get-pagination-meta";
 import { trackItemSelect } from "@/features/track/track-selects";
 import { albumItemSelect } from "./album-selects";
 
+export const getAllAlbums = async () => {
+  return await db.album.findMany({
+    select: {
+      id: true,
+    },
+  });
+};
+
 export const getAlbumOverview = async (albumId: string) => {
   const album = await db.album.findUniqueOrThrow({
     where: { id: albumId },
