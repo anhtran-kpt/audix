@@ -1,12 +1,11 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteApi, putApi } from "@/lib/api";
 import { MyLikedAlbums } from "@/features/me/me-data";
 import { AlbumItem } from "@/features/album/album-types";
-import { meEndpoints } from "../me-endpoints";
 import { meKeys } from "../me-keys";
 import { useBaseUserOverlay } from "@/features/shared/hooks/use-base-user-overlay";
+import { likeAlbum, unlikeAlbum } from "../me-actions";
 
 export function useToggleLikeAlbum() {
   const qc = useQueryClient();
@@ -23,8 +22,8 @@ export function useToggleLikeAlbum() {
       isCurrentlyLiked: boolean;
     }) => {
       return isCurrentlyLiked
-        ? await deleteApi(meEndpoints.toggleLikeAlbum(album.id))
-        : await putApi(meEndpoints.toggleLikeAlbum(album.id));
+        ? await unlikeAlbum(album.id)
+        : await likeAlbum(album.id);
     },
 
     onMutate: async ({ album }) => {

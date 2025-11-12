@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     template: "%s | AudiX",
   },
   description:
-    "Immerse yourself in a personalized music experience that brings your favorite tracks to life, anytime, anywhere.",
+    "Immerse yourself in a personalized music experience that brings your favorite songs to life, anytime, anywhere.",
 };
 
 export default async function RootLayout({

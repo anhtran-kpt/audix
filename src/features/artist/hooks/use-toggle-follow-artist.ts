@@ -1,14 +1,13 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteApi, postApi } from "@/lib/api";
 import { MyFollowedArtists } from "@/features/me/me-data";
 import { ArtistFollowersCount } from "@/features/artist/artist-data";
 import { ArtistItem } from "../artist-types";
-import { artistEndpoints } from "../artist-endpoints";
 import { artistKeys } from "../artist-keys";
 import { useBaseUserOverlay } from "@/features/shared/hooks/use-base-user-overlay";
 import { meKeys } from "@/features/me/me-keys";
+import { followArtist, unfollowArtist } from "../artist-actions";
 
 export function useToggleFollowArtist() {
   const qc = useQueryClient();
@@ -26,8 +25,8 @@ export function useToggleFollowArtist() {
       isCurrentlyFollowed: boolean;
     }) => {
       return isCurrentlyFollowed
-        ? await deleteApi<boolean>(artistEndpoints.follow(artist.id))
-        : await postApi<boolean>(artistEndpoints.follow(artist.id));
+        ? await unfollowArtist(artist.id)
+        : await followArtist(artist.id);
     },
 
     onMutate: async ({ artist }) => {

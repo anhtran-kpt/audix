@@ -1,31 +1,15 @@
-import "server-only";
+"use server";
+
 import db from "@/lib/db";
-import { AppError } from "@/lib/errors";
 import {
   addTrackToPlaylist,
   removeTrackFromPlaylist,
 } from "@/features/playlist/playlist-actions";
 import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
+import { getUserIdOrThrow } from "@/lib/auth";
 
-export const likeAlbum = async ({
-  userId,
-  albumId,
-}: {
-  userId: string;
-  albumId: string;
-}) => {
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
+export const likeAlbum = async (albumId: string) => {
+  const userId = await getUserIdOrThrow();
 
   await db.userLikedAlbum.upsert({
     where: {
@@ -36,50 +20,16 @@ export const likeAlbum = async ({
   });
 };
 
-export const unlikeAlbum = async ({
-  userId,
-  albumId,
-}: {
-  userId: string;
-  albumId: string;
-}) => {
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
+export const unlikeAlbum = async (albumId: string) => {
+  const userId = await getUserIdOrThrow();
 
   await db.userLikedAlbum.deleteMany({
     where: { userId, albumId },
   });
 };
 
-export const likePlaylist = async ({
-  userId,
-  playlistId,
-}: {
-  userId: string;
-  playlistId: string;
-}) => {
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
+export const likePlaylist = async (playlistId: string) => {
+  const userId = await getUserIdOrThrow();
 
   await db.userLikedPlaylist.upsert({
     where: {
@@ -90,38 +40,17 @@ export const likePlaylist = async ({
   });
 };
 
-export const unlikePlaylist = async ({
-  userId,
-  playlistId,
-}: {
-  userId: string;
-  playlistId: string;
-}) => {
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      id: true,
-    },
-  });
-
-  if (!user) {
-    throw new AppError("NOT_FOUND", "User not found");
-  }
+export const unlikePlaylist = async (playlistId: string) => {
+  const userId = await getUserIdOrThrow();
 
   await db.userLikedPlaylist.deleteMany({
     where: { userId, playlistId },
   });
 };
 
-export const toggleLikeTrack = async ({
-  userId,
-  trackId,
-}: {
-  userId: string;
-  trackId: string;
-}) => {
+export const toggleLikeTrack = async (trackId: string) => {
+  const userId = await getUserIdOrThrow();
+
   const likedPlaylist = await db.playlist.findFirstOrThrow({
     where: { userId, systemType: DEFAULT_USER_PLAYLIST_TYPE },
   });
@@ -143,6 +72,6 @@ export const toggleLikeTrack = async ({
     return { isLiked: false };
   }
 
-  await addTrackToPlaylist(likedPlaylist.id, trackId);
+  await addTrackToPlaylist({ playlistId: likedPlaylist.id, trackId });
   return { isLiked: true };
 };

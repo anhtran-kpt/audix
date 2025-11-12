@@ -3,7 +3,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TrackItem } from "@/features/track/track-types";
 import { usePlaybackStore } from "@/stores/use-playback-store";
-import { deleteApi, postApi } from "@/lib/api";
 import { MyFavoriteSongsPlaylist } from "@/features/me/me-data";
 import { meKeys } from "../me-keys";
 import { playlistKeys } from "@/features/playlist/playlist-keys";
@@ -13,6 +12,10 @@ import {
   PlaylistOverview,
   PlaylistTracks,
 } from "@/features/playlist/playlist-types";
+import {
+  addTrackToPlaylist,
+  removeTrackFromPlaylist,
+} from "@/features/playlist/playlist-actions";
 
 export function useToggleLikeTrack() {
   const qc = useQueryClient();
@@ -33,9 +36,13 @@ export function useToggleLikeTrack() {
       isCurrentlyLiked: boolean;
     }) => {
       return isCurrentlyLiked
-        ? deleteApi(`/playlists/${likedPlaylistId}/tracks/${track.id}`)
-        : postApi(`/playlists/${likedPlaylistId}/tracks`, {
-            body: { trackId: track.id },
+        ? removeTrackFromPlaylist({
+            playlistId: likedPlaylistId,
+            trackId: track.id,
+          })
+        : addTrackToPlaylist({
+            playlistId: likedPlaylistId,
+            trackId: track.id,
           });
     },
     onMutate: async ({

@@ -1,18 +1,16 @@
 "use client";
 
-import { postApi } from "@/lib/api";
 import { useMutation } from "@tanstack/react-query";
-import { SignUpInput, SignUpOutput } from "@/features/auth/auth-types";
+import { SignUpInput } from "@/features/auth/auth-types";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { authEndpoints } from "../auth-endpoints";
+import { signUp } from "../auth-actions";
 
 export const useSignUp = () => {
   const router = useRouter();
 
   return useMutation({
-    mutationFn: (input: SignUpInput) =>
-      postApi<SignUpOutput>(authEndpoints.signUp, { body: input }),
+    mutationFn: async (input: SignUpInput) => await signUp(input),
 
     onSuccess: async (res, vars) => {
       if (!res.success) throw new Error(res.message);

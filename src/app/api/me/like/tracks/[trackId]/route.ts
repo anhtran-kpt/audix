@@ -5,7 +5,7 @@ import { makePUT } from "@/lib/route-factory";
 export const PUT = makePUT({
   auth: "required",
   params: TrackParamsSchema,
-  handler: async ({ userId, params }) => {
-    return toggleLikeTrack({ userId: userId!, trackId: params.trackId });
+  handler: async ({ params }) => {
+    return toggleLikeTrack(params.trackId);
   },
 });

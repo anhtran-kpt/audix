@@ -1,12 +1,12 @@
 "use client";
 
 import { MyPlaylists } from "@/features/me/me-data";
-import { deleteApi } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { playlistKeys } from "../playlist-keys";
 import { meKeys } from "@/features/me/me-keys";
+import { deletePlaylist } from "../playlist-actions";
 
 type DeletePlaylistInput = {
   playlistId: string;
@@ -18,8 +18,8 @@ export function useOptimisticPlaylistDelete() {
   const pathname = usePathname();
 
   return useMutation({
-    mutationFn: ({ playlistId }: DeletePlaylistInput) =>
-      deleteApi(`/playlists/${playlistId}`),
+    mutationFn: async ({ playlistId }: DeletePlaylistInput) =>
+      await deletePlaylist(playlistId),
 
     onMutate: async ({ playlistId }) => {
       await Promise.all([

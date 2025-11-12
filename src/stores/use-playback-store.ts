@@ -2,14 +2,18 @@
 
 import { RepeatMode } from "@/app/generated/prisma";
 import {
+  getClientPlaybackSession,
+  repeatPlayback,
+  shufflePlayback,
+  skipToNext,
+  skipToPrevious,
+  startPlaybackSession,
+  updatePlayHistoryListen,
+} from "@/features/playback/playback-actions";
+import {
   ClientPlaybackSession,
-  NextPlaybackOutput,
-  PreviousPlaybackOutput,
-  RepeatPlaybackOutput,
-  ShufflePlaybackOutput,
   StartPlaybackInput,
 } from "@/features/playback/playback-types";
-import { getApi, patchApi, postApi } from "@/lib/api";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -51,13 +55,7 @@ export const usePlaybackStore = create<PlaybackState>()(
 
       async hydrate() {
         try {
-          const session = await getApi<ClientPlaybackSession>(
-            "/playback/session"
-          );
-
-          if (JSON.stringify(session) === "{}") {
-            return;
-          }
+          const session = await getClientPlaybackSession();
 
           set({ session, isPlaying: false });
         } catch (err) {
@@ -69,12 +67,7 @@ export const usePlaybackStore = create<PlaybackState>()(
         set({ isLoading: true });
 
         try {
-          const session = await postApi<ClientPlaybackSession>(
-            "/playback/start",
-            {
-              body: input,
-            }
-          );
+          const session = await startPlaybackSession(input);
 
           set({ session: session, isLoading: false, progressMs: 0 });
           get().resume();
@@ -105,7 +98,7 @@ export const usePlaybackStore = create<PlaybackState>()(
         }
 
         try {
-          const response = await postApi<NextPlaybackOutput>("/playback/next");
+          const response = await skipToNext();
           set({
             session: { ...session, ...response },
             progressMs: 0,
@@ -126,14 +119,7 @@ export const usePlaybackStore = create<PlaybackState>()(
         }
 
         try {
-          const response = await postApi<PreviousPlaybackOutput>(
-            "/playback/previous",
-            {
-              body: {
-                positionMs: progressMs,
-              },
-            }
-          );
+          const response = await skipToPrevious(progressMs);
           set({
             session: { ...session, ...response },
             isLoading: false,
@@ -161,12 +147,7 @@ export const usePlaybackStore = create<PlaybackState>()(
         set({ session: { ...session, isShuffled: next } });
 
         try {
-          const response = await patchApi<ShufflePlaybackOutput>(
-            "/playback/shuffle",
-            {
-              body: { isShuffled: next },
-            }
-          );
+          const response = await shufflePlayback({ isShuffled: next });
           set({
             session: { ...session, queue: response.queue, isShuffled: next },
           });
@@ -187,9 +168,7 @@ export const usePlaybackStore = create<PlaybackState>()(
         set({ session: { ...session, repeatMode: next } });
 
         try {
-          await patchApi<RepeatPlaybackOutput>("/playback/repeat", {
-            body: { repeatMode: next },
-          });
+          await repeatPlayback({ repeatMode: next });
         } catch (err) {
           console.error("Set repeat mode failed:", err);
 
@@ -231,9 +210,7 @@ export const usePlaybackStore = create<PlaybackState>()(
         listenedSec: number
       ) => {
         try {
-          await patchApi("/playback/history", {
-            body: { historyId, listenedSec },
-          });
+          await updatePlayHistoryListen({ historyId, listenedSec });
         } catch (err) {
           console.error("Failed to update play history:", err);
         }

@@ -1,3 +1,5 @@
+"use server";
+
 import db from "@/lib/db";
 import { trackItemSelect } from "@/features/track/track-selects";
 import cloudinary from "@/lib/cloudinary";
@@ -5,6 +7,7 @@ import { buildPlaylistCoverUrl } from "@/utils/string";
 import { AppError } from "@/lib/errors";
 import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
 import { CreatePlaylistInput, UpdatePlaylistInput } from "./playlist-types";
+import { getUserIdOrThrow } from "@/lib/auth";
 
 export const authorizePlaylist = async ({
   userId,
@@ -70,10 +73,9 @@ export const authorizePlaylist = async ({
   };
 };
 
-export const createPlaylist = async (
-  userId: string,
-  input: CreatePlaylistInput
-) => {
+export const createPlaylist = async (input: CreatePlaylistInput) => {
+  const userId = await getUserIdOrThrow();
+
   return await db.playlist.create({
     data: {
       userId,
@@ -93,10 +95,13 @@ export const createPlaylist = async (
   });
 };
 
-export const addTrackToPlaylist = async (
-  playlistId: string,
-  trackId: string
-) => {
+export const addTrackToPlaylist = async ({
+  playlistId,
+  trackId,
+}: {
+  playlistId: string;
+  trackId: string;
+}) => {
   const track = await db.$transaction(async (tx) => {
     const t = await tx.track.findUniqueOrThrow({
       where: { id: trackId },
@@ -291,13 +296,9 @@ export const uploadPlaylistCover = async ({
   }
 };
 
-export const deletePlaylist = async ({
-  playlistId,
-  userId,
-}: {
-  playlistId: string;
-  userId: string;
-}) => {
+export const deletePlaylist = async (playlistId: string) => {
+  const userId = await getUserIdOrThrow();
+
   const auth = await authorizePlaylist({
     playlistId,
     userId,
@@ -367,21 +368,21 @@ export const getUserPlaylistsWithoutTrack = async (
 };
 
 export const updatePlaylistInfo = async ({
-  userId,
   playlistId,
   input,
 }: {
-  userId: string;
   playlistId: string;
   input: UpdatePlaylistInput;
 }) => {
+  const userId = await getUserIdOrThrow();
+
   const auth = await authorizePlaylist({
     playlistId,
     userId,
   });
 
   if (!auth.canEdit) {
-    return new AppError("FORBIDDEN", "You cannot edit this playlist");
+    throw new AppError("FORBIDDEN", "You cannot edit this playlist");
   }
 
   return await db.playlist.update({

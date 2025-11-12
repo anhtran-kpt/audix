@@ -1,4 +1,5 @@
-import "server-only";
+"use server";
+
 import db from "@/lib/db";
 import { createHash } from "crypto";
 import { trackItemSelect } from "@/features/track/track-selects";
@@ -19,6 +20,7 @@ import {
   ShufflePlaybackInput,
   StartPlaybackInput,
 } from "./playback-types";
+import { getUserIdOrThrow } from "@/lib/auth";
 
 const generateHash = (
   userId: string,
@@ -305,14 +307,16 @@ async function ensureSnapshot({
   }
 }
 
-export const getClientPlaybackSession = async (userId: string) => {
+export const getClientPlaybackSession = async () => {
+  const userId = await getUserIdOrThrow();
+
   const session = await db.playbackSession.findUnique({
     where: { userId: userId },
     select: playbackSessionSelect,
   });
 
   if (!session) {
-    return {};
+    return null;
   }
 
   const { hasNext, hasPrevious } = getPlaybackBoundaries(session);
@@ -330,14 +334,10 @@ export const getClientPlaybackSession = async (userId: string) => {
   };
 };
 
-export const startPlaybackSession = async ({
-  userId,
-  context,
-}: {
-  userId: string;
-  context: StartPlaybackInput;
-}) => {
+export const startPlaybackSession = async (context: StartPlaybackInput) => {
   const { contextType, contextId, startTrackId } = context;
+
+  const userId = await getUserIdOrThrow();
 
   const snapshot = await ensureSnapshot({ userId, contextType, contextId });
 
@@ -396,7 +396,9 @@ export const startPlaybackSession = async ({
   };
 };
 
-export const skipToNext = async (userId: string) => {
+export const skipToNext = async () => {
+  const userId = await getUserIdOrThrow();
+
   const session = await db.playbackSession.findUnique({
     where: { userId },
     include: {
@@ -483,7 +485,9 @@ export const skipToNext = async (userId: string) => {
   };
 };
 
-export const skipToPrevious = async (userId: string, progressMs = 0) => {
+export const skipToPrevious = async (progressMs = 0) => {
+  const userId = await getUserIdOrThrow();
+
   const session = await db.playbackSession.findUnique({
     where: { userId },
     include: {
@@ -543,11 +547,9 @@ export const skipToPrevious = async (userId: string, progressMs = 0) => {
   };
 };
 
-export const shufflePlayback = async (
-  userId: string,
-  input: ShufflePlaybackInput
-) => {
+export const shufflePlayback = async (input: ShufflePlaybackInput) => {
   const { isShuffled } = input;
+  const userId = await getUserIdOrThrow();
 
   const session = await db.playbackSession.update({
     where: { userId },
@@ -563,11 +565,10 @@ export const shufflePlayback = async (
   return { isShuffled: session.isShuffled, queue };
 };
 
-export const repeatPlayback = async (
-  userId: string,
-  input: RepeatPlaybackInput
-) => {
+export const repeatPlayback = async (input: RepeatPlaybackInput) => {
   const { repeatMode } = input;
+
+  const userId = await getUserIdOrThrow();
 
   if (!["OFF", "ONE", "ALL"].includes(repeatMode)) {
     return NextResponse.json({ error: "Invalid repeat mode" }, { status: 400 });
@@ -584,7 +585,9 @@ export const repeatPlayback = async (
   });
 };
 
-export const getHistoryTracks = async (userId: string) => {
+export const getHistoryTracks = async () => {
+  const userId = await getUserIdOrThrow();
+
   const playHistory = await db.playHistory.findMany({
     where: { userId },
     orderBy: { playedAt: "desc" },
@@ -616,14 +619,14 @@ export const getHistoryTracks = async (userId: string) => {
 export type HistoryTracks = AwaitedReturnType<typeof getHistoryTracks>;
 
 export const updatePlayHistoryListen = async ({
-  userId,
   historyId,
   listenedSec,
 }: {
-  userId: string;
   historyId: string;
   listenedSec: number;
 }) => {
+  const userId = await getUserIdOrThrow();
+
   const history = await db.playHistory.findUnique({
     where: { id: historyId },
     select: {

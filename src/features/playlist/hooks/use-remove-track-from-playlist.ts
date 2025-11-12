@@ -1,9 +1,11 @@
-import { deleteApi } from "@/lib/api";
+"use client";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useOptimisticCoverUpdate } from "./use-optimistic-cover-update";
 import { toast } from "sonner";
 import { playlistKeys } from "../playlist-keys";
 import { PlaylistOverview, PlaylistTracks } from "../playlist-types";
+import { removeTrackFromPlaylist } from "../playlist-actions";
 
 type RemoveTrackInput = {
   playlistId: string;
@@ -15,8 +17,8 @@ export function useRemoveTrackFromPlaylist() {
   const updateCoverMutation = useOptimisticCoverUpdate();
 
   return useMutation({
-    mutationFn: ({ playlistId, trackId }: RemoveTrackInput) =>
-      deleteApi(`/playlists/${playlistId}/tracks/${trackId}`),
+    mutationFn: async ({ playlistId, trackId }: RemoveTrackInput) =>
+      await removeTrackFromPlaylist({ playlistId, trackId }),
 
     onMutate: async ({ playlistId, trackId }) => {
       await Promise.all([

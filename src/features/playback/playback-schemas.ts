@@ -43,7 +43,7 @@ export const ServerPlaybackSessionSchema = PlaybackSessionSchema.pick({
       track: MiniTrackItemSchema,
     })
     .array(),
-  playHistoryId: z.string(),
+  playHistoryId: z.string().optional(),
 });
 
 export const ClientPlaybackSessionSchema = PlaybackSessionSchema.pick({
@@ -69,7 +69,7 @@ export const ClientPlaybackSessionSchema = PlaybackSessionSchema.pick({
       id: true,
     }).array(),
   }),
-  playHistoryId: z.string(),
+  playHistoryId: z.string().optional(),
 });
 
 export const StartPlaybackInputSchema = PlaybackContextSnapshotSchema.pick({

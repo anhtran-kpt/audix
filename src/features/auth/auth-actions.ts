@@ -1,3 +1,5 @@
+"use server";
+
 import "server-only";
 import db from "@/lib/db";
 import { hash } from "bcryptjs";

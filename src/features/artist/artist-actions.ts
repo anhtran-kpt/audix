@@ -1,7 +1,11 @@
-import "server-only";
-import db from "../../lib/db";
+"use server";
 
-export const followArtist = async (userId: string, artistId: string) => {
+import { getUserIdOrThrow } from "@/lib/auth";
+import db from "@/lib/db";
+
+export const followArtist = async (artistId: string) => {
+  const userId = await getUserIdOrThrow();
+
   return await db.$transaction(async (tx) => {
     const created = await tx.userFollowedArtist
       .create({ data: { userId, artistId } })
@@ -14,17 +18,12 @@ export const followArtist = async (userId: string, artistId: string) => {
         data: { followersCount: { increment: 1 } },
       });
     }
-
-    const { followersCount } = await tx.artist.findUniqueOrThrow({
-      where: { id: artistId },
-      select: { followersCount: true },
-    });
-
-    return { isFollowing: true as const, followersCount };
   });
 };
 
-export const unfollowArtist = async (userId: string, artistId: string) => {
+export const unfollowArtist = async (artistId: string) => {
+  const userId = await getUserIdOrThrow();
+
   return await db.$transaction(async (tx) => {
     const del = await tx.userFollowedArtist.deleteMany({
       where: { userId, artistId },
@@ -36,12 +35,5 @@ export const unfollowArtist = async (userId: string, artistId: string) => {
         data: { followersCount: { decrement: 1 } },
       });
     }
-
-    const { followersCount } = await tx.artist.findUniqueOrThrow({
-      where: { id: artistId },
-      select: { followersCount: true },
-    });
-
-    return { isFollowing: false as const, followersCount };
   });
 };

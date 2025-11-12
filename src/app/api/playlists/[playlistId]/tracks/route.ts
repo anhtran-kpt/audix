@@ -1,19 +1,6 @@
-import {
-  AddTrackToPlaylistInputSchema,
-  PlaylistParamsSchema,
-} from "@/features/playlist/playlist-schemas";
-import { addTrackToPlaylist } from "@/features/playlist/playlist-actions";
+import { PlaylistParamsSchema } from "@/features/playlist/playlist-schemas";
 import { getPlaylistTracks } from "@/features/playlist/playlist-data";
-import { makeGET, makePOST } from "@/lib/route-factory";
-
-export const POST = makePOST({
-  auth: "required",
-  params: PlaylistParamsSchema,
-  body: AddTrackToPlaylistInputSchema,
-  handler: async ({ body, params }) => {
-    return addTrackToPlaylist(params.playlistId, body.trackId);
-  },
-});
+import { makeGET } from "@/lib/route-factory";
 
 export const GET = makeGET({
   auth: "required",

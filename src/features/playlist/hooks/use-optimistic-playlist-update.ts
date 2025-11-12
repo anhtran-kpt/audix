@@ -1,30 +1,26 @@
 "use client";
 
-import { patchApi } from "@/lib/api";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   PlaylistItem,
   PlaylistOverview,
   UpdatePlaylistInput,
-  UpdatePlaylistOutput,
 } from "../playlist-types";
 import { playlistKeys } from "../playlist-keys";
+import { updatePlaylistInfo } from "../playlist-actions";
 
 export const useOptimisticPlaylistUpdate = () => {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       playlistId,
       input,
     }: {
       playlistId: string;
       input: UpdatePlaylistInput;
-    }) =>
-      patchApi<UpdatePlaylistOutput>(`/playlists/${playlistId}`, {
-        body: input,
-      }),
+    }) => await updatePlaylistInfo({ playlistId, input }),
 
     onMutate: async ({ playlistId, input }) => {
       await qc.cancelQueries({ queryKey: playlistKeys.overview(playlistId) });

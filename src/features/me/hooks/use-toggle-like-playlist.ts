@@ -1,12 +1,11 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteApi, putApi } from "@/lib/api";
 import { MyLikedPlaylists } from "@/features/me/me-data";
 import { meKeys } from "../me-keys";
-import { meEndpoints } from "../me-endpoints";
 import { PlaylistItem } from "@/features/playlist/playlist-types";
 import { useBaseUserOverlay } from "@/features/shared/hooks/use-base-user-overlay";
+import { likePlaylist, unlikePlaylist } from "../me-actions";
 
 export function useToggleLikePlaylist() {
   const qc = useQueryClient();
@@ -23,8 +22,8 @@ export function useToggleLikePlaylist() {
       isCurrentlyLiked: boolean;
     }) => {
       return isCurrentlyLiked
-        ? await deleteApi(meEndpoints.toggleLikePlaylist(playlist.id))
-        : await putApi(meEndpoints.toggleLikePlaylist(playlist.id));
+        ? await unlikePlaylist(playlist.id)
+        : await likePlaylist(playlist.id);
     },
 
     onMutate: async ({ playlist }) => {

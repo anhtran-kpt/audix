@@ -1,27 +1,24 @@
 "use client";
 
 import { MyPlaylists } from "@/features/me/me-data";
-import { postApi } from "@/lib/api";
 import { buildPlaylistCoverUrl } from "@/utils/string";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { playlistKeys } from "../playlist-keys";
 import { meKeys } from "@/features/me/me-keys";
 import { PlaylistOverview } from "../playlist-types";
+import { uploadPlaylistCover } from "../playlist-actions";
 
 export const useOptimisticCoverUpdate = () => {
   const qc = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       playlistId,
       imageIds,
     }: {
       playlistId: string;
       imageIds: string[];
-    }) =>
-      postApi<{ imageId: string }>(`/playlists/${playlistId}/cover`, {
-        body: { imageIds },
-      }),
+    }) => await uploadPlaylistCover({ playlistId, imageIds }),
 
     onMutate: async ({ playlistId, imageIds }) => {
       await qc.cancelQueries({ queryKey: playlistKeys.overview(playlistId) });

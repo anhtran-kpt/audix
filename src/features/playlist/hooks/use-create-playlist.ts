@@ -3,7 +3,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { postApi } from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
 import { CreatePlaylistInputSchema } from "@/features/playlist/playlist-schemas";
@@ -15,6 +14,7 @@ import {
   PlaylistItem,
 } from "../playlist-types";
 import { meKeys } from "@/features/me/me-keys";
+import { createPlaylist } from "../playlist-actions";
 
 export function useCreatePlaylist(
   onSuccess?: (res: CreatePlaylistOutput) => void
@@ -34,8 +34,7 @@ export function useCreatePlaylist(
   });
 
   const mutation = useMutation({
-    mutationFn: (data: CreatePlaylistInput) =>
-      postApi<CreatePlaylistOutput>("/playlists", { body: data }),
+    mutationFn: async (data: CreatePlaylistInput) => await createPlaylist(data),
     onMutate: async (vars) => {
       await Promise.all([
         qc.cancelQueries({ queryKey: meKeys.myPlaylists() }),

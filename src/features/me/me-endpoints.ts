@@ -7,9 +7,5 @@ export const meEndpoints = {
   likedAlbumStatus: (albumId: string) => `/me/like/albums/${albumId}` as const,
   followedArtists: () => `/me/following` as const,
   myPlaylists: () => `/me/playlists` as const,
-  toggleLikeAlbum: (albumId: string) => `/me/like/albums/${albumId}` as const,
-  toggleLikePlaylist: (playlistId: string) =>
-    `/me/like/playlists/${playlistId}` as const,
-  toggleLikeTrack: (trackId: string) => `/me/like/tracks/${trackId}` as const,
   favoriteSongsPlaylist: () => `/me/favorite-songs-playlist` as const,
 };
