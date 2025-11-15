@@ -1,0 +1,10 @@
+
+/frontend/node_modules
+/frontend/.next
+/backend/node_modules
+/backend/dist
+
+
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
