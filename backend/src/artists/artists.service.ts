@@ -3,12 +3,20 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
+import { isUUID } from "class-validator";
+import { Prisma } from "generated/prisma";
 import { PaginationDto } from "src/common/dto/pagination.dto";
+import { SlugService } from "src/common/services/slug.service";
 import { PrismaService } from "src/prisma/prisma.service";
+import { CreateArtistDto } from "./dto/create-artist.dto";
+import { UpdateArtistDto } from "./dto/update-artist.dto";
 
 @Injectable()
 export class ArtistsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly slugService: SlugService
+  ) {}
 
   async findAllStatic() {
     return this.prisma.artist.findMany({
@@ -44,9 +52,17 @@ export class ArtistsService {
     };
   }
 
-  async findOne(id: string) {
+  async findOne(identifier: string) {
+    let where: Prisma.ArtistWhereUniqueInput;
+
+    if (isUUID(identifier)) {
+      where = { id: identifier };
+    } else {
+      where = { slug: identifier };
+    }
+
     const artist = await this.prisma.artist.findUnique({
-      where: { id },
+      where,
       select: {
         id: true,
         name: true,
@@ -111,6 +127,39 @@ export class ArtistsService {
           artists: track.artists.map((ta) => ta.artist),
         })),
     };
+  }
+
+  async create(createArtistDto: CreateArtistDto) {
+    const slug = await this.slugService.generateUniqueSlug(
+      createArtistDto.name,
+      "artist"
+    );
+
+    return this.prisma.artist.create({
+      data: {
+        ...createArtistDto,
+        slug: slug,
+      },
+    });
+  }
+
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    let newSlug: string | undefined = undefined;
+
+    if (updateArtistDto.name) {
+      newSlug = await this.slugService.generateUniqueSlug(
+        updateArtistDto.name,
+        "artist"
+      );
+    }
+
+    return this.prisma.artist.update({
+      where: { id },
+      data: {
+        ...updateArtistDto,
+        slug: newSlug,
+      },
+    });
   }
 
   async follow(artistId: string, userId: string) {

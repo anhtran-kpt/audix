@@ -7,12 +7,16 @@ import {
   Query,
   UseGuards,
   Delete,
+  Body,
+  Patch,
 } from "@nestjs/common";
 import { ArtistsService } from "./artists.service";
 import { PaginationDto } from "src/common/dto/pagination.dto";
 import { JwtAuthGuard } from "src/auth/jwt-auth.guard";
 import { AuthUser } from "src/common/decorators/auth-user.decorator";
 import { User } from "generated/prisma";
+import { CreateArtistDto } from "./dto/create-artist.dto";
+import { UpdateArtistDto } from "./dto/update-artist.dto";
 
 @Controller("artists")
 export class ArtistsController {
@@ -28,8 +32,18 @@ export class ArtistsController {
     return this.artistsService.findAll(paginationDto);
   }
 
+  @Post()
+  create(@Body() createArtistDto: CreateArtistDto) {
+    return this.artistsService.create(createArtistDto);
+  }
+
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateArtistDto: UpdateArtistDto) {
+    return this.artistsService.update(id, updateArtistDto);
+  }
+
   @Get(":id")
-  findOne(@Param("id", new ParseUUIDPipe()) id: string) {
+  findOne(@Param("id") id: string) {
     return this.artistsService.findOne(id);
   }
 

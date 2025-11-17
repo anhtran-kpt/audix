@@ -28,10 +28,6 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  // Subscription info
-  subscription UserSubscription?
-
-  // Quan hệ
   accounts                Account[]
   playlists               Playlist[]
   likedAlbums             UserLikedAlbum[]
@@ -58,37 +54,6 @@ model Account {
 }
 
 // ================================
-// SUBSCRIPTION MANAGEMENT
-// ================================
-
-model UserSubscription {
-  id            String             @id @default(uuid())
-  userId        String             @unique
-  type          SubscriptionType   @default(FREE)
-  status        SubscriptionStatus @default(ACTIVE)
-  startDate     DateTime           @default(now())
-  endDate       DateTime?
-  autoRenew     Boolean            @default(false)
-  paymentMethod String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("user_subscriptions")
-}
-
-enum SubscriptionType {
-  FREE
-  PREMIUM
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  CANCELLED
-  EXPIRED
-  SUSPENDED
-}
-
-// ================================
 // MUSIC CORE ENTITIES
 // ================================
 
@@ -110,6 +75,7 @@ model Artist {
   followedBy UserFollowedArtist[]
   credits    TrackCredit[]
 
+  @@index([slug])
   @@map("artists")
 }
 
@@ -132,6 +98,7 @@ model Album {
   genres   AlbumGenre[]
   likedBy  UserLikedAlbum[]
 
+  @@index([slug])
   @@map("albums")
 }
 
@@ -139,13 +106,11 @@ enum AlbumType {
   SINGLE
   EP
   ALBUM
-  COMPILATION
 }
 
 model Track {
   id          String   @id @default(uuid())
   title       String
-  slug        String   @unique
   audioId     String
   duration    Int
   trackNumber Int
@@ -184,6 +149,7 @@ model Genre {
   albums  AlbumGenre[]
   artists ArtistGenre[]
 
+  @@index([slug])
   @@map("genres")
 }
 
@@ -313,6 +279,7 @@ model ArtistGenre {
 model Playlist {
   id          String   @id @default(uuid())
   title       String
+  slug        String   @unique
   description String?  @db.Text
   imageId     String?
   isPublic    Boolean  @default(true)
@@ -329,6 +296,7 @@ model Playlist {
   tracks  PlaylistTrack[]
   likedBy UserLikedPlaylist[]
 
+  @@index([slug])
   @@map("playlists")
 }
 

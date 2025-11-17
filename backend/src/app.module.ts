@@ -6,6 +6,7 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { UsersModule } from "./users/users.module";
 import { AuthModule } from "./auth/auth.module";
 import { ConfigModule } from "@nestjs/config";
+import { CommonModule } from "./common/common.module";
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ConfigModule } from "@nestjs/config";
       isGlobal: true,
       envFilePath: ".env",
     }),
+    CommonModule,
     ArtistsModule,
     PrismaModule,
     UsersModule,

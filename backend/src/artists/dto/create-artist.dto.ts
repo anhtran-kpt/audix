@@ -3,9 +3,16 @@ import { IsString, IsNotEmpty } from "class-validator";
 export class CreateArtistDto {
   @IsString()
   @IsNotEmpty()
-  readonly title: string;
+  name: string;
+
+  @IsString()
+  bio: string;
 
   @IsString()
   @IsNotEmpty()
-  readonly content: string;
+  imageId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  bannerId: string;
 }

@@ -11,6 +11,7 @@ import { AuthService } from "./auth.service";
 import { AuthUser } from "src/common/decorators/auth-user.decorator";
 import { User } from "generated/prisma";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { JwtAuthGuard } from "./jwt-auth.guard";
 
 @Controller("auth")
 export class AuthController {
@@ -37,5 +38,11 @@ export class AuthController {
     const token = this.authService.login(user);
 
     return token;
+  }
+
+  @Get("profile")
+  @UseGuards(JwtAuthGuard)
+  getProfile(@AuthUser() user: User) {
+    return user;
   }
 }
