@@ -19,8 +19,8 @@ datasource db {
 // ================================
 
 model User {
-  id            String    @id @default(cuid())
-  email         String?   @unique
+  id            String    @id @default(uuid())
+  email         String    @unique
   name          String
   image         String?
   emailVerified DateTime? @map("email_verified")
@@ -31,18 +31,14 @@ model User {
   // Subscription info
   subscription UserSubscription?
 
-  // NextAuth fields
-  accounts Account[]
-  sessions Session[]
-
-  playlists       Playlist[]
-  likedAlbums     UserLikedAlbum[]
-  likedPlaylists  UserLikedPlaylist[]
-  followedArtists UserFollowedArtist[]
-
-  playHistory   PlayHistory[]
-  searchHistory SearchHistory[]
-
+  // Quan hệ
+  accounts                Account[]
+  playlists               Playlist[]
+  likedAlbums             UserLikedAlbum[]
+  likedPlaylists          UserLikedPlaylist[]
+  followedArtists         UserFollowedArtist[]
+  playHistory             PlayHistory[]
+  searchHistory           SearchHistory[]
   playbackSession         PlaybackSession[]
   playbackContextSnapshot PlaybackContextSnapshot[]
 
@@ -50,18 +46,10 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String  @map("user_id")
-  type              String
+  id                String @id @default(uuid())
+  userId            String @map("user_id")
   provider          String
-  providerAccountId String  @map("provider_account_id")
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String? @db.Text
-  session_state     String?
+  providerAccountId String @map("provider_account_id")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -69,31 +57,12 @@ model Account {
   @@map("accounts")
 }
 
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique @map("session_token")
-  userId       String   @map("user_id")
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
-}
-
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map("verification_tokens")
-}
-
 // ================================
 // SUBSCRIPTION MANAGEMENT
 // ================================
 
 model UserSubscription {
-  id            String             @id @default(cuid())
+  id            String             @id @default(uuid())
   userId        String             @unique
   type          SubscriptionType   @default(FREE)
   status        SubscriptionStatus @default(ACTIVE)
@@ -124,7 +93,7 @@ enum SubscriptionStatus {
 // ================================
 
 model Artist {
-  id             String   @id @default(cuid())
+  id             String   @id @default(uuid())
   name           String
   slug           String   @unique
   bio            String?  @db.Text
@@ -145,7 +114,7 @@ model Artist {
 }
 
 model Album {
-  id          String    @id @default(cuid())
+  id          String    @id @default(uuid())
   title       String
   slug        String    @unique
   imageId     String
@@ -174,7 +143,7 @@ enum AlbumType {
 }
 
 model Track {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   title       String
   slug        String   @unique
   audioId     String
@@ -207,7 +176,7 @@ model Track {
 // ================================
 
 model Genre {
-  id   String @id @default(cuid())
+  id   String @id @default(uuid())
   name String @unique
   slug String @unique
 
@@ -244,7 +213,7 @@ enum ArtistRole {
 }
 
 model TrackCredit {
-  id       String     @id @default(cuid())
+  id       String     @id @default(uuid())
   trackId  String
   artistId String? // Null if it set for the person who is not artist
   name     String // Credit name (if artistId null)
@@ -342,7 +311,7 @@ model ArtistGenre {
 // ================================
 
 model Playlist {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   title       String
   description String?  @db.Text
   imageId     String?
@@ -364,7 +333,7 @@ model Playlist {
 }
 
 model PlaylistTrack {
-  id       String   @id @default(cuid())
+  id       String   @id @default(uuid())
   position Int // Position in playlist
   addedAt  DateTime @default(now())
 
@@ -395,15 +364,15 @@ model UserLikedAlbum {
 }
 
 model UserFollowedArtist {
-  userId   String
-  artistId String
-  likedAt  DateTime @default(now())
+  userId     String
+  artistId   String
+  followedAt DateTime @default(now())
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
   @@id([userId, artistId])
-  @@map("user_liked_artists")
+  @@map("user_followed_artists")
 }
 
 model UserLikedPlaylist {
@@ -443,7 +412,7 @@ enum PlaybackContextType {
 }
 
 model PlaybackSession {
-  id     String @id @default(cuid())
+  id     String @id @default(uuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -471,7 +440,7 @@ model PlaybackSession {
 }
 
 model PlaybackContextSnapshot {
-  id     String @id @default(cuid())
+  id     String @id @default(uuid())
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -504,7 +473,7 @@ model PlaybackSnapshotTrack {
 }
 
 model PlayHistory {
-  id          String   @id @default(cuid())
+  id          String   @id @default(uuid())
   playedAt    DateTime @default(now())
   listenedSec Int
 
@@ -523,7 +492,7 @@ model PlayHistory {
 }
 
 model PlaybackQueueItem {
-  id        String          @id @default(cuid())
+  id        String          @id @default(uuid())
   sessionId String
   session   PlaybackSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
@@ -539,7 +508,7 @@ model PlaybackQueueItem {
 }
 
 model SearchHistory {
-  id         String   @id @default(cuid())
+  id         String   @id @default(uuid())
   query      String
   resultType String? // track, artist, album, playlist
   resultId   String?
@@ -557,7 +526,7 @@ model SearchHistory {
 // ================================
 
 model UserRecommendation {
-  id        String   @id @default(cuid())
+  id        String   @id @default(uuid())
   type      String // track, artist, album, playlist
   targetId  String // ID of recommended item
   score     Float //  Recommendation score (0-1)
@@ -576,7 +545,7 @@ model UserRecommendation {
 
 // Trending/Charts
 model Chart {
-  id        String    @id @default(cuid())
+  id        String    @id @default(uuid())
   name      String
   type      ChartType
   period    String // daily, weekly, monthly
