@@ -12,6 +12,7 @@ import { AuthUser } from "src/common/decorators/auth-user.decorator";
 import { User } from "generated/prisma";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { JwtAuthGuard } from "./jwt-auth.guard";
+import { AuthUserPayload } from "./types/auth-user.payload";
 
 @Controller("auth")
 export class AuthController {
@@ -24,7 +25,7 @@ export class AuthController {
 
   @Post("login")
   @UseGuards(AuthGuard("local"))
-  login(@AuthUser() user: User) {
+  login(@AuthUser() user: AuthUserPayload) {
     return this.authService.login(user);
   }
 
@@ -34,10 +35,8 @@ export class AuthController {
 
   @Get("google/callback")
   @UseGuards(AuthGuard("google"))
-  googleAuthRedirect(@AuthUser() user: User) {
-    const token = this.authService.login(user);
-
-    return token;
+  googleAuthRedirect(@AuthUser() user: AuthUserPayload) {
+    return this.authService.login(user);
   }
 
   @Get("profile")

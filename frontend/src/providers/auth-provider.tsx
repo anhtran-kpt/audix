@@ -1,15 +1,15 @@
 "use client";
 
-import { SessionProvider } from "next-auth/react";
-import type { Session } from "next-auth";
+import { useAuthStore } from "@/features/auth/stores/use-auth-store";
 import type { ReactNode } from "react";
+import { useEffect } from "react";
 
-export function AuthProvider({
-  children,
-  session,
-}: {
-  children: ReactNode;
-  session?: Session | null;
-}) {
-  return <SessionProvider session={session}>{children}</SessionProvider>;
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  return <>{children}</>;
 }

@@ -4,24 +4,26 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { isUUID } from "class-validator";
-import { Prisma } from "generated/prisma";
+import { Artist, Prisma } from "generated/prisma";
 import { PaginationDto } from "src/common/dto/pagination.dto";
 import { SlugService } from "src/common/services/slug.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateArtistDto } from "./dto/create-artist.dto";
 import { UpdateArtistDto } from "./dto/update-artist.dto";
+import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 
 @Injectable()
 export class ArtistsService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly slugService: SlugService
+    private readonly slugService: SlugService,
+    private readonly cloudinaryService: CloudinaryService
   ) {}
 
-  async findAllStatic() {
-    return this.prisma.artist.findMany({
+  async findAllStatic(): Promise<Pick<Artist, "slug">[]> {
+    return await this.prisma.artist.findMany({
       select: {
-        id: true,
+        slug: true,
       },
     });
   }
@@ -65,52 +67,14 @@ export class ArtistsService {
       where,
       select: {
         id: true,
+        slug: true,
         name: true,
-        imageId: true,
-        followersCount: true,
+        avatarId: true,
         bannerId: true,
+        avatarColor: true,
+        bannerColor: true,
         bio: true,
-        tracks: {
-          select: {
-            track: {
-              select: {
-                id: true,
-                title: true,
-                audioId: true,
-                duration: true,
-                trackNumber: true,
-                isExplicit: true,
-                playCount: true,
-                album: {
-                  select: {
-                    id: true,
-                    imageId: true,
-                    title: true,
-                    artist: {
-                      select: {
-                        id: true,
-                        name: true,
-                        imageId: true,
-                      },
-                    },
-                  },
-                },
-                artists: {
-                  select: {
-                    artist: { select: { id: true, name: true } },
-                  },
-                  orderBy: { order: "asc" },
-                },
-              },
-            },
-          },
-          take: 5,
-          orderBy: {
-            track: {
-              playCount: "desc",
-            },
-          },
-        },
+        followersCount: true,
       },
     });
 
@@ -118,24 +82,86 @@ export class ArtistsService {
       throw new NotFoundException("Artist not found");
     }
 
+    const [popularSongs, albums, singlesAndEps] = await Promise.all([
+      this.prisma.songArtist.findMany({
+        where: { artistId: artist.id },
+        select: {
+          song: {
+            select: {
+              id: true,
+              title: true,
+              audioId: true,
+              duration: true,
+              songNumber: true,
+              isExplicit: true,
+              playCount: true,
+            },
+          },
+        },
+        take: 5,
+        orderBy: {
+          song: {
+            playCount: "desc",
+          },
+        },
+      }),
+
+      this.prisma.album.findMany({
+        where: { artistId: artist.id, type: "ALBUM" },
+        orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
+        take: 5,
+        select: {
+          id: true,
+          title: true,
+          thumbnailId: true,
+          type: true,
+          releaseDate: true,
+          artist: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
+
+      this.prisma.album.findMany({
+        where: { artistId: artist.id, type: { in: ["SINGLE", "EP"] } },
+        take: 5,
+        orderBy: [{ releaseDate: "desc" }, { id: "desc" }],
+        select: {
+          id: true,
+          title: true,
+          thumbnailId: true,
+          type: true,
+          releaseDate: true,
+          artist: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      }),
+    ]);
+
     return {
-      ...artist,
-      tracks: artist.tracks
-        .map((at) => at.track)
-        .map((track) => ({
-          ...track,
-          artists: track.artists.map((ta) => ta.artist),
-        })),
+      info: artist,
+      popularSongs: popularSongs.map((sa) => sa.song),
+      discography: {
+        albums,
+        singlesAndEps,
+      },
     };
   }
 
-  async create(createArtistDto: CreateArtistDto) {
+  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const slug = await this.slugService.generateUniqueSlug(
       createArtistDto.name,
       "artist"
     );
 
-    return this.prisma.artist.create({
+    return await this.prisma.artist.create({
       data: {
         ...createArtistDto,
         slug: slug,
@@ -143,7 +169,7 @@ export class ArtistsService {
     });
   }
 
-  async update(id: string, updateArtistDto: UpdateArtistDto) {
+  async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
     let newSlug: string | undefined = undefined;
 
     if (updateArtistDto.name) {
@@ -153,7 +179,7 @@ export class ArtistsService {
       );
     }
 
-    return this.prisma.artist.update({
+    return await this.prisma.artist.update({
       where: { id },
       data: {
         ...updateArtistDto,
@@ -222,5 +248,47 @@ export class ArtistsService {
     ]);
 
     return deletedRecord;
+  }
+
+  async updateAvatar(artistId: string, file: Express.Multer.File) {
+    type ArtistWithAvatar = {
+      avatarId: string | null;
+    } | null;
+
+    const artist: ArtistWithAvatar = await this.prisma.artist.findUnique({
+      where: { id: artistId },
+      select: { avatarId: true },
+    });
+
+    if (!artist) {
+      throw new NotFoundException("Artist not found");
+    }
+
+    const oldAvatarId = artist.avatarId;
+
+    const uploadResult = await this.cloudinaryService.uploadImage(
+      file,
+      "artist_avatars"
+    );
+    const newPublicId = uploadResult.public_id;
+    const dominantColor = uploadResult.colors?.[0]?.[0] || null;
+
+    const updatedArtist = await this.prisma.artist.update({
+      where: { id: artistId },
+      data: {
+        avatarId: newPublicId,
+        avatarColor: dominantColor,
+      },
+    });
+
+    if (oldAvatarId) {
+      try {
+        await this.cloudinaryService.deleteImage(oldAvatarId);
+      } catch (error) {
+        console.error(`Failed to delete old avatar ${oldAvatarId}:`, error);
+      }
+    }
+
+    return updatedArtist;
   }
 }

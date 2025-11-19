@@ -1,7 +1,7 @@
 import { SearchResults } from "@/features/search/search-actions";
 import { Section } from "@/components/shared/section";
 import { EntityCarousel } from "@/components/shared/entity-carousel";
-import { ArtistItem } from "@/components/features/entity-item/artist-item";
+import { ArtistItem } from "@/features/artists/components/artist-item";
 
 export default function ArtistsSection({
   data,

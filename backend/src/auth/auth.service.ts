@@ -7,8 +7,9 @@ import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { PrismaService } from "src/prisma/prisma.service";
-import { User } from "generated/prisma";
 import { Profile } from "passport-google-oauth20";
+import { AuthUserPayload } from "./types/auth-user.payload";
+import { UserRole } from "./enums/role.enum";
 
 @Injectable()
 export class AuthService {
@@ -34,6 +35,7 @@ export class AuthService {
         email: dto.email,
         name: dto.name,
         passwordHash: passwordHash,
+        role: UserRole.USER,
       },
       omit: {
         passwordHash: true,
@@ -43,8 +45,12 @@ export class AuthService {
     return this.login(user);
   }
 
-  login(user: Omit<User, "passwordHash">) {
-    const payload = { sub: user.id, email: user.email };
+  login(user: AuthUserPayload): { access_token: string } {
+    const payload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role as UserRole,
+    };
 
     return {
       access_token: this.jwtService.sign(payload),
@@ -60,7 +66,6 @@ export class AuthService {
     }
 
     const email = profile.emails[0].value;
-
     const name = profile.name?.givenName + " " + profile.name?.familyName;
     const image = profile.photos ? profile.photos[0].value : null;
 
@@ -94,7 +99,6 @@ export class AuthService {
           email,
           name,
           image,
-          emailVerified: new Date(),
           accounts: {
             create: {
               provider,

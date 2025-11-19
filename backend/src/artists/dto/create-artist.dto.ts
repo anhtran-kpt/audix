@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from "class-validator";
+import { IsString, IsNotEmpty, IsOptional } from "class-validator";
 
 export class CreateArtistDto {
   @IsString()
@@ -6,13 +6,14 @@ export class CreateArtistDto {
   name: string;
 
   @IsString()
-  bio: string;
+  @IsOptional()
+  bio?: string;
 
   @IsString()
-  @IsNotEmpty()
-  imageId: string;
+  @IsOptional()
+  imageId?: string;
 
   @IsString()
-  @IsNotEmpty()
-  bannerId: string;
+  @IsOptional()
+  bannerId?: string;
 }
