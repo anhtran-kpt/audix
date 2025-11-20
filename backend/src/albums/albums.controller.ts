@@ -48,7 +48,8 @@ export class AlbumsController {
   })
   async findAll() {
     const albums = await this.albumsService.findAll();
-    return albums.map((album) => new AlbumItemResponse(album));
+    // return albums.map((album) => new AlbumItemResponse(album));
+    return albums;
   }
 
   @Get(":identifier")
@@ -58,6 +59,7 @@ export class AlbumsController {
   })
   async findOne(@Param("identifier") identifier: string) {
     const album = await this.albumsService.findOne(identifier);
-    return new AlbumDetailResponse(album);
+    // return new AlbumDetailResponse(album);
+    return album;
   }
 }

@@ -14,7 +14,11 @@ import { AuthUser } from "src/common/decorators/auth-user.decorator";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { AuthUserPayload } from "./types/auth-user.payload";
-import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+} from "@nestjs/swagger";
 import { LoginResponseDto } from "./dto/login-response.dto";
 import { LoginDto } from "./dto/login.dto";
 import { UserEntity } from "src/users/entities/user.entity";
@@ -24,6 +28,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("register")
+  @ApiCreatedResponse({ type: LoginResponseDto })
   register(@Body() createUserDto: CreateUserDto) {
     return this.authService.register(createUserDto);
   }
