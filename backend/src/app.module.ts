@@ -9,6 +9,7 @@ import { ConfigModule } from "@nestjs/config";
 import { CommonModule } from "./common/common.module";
 import { CloudinaryModule } from "./cloudinary/cloudinary.module";
 import { AlbumsModule } from "./albums/albums.module";
+import { GenresModule } from "./genres/genres.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AlbumsModule } from "./albums/albums.module";
     AuthModule,
     CloudinaryModule,
     AlbumsModule,
+    GenresModule,
   ],
   controllers: [AppController],
   providers: [AppService],

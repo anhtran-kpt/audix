@@ -89,16 +89,17 @@ model Artist {
 }
 
 model Album {
-  id          String    @id @default(uuid())
-  title       String
-  slug        String    @unique
-  thumbnailId String?
-  type        AlbumType @default(SINGLE)
-  releaseDate DateTime  @default(now())
-  totalSongs  Int       @default(0)
-  duration    Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id             String    @id @default(uuid())
+  title          String
+  slug           String    @unique
+  thumbnailId    String?
+  thumbnailColor String?
+  type           AlbumType @default(SINGLE)
+  releaseDate    DateTime  @default(now())
+  totalSongs     Int       @default(0)
+  duration       Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   artistId String
   artist   Artist           @relation(fields: [artistId], references: [id], onDelete: Cascade)

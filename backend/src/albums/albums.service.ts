@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateAlbumDto } from "./dto/create-album.dto";
 import { SlugService } from "src/common/services/slug.service";
@@ -32,6 +32,14 @@ export class AlbumsService {
     });
   }
 
+  async findAllStatic() {
+    return await this.prisma.album.findMany({
+      select: {
+        slug: true,
+      },
+    });
+  }
+
   async findAll() {
     return this.prisma.album.findMany({
       orderBy: { releaseDate: "desc" },
@@ -54,15 +62,28 @@ export class AlbumsService {
 
     const album = await this.prisma.album.findUnique({
       where,
-      include: {
-        artist: true,
-        songs: {
-          orderBy: { songNumber: "asc" },
+      select: {
+        id: true,
+        title: true,
+        thumbnailId: true,
+        thumbnailColor: true,
+        type: true,
+        releaseDate: true,
+        totalSongs: true,
+        duration: true,
+        artist: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            avatarId: true,
+          },
         },
       },
     });
 
-    if (!album) throw new BadRequestException("Album not found");
+    if (!album) throw new NotFoundException("Album not found");
+
     return album;
   }
 }

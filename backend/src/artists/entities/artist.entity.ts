@@ -38,4 +38,8 @@ export class ArtistEntity implements PrismaArtist {
 
   @ApiProperty()
   updatedAt: Date;
+
+  constructor(partial: Partial<ArtistEntity>) {
+    Object.assign(this, partial);
+  }
 }

@@ -34,4 +34,8 @@ export class SongEntity implements PrismaSong {
 
   @ApiProperty()
   albumId: string;
+
+  constructor(partial: Partial<SongEntity>) {
+    Object.assign(this, partial);
+  }
 }

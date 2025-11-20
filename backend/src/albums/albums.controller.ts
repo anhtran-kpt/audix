@@ -11,7 +11,9 @@ import { AlbumsService } from "./albums.service";
 import { CreateAlbumDto } from "./dto/create-album.dto";
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
 import { AlbumEntity } from "./entities/album.entity";
-import { AlbumListResponse } from "./dto/album-response.dto";
+import { AlbumDetailResponse } from "./dto/album-detail-response.dto";
+import { AlbumSlug } from "./dto/album-slug.dto";
+import { AlbumItemResponse } from "./dto/album-item-response.dto";
 
 @ApiTags("Albums")
 @Controller("albums")
@@ -31,21 +33,31 @@ export class AlbumsController {
 
   @Get()
   @ApiOkResponse({
+    description: "Get full static albums",
+    type: [AlbumSlug],
+  })
+  async findAllStatic() {
+    const albums = await this.albumsService.findAllStatic();
+    return albums.map((album) => new AlbumSlug(album));
+  }
+
+  @Get()
+  @ApiOkResponse({
     description: "Get album list",
-    type: [AlbumListResponse],
+    type: [AlbumItemResponse],
   })
   async findAll() {
     const albums = await this.albumsService.findAll();
-    return albums.map((album) => new AlbumListResponse(album));
+    return albums.map((album) => new AlbumItemResponse(album));
   }
 
   @Get(":identifier")
   @ApiOkResponse({
     description: "Get album details",
-    type: AlbumEntity,
+    type: AlbumDetailResponse,
   })
   async findOne(@Param("identifier") identifier: string) {
     const album = await this.albumsService.findOne(identifier);
-    return new AlbumEntity(album);
+    return new AlbumDetailResponse(album);
   }
 }

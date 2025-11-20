@@ -22,12 +22,11 @@ import { UpdateArtistDto } from "./dto/update-artist.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Roles } from "src/auth/roles.decorator";
 import { UserRole } from "src/auth/enums/role.enum";
-import { ApiOkResponse } from "@nestjs/swagger";
-import {
-  ArtistSlugResponse,
-  FullArtistResponse,
-} from "./dto/artist-response.dto";
+import { ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
+import { ArtistSlugResponse } from "./dto/artist-slug-response.dto";
 import { RolesGuard } from "src/auth/guards/roles.guard";
+import { ArtistDetailResponse } from "./dto/artist-detail-response.dto";
+import { ArtistEntity } from "./entities/artist.entity";
 
 @Controller("artists")
 export class ArtistsController {
@@ -38,8 +37,9 @@ export class ArtistsController {
     type: [ArtistSlugResponse],
     description: "Get all static artists",
   })
-  findAllStatic() {
-    return this.artistsService.findAllStatic();
+  async findAllStatic() {
+    const artists = await this.artistsService.findAllStatic();
+    return artists.map((artist) => new ArtistSlugResponse(artist));
   }
 
   @Get()
@@ -50,24 +50,38 @@ export class ArtistsController {
   @Post()
   @Roles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  create(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistsService.create(createArtistDto);
+  @ApiCreatedResponse({
+    type: [ArtistEntity],
+    description: "Created successful",
+  })
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    const newArtist = await this.artistsService.create(createArtistDto);
+    return new ArtistEntity(newArtist);
   }
 
   @Patch(":id")
   @Roles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  update(@Param("id") id: string, @Body() updateArtistDto: UpdateArtistDto) {
-    return this.artistsService.update(id, updateArtistDto);
+  @ApiOkResponse({
+    type: [ArtistEntity],
+    description: "Updated successful",
+  })
+  async update(
+    @Param("id") id: string,
+    @Body() updateArtistDto: UpdateArtistDto
+  ) {
+    const updatedArtist = await this.artistsService.update(id, updateArtistDto);
+    return new ArtistEntity(updatedArtist);
   }
 
   @Get(":identifier")
   @ApiOkResponse({
-    type: FullArtistResponse,
+    type: ArtistDetailResponse,
     description: "Get artist by identifier",
   })
-  findOne(@Param("identifier") identifier: string) {
-    return this.artistsService.findOne(identifier);
+  async findOne(@Param("identifier") identifier: string) {
+    const artist = await this.artistsService.findOne(identifier);
+    return new ArtistDetailResponse(artist);
   }
 
   @Post(":id/follow")
@@ -94,5 +108,16 @@ export class ArtistsController {
     @UploadedFile() file: Express.Multer.File
   ) {
     return this.artistsService.updateAvatar(artistId, file);
+  }
+
+  @Patch(":id/banner")
+  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseInterceptors(FileInterceptor("banner"))
+  updateBanner(
+    @Param("id") artistId: string,
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    return this.artistsService.updateBanner(artistId, file);
   }
 }

@@ -251,11 +251,7 @@ export class ArtistsService {
   }
 
   async updateAvatar(artistId: string, file: Express.Multer.File) {
-    type ArtistWithAvatar = {
-      avatarId: string | null;
-    } | null;
-
-    const artist: ArtistWithAvatar = await this.prisma.artist.findUnique({
+    const artist = await this.prisma.artist.findUnique({
       where: { id: artistId },
       select: { avatarId: true },
     });
@@ -286,6 +282,44 @@ export class ArtistsService {
         await this.cloudinaryService.deleteImage(oldAvatarId);
       } catch (error) {
         console.error(`Failed to delete old avatar ${oldAvatarId}:`, error);
+      }
+    }
+
+    return updatedArtist;
+  }
+
+  async updateBanner(artistId: string, file: Express.Multer.File) {
+    const artist = await this.prisma.artist.findUnique({
+      where: { id: artistId },
+      select: { bannerId: true },
+    });
+
+    if (!artist) {
+      throw new NotFoundException("Artist not found");
+    }
+
+    const oldBannerId = artist.bannerId;
+
+    const uploadResult = await this.cloudinaryService.uploadImage(
+      file,
+      "artist_banners"
+    );
+    const newPublicId = uploadResult.public_id;
+    const dominantColor = uploadResult.colors?.[0]?.[0] || null;
+
+    const updatedArtist = await this.prisma.artist.update({
+      where: { id: artistId },
+      data: {
+        bannerId: newPublicId,
+        avatarColor: dominantColor,
+      },
+    });
+
+    if (oldBannerId) {
+      try {
+        await this.cloudinaryService.deleteImage(oldBannerId);
+      } catch (error) {
+        console.error(`Failed to delete old avatar ${oldBannerId}:`, error);
       }
     }
 
