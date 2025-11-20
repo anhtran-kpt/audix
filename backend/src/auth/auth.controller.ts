@@ -5,14 +5,19 @@ import {
   UseGuards,
   Request,
   Get,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
 import { AuthUser } from "src/common/decorators/auth-user.decorator";
-import { User } from "generated/prisma";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { JwtAuthGuard } from "./jwt-auth.guard";
+import { JwtAuthGuard } from "./guards/jwt-auth.guard";
 import { AuthUserPayload } from "./types/auth-user.payload";
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { LoginResponseDto } from "./dto/login-response.dto";
+import { LoginDto } from "./dto/login.dto";
+import { UserEntity } from "src/users/entities/user.entity";
 
 @Controller("auth")
 export class AuthController {
@@ -25,7 +30,9 @@ export class AuthController {
 
   @Post("login")
   @UseGuards(AuthGuard("local"))
-  login(@AuthUser() user: AuthUserPayload) {
+  @ApiOperation({ summary: "Login" })
+  @ApiOkResponse({ type: LoginResponseDto })
+  login(@AuthUser() user: AuthUserPayload, @Body() _loginDto: LoginDto) {
     return this.authService.login(user);
   }
 
@@ -41,7 +48,9 @@ export class AuthController {
 
   @Get("profile")
   @UseGuards(JwtAuthGuard)
-  getProfile(@AuthUser() user: User) {
-    return user;
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOkResponse({ type: UserEntity })
+  getProfile(@AuthUser() user: AuthUserPayload) {
+    return new UserEntity(user);
   }
 }

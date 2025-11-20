@@ -29,9 +29,9 @@ export default async function ArtistDetail({
   return (
     <>
       <OverviewSection artist={artist} />
-      <DiscographySection artistId={artistId} />
+      {/* <DiscographySection artistId={artistId} /> */}
       <AboutSection artist={artist} />
-      <RelatedArtistsSection artistId={artistId} />
+      {/* <RelatedArtistsSection artistId={artistId} /> */}
     </>
   );
 }

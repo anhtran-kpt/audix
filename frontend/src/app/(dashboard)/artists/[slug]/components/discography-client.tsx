@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArtistDiscography } from "@/features/artist/artist-data";
 import { Section } from "@/components/shared/section";
 import { EntityCarousel } from "@/components/shared/entity-carousel";
-import { AlbumItem } from "@/components/features/entity-item/album-item";
+import { AlbumItem } from "@/features/albums/components/album-item";
 
 type DiscographyClientProps = {
   initialData: ArtistDiscography;

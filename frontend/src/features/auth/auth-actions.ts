@@ -5,7 +5,7 @@ import db from "@/lib/db";
 import { hash } from "bcryptjs";
 import { AppError } from "@/lib/errors";
 import { DEFAULT_USER_PLAYLIST_TYPE } from "@/lib/constants";
-import { SignUpInput } from "./auth-types";
+import { SignUpInput } from "./auth.type";
 
 export const signUp = async (input: SignUpInput) => {
   const { email, name, password } = input;

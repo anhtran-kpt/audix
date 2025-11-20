@@ -1,7 +1,7 @@
 import { PickType } from "@nestjs/swagger";
 import { ArtistEntity } from "../entities/artist.entity";
 
-export class FullArtist extends PickType(ArtistEntity, [
+export class FullArtistResponse extends PickType(ArtistEntity, [
   "id",
   "name",
   "slug",
@@ -13,4 +13,6 @@ export class FullArtist extends PickType(ArtistEntity, [
   "followersCount",
 ] as const) {}
 
-export class ArtistSlug extends PickType(ArtistEntity, ["slug"] as const) {}
+export class ArtistSlugResponse extends PickType(ArtistEntity, [
+  "slug",
+] as const) {}

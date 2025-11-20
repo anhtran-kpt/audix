@@ -1,6 +1,6 @@
 import { SearchResults } from "@/features/search/search-actions";
 import { EntityCarousel } from "@/components/shared/entity-carousel";
-import { AlbumItem } from "@/components/features/entity-item/album-item";
+import { AlbumItem } from "@/features/albums/components/album-item";
 import { Section } from "@/components/shared/section";
 
 export default function AlbumsSection({

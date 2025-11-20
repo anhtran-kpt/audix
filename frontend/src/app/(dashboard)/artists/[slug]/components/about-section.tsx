@@ -1,10 +1,13 @@
 import SectionHeading from "@/components/ui/section-heading";
 import { AppImage } from "@/components/shared/app-image";
-import { ArtistOverview } from "@/features/artist/artist-data";
 import { ArtistFollowersBadge } from "@/components/features/artist-follow-badge";
+import { FullArtist } from "@/features/artists/artists.type";
 
 type AboutSectionProps = {
-  artist: Omit<ArtistOverview, "tracks" | "imageId">;
+  artist: Pick<
+    FullArtist,
+    "bannerId" | "name" | "id" | "followersCount" | "bio"
+  >;
 };
 export const AboutSection = ({ artist }: AboutSectionProps) => {
   return (

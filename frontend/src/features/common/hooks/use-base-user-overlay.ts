@@ -1,4 +1,4 @@
-import { getApi } from "@/lib/api";
+import { getApi } from "@/lib/axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 type OverlayType = "tracks" | "artists" | "albums" | "playlists";

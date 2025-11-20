@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getApi } from "@/lib/api";
+import { getApi } from "@/lib/axios";
 import { PaginationParams } from "@/features/shared/shared-types";
 import { stableKey } from "@/utils/stable-keys";
 import { SearchResults } from "./search-actions";

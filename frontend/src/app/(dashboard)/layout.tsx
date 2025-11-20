@@ -8,32 +8,30 @@ import { NewPlaylistDialog } from "@/components/shared/new-playlist-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { MobilePlayer } from "@/components/features/players/mobile-player";
-import { getSidebarOverview } from "@/features/me/me-data";
+// import { getSidebarOverview } from "@/features/me/me-data";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
-import { getAuthenticatedUser } from "@/lib/auth";
-import { getOverlayData } from "@/features/shared/shared-actions";
-import { getQueryClient } from "@/lib/query-client";
+// import { getQueryClient } from "@/lib/query-client";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getAuthenticatedUser();
+  // const user = await getAuthenticatedUser();
 
-  const sidebarData = await getSidebarOverview({
-    userId: user.id,
-    params: { limit: 5, offset: 0 },
-  });
+  // const sidebarData = await getSidebarOverview({
+  //   userId: user.id,
+  //   params: { limit: 5, offset: 0 },
+  // });
 
-  const overlayData = await getOverlayData(user.id);
+  // const overlayData = await getOverlayData(user.id);
 
-  const qc = getQueryClient();
+  // const qc = getQueryClient();
 
-  qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
-  qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
-  qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
-  qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
+  // qc.setQueryData(["me", "overlay", "tracks"], overlayData.likedTracks);
+  // qc.setQueryData(["me", "overlay", "artists"], overlayData.followedArtists);
+  // qc.setQueryData(["me", "overlay", "albums"], overlayData.likedAlbums);
+  // qc.setQueryData(["me", "overlay", "playlists"], overlayData.likedPlaylists);
 
   return (
     <SidebarProvider
@@ -44,7 +42,7 @@ export default async function DashboardLayout({
         } as React.CSSProperties
       }
     >
-      <AppSidebar initialData={sidebarData} />
+      <AppSidebar />
       <SidebarInset
         className="h-full transition-[width]"
         style={{
@@ -57,9 +55,7 @@ export default async function DashboardLayout({
           <div className="flex flex-col flex-1 p-responsive">
             <div className="@container/main flex flex-1 flex-col gap-8">
               <PlayerOffsetSetter />
-              <HydrationBoundary state={dehydrate(qc)}>
-                {children}
-              </HydrationBoundary>
+              {children}
             </div>
           </div>
         </ScrollArea>

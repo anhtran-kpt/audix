@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { playbackEndpoints } from "./playback-endpoints";
 import { playbackKeys } from "./playback-keys";
-import { getApi } from "@/lib/api";
+import { getApi } from "@/lib/axios";
 import { HistoryTracks } from "./playback-actions";
 
 export const playbackQueryOptions = {

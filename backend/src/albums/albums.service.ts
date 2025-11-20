@@ -1,26 +1,68 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAlbumDto } from './dto/create-album.dto';
-import { UpdateAlbumDto } from './dto/update-album.dto';
+import { Injectable, BadRequestException } from "@nestjs/common";
+import { PrismaService } from "src/prisma/prisma.service";
+import { CreateAlbumDto } from "./dto/create-album.dto";
+import { SlugService } from "src/common/services/slug.service";
+import { Prisma } from "generated/prisma";
+import { isUUID } from "class-validator";
 
 @Injectable()
 export class AlbumsService {
-  create(createAlbumDto: CreateAlbumDto) {
-    return 'This action adds a new album';
+  constructor(
+    private prisma: PrismaService,
+    private slugService: SlugService
+  ) {}
+
+  async create(dto: CreateAlbumDto) {
+    const slug = await this.slugService.generateUniqueSlug(dto.title, "album");
+
+    return this.prisma.album.create({
+      data: {
+        title: dto.title,
+        slug: slug,
+        thumbnailId: dto.thumbnailId,
+        type: dto.type,
+        releaseDate: dto.releaseDate ? new Date(dto.releaseDate) : undefined,
+        artist: {
+          connect: { id: dto.artistId },
+        },
+      },
+      include: {
+        artist: true,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all albums`;
+  async findAll() {
+    return this.prisma.album.findMany({
+      orderBy: { releaseDate: "desc" },
+      include: {
+        artist: {
+          select: { id: true, name: true, avatarId: true },
+        },
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} album`;
-  }
+  async findOne(identifier: string) {
+    let where: Prisma.AlbumWhereUniqueInput;
 
-  update(id: number, updateAlbumDto: UpdateAlbumDto) {
-    return `This action updates a #${id} album`;
-  }
+    if (isUUID(identifier)) {
+      where = { id: identifier };
+    } else {
+      where = { slug: identifier };
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} album`;
+    const album = await this.prisma.album.findUnique({
+      where,
+      include: {
+        artist: true,
+        songs: {
+          orderBy: { songNumber: "asc" },
+        },
+      },
+    });
+
+    if (!album) throw new BadRequestException("Album not found");
+    return album;
   }
 }

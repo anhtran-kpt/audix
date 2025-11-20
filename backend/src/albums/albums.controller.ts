@@ -1,34 +1,51 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AlbumsService } from './albums.service';
-import { CreateAlbumDto } from './dto/create-album.dto';
-import { UpdateAlbumDto } from './dto/update-album.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+} from "@nestjs/common";
+import { AlbumsService } from "./albums.service";
+import { CreateAlbumDto } from "./dto/create-album.dto";
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from "@nestjs/swagger";
+import { AlbumEntity } from "./entities/album.entity";
+import { AlbumListResponse } from "./dto/album-response.dto";
 
-@Controller('albums')
+@ApiTags("Albums")
+@Controller("albums")
+@UseInterceptors(ClassSerializerInterceptor)
 export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
   @Post()
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumsService.create(createAlbumDto);
+  @ApiCreatedResponse({
+    description: "Created successful",
+    type: AlbumEntity,
+  })
+  async create(@Body() createAlbumDto: CreateAlbumDto) {
+    const newAlbum = await this.albumsService.create(createAlbumDto);
+    return new AlbumEntity(newAlbum);
   }
 
   @Get()
-  findAll() {
-    return this.albumsService.findAll();
+  @ApiOkResponse({
+    description: "Get album list",
+    type: [AlbumListResponse],
+  })
+  async findAll() {
+    const albums = await this.albumsService.findAll();
+    return albums.map((album) => new AlbumListResponse(album));
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.albumsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAlbumDto: UpdateAlbumDto) {
-    return this.albumsService.update(+id, updateAlbumDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.albumsService.remove(+id);
+  @Get(":identifier")
+  @ApiOkResponse({
+    description: "Get album details",
+    type: AlbumEntity,
+  })
+  async findOne(@Param("identifier") identifier: string) {
+    const album = await this.albumsService.findOne(identifier);
+    return new AlbumEntity(album);
   }
 }

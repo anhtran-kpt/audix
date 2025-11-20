@@ -8,7 +8,7 @@ export const getAllStaticArtists = async () => {
 export const getArtistBySlug = async (slug: string) => {
   return serverFetch<FullArtist>(`/artists/${slug}`, {
     next: {
-      revalidate: 60,
+      revalidate: 3600,
       tags: [`artist-${slug}`],
     },
   });

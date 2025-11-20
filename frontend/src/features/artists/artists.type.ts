@@ -5,5 +5,5 @@ import { components } from "@/types/api-schema";
 export type MiniArtist = z.infer<typeof MiniArtistSchema>;
 export type ArtistItem = z.infer<typeof ArtistItemSchema>;
 
-export type FullArtist = components["schemas"]["FullArtist"];
-export type ArtistSlug = components["schemas"]["ArtistSlug"];
+export type FullArtistResponse = components["schemas"]["FullArtistResponse"];
+export type ArtistSlugResponse = components["schemas"]["ArtistSlugResponse"];

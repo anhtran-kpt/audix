@@ -2,7 +2,7 @@ import { keepPreviousData, queryOptions } from "@tanstack/react-query";
 import { artistKeys } from "./artist-keys";
 import { artistEndpoints } from "./artist-endpoints";
 import { PaginationParams } from "@/features/shared/shared-types";
-import { getApi } from "@/lib/api";
+import { getApi } from "@/lib/axios";
 import {
   ArtistFollowersCount,
   HotArtists,

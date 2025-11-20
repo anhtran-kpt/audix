@@ -1,6 +1,6 @@
 "use client";
 
-import { AlbumItem } from "@/components/features/entity-item/album-item";
+import { AlbumItem } from "@/features/albums/components/album-item";
 import { EntityCarousel } from "@/components/shared/entity-carousel";
 import { Section } from "@/components/shared/section";
 import { PopularAlbums } from "@/features/album/album-types";

@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { meKeys } from "./me-keys";
 import { meEndpoints } from "./me-endpoints";
-import { getApi } from "@/lib/api";
+import { getApi } from "@/lib/axios";
 import { PaginationParams } from "@/features/shared/shared-types";
 import {
   LikedAlbumStatus,

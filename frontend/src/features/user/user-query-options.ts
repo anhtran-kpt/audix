@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { userKeys } from "./user-keys";
 import { userEndpoints } from "./user-endpoints";
-import { getApi } from "@/lib/api";
+import { getApi } from "@/lib/axios";
 import { PaginationParams } from "@/features/shared/shared-types";
 import {
   UserFollowedArtists,

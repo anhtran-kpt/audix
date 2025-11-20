@@ -125,6 +125,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
+        /** Login */
         post: operations["AuthController_login"];
         delete?: never;
         options?: never;
@@ -216,7 +217,7 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        ArtistSlug: {
+        ArtistSlugResponse: {
             slug: string;
         };
         CreateArtistDto: {
@@ -226,7 +227,7 @@ export interface components {
             bannerId?: string;
         };
         UpdateArtistDto: Record<string, never>;
-        FullArtist: {
+        FullArtistResponse: {
             id: string;
             name: string;
             slug: string;
@@ -242,6 +243,29 @@ export interface components {
             email: string;
             password: string;
             name: string;
+        };
+        LoginDto: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        UserEntity: {
+            id: string;
+            email: string;
+            name: string;
+            image?: string | null;
+            role: Record<string, never>;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            /** Format: date-time */
+            emailVerified: string | null;
+            passwordHash: string | null;
+        };
+        LoginResponseDto: {
+            access_token: string;
+            user: components["schemas"]["UserEntity"];
         };
         CreateAlbumDto: Record<string, never>;
         UpdateAlbumDto: Record<string, never>;
@@ -269,7 +293,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ArtistSlug"][];
+                    "application/json": components["schemas"]["ArtistSlugResponse"][];
                 };
             };
         };
@@ -355,7 +379,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["FullArtist"];
+                    "application/json": components["schemas"]["FullArtistResponse"];
                 };
             };
         };
@@ -445,8 +469,20 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginDto"];
+            };
+        };
         responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponseDto"];
+                };
+            };
             201: {
                 headers: {
                     [name: string]: unknown;
@@ -502,7 +538,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["UserEntity"];
+                };
             };
         };
     };

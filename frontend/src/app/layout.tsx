@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Lexend } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/providers/auth-provider";
-import { getServerSession } from "next-auth";
 import { authOptions } from "./api/auth/[...nextauth]/route";
 import ReactQueryProvider from "@/providers/react-query-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -25,8 +24,6 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
-
   return (
     <html
       lang="en"
@@ -38,7 +35,7 @@ export default async function RootLayout({
       </head>
       <body className="antialiased h-full">
         <ReactQueryProvider>
-          <AuthProvider session={session}>{children}</AuthProvider>
+          <AuthProvider>{children}</AuthProvider>
           <Toaster />
         </ReactQueryProvider>
       </body>
