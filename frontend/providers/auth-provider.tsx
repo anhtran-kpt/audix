@@ -11,7 +11,7 @@ export default function AuthProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const { login, logout, finishInitialLoad } = useAuthStore();
+  const { login, logout, finishInitialLoad, isAuthenticated } = useAuthStore();
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
@@ -19,8 +19,8 @@ export default function AuthProvider({
   const {
     data: profileData,
     isError,
-    isLoading,
     isSuccess,
+    isLoading,
   } = useQuery({
     queryKey: authKeys.profile(),
     queryFn: getProfile,

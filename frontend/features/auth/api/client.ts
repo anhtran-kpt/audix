@@ -18,6 +18,5 @@ export const register = async (
 };
 
 export const getProfile = async (): Promise<UserResponse> => {
-  const { data } = await apiClient.get("/auth/profile");
-  return data;
+  return apiClient.get("/auth/profile");
 };

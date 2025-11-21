@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { LoginSchemaType } from "@/features/auth/schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -36,34 +37,31 @@ export default function LoginPage() {
     },
   });
 
-  // const onSubmit = async (values: SignInInput) => {
-  //   const result = await login({
-  //     email: values.email,
-  //     password: values.password,
-  //   });
+  const onSubmit = async (data: LoginSchemaType) => {
+    login(data);
 
-  //   if (result?.error) {
-  //     if (result.error === "Invalid credentials") {
-  //       form.setError("email", {
-  //         type: "manual",
-  //         message: "Incorrect email or password.",
-  //       });
-  //       form.setError("password", {
-  //         type: "manual",
-  //         message: "Incorrect email or password.",
-  //       });
-  //     } else {
-  //       form.setError("email", {
-  //         type: "manual",
-  //         message: "Sign in failed. Please try again.",
-  //       });
-  //     }
-  //     return;
-  //   }
+    // if (result?.error) {
+    //   if (result.error === "Invalid credentials") {
+    //     form.setError("email", {
+    //       type: "manual",
+    //       message: "Incorrect email or password.",
+    //     });
+    //     form.setError("password", {
+    //       type: "manual",
+    //       message: "Incorrect email or password.",
+    //     });
+    //   } else {
+    //     form.setError("email", {
+    //       type: "manual",
+    //       message: "Sign in failed. Please try again.",
+    //     });
+    //   }
+    //   return;
+    // }
 
-  //   toast.success("Sign in sucessful!");
-  //   router.push("/");
-  // };
+    // toast.success("Sign in sucessful!");
+    // router.push("/");
+  };
 
   const { control, handleSubmit, formState } = form;
 
@@ -80,7 +78,7 @@ export default function LoginPage() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form className="space-y-5">
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <FormField
               control={control}
               name="email"

@@ -1,23 +1,27 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { register as registerApi } from "../api/client";
 import { useAuthStore } from "../stores/use-auth-store";
+import { getRedirectPath } from "../utils/auth-redirect";
 
 export const useRegister = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login: setLoginState } = useAuthStore();
 
   const mutation = useMutation({
     mutationFn: registerApi,
     onSuccess: (data) => {
       setLoginState(data.user, data.access_token);
-
       toast.success(`Welcome, ${data.user.name}!`);
 
-      router.push("/");
+      const returnUrl = searchParams.get("returnUrl");
+      const redirectPath = getRedirectPath(data.user, returnUrl);
+
+      router.replace(redirectPath);
     },
   });
 

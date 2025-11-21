@@ -1,17 +1,15 @@
 import AuthGuard from "@/features/auth/components/auth-guard";
 import { UserRole } from "@/features/common/constants/enum";
 
-export default function AdminLayout({
+export default function UserLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <AuthGuard allowedRoles={[UserRole.ADMIN]}>
-      <div className="admin-wrapper">
-        <aside>Admin Sidebar</aside>
-        <main>{children}</main>
-      </div>
+    <AuthGuard allowedRoles={[UserRole.USER]}>
+      <aside>User Sidebar</aside>
+      <main>{children}</main>
     </AuthGuard>
   );
 }

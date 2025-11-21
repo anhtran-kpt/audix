@@ -1,4 +1,3 @@
-// src/features/auth/stores/use-auth-store.ts
 import { User } from "@/features/common/types/entity.type";
 import { create } from "zustand";
 

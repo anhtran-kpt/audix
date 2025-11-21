@@ -1,9 +1,9 @@
-// src/features/auth/components/GuestGuard.tsx
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/features/auth/stores/use-auth-store";
+import { getRedirectPath } from "../utils/auth-redirect";
 
 export default function GuestGuard({
   children,
@@ -11,13 +11,19 @@ export default function GuestGuard({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const { isAuthenticated, isChecking } = useAuthStore();
+  const searchParams = useSearchParams();
+  const { isAuthenticated, isChecking, user } = useAuthStore();
 
   useEffect(() => {
-    if (!isChecking && isAuthenticated) {
-      router.replace("/");
+    if (isChecking) return;
+
+    if (isAuthenticated && user) {
+      const returnUrl = searchParams.get("returnUrl");
+      const redirectPath = getRedirectPath(user, returnUrl);
+
+      router.replace(redirectPath);
     }
-  }, [isAuthenticated, isChecking, router]);
+  }, [isAuthenticated, isChecking, router, user, searchParams]);
 
   if (isChecking) {
     return (
@@ -27,13 +33,7 @@ export default function GuestGuard({
     );
   }
 
-  if (isAuthenticated) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center bg-background">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-      </div>
-    );
-  }
+  if (isAuthenticated) return null;
 
   return <>{children}</>;
 }

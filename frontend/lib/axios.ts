@@ -44,7 +44,7 @@ apiClient.interceptors.response.use(
     if (status === 401) {
       if (typeof window !== "undefined") {
         localStorage.removeItem("accessToken");
-        window.location.href = "/auth/login";
+        window.location.href = "/login";
       }
     }
 
