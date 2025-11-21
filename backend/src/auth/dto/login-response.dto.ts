@@ -1,12 +1,16 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { UserEntity } from "src/users/entities/user.entity";
+import { Type } from "class-transformer";
+import { UserResponseDto } from "./user-response.dto";
 
 export class LoginResponseDto {
   @ApiProperty()
   access_token: string;
 
-  @ApiProperty({
-    type: UserEntity,
-  })
-  user: UserEntity;
+  @ApiProperty({ type: UserResponseDto })
+  @Type(() => UserResponseDto)
+  user: UserResponseDto;
+
+  constructor(partial: Partial<LoginResponseDto>) {
+    Object.assign(this, partial);
+  }
 }

@@ -5,11 +5,11 @@ import {
 } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcrypt";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { RegisterDto } from "./dto/register.dto";
 import { PrismaService } from "src/prisma/prisma.service";
 import { Profile } from "passport-google-oauth20";
-import { AuthUserPayload } from "./types/auth-user.payload";
 import { UserRole } from "./enums/role.enum";
+import { AuthUserPayload } from "./types/auth-user-payload.type";
 
 @Injectable()
 export class AuthService {
@@ -18,7 +18,7 @@ export class AuthService {
     private readonly jwtService: JwtService
   ) {}
 
-  async register(dto: CreateUserDto) {
+  async register(dto: RegisterDto) {
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });

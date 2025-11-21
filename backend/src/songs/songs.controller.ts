@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { SongsService } from './songs.service';
-import { CreateSongDto } from './dto/create-song.dto';
-import { UpdateSongDto } from './dto/update-song.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+} from "@nestjs/common";
+import { SongsService } from "./songs.service";
+import { CreateSongDto } from "./dto/create-song.dto";
+import { UpdateSongDto } from "./dto/update-song.dto";
 
-@Controller('songs')
+@Controller("songs")
+@UseInterceptors(ClassSerializerInterceptor)
 export class SongsController {
   constructor(private readonly songsService: SongsService) {}
 
@@ -17,18 +28,18 @@ export class SongsController {
     return this.songsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.songsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSongDto: UpdateSongDto) {
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateSongDto: UpdateSongDto) {
     return this.songsService.update(+id, updateSongDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.songsService.remove(+id);
   }
 }

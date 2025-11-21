@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   ParseUUIDPipe,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from "@nestjs/common";
 import { GenresService } from "./genres.service";
 import { CreateGenreDto } from "./dto/create-genre.dto";
@@ -20,6 +22,7 @@ import { RolesGuard } from "src/auth/guards/roles.guard";
 import { ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
 
 @Controller("genres")
+@UseInterceptors(ClassSerializerInterceptor)
 export class GenresController {
   constructor(private readonly genresService: GenresService) {}
 

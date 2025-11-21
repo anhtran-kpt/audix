@@ -11,6 +11,7 @@ import {
   Patch,
   UseInterceptors,
   UploadedFile,
+  ClassSerializerInterceptor,
 } from "@nestjs/common";
 import { ArtistsService } from "./artists.service";
 import { PaginationDto } from "src/common/dto/pagination.dto";
@@ -29,6 +30,7 @@ import { ArtistDetailResponse } from "./dto/artist-detail-response.dto";
 import { ArtistEntity } from "./entities/artist.entity";
 
 @Controller("artists")
+@UseInterceptors(ClassSerializerInterceptor)
 export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) {}
 

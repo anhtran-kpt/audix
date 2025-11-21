@@ -3,7 +3,7 @@ import { PassportStrategy } from "@nestjs/passport";
 import { Strategy } from "passport-local";
 import * as bcrypt from "bcrypt";
 import { PrismaService } from "src/prisma/prisma.service";
-import { AuthUserPayload } from "../types/auth-user.payload";
+import { AuthUserPayload } from "../types/auth-user-payload.type";
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

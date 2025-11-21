@@ -11,9 +11,8 @@ import {
 import { AuthGuard } from "@nestjs/passport";
 import { AuthService } from "./auth.service";
 import { AuthUser } from "src/common/decorators/auth-user.decorator";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { RegisterDto } from "./dto/register.dto";
 import { JwtAuthGuard } from "./guards/jwt-auth.guard";
-import { AuthUserPayload } from "./types/auth-user.payload";
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -21,16 +20,20 @@ import {
 } from "@nestjs/swagger";
 import { LoginResponseDto } from "./dto/login-response.dto";
 import { LoginDto } from "./dto/login.dto";
-import { UserEntity } from "src/users/entities/user.entity";
+import { AuthUserPayload } from "./types/auth-user-payload.type";
+import { UserResponseDto } from "./dto/user-response.dto";
+import { RegisterResponseDto } from "./dto/register-response.dto";
 
 @Controller("auth")
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("register")
-  @ApiCreatedResponse({ type: LoginResponseDto })
-  register(@Body() createUserDto: CreateUserDto) {
-    return this.authService.register(createUserDto);
+  @ApiCreatedResponse({ type: RegisterResponseDto })
+  async register(@Body() registerDto: RegisterDto) {
+    const result = await this.authService.register(registerDto);
+    return new RegisterResponseDto(result);
   }
 
   @Post("login")
@@ -38,7 +41,7 @@ export class AuthController {
   @ApiOperation({ summary: "Login" })
   @ApiOkResponse({ type: LoginResponseDto })
   login(@AuthUser() user: AuthUserPayload, @Body() _loginDto: LoginDto) {
-    return this.authService.login(user);
+    return new LoginResponseDto(this.authService.login(user));
   }
 
   @Get("google")
@@ -48,14 +51,13 @@ export class AuthController {
   @Get("google/callback")
   @UseGuards(AuthGuard("google"))
   googleAuthRedirect(@AuthUser() user: AuthUserPayload) {
-    return this.authService.login(user);
+    return new LoginResponseDto(this.authService.login(user));
   }
 
   @Get("profile")
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(ClassSerializerInterceptor)
-  @ApiOkResponse({ type: UserEntity })
+  @ApiOkResponse({ type: UserResponseDto })
   getProfile(@AuthUser() user: AuthUserPayload) {
-    return new UserEntity(user);
+    return new UserResponseDto(user);
   }
 }

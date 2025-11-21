@@ -12,19 +12,19 @@ export class ArtistEntity implements PrismaArtist {
   @ApiProperty()
   slug: string;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty()
   avatarId: string | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty()
   bannerId: string | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty()
   avatarColor: string | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty()
   bannerColor: string | null;
 
-  @ApiProperty({ nullable: true })
+  @ApiProperty()
   bio: string | null;
 
   @ApiProperty()
