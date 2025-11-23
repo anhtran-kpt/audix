@@ -1,5 +1,6 @@
 import { components } from "../common/types/api-schema";
 
-// export type ArtistDetailResponse =
-//   components["schemas"]["ArtistDetailResponseDto"];
-// export type ArtistDetailDto = components["schemas"]["ArtistDetailDto"];
+export type CreateArtistDto = components["schemas"]["CreateArtistDto"];
+export type UpdateArtistDto = components["schemas"]["UpdateArtistDto"];
+export type ArtistProfileResponse =
+  components["schemas"]["ArtistProfileResponse"];

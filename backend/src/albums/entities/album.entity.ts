@@ -80,5 +80,9 @@ export class AlbumEntity implements Album {
 
   constructor(partial: Partial<AlbumEntity>) {
     Object.assign(this, partial);
+
+    if (partial.artist) {
+      this.artist = new ArtistEntity(partial.artist);
+    }
   }
 }

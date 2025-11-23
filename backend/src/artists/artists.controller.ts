@@ -10,24 +10,24 @@ import {
   Body,
   Patch,
   UseInterceptors,
-  UploadedFile,
   ClassSerializerInterceptor,
 } from "@nestjs/common";
 import { ArtistsService } from "./artists.service";
-import { PaginationDto } from "src/common/dto/pagination.dto";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { AuthUser } from "src/common/decorators/auth-user.decorator";
 import { User } from "generated/prisma";
 import { CreateArtistDto } from "./dto/create-artist.dto";
 import { UpdateArtistDto } from "./dto/update-artist.dto";
-import { FileInterceptor } from "@nestjs/platform-express";
 import { Roles } from "src/auth/roles.decorator";
 import { UserRole } from "src/auth/enums/role.enum";
 import { ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
 import { ArtistSlugResponse } from "./dto/artist-slug-response.dto";
 import { RolesGuard } from "src/auth/guards/roles.guard";
-import { ArtistDetailResponse } from "./dto/artist-detail-response.dto";
+import { ArtistProfileResponse } from "./dto/artist-profile-response.dto";
 import { ArtistEntity } from "./entities/artist.entity";
+import { ApiPaginatedResponse } from "src/common/dtos/pagination/api-paginated-response.decorator";
+import { PageOptionsDto } from "src/common/dtos/pagination/page-options.dto";
+import { PageDto } from "src/common/dtos/pagination/page.dto";
 
 @Controller("artists")
 @UseInterceptors(ClassSerializerInterceptor)
@@ -45,8 +45,11 @@ export class ArtistsController {
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.artistsService.findAll(paginationDto);
+  @ApiPaginatedResponse(ArtistEntity)
+  async findAll(
+    @Query() pageOptionsDto: PageOptionsDto
+  ): Promise<PageDto<ArtistEntity>> {
+    return this.artistsService.findAll(pageOptionsDto);
   }
 
   @Post()
@@ -76,14 +79,26 @@ export class ArtistsController {
     return new ArtistEntity(updatedArtist);
   }
 
-  @Get(":identifier")
+  @Get(":id")
   @ApiOkResponse({
-    type: ArtistDetailResponse,
-    description: "Get artist by identifier",
+    type: ArtistEntity,
+    description: "Get basic artist info by id",
   })
-  async findOne(@Param("identifier") identifier: string) {
-    const artist = await this.artistsService.findOne(identifier);
-    return new ArtistDetailResponse(artist);
+  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async findOne(@Param("id") id: string) {
+    const artist = await this.artistsService.findOne(id);
+    return new ArtistEntity(artist);
+  }
+
+  @Get("profile/:identifier")
+  @ApiOkResponse({
+    type: ArtistProfileResponse,
+    description: "Get artist profile by id or slug",
+  })
+  async findProfile(@Param("identifier") identifier: string) {
+    const artist = await this.artistsService.findProfile(identifier);
+    return new ArtistProfileResponse(artist);
   }
 
   @Post(":id/follow")
@@ -99,27 +114,5 @@ export class ArtistsController {
     @AuthUser() user: User
   ) {
     return this.artistsService.unfollow(artistId, user.id);
-  }
-
-  @Patch(":id/avatar")
-  @Roles(UserRole.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @UseInterceptors(FileInterceptor("avatar"))
-  updateAvatar(
-    @Param("id") artistId: string,
-    @UploadedFile() file: Express.Multer.File
-  ) {
-    return this.artistsService.updateAvatar(artistId, file);
-  }
-
-  @Patch(":id/banner")
-  @Roles(UserRole.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @UseInterceptors(FileInterceptor("banner"))
-  updateBanner(
-    @Param("id") artistId: string,
-    @UploadedFile() file: Express.Multer.File
-  ) {
-    return this.artistsService.updateBanner(artistId, file);
   }
 }

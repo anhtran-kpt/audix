@@ -12,6 +12,7 @@ import {
   ColumnFiltersState,
   PaginationState,
   OnChangeFn,
+  RowSelectionState,
 } from "@tanstack/react-table";
 import {
   Table,
@@ -32,6 +33,8 @@ interface DataTableProps<TData, TValue> {
   pagination: PaginationState;
   onPaginationChange: OnChangeFn<PaginationState>;
   searchKey?: string;
+  rowSelection: RowSelectionState;
+  onRowSelectionChange: OnChangeFn<RowSelectionState>;
 }
 
 export function DataTable<TData, TValue>({
@@ -40,6 +43,8 @@ export function DataTable<TData, TValue>({
   pageCount,
   pagination,
   onPaginationChange,
+  rowSelection,
+  onRowSelectionChange,
   searchKey = "name",
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -57,10 +62,14 @@ export function DataTable<TData, TValue>({
       pagination,
       sorting,
       columnFilters,
+      rowSelection,
     },
     onPaginationChange: onPaginationChange,
     getCoreRowModel: getCoreRowModel(),
     manualPagination: true,
+    enableRowSelection: true,
+    onRowSelectionChange,
+    getRowId: (row: any) => row.id,
   });
 
   return (

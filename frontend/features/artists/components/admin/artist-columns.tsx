@@ -13,8 +13,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { format } from "date-fns";
 import { Artist } from "@/features/common/types/entity.type";
+import { getSelectColumn } from "@/components/ui/data-table/select-column";
 
 export const columns: ColumnDef<Artist>[] = [
+  getSelectColumn<Artist>(),
   {
     accessorKey: "name",
     header: "Name",
@@ -23,7 +25,7 @@ export const columns: ColumnDef<Artist>[] = [
       return (
         <div className="flex items-center gap-3">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={artist.avatarId || ""} />
+            <AvatarImage src={artist.avatarUrl || ""} />
             <AvatarFallback>{artist.name[0]}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
@@ -42,11 +44,15 @@ export const columns: ColumnDef<Artist>[] = [
     ),
   },
   {
+    accessorKey: "songs",
+    header: "Songs Count",
+    cell: ({ row }) => <span>{row.original.songs?.length ?? 0}</span>,
+  },
+  {
     accessorKey: "createdAt",
     header: "Created At",
     cell: ({ row }) => format(new Date(row.original.createdAt), "dd/MM/yyyy"),
   },
-  // ACTION COLUMN (Nút 3 chấm)
   {
     id: "actions",
     cell: ({ row }) => {

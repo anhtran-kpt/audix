@@ -43,7 +43,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["ArtistsController_findOne"];
         put?: never;
         post?: never;
         delete?: never;
@@ -52,14 +52,14 @@ export interface paths {
         patch: operations["ArtistsController_update"];
         trace?: never;
     };
-    "/artists/{identifier}": {
+    "/artists/profile/{identifier}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["ArtistsController_findOne"];
+        get: operations["ArtistsController_findProfile"];
         put?: never;
         post?: never;
         delete?: never;
@@ -84,7 +84,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/artists/{id}/avatar": {
+    "/media/upload/image": {
         parameters: {
             query?: never;
             header?: never;
@@ -93,27 +93,11 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post?: never;
+        post: operations["MediaController_uploadImage"];
         delete?: never;
         options?: never;
         head?: never;
-        patch: operations["ArtistsController_updateAvatar"];
-        trace?: never;
-    };
-    "/artists/{id}/banner": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: operations["ArtistsController_updateBanner"];
+        patch?: never;
         trace?: never;
     };
     "/users/{email}": {
@@ -284,11 +268,17 @@ export interface components {
         ArtistSlugResponse: {
             slug: string;
         };
-        CreateArtistDto: {
-            name: string;
-            bio?: string;
-            imageId?: string;
-            bannerId?: string;
+        PageMetaDto: {
+            page: number;
+            take: number;
+            itemCount: number;
+            pageCount: number;
+            hasPreviousPage: boolean;
+            hasNextPage: boolean;
+        };
+        PageDto: {
+            data: unknown[][];
+            meta: components["schemas"]["PageMetaDto"];
         };
         SongEntity: {
             id: string;
@@ -320,8 +310,25 @@ export interface components {
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
+            avatarUrl: string | null;
+            bannerUrl: string | null;
         };
-        UpdateArtistDto: Record<string, never>;
+        CreateArtistDto: {
+            name: string;
+            bio: string | null;
+            avatarId: string | null;
+            avatarColor: string | null;
+            bannerId: string | null;
+            bannerColor: string | null;
+        };
+        UpdateArtistDto: {
+            name?: string;
+            bio?: string | null;
+            avatarId?: string | null;
+            avatarColor?: string | null;
+            bannerId?: string | null;
+            bannerColor?: string | null;
+        };
         InfoDto: {
             id: string;
             name: string;
@@ -360,10 +367,14 @@ export interface components {
             albums: components["schemas"]["DiscographyAlbumDto"][];
             singlesAndEps: components["schemas"]["DiscographyAlbumDto"][];
         };
-        ArtistDetailResponse: {
+        ArtistProfileResponse: {
             info: components["schemas"]["InfoDto"];
             popularSongs: components["schemas"]["PopularSongDto"][];
             discography: components["schemas"]["DiscographyDto"];
+        };
+        UploadImageResponse: {
+            publicId: string;
+            dominantColor: string | null;
         };
         /** @enum {string} */
         UserRole: "USER" | "ADMIN";
@@ -537,9 +548,10 @@ export interface operations {
     };
     ArtistsController_findAll: {
         parameters: {
-            query: {
-                page: number;
-                limit: number;
+            query?: {
+                order?: "asc" | "desc";
+                page?: number;
+                take?: number;
             };
             header?: never;
             path?: never;
@@ -547,11 +559,16 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Successfully received model list */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["PageDto"] & {
+                        data?: components["schemas"]["ArtistEntity"][];
+                    };
+                };
             };
         };
     };
@@ -575,6 +592,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ArtistEntity"][];
+                };
+            };
+        };
+    };
+    ArtistsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Get basic artist info by id */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtistEntity"];
                 };
             };
         };
@@ -605,7 +644,7 @@ export interface operations {
             };
         };
     };
-    ArtistsController_findOne: {
+    ArtistsController_findProfile: {
         parameters: {
             query?: never;
             header?: never;
@@ -616,13 +655,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Get artist by identifier */
+            /** @description Get artist profile by id or slug */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ArtistDetailResponse"];
+                    "application/json": components["schemas"]["ArtistProfileResponse"];
                 };
             };
         };
@@ -665,41 +704,24 @@ export interface operations {
             };
         };
     };
-    ArtistsController_updateAvatar: {
+    MediaController_uploadImage: {
         parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
+            query: {
+                folder: string;
             };
+            header?: never;
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            200: {
+            201: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
-            };
-        };
-    };
-    ArtistsController_updateBanner: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
+                content: {
+                    "application/json": components["schemas"]["UploadImageResponse"];
                 };
-                content?: never;
             };
         };
     };

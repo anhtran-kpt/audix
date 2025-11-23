@@ -18,7 +18,7 @@ import { GoogleStrategy } from "./strategies/google.strategy";
         secret: configService.get<string>("JWT_SECRET_KEY"),
 
         signOptions: {
-          expiresIn: "1h",
+          expiresIn: "1d",
         },
       }),
       inject: [ConfigService],

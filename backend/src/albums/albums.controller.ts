@@ -6,6 +6,7 @@ import {
   Param,
   ClassSerializerInterceptor,
   UseInterceptors,
+  UseGuards,
 } from "@nestjs/common";
 import { AlbumsService } from "./albums.service";
 import { CreateAlbumDto } from "./dto/create-album.dto";
@@ -14,6 +15,10 @@ import { AlbumEntity } from "./entities/album.entity";
 import { AlbumDetailResponse } from "./dto/album-detail-response.dto";
 import { AlbumSlug } from "./dto/album-slug.dto";
 import { AlbumItemResponse } from "./dto/album-item-response.dto";
+import { Roles } from "src/auth/roles.decorator";
+import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
+import { RolesGuard } from "src/auth/guards/roles.guard";
+import { UserRole } from "src/auth/enums/role.enum";
 
 @ApiTags("Albums")
 @Controller("albums")
@@ -22,13 +27,15 @@ export class AlbumsController {
   constructor(private readonly albumsService: AlbumsService) {}
 
   @Post()
+  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiCreatedResponse({
     description: "Created successful",
     type: AlbumEntity,
   })
   async create(@Body() createAlbumDto: CreateAlbumDto) {
     const newAlbum = await this.albumsService.create(createAlbumDto);
-    return new AlbumEntity(newAlbum);
+    return new AlbumEntity(newAlbum as any);
   }
 
   @Get()

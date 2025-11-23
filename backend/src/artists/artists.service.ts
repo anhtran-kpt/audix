@@ -5,19 +5,22 @@ import {
 } from "@nestjs/common";
 import { isUUID } from "class-validator";
 import { Artist, Prisma } from "generated/prisma";
-import { PaginationDto } from "src/common/dto/pagination.dto";
 import { SlugService } from "src/common/services/slug.service";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateArtistDto } from "./dto/create-artist.dto";
 import { UpdateArtistDto } from "./dto/update-artist.dto";
-import { CloudinaryService } from "src/cloudinary/cloudinary.service";
+import { PageOptionsDto } from "src/common/dtos/pagination/page-options.dto";
+import { PageDto } from "src/common/dtos/pagination/page.dto";
+import { ArtistEntity } from "./entities/artist.entity";
+import { PageMetaDto } from "src/common/dtos/pagination/page-meta.dto";
+import { MediaService } from "src/media/media.service";
 
 @Injectable()
 export class ArtistsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly slugService: SlugService,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly mediaService: MediaService
   ) {}
 
   async findAllStatic(): Promise<Pick<Artist, "slug">[]> {
@@ -28,33 +31,58 @@ export class ArtistsService {
     });
   }
 
-  async findAll(paginationDto: PaginationDto) {
-    const { page, limit } = paginationDto;
+  async findAll(
+    pageOptionsDto: PageOptionsDto
+  ): Promise<PageDto<ArtistEntity>> {
+    const where: Prisma.ArtistWhereInput = {};
 
-    const skip = (page - 1) * limit;
-
-    const [artists, totalArtists] = await Promise.all([
+    const [entities, itemCount] = await this.prisma.$transaction([
       this.prisma.artist.findMany({
-        take: limit,
-        skip: skip,
+        where,
+        skip: pageOptionsDto.skip,
+        take: pageOptionsDto.take,
+        orderBy: {
+          createdAt: pageOptionsDto.order,
+        },
       }),
-      this.prisma.artist.count(),
+
+      this.prisma.artist.count({ where }),
     ]);
 
-    const totalPages = Math.ceil(totalArtists / limit);
+    const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
-    return {
-      data: artists,
-      meta: {
-        total: totalArtists,
-        page: page,
-        limit: limit,
-        totalPages: totalPages,
-      },
-    };
+    return new PageDto(
+      entities.map((e) => new ArtistEntity(e)),
+      pageMetaDto
+    );
   }
 
-  async findOne(identifier: string) {
+  async findOne(id: string) {
+    const artist = await this.prisma.artist.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        id: true,
+        slug: true,
+        name: true,
+        avatarId: true,
+        bannerId: true,
+        avatarColor: true,
+        bannerColor: true,
+        bio: true,
+        followersCount: true,
+      },
+    });
+
+    if (!artist) {
+      throw new NotFoundException("Artist not found");
+    }
+
+    return artist;
+  }
+
+  async findProfile(identifier: string) {
     let where: Prisma.ArtistWhereUniqueInput;
 
     if (isUUID(identifier)) {
@@ -169,24 +197,24 @@ export class ArtistsService {
     });
   }
 
-  async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
-    let newSlug: string | undefined = undefined;
+  // async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
+  //   let newSlug: string | undefined = undefined;
 
-    if (updateArtistDto.name) {
-      newSlug = await this.slugService.generateUniqueSlug(
-        updateArtistDto.name,
-        "artist"
-      );
-    }
+  //   if (updateArtistDto.name) {
+  //     newSlug = await this.slugService.generateUniqueSlug(
+  //       updateArtistDto.name,
+  //       "artist"
+  //     );
+  //   }
 
-    return await this.prisma.artist.update({
-      where: { id },
-      data: {
-        ...updateArtistDto,
-        slug: newSlug,
-      },
-    });
-  }
+  //   return await this.prisma.artist.update({
+  //     where: { id },
+  //     data: {
+  //       ...updateArtistDto,
+  //       slug: newSlug,
+  //     },
+  //   });
+  // }
 
   async follow(artistId: string, userId: string) {
     const artist = await this.prisma.artist.findUnique({
@@ -250,79 +278,54 @@ export class ArtistsService {
     return deletedRecord;
   }
 
-  async updateAvatar(artistId: string, file: Express.Multer.File) {
-    const artist = await this.prisma.artist.findUnique({
-      where: { id: artistId },
-      select: { avatarId: true },
-    });
+  async update(id: string, dto: UpdateArtistDto) {
+    let newSlug: string | undefined = undefined;
 
-    if (!artist) {
-      throw new NotFoundException("Artist not found");
+    if (dto.name) {
+      newSlug = await this.slugService.generateUniqueSlug(dto.name, "artist");
     }
 
-    const oldAvatarId = artist.avatarId;
+    const oldArtist = await this.prisma.artist.findUnique({
+      where: { id },
+      select: { avatarId: true, bannerId: true },
+    });
 
-    const uploadResult = await this.cloudinaryService.uploadImage(
-      file,
-      "artist_avatars"
-    );
-    const newPublicId = uploadResult.public_id;
-    const dominantColor = uploadResult.colors?.[0]?.[0] || null;
+    if (!oldArtist) throw new NotFoundException("Artist not found");
 
     const updatedArtist = await this.prisma.artist.update({
-      where: { id: artistId },
-      data: {
-        avatarId: newPublicId,
-        avatarColor: dominantColor,
-      },
+      where: { id },
+      data: { ...dto, slug: newSlug },
     });
 
-    if (oldAvatarId) {
-      try {
-        await this.cloudinaryService.deleteImage(oldAvatarId);
-      } catch (error) {
-        console.error(`Failed to delete old avatar ${oldAvatarId}:`, error);
-      }
-    }
+    void this.handleCleanupImages(oldArtist, dto);
 
     return updatedArtist;
   }
 
-  async updateBanner(artistId: string, file: Express.Multer.File) {
-    const artist = await this.prisma.artist.findUnique({
-      where: { id: artistId },
-      select: { bannerId: true },
-    });
-
-    if (!artist) {
-      throw new NotFoundException("Artist not found");
+  private async handleCleanupImages(
+    oldArtist: { avatarId: string | null; bannerId: string | null },
+    newDto: UpdateArtistDto
+  ) {
+    if (
+      newDto.avatarId &&
+      oldArtist.avatarId &&
+      newDto.avatarId !== oldArtist.avatarId
+    ) {
+      console.log(`Deleting old avatar: ${oldArtist.avatarId}`);
+      await this.mediaService
+        .deleteImage(oldArtist.avatarId)
+        .catch((err) => console.error(err));
     }
 
-    const oldBannerId = artist.bannerId;
-
-    const uploadResult = await this.cloudinaryService.uploadImage(
-      file,
-      "artist_banners"
-    );
-    const newPublicId = uploadResult.public_id;
-    const dominantColor = uploadResult.colors?.[0]?.[0] || null;
-
-    const updatedArtist = await this.prisma.artist.update({
-      where: { id: artistId },
-      data: {
-        bannerId: newPublicId,
-        avatarColor: dominantColor,
-      },
-    });
-
-    if (oldBannerId) {
-      try {
-        await this.cloudinaryService.deleteImage(oldBannerId);
-      } catch (error) {
-        console.error(`Failed to delete old avatar ${oldBannerId}:`, error);
-      }
+    if (
+      newDto.bannerId &&
+      oldArtist.bannerId &&
+      newDto.bannerId !== oldArtist.bannerId
+    ) {
+      console.log(`Deleting old banner: ${oldArtist.bannerId}`);
+      await this.mediaService
+        .deleteImage(oldArtist.bannerId)
+        .catch((err) => console.error(err));
     }
-
-    return updatedArtist;
   }
 }
