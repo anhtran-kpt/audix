@@ -3,7 +3,7 @@
 import { Loader2, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table/data-table";
+import { DataTable } from "@/components/data-table/data-table";
 import { columns } from "@/features/artists/components/admin/artist-columns";
 import { getArtists } from "@/features/artists/api/client";
 import { useServerTable } from "@/hooks/use-server-table";

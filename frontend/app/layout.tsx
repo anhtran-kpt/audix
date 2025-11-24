@@ -4,6 +4,7 @@ import "./globals.css";
 import QueryProvider from "@/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import AuthProvider from "@/providers/auth-provider";
+import { ConfirmModal } from "@/components/modals/confirm-modal";
 
 const lexendSans = Lexend({
   subsets: ["vietnamese"],
@@ -30,6 +31,7 @@ export default function RootLayout({
           <AuthProvider>
             {children}
             <Toaster position="bottom-right" />
+            <ConfirmModal />
           </AuthProvider>
         </QueryProvider>
       </body>

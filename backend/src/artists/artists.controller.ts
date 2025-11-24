@@ -79,6 +79,18 @@ export class ArtistsController {
     return new ArtistEntity(updatedArtist);
   }
 
+  @Delete(":id")
+  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOkResponse({
+    type: [ArtistEntity],
+    description: "Removed successful",
+  })
+  async remove(@Param("id") id: string) {
+    const updatedArtist = await this.artistsService.remove(id);
+    return new ArtistEntity(updatedArtist);
+  }
+
   @Get(":id")
   @ApiOkResponse({
     type: ArtistEntity,

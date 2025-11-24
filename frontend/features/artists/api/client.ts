@@ -33,3 +33,7 @@ export const createArtist = async (data: CreateArtistDto) => {
 export const updateArtist = async (id: string, data: UpdateArtistDto) => {
   return apiClient.patch(`/artists/${id}`, data);
 };
+
+export const deleteArtist = async (id: string) => {
+  return apiClient.delete(`/artists/${id}`);
+};

@@ -197,25 +197,6 @@ export class ArtistsService {
     });
   }
 
-  // async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
-  //   let newSlug: string | undefined = undefined;
-
-  //   if (updateArtistDto.name) {
-  //     newSlug = await this.slugService.generateUniqueSlug(
-  //       updateArtistDto.name,
-  //       "artist"
-  //     );
-  //   }
-
-  //   return await this.prisma.artist.update({
-  //     where: { id },
-  //     data: {
-  //       ...updateArtistDto,
-  //       slug: newSlug,
-  //     },
-  //   });
-  // }
-
   async follow(artistId: string, userId: string) {
     const artist = await this.prisma.artist.findUnique({
       where: { id: artistId },
@@ -302,6 +283,40 @@ export class ArtistsService {
     return updatedArtist;
   }
 
+  async remove(id: string) {
+    const existingArtist = await this.prisma.artist.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        avatarId: true,
+        bannerId: true,
+      },
+    });
+
+    if (!existingArtist) {
+      throw new NotFoundException(`Artist with ID ${id} not found`);
+    }
+
+    const deletedRecord = await this.prisma.artist.delete({
+      where: { id },
+    });
+
+    if (existingArtist.avatarId) {
+      this.mediaService
+        .deleteImage(existingArtist.avatarId)
+        .catch((err) => console.error(err));
+    }
+
+    if (existingArtist.bannerId) {
+      this.mediaService
+        .deleteImage(existingArtist.bannerId)
+        .catch((err) => console.error(err));
+    }
+
+    return deletedRecord;
+  }
+
   private async handleCleanupImages(
     oldArtist: { avatarId: string | null; bannerId: string | null },
     newDto: UpdateArtistDto
@@ -311,7 +326,6 @@ export class ArtistsService {
       oldArtist.avatarId &&
       newDto.avatarId !== oldArtist.avatarId
     ) {
-      console.log(`Deleting old avatar: ${oldArtist.avatarId}`);
       await this.mediaService
         .deleteImage(oldArtist.avatarId)
         .catch((err) => console.error(err));
@@ -322,7 +336,6 @@ export class ArtistsService {
       oldArtist.bannerId &&
       newDto.bannerId !== oldArtist.bannerId
     ) {
-      console.log(`Deleting old banner: ${oldArtist.bannerId}`);
       await this.mediaService
         .deleteImage(oldArtist.bannerId)
         .catch((err) => console.error(err));

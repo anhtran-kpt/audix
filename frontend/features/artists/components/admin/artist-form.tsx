@@ -215,7 +215,7 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
                         label="Avatar (Square)"
                         value={value}
                         onChange={onChange}
-                        className="aspect-square w-full"
+                        className="aspect-square rounded-full w-full"
                         {...fieldProps}
                       />
                     </FormControl>

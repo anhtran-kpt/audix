@@ -44,13 +44,13 @@ export class ArtistEntity implements PrismaArtist {
   @Expose()
   @ApiProperty({ type: String, nullable: true })
   get avatarUrl(): string | null {
-    return CloudinaryUtil.getFullUrl(this.avatarId);
+    return CloudinaryUtil.getAvatarUrl(this.avatarId);
   }
 
   @Expose()
   @ApiProperty({ type: String, nullable: true })
   get bannerUrl(): string | null {
-    return CloudinaryUtil.getFullUrl(this.bannerId);
+    return CloudinaryUtil.getBannerUrl(this.bannerId);
   }
 
   constructor(partial: Partial<ArtistEntity>) {
