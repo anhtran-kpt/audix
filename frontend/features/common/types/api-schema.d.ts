@@ -46,7 +46,7 @@ export interface paths {
         get: operations["ArtistsController_findOne"];
         put?: never;
         post?: never;
-        delete?: never;
+        delete: operations["ArtistsController_remove"];
         options?: never;
         head?: never;
         patch: operations["ArtistsController_update"];
@@ -468,6 +468,10 @@ export interface components {
             id: string;
             name: string;
             slug: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
             songList: components["schemas"]["SongEntity"][];
             albumList: components["schemas"]["AlbumEntity"][];
             artistList: components["schemas"]["ArtistEntity"][];
@@ -614,6 +618,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ArtistEntity"];
+                };
+            };
+        };
+    };
+    ArtistsController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Removed successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtistEntity"][];
                 };
             };
         };
@@ -923,19 +949,26 @@ export interface operations {
     };
     GenresController_findAll: {
         parameters: {
-            query?: never;
+            query?: {
+                order?: "asc" | "desc";
+                page?: number;
+                take?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
+            /** @description Successfully received model list */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": string;
+                    "application/json": components["schemas"]["PageDto"] & {
+                        data?: components["schemas"]["GenreEntity"][];
+                    };
                 };
             };
         };
@@ -975,12 +1008,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description Get basic genre info by id */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": string;
+                    "application/json": components["schemas"]["GenreEntity"];
                 };
             };
         };

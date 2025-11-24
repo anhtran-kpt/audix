@@ -153,6 +153,9 @@ model Genre {
   name String @unique
   slug String @unique
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   songs   SongGenre[]
   albums  AlbumGenre[]
   artists ArtistGenre[]

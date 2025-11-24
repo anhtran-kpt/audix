@@ -10,6 +10,7 @@ import {
   ParseUUIDPipe,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Query,
 } from "@nestjs/common";
 import { GenresService } from "./genres.service";
 import { CreateGenreDto } from "./dto/create-genre.dto";
@@ -20,6 +21,9 @@ import { Roles } from "src/auth/roles.decorator";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { RolesGuard } from "src/auth/guards/roles.guard";
 import { ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
+import { PageOptionsDto } from "src/common/dtos/pagination/page-options.dto";
+import { ApiPaginatedResponse } from "src/common/dtos/pagination/api-paginated-response.decorator";
+import { PageDto } from "src/common/dtos/pagination/page.dto";
 
 @Controller("genres")
 @UseInterceptors(ClassSerializerInterceptor)
@@ -39,13 +43,23 @@ export class GenresController {
   }
 
   @Get()
-  findAll() {
-    return this.genresService.findAll();
+  @ApiPaginatedResponse(GenreEntity)
+  async findAll(
+    @Query() pageOptionsDto: PageOptionsDto
+  ): Promise<PageDto<GenreEntity>> {
+    return this.genresService.findAll(pageOptionsDto);
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.genresService.findOne(+id);
+  @ApiOkResponse({
+    type: GenreEntity,
+    description: "Get basic genre info by id",
+  })
+  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async findOne(@Param("id", ParseUUIDPipe) id: string) {
+    const genre = await this.genresService.findOne(id);
+    return new GenreEntity(genre);
   }
 
   @Patch(":id")

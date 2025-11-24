@@ -23,6 +23,12 @@ export class GenreEntity implements Genre {
   @ApiProperty()
   slug: string;
 
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updatedAt: Date;
+
   @Exclude()
   songs?: (SongGenre & { song: Song })[];
 
