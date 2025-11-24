@@ -14,6 +14,7 @@ import {
 import { format } from "date-fns";
 import { Artist } from "@/features/common/types/entity.type";
 import { getSelectColumn } from "@/components/ui/data-table/select-column";
+import Link from "next/link";
 
 export const columns: ColumnDef<Artist>[] = [
   getSelectColumn<Artist>(),
@@ -68,8 +69,13 @@ export const columns: ColumnDef<Artist>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => console.log("Edit", artist.id)}>
-              <Pencil className="mr-2 h-4 w-4" /> Edit
+            <DropdownMenuItem asChild>
+              <Link
+                href={`/admin/artists/${artist.id}`}
+                className="flex cursor-pointer items-center"
+              >
+                <Pencil className="mr-2 h-4 w-4" /> Edit
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => console.log("Delete", artist.id)}

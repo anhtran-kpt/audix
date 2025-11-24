@@ -15,3 +15,22 @@ export const sanitizeNull = <T>(obj: T): T => {
 
   return obj;
 };
+
+export function getDirtyValues<T>(
+  dirtyFields: Record<string, any>,
+  allValues: T
+): Partial<T> {
+  const dirtyValues: any = {};
+
+  Object.keys(dirtyFields).forEach((key) => {
+    if (dirtyFields[key] === true || typeof dirtyFields[key] === "object") {
+      // @ts-ignore
+      dirtyValues[key] = allValues[key];
+    }
+  });
+
+  return dirtyValues;
+}
+
+export const emptyStringToNull = (val: string | null | undefined) =>
+  typeof val === "string" && val.trim() === "" ? null : val;

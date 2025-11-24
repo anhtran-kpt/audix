@@ -1,27 +1,26 @@
-import { IsString, IsNotEmpty, ValidateIf } from "class-validator";
+import { IsString, IsOptional } from "class-validator";
 
 export class CreateArtistDto {
   @IsString()
-  @IsNotEmpty()
   name: string;
 
   @IsString()
-  @ValidateIf((_, value) => value !== null)
-  bio: string | null;
+  @IsOptional()
+  bio?: string | null;
 
   @IsString()
-  @ValidateIf((_, value) => value !== null)
-  avatarId: string | null;
+  @IsOptional()
+  avatarId?: string | null;
 
   @IsString()
-  @ValidateIf((_, value) => value !== null)
-  avatarColor: string | null;
+  @IsOptional()
+  avatarColor?: string | null;
 
   @IsString()
-  @ValidateIf((_, value) => value !== null)
-  bannerId: string | null;
+  @IsOptional()
+  bannerId?: string | null;
 
   @IsString()
-  @ValidateIf((_, value) => value !== null)
-  bannerColor: string | null;
+  @IsOptional()
+  bannerColor?: string | null;
 }

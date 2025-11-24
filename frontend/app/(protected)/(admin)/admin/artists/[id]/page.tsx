@@ -7,6 +7,7 @@ import { Loader2, ArrowLeft } from "lucide-react";
 import { ArtistForm } from "@/features/artists/components/admin/artist-form";
 import { Button } from "@/components/ui/button";
 import { getArtistBasic } from "@/features/artists/api/client";
+import { artistKeys } from "@/features/artists/api/keys";
 
 export default function EditArtistPage() {
   const params = useParams();
@@ -17,7 +18,7 @@ export default function EditArtistPage() {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ["artist", artistId],
+    queryKey: artistKeys.detail(artistId),
     queryFn: () => getArtistBasic(artistId),
     enabled: !!artistId,
   });
@@ -51,7 +52,7 @@ export default function EditArtistPage() {
       </div>
 
       <div className="border rounded-lg p-6 bg-card">
-        <ArtistForm initialData={artist} />
+        <ArtistForm initialData={{ ...artist, bio: artist.bio ?? "" }} />
       </div>
     </div>
   );

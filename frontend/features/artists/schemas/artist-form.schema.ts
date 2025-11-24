@@ -1,13 +1,10 @@
 import { z } from "zod";
 
 export const artistFormSchema = z.object({
-  name: z.string().min(1),
-  bio: z
-    .string()
-    .optional()
-    .or(z.literal(""))
-    .transform((v) => v || null),
+  name: z.string().min(1, "Name is required"),
+  bio: z.string().optional(),
+  avatar: z.union([z.instanceof(File), z.string(), z.null()]).optional(),
+  banner: z.union([z.instanceof(File), z.string(), z.null()]).optional(),
 });
 
-export type ArtistFormInput = z.input<typeof artistFormSchema>;
-export type ArtistFormOutput = z.output<typeof artistFormSchema>;
+export type ArtistFormValues = z.infer<typeof artistFormSchema>;

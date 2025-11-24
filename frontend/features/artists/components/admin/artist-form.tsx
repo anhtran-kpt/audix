@@ -3,9 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,104 +17,139 @@ import {
 } from "@/components/ui/form";
 import { ImageUpload } from "@/components/ui/image-load";
 import {
-  ArtistFormInput,
-  ArtistFormOutput,
   artistFormSchema,
+  ArtistFormValues,
 } from "../../schemas/artist-form.schema";
 import { Artist } from "@/features/common/types/entity.type";
 import { uploadImage } from "@/features/media/api/client";
-import { createArtist, updateArtist } from "../../api/client";
-import { sanitizeNull } from "@/features/common/utils/form-helper";
+import { useCreateArtist } from "../../hooks/admin/use-create-artist";
+import { useUpdateArtist } from "../../hooks/admin/use-update-artist";
+import { emptyStringToNull } from "@/features/common/utils/form-helper";
+import { compressImage } from "@/features/common/utils/compress-image";
 
 interface ArtistFormProps {
   initialData?: Artist;
 }
+
 export function ArtistForm({ initialData }: ArtistFormProps) {
-  const router = useRouter();
-  const queryClient = useQueryClient();
+  const { createArtist, isCreating } = useCreateArtist();
+  const { updateArtist, isUpdating } = useUpdateArtist();
+  const [step, setStep] = useState(1);
+  const [isUploading, setIsUploading] = useState(false);
 
   const isEditMode = !!initialData;
 
   const action = isEditMode ? "Save Changes" : "Create Artist";
   const loadingAction = isEditMode ? "Saving..." : "Creating...";
 
-  const [step, setStep] = useState(1);
-  const [avatarFile, setAvatarFile] = useState<File | string | null>(
-    initialData?.avatarId ? initialData.avatarUrl : null
-  );
-  const [bannerFile, setBannerFile] = useState<File | string | null>(
-    initialData?.bannerId ? initialData.bannerUrl : null
-  );
-  const [isUploading, setIsUploading] = useState(false);
-
-  const form = useForm<ArtistFormInput>({
-    resolver: zodResolver(artistFormSchema) as any,
-    defaultValues: initialData
-      ? (sanitizeNull(initialData) as ArtistFormInput)
-      : {
-          name: "",
-          bio: "",
-        },
+  const form = useForm<ArtistFormValues>({
+    resolver: zodResolver(artistFormSchema),
+    defaultValues: {
+      name: initialData?.name || "",
+      bio: initialData?.bio || "",
+      avatar: initialData?.avatarUrl || null,
+      banner: initialData?.bannerUrl || null,
+    },
   });
 
-  const onSubmit = async (values: ArtistFormOutput) => {
+  const handleUpload = async (fileOrUrl: File | string | null) => {
+    if (fileOrUrl instanceof File) {
+      const compressedFile = await compressImage(fileOrUrl);
+
+      const res = await uploadImage(compressedFile);
+      return { id: res.publicId, color: res.dominantColor };
+    }
+    return null;
+  };
+
+  const onSubmit = async (values: ArtistFormValues) => {
     try {
       setIsUploading(true);
 
-      let finalAvatarId = initialData?.avatarId || null;
-      let finalBannerId = initialData?.bannerId || null;
+      if (!initialData) {
+        const uploadPromises = [];
+        type ImageRes = {
+          id: string;
+          color: string | null;
+        } | null;
 
-      let finalAvatarColor = initialData?.avatarColor || null;
-      let finalBannerColor = initialData?.bannerColor || null;
+        let avatarRes = null;
+        let bannerRes = null;
 
-      const uploadTasks = [];
+        if (values.avatar instanceof File) {
+          uploadPromises.push(
+            handleUpload(values.avatar).then((res) => (avatarRes = res))
+          );
+        }
+        if (values.banner instanceof File) {
+          uploadPromises.push(
+            handleUpload(values.banner).then((res) => (bannerRes = res))
+          );
+        }
+        await Promise.all(uploadPromises);
 
-      if (avatarFile instanceof File) {
-        uploadTasks.push(
-          uploadImage(avatarFile).then((res) => {
-            finalAvatarId = res.publicId;
-            finalAvatarColor = res.dominantColor;
+        const payload = {
+          name: values.name,
+          bio: values.bio,
+          avatarId: (avatarRes as ImageRes)?.id ?? null,
+          avatarColor: (avatarRes as ImageRes)?.color ?? null,
+          bannerId: (bannerRes as ImageRes)?.id ?? null,
+          bannerColor: (bannerRes as ImageRes)?.color ?? null,
+        };
+
+        createArtist(payload);
+        return;
+      }
+
+      const payload: any = {};
+
+      if (values.name !== initialData.name) {
+        payload.name = values.name;
+      }
+
+      const currentBio = emptyStringToNull(values.bio);
+
+      if (currentBio !== initialData.bio) {
+        payload.bio = currentBio;
+      }
+
+      const tasks = [];
+
+      if (values.avatar instanceof File) {
+        tasks.push(
+          handleUpload(values.avatar).then((res) => {
+            payload.avatarId = res?.id;
+            payload.avatarColor = res?.color;
           })
         );
-      } else if (avatarFile === null) {
-        finalAvatarId = null;
-        finalAvatarColor = null;
+      } else if (values.avatar === null && initialData.avatarUrl) {
+        payload.avatarId = null;
+        payload.avatarColor = null;
       }
 
-      if (bannerFile instanceof File) {
-        uploadTasks.push(
-          uploadImage(bannerFile).then((res) => {
-            finalBannerId = res.publicId;
-            finalBannerColor = res.dominantColor;
+      if (values.banner instanceof File) {
+        tasks.push(
+          handleUpload(values.banner).then((res) => {
+            payload.bannerId = res?.id;
+            payload.bannerColor = res?.color;
           })
         );
-      } else if (bannerFile === null) {
-        finalBannerId = null;
-        finalBannerColor = null;
+      } else if (values.banner === null && initialData.bannerUrl) {
+        payload.bannerId = null;
+        payload.bannerColor = null;
       }
 
-      await Promise.all(uploadTasks);
+      await Promise.all(tasks);
 
-      const payload = {
-        ...values,
-        avatarId: finalAvatarId ?? null,
-        bannerId: finalBannerId ?? null,
-        avatarColor: finalAvatarColor ?? null,
-        bannerColor: finalBannerColor ?? null,
-      };
-
-      if (isEditMode) {
-        await updateArtist(initialData.id, payload);
-        toast.success("Artist updated!");
-      } else {
-        await createArtist(payload);
-        toast.success("Artist created!");
+      if (Object.keys(payload).length === 0) {
+        toast.info("No changes to save");
+        return;
       }
 
-      queryClient.invalidateQueries({ queryKey: ["artists"] });
-      router.push("/admin/artists");
+      updateArtist({ artistId: initialData.id, values: payload });
     } catch (error) {
       toast.error("Something went wrong");
+      console.error(error);
     } finally {
       setIsUploading(false);
     }
@@ -129,6 +162,8 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
     if (isValid) setStep(2);
   };
 
+  const isLoading = isUploading || isCreating || isUpdating;
+
   return (
     <div className="max-w-2xl mx-auto p-6 border rounded-lg bg-background shadow-sm">
       <div className="flex items-center gap-2 mb-6 text-sm font-medium text-muted-foreground">
@@ -138,10 +173,7 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit as any)}
-          className="space-y-6"
-        >
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className={step === 1 ? "block" : "hidden"}>
             <FormField
               control={form.control}
@@ -173,18 +205,42 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
 
           <div className={step === 2 ? "space-y-6 block" : "hidden"}>
             <div className="grid grid-cols-2 gap-4">
-              <ImageUpload
-                label="Avatar (Square)"
-                value={avatarFile}
-                onChange={setAvatarFile}
-                className="aspect-square"
+              <FormField
+                control={form.control}
+                name="avatar"
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem>
+                    <FormControl>
+                      <ImageUpload
+                        label="Avatar (Square)"
+                        value={value}
+                        onChange={onChange}
+                        className="aspect-square w-full"
+                        {...fieldProps}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
 
-              <ImageUpload
-                label="Banner (Wide)"
-                value={bannerFile}
-                onChange={setBannerFile}
-                className="aspect-video col-span-2"
+              <FormField
+                control={form.control}
+                name="banner"
+                render={({ field: { value, onChange, ...fieldProps } }) => (
+                  <FormItem className="col-span-2">
+                    <FormControl>
+                      <ImageUpload
+                        label="Banner (Wide)"
+                        value={value}
+                        onChange={onChange}
+                        className="w-full"
+                        {...fieldProps}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
             </div>
           </div>
@@ -195,7 +251,7 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
                 type="button"
                 variant="outline"
                 onClick={() => setStep(1)}
-                disabled={isUploading}
+                disabled={isLoading}
               >
                 Back
               </Button>
@@ -206,8 +262,8 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
                 Next Step
               </Button>
             ) : (
-              <Button key="submit-btn" type="submit" disabled={isUploading}>
-                {isUploading ? loadingAction : action}
+              <Button key="submit-btn" type="submit" disabled={isLoading}>
+                {isLoading ? loadingAction : action}
               </Button>
             )}
           </div>

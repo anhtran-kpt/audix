@@ -84,7 +84,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/media/upload/image": {
+    "/media/image/upload": {
         parameters: {
             query?: never;
             header?: never;
@@ -315,11 +315,11 @@ export interface components {
         };
         CreateArtistDto: {
             name: string;
-            bio: string | null;
-            avatarId: string | null;
-            avatarColor: string | null;
-            bannerId: string | null;
-            bannerColor: string | null;
+            bio?: string | null;
+            avatarId?: string | null;
+            avatarColor?: string | null;
+            bannerId?: string | null;
+            bannerColor?: string | null;
         };
         UpdateArtistDto: {
             name?: string;

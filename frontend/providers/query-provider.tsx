@@ -27,7 +27,10 @@ export default function QueryProvider({
         },
 
         mutationCache: new MutationCache({
-          onError: (error: any) => {
+          onError: (error, _variables, _context, mutation) => {
+            if (mutation.meta?.suppressErrorToast) {
+              return;
+            }
             toast.error(error.message || "Something went wrong");
           },
         }),
