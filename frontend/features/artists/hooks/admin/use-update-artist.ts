@@ -30,7 +30,7 @@ export const useUpdateArtist = () => {
     },
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: artistKeys.all });
-      qc.invalidateQueries({ queryKey: artistKeys.detail(vars.artistId) });
+      qc.invalidateQueries({ queryKey: artistKeys.details(vars.artistId) });
       toast.success(`Artist updated successfully!`);
       router.replace("/admin/artists");
     },

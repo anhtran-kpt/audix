@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Genre } from "@/features/common/types/entity.type";
 import { getSelectColumn } from "@/components/data-table/select-column";
 import { CellAction } from "./cell-action";
+import { format } from "date-fns";
 
 export const columns: ColumnDef<Genre>[] = [
   getSelectColumn<Genre>(),
@@ -34,6 +35,11 @@ export const columns: ColumnDef<Genre>[] = [
     accessorKey: "artists",
     header: "Artists Count",
     cell: ({ row }) => <span>{row.original.artists?.length ?? 0}</span>,
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+    cell: ({ row }) => format(new Date(row.original.createdAt), "dd/MM/yyyy"),
   },
   {
     id: "actions",

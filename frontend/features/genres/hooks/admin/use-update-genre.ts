@@ -18,7 +18,7 @@ export const useUpdateGenre = () => {
     }) => updateGenre(genreId, values),
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: genreKeys.all });
-      qc.invalidateQueries({ queryKey: genreKeys.detail(vars.genreId) });
+      qc.invalidateQueries({ queryKey: genreKeys.details(vars.genreId) });
       toast.success(`Genre updated successfully!`);
       router.replace("/admin/genres");
     },

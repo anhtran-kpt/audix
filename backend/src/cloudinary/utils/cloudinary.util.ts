@@ -64,4 +64,13 @@ export class CloudinaryUtil {
       quality: "auto:low",
     });
   }
+
+  static getAudioUrl(publicId: string | null): string | null {
+    if (!publicId) return null;
+    if (publicId.startsWith("http")) return publicId;
+
+    const VIDEO_BASE_URL = `https://res.cloudinary.com/${this.CLOUD_NAME}/video/upload/`;
+
+    return `${VIDEO_BASE_URL}q_auto,f_auto/${publicId}`;
+  }
 }

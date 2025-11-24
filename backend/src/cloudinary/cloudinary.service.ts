@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import {
   v2 as cloudinary,
   UploadApiResponse,
@@ -7,6 +8,34 @@ import {
 
 @Injectable()
 export class CloudinaryService {
+  constructor(private readonly configService: ConfigService) {}
+  getUploadSignature(folder: string) {
+    const apiSecret = this.configService.get<string>("CLOUDINARY_API_SECRET")!;
+    const apiKey = this.configService.get<string>("CLOUDINARY_API_KEY");
+    const cloudName = this.configService.get<string>("CLOUDINARY_CLOUD_NAME");
+
+    const now = new Date();
+    const timestamp = now.toISOString();
+
+    const paramsToSign = {
+      timestamp,
+      folder,
+    };
+
+    const signature = cloudinary.utils.api_sign_request(
+      paramsToSign,
+      apiSecret
+    );
+
+    return {
+      timestamp,
+      signature,
+      folder,
+      apiKey,
+      cloudName,
+    };
+  }
+
   async uploadImage(
     file: Express.Multer.File,
     folder: string

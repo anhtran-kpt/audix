@@ -57,11 +57,17 @@ export class ArtistsService {
     );
   }
 
-  async findOne(id: string) {
+  async findOne(identifier: string) {
+    let where: Prisma.ArtistWhereUniqueInput;
+
+    if (isUUID(identifier)) {
+      where = { id: identifier };
+    } else {
+      where = { slug: identifier };
+    }
+
     const artist = await this.prisma.artist.findUnique({
-      where: {
-        id,
-      },
+      where,
       select: {
         id: true,
         slug: true,
@@ -82,7 +88,7 @@ export class ArtistsService {
     return artist;
   }
 
-  async findProfile(identifier: string) {
+  async findOneDetails(identifier: string) {
     let where: Prisma.ArtistWhereUniqueInput;
 
     if (isUUID(identifier)) {

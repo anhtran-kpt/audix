@@ -27,7 +27,11 @@ export class AlbumEntity implements Album {
   @ApiProperty({ nullable: true })
   thumbnailColor: string | null;
 
-  @ApiProperty({ enum: AlbumType })
+  @ApiProperty({
+    enum: AlbumType,
+    enumName: "AlbumType",
+    example: AlbumType.ALBUM,
+  })
   type: AlbumType;
 
   @ApiProperty()
@@ -50,6 +54,7 @@ export class AlbumEntity implements Album {
 
   @ApiProperty({ type: () => ArtistEntity, required: false })
   @Type(() => ArtistEntity)
+  @Expose()
   artist?: ArtistEntity;
 
   @ApiProperty({ type: () => SongEntity, required: false })

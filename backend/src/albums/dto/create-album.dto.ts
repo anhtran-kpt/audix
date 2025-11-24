@@ -18,7 +18,11 @@ export class CreateAlbumDto {
   @ApiPropertyOptional({ example: "cloudinary_id_123" })
   @IsString()
   @IsOptional()
-  thumbnailId?: string;
+  thumbnailId?: string | null;
+
+  @IsString()
+  @IsOptional()
+  thumbnailColor?: string | null;
 
   @ApiProperty({ enum: AlbumType, default: AlbumType.SINGLE })
   @IsEnum(AlbumType)

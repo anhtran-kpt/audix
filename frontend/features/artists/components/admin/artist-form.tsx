@@ -182,7 +182,7 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
                 <FormItem>
                   <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="Artist Name" {...field} />
+                    <Input placeholder="Artist name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -195,7 +195,7 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
                 <FormItem className="mt-4">
                   <FormLabel>Biography</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Bio..." {...field} />
+                    <Textarea placeholder="Biography" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

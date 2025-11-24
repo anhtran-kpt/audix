@@ -43,7 +43,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get: operations["ArtistsController_findOne"];
+        get?: never;
         put?: never;
         post?: never;
         delete: operations["ArtistsController_remove"];
@@ -52,14 +52,30 @@ export interface paths {
         patch: operations["ArtistsController_update"];
         trace?: never;
     };
-    "/artists/profile/{identifier}": {
+    "/artists/{identifier}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get: operations["ArtistsController_findProfile"];
+        get: operations["ArtistsController_findOne"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/artists/{identifier}/details": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ArtistsController_findOneDetails"];
         put?: never;
         post?: never;
         delete?: never;
@@ -94,6 +110,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["MediaController_uploadImage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/media/signature/audio": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MediaController_getAudioUploadSignature"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -229,6 +261,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/albums/{identifier}/details": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AlbumsController_findOneDetails"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/albums/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["AlbumsController_remove"];
+        options?: never;
+        head?: never;
+        patch: operations["AlbumsController_update"];
+        trace?: never;
+    };
     "/genres": {
         parameters: {
             query?: never;
@@ -349,6 +413,8 @@ export interface components {
             isExplicit: boolean;
             playCount: number;
         };
+        /** @enum {string} */
+        AlbumType: "SINGLE" | "EP" | "ALBUM";
         AlbumArtistDto: {
             id: string;
             name: string;
@@ -357,8 +423,8 @@ export interface components {
             id: string;
             title: string;
             thumbnailId: string | null;
-            /** @enum {string} */
-            type: "SINGLE" | "EP" | "ALBUM";
+            /** @example ALBUM */
+            type: components["schemas"]["AlbumType"];
             /** Format: date-time */
             releaseDate: string;
             artist: components["schemas"]["AlbumArtistDto"];
@@ -375,6 +441,14 @@ export interface components {
         UploadImageResponse: {
             publicId: string;
             dominantColor: string | null;
+        };
+        UploadSignatureResponse: {
+            publicId: string;
+            timestamp: string;
+            signature: string;
+            folder: string;
+            apiKey: string;
+            cloudName: string;
         };
         /** @enum {string} */
         UserRole: "USER" | "ADMIN";
@@ -425,7 +499,7 @@ export interface components {
             /** @example Midnight Memories */
             title: string;
             /** @example cloudinary_id_123 */
-            thumbnailId?: string;
+            thumbnailId?: string | null;
             /**
              * @default SINGLE
              * @enum {string}
@@ -438,6 +512,7 @@ export interface components {
              * @description Artist ID
              */
             artistId: string;
+            thumbnailColor?: string | null;
         };
         AlbumEntity: {
             id: string;
@@ -445,8 +520,8 @@ export interface components {
             slug: string;
             thumbnailId: string | null;
             thumbnailColor: string | null;
-            /** @enum {string} */
-            type: "SINGLE" | "EP" | "ALBUM";
+            /** @example ALBUM */
+            type: components["schemas"]["AlbumType"];
             /** Format: date-time */
             releaseDate: string;
             totalSongs: number;
@@ -482,22 +557,14 @@ export interface components {
         AlbumSlug: {
             slug: string;
         };
-        AlbumItemResponse: {
-            id: string;
-            slug: string;
-            thumbnailId: string | null;
-            /** Format: date-time */
-            releaseDate: string;
-            artist?: components["schemas"]["ArtistEntity"];
-        };
-        AlbumDetailResponse: {
+        AlbumDetailsResponse: {
             id: string;
             title: string;
             slug: string;
             thumbnailId: string | null;
             thumbnailColor: string | null;
-            /** @enum {string} */
-            type: "SINGLE" | "EP" | "ALBUM";
+            /** @example ALBUM */
+            type: components["schemas"]["AlbumType"];
             /** Format: date-time */
             releaseDate: string;
             totalSongs: number;
@@ -514,6 +581,25 @@ export interface components {
             artistId: string;
             likedBy: string[];
             genres?: Record<string, never>[];
+        };
+        UpdateAlbumDto: {
+            /** @example Midnight Memories */
+            title?: string;
+            /** @example cloudinary_id_123 */
+            thumbnailId?: string | null;
+            /**
+             * @default SINGLE
+             * @enum {string}
+             */
+            type: "SINGLE" | "EP" | "ALBUM";
+            /** @example 2023-10-27T00:00:00.000Z */
+            releaseDate?: string;
+            /**
+             * Format: uuid
+             * @description Artist ID
+             */
+            artistId?: string;
+            thumbnailColor?: string | null;
         };
         CreateGenreDto: {
             name: string;
@@ -600,28 +686,6 @@ export interface operations {
             };
         };
     };
-    ArtistsController_findOne: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Get basic artist info by id */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ArtistEntity"];
-                };
-            };
-        };
-    };
     ArtistsController_remove: {
         parameters: {
             query?: never;
@@ -659,7 +723,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Updated successful */
+            /** @description Artist updated successful */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -670,7 +734,29 @@ export interface operations {
             };
         };
     };
-    ArtistsController_findProfile: {
+    ArtistsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Get basic artist info by identifier */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtistEntity"];
+                };
+            };
+        };
+    };
+    ArtistsController_findOneDetails: {
         parameters: {
             query?: never;
             header?: never;
@@ -747,6 +833,33 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UploadImageResponse"];
+                };
+            };
+        };
+    };
+    MediaController_getAudioUploadSignature: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadSignatureResponse"];
+                };
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadSignatureResponse"];
                 };
             };
         };
@@ -883,20 +996,26 @@ export interface operations {
     };
     AlbumsController_findAll: {
         parameters: {
-            query?: never;
+            query?: {
+                order?: "asc" | "desc";
+                page?: number;
+                take?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
         };
         requestBody?: never;
         responses: {
-            /** @description Get album list */
+            /** @description Successfully received model list */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AlbumItemResponse"][];
+                    "application/json": components["schemas"]["PageDto"] & {
+                        data?: components["schemas"]["AlbumEntity"][];
+                    };
                 };
             };
         };
@@ -936,13 +1055,83 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Get album details */
+            /** @description Get album by identifier */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["AlbumDetailResponse"];
+                    "application/json": components["schemas"]["AlbumEntity"];
+                };
+            };
+        };
+    };
+    AlbumsController_findOneDetails: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                identifier: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Get album detail by identifier */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlbumDetailsResponse"];
+                };
+            };
+        };
+    };
+    AlbumsController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Album removed successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlbumEntity"][];
+                };
+            };
+        };
+    };
+    AlbumsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateAlbumDto"];
+            };
+        };
+        responses: {
+            /** @description Album updated successful */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlbumEntity"][];
                 };
             };
         };

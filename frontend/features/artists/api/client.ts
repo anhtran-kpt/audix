@@ -16,14 +16,14 @@ export const getArtists = async (
   return apiClient.get("/artists", { params });
 };
 
-export const getArtistBasic = async (id: string): Promise<Artist> => {
-  return apiClient.get(`/artists/${id}`);
+export const getArtist = async (identifier: string): Promise<Artist> => {
+  return apiClient.get(`/artists/${identifier}`);
 };
 
 export const getArtistProfile = async (
   identifier: string
 ): Promise<ArtistProfileResponse> => {
-  return apiClient.get(`/artists/profile/${identifier}`);
+  return apiClient.get(`/artists/${identifier}/details`);
 };
 
 export const createArtist = async (data: CreateArtistDto) => {

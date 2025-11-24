@@ -10,26 +10,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { Artist } from "@/features/common/types/entity.type";
+import { Album } from "@/features/common/types/entity.type";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
-import { useDeleteArtist } from "../../hooks/admin/use-delete-artist";
+import { useDeleteAlbum } from "../../hooks/admin/use-delete-album";
 
 interface CellActionProps {
-  data: Artist;
+  data: Album;
 }
 
 export const CellAction = ({ data }: CellActionProps) => {
   const confirmModal = useConfirmModal();
 
-  const { deleteArtist } = useDeleteArtist();
+  const { deleteAlbum } = useDeleteAlbum();
 
   const onDelete = () => {
     confirmModal.onOpen({
       title: "Are you sure?",
       description:
-        "This action cannot be undone. This will permanently delete the artist and remove their data from our servers.",
+        "This action cannot be undone. This will permanently delete the album and remove their data from our servers.",
       onConfirm: async () => {
-        await deleteArtist(data.id);
+        await deleteAlbum(data.id);
       },
     });
   };
@@ -46,7 +46,7 @@ export const CellAction = ({ data }: CellActionProps) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem asChild>
           <Link
-            href={`/admin/artists/${data.slug}`}
+            href={`/admin/Albums/${data.id}`}
             className="flex cursor-pointer items-center"
           >
             <Pencil className="mr-2 h-4 w-4" /> Edit

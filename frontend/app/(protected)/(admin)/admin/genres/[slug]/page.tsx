@@ -4,23 +4,23 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { ArtistForm } from "@/features/artists/components/admin/artist-form";
+import { GenreForm } from "@/features/genres/components/admin/genre-form";
 import { Button } from "@/components/ui/button";
-import { getArtistBasic } from "@/features/artists/api/client";
-import { artistKeys } from "@/features/artists/api/keys";
+import { getGenre } from "@/features/genres/api/client";
+import { genreKeys } from "@/features/genres/api/keys";
 
-export default function EditArtistPage() {
+export default function EditGenrePage() {
   const params = useParams();
-  const artistId = params.id as string;
+  const genreSlug = params.slug as string;
 
   const {
-    data: artist,
+    data: genre,
     isLoading,
     isError,
   } = useQuery({
-    queryKey: artistKeys.detail(artistId),
-    queryFn: () => getArtistBasic(artistId),
-    enabled: !!artistId,
+    queryKey: genreKeys.details(genreSlug),
+    queryFn: () => getGenre(genreSlug),
+    enabled: !!genreSlug,
   });
 
   if (isLoading) {
@@ -31,28 +31,28 @@ export default function EditArtistPage() {
     );
   }
 
-  if (isError || !artist) {
-    return <div>Artist not found</div>;
+  if (isError || !genre) {
+    return <div>genre not found</div>;
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <Button variant="outline" size="icon" asChild>
-          <Link href="/admin/artists">
+          <Link href="/admin/genres">
             <ArrowLeft className="h-4 w-4" />
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Edit Artist</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Edit genre</h1>
           <p className="text-muted-foreground">
-            Update information for {artist.name}
+            Update information for {genre.name}
           </p>
         </div>
       </div>
 
       <div className="border rounded-lg p-6 bg-card">
-        <ArtistForm initialData={{ ...artist, bio: artist.bio ?? "" }} />
+        <GenreForm initialData={genre} />
       </div>
     </div>
   );

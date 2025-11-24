@@ -12,8 +12,8 @@ export const getGenres = async (
   return apiClient.get("/genres", { params });
 };
 
-export const getGenreBasic = async (id: string): Promise<Genre> => {
-  return apiClient.get(`/genres/${id}`);
+export const getGenre = async (identifier: string): Promise<Genre> => {
+  return apiClient.get(`/genres/${identifier}`);
 };
 
 export const createGenre = async (data: CreateGenreDto) => {

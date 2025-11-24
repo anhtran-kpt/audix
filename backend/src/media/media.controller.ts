@@ -5,6 +5,7 @@ import {
   UploadedFile,
   UseGuards,
   Query,
+  Get,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
@@ -14,12 +15,17 @@ import { RolesGuard } from "src/auth/guards/roles.guard";
 import { MediaService } from "./media.service";
 import { ApiCreatedResponse } from "@nestjs/swagger";
 import { UploadImageResponse } from "./dto/upload-image-response.dto";
+import { CloudinaryService } from "src/cloudinary/cloudinary.service";
+import { UploadSignatureResponse } from "./dto/upload-signature-response.dto";
 
 @Controller("media")
 @Roles(UserRole.ADMIN)
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class MediaController {
-  constructor(private readonly mediaService: MediaService) {}
+  constructor(
+    private readonly mediaService: MediaService,
+    private readonly cloudinaryService: CloudinaryService
+  ) {}
 
   @Post("image/upload")
   @UseInterceptors(FileInterceptor("file"))
@@ -30,5 +36,15 @@ export class MediaController {
   ) {
     const res = await this.mediaService.uploadImage(file, folder);
     return new UploadImageResponse(res);
+  }
+
+  @Get("signature/audio")
+  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiCreatedResponse({ type: UploadSignatureResponse })
+  getAudioUploadSignature() {
+    const res = this.cloudinaryService.getUploadSignature("songs");
+
+    return new UploadSignatureResponse(res);
   }
 }

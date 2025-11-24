@@ -69,7 +69,7 @@ export class ArtistsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({
     type: [ArtistEntity],
-    description: "Updated successful",
+    description: "Artist updated successful",
   })
   async update(
     @Param("id") id: string,
@@ -91,25 +91,23 @@ export class ArtistsController {
     return new ArtistEntity(updatedArtist);
   }
 
-  @Get(":id")
+  @Get(":identifier")
   @ApiOkResponse({
     type: ArtistEntity,
-    description: "Get basic artist info by id",
+    description: "Get basic artist info by identifier",
   })
-  @Roles(UserRole.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  async findOne(@Param("id") id: string) {
-    const artist = await this.artistsService.findOne(id);
+  async findOne(@Param("identifier") identifier: string) {
+    const artist = await this.artistsService.findOne(identifier);
     return new ArtistEntity(artist);
   }
 
-  @Get("profile/:identifier")
+  @Get(":identifier/details")
   @ApiOkResponse({
     type: ArtistProfileResponse,
     description: "Get artist profile by id or slug",
   })
-  async findProfile(@Param("identifier") identifier: string) {
-    const artist = await this.artistsService.findProfile(identifier);
+  async findOneDetails(@Param("identifier") identifier: string) {
+    const artist = await this.artistsService.findOneDetails(identifier);
     return new ArtistProfileResponse(artist);
   }
 
