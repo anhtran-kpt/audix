@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { Album } from "@/features/common/types/entity.type";
 import { getSelectColumn } from "@/components/data-table/select-column";
 import { CellAction } from "./cell-action";
+import { formatAlbumDuration } from "@/features/common/utils/format-duration";
 
 export const columns: ColumnDef<Album>[] = [
   getSelectColumn<Album>(),
@@ -28,18 +29,23 @@ export const columns: ColumnDef<Album>[] = [
       );
     },
   },
-  // {
-  //   accessorKey: "followersCount",
-  //   header: "Followers",
-  //   cell: ({ row }) => (
-  //     <span>{row.original.followersCount.toLocaleString()}</span>
-  //   ),
-  // },
-  // {
-  //   accessorKey: "songs",
-  //   header: "Songs Count",
-  //   cell: ({ row }) => <span>{row.original.songs?.length ?? 0}</span>,
-  // },
+  {
+    accessorKey: "artist",
+    header: "Author",
+    cell: ({ row }) => <span>{row.original.artist?.name}</span>,
+  },
+  {
+    accessorKey: "songsCount",
+    header: "Songs Count",
+    cell: ({ row }) => <span>{row.original.songsCount.toLocaleString()}</span>,
+  },
+  {
+    accessorKey: "totalDuration",
+    header: "Total Duration",
+    cell: ({ row }) => (
+      <span>{formatAlbumDuration(row.original.totalDuration)}</span>
+    ),
+  },
   {
     accessorKey: "createdAt",
     header: "Created At",

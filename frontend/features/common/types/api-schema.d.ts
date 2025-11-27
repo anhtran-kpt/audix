@@ -448,8 +448,8 @@ export interface components {
             type: components["schemas"]["AlbumType"];
             /** Format: date-time */
             releaseDate: string;
-            totalSongs: number;
-            duration: number;
+            totalDuration: number;
+            songsCount: number;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
@@ -575,7 +575,7 @@ export interface components {
             dominantColor: string | null;
         };
         UploadSignatureResponse: {
-            timestamp: string;
+            timestamp: number;
             signature: string;
             folder: string;
             apiKey: string;
@@ -658,8 +658,8 @@ export interface components {
             type: components["schemas"]["AlbumType"];
             /** Format: date-time */
             releaseDate: string;
-            totalSongs: number;
-            duration: number;
+            totalDuration: number;
+            songsCount: number;
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */

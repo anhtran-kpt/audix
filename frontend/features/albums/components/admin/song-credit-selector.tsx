@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { CreditSelect } from "@/features/albums/components/admin/credit-select";
+import { CreditRoleEnum } from "../../schemas/album-form.schema";
 
 interface SongCreditSelectorProps {
   songIndex: number;
@@ -66,10 +67,11 @@ export function SongCreditSelector({ songIndex }: SongCreditSelectorProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="PRODUCER">Producer</SelectItem>
-                        <SelectItem value="WRITER">Writer</SelectItem>
-                        <SelectItem value="COMPOSER">Composer</SelectItem>
-                        <SelectItem value="ARRANGER">Arranger</SelectItem>
+                        {CreditRoleEnum.options.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </FormItem>

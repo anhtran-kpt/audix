@@ -2,7 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class UploadSignatureResponse {
   @ApiProperty()
-  timestamp: string;
+  timestamp: number;
 
   @ApiProperty()
   signature: string;

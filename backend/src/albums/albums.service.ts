@@ -10,6 +10,7 @@ import { AlbumEntity } from "./entities/album.entity";
 import { PageMetaDto } from "src/common/dtos/pagination/page-meta.dto";
 import { MediaService } from "src/media/media.service";
 import { UpdateAlbumDto } from "./dto/update-album.dto";
+import { plainToInstance } from "class-transformer";
 
 @Injectable()
 export class AlbumsService {
@@ -61,6 +62,9 @@ export class AlbumsService {
         orderBy: {
           createdAt: pageOptionsDto.order,
         },
+        include: {
+          artist: true,
+        },
       }),
 
       this.prisma.album.count({ where }),
@@ -69,7 +73,7 @@ export class AlbumsService {
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
     return new PageDto(
-      entities.map((e) => new AlbumEntity(e)),
+      entities.map((e) => plainToInstance(AlbumEntity, e)),
       pageMetaDto
     );
   }

@@ -226,7 +226,6 @@ export function AlbumForm() {
                   />
 
                   <div className="grid grid-cols-2 gap-4">
-                    {/* 1. Album Type Select */}
                     <FormField
                       control={form.control}
                       name="type"

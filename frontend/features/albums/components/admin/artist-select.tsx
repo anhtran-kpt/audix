@@ -45,11 +45,10 @@ export function ArtistSelect({
     queryFn: () =>
       getArtists({
         q: debounceQuery,
-        take: 20,
-        order: "asc",
-        page: 1,
+        take: 10,
       }),
     placeholderData: keepPreviousData,
+    enabled: open,
   });
 
   const selectedArtist = data?.data.find((artist) => artist.id === value);

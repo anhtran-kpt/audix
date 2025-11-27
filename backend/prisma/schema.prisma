@@ -96,8 +96,8 @@ model Album {
   thumbnailColor String?
   type           AlbumType @default(SINGLE)
   releaseDate    DateTime  @default(now())
-  totalSongs     Int       @default(0)
-  duration       Int       @default(0)
+  songsCount     Int       @default(0)
+  totalDuration  Int       @default(0)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 

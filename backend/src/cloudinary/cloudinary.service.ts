@@ -14,8 +14,7 @@ export class CloudinaryService {
     const apiKey = this.configService.get<string>("CLOUDINARY_API_KEY");
     const cloudName = this.configService.get<string>("CLOUDINARY_CLOUD_NAME");
 
-    const now = new Date();
-    const timestamp = now.toISOString();
+    const timestamp = Math.round(new Date().getTime() / 1000);
 
     const paramsToSign = {
       timestamp,

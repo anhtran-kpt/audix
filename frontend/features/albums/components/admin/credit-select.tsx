@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import {
   Command,
   CommandEmpty,
@@ -33,10 +33,8 @@ export function CreditSelect({ value, onChange }: CreditSelectProps) {
 
   const { data } = useQuery({
     queryKey: ["artists-search", debouncedSearch],
-    queryFn: async () => {
-      if (!debouncedSearch) return { data: [] };
-      return await getArtists({ q: debouncedSearch, take: 5 });
-    },
+    queryFn: () => getArtists({ q: debouncedSearch, take: 10 }),
+    placeholderData: keepPreviousData,
     enabled: open,
   });
 

@@ -38,10 +38,10 @@ export class AlbumEntity implements Album {
   releaseDate: Date;
 
   @ApiProperty()
-  totalSongs: number;
+  totalDuration: number;
 
   @ApiProperty()
-  duration: number;
+  songsCount: number;
 
   @ApiProperty()
   createdAt: Date;
@@ -85,9 +85,5 @@ export class AlbumEntity implements Album {
 
   constructor(partial: Partial<AlbumEntity>) {
     Object.assign(this, partial);
-
-    if (partial.artist) {
-      this.artist = new ArtistEntity(partial.artist);
-    }
   }
 }

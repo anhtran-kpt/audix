@@ -11,7 +11,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormField } from "@/components/ui/form";
-import { CreditSelect } from "./credit-select";
+import { ArtistTypeEnum } from "../../schemas/album-form.schema";
+import { ArtistSelect } from "./artist-select";
 
 interface SongArtistSelectorProps {
   songIndex: number;
@@ -47,12 +48,11 @@ export function SongArtistSelector({ songIndex }: SongArtistSelectorProps) {
                 control={control}
                 name={`songs.${songIndex}.artists.${artistIndex}.artistId`}
                 render={({ field }) => (
-                  <CreditSelect value={field.value} onChange={field.onChange} />
+                  <ArtistSelect value={field.value} onChange={field.onChange} />
                 )}
               />
             </div>
 
-            {/* 2. Chọn Role (Main/Feat) */}
             <div className="w-[110px]">
               <FormField
                 control={control}
@@ -66,16 +66,17 @@ export function SongArtistSelector({ songIndex }: SongArtistSelectorProps) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="MAIN">Main</SelectItem>
-                      <SelectItem value="FEATURED">Feat</SelectItem>
-                      <SelectItem value="REMIXER">Remix</SelectItem>
+                      {ArtistTypeEnum.options.map((type) => (
+                        <SelectItem key={type} value={type}>
+                          {type}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 )}
               />
             </div>
 
-            {/* 3. Nút Xóa (Chỉ hiện nếu > 1 artist để tránh bài hát vô chủ) */}
             {fields.length > 1 && (
               <Button
                 type="button"

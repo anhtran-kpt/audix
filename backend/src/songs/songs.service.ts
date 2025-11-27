@@ -14,7 +14,7 @@ export class SongsService {
   async create(dto: CreateSongDto) {
     const slug = await this.slugService.generateUniqueSlug(dto.title, "song");
 
-    return await this.prisma.song.create({
+    const newSong = await this.prisma.song.create({
       data: {
         ...dto,
         slug,
@@ -54,6 +54,10 @@ export class SongsService {
         },
       },
     });
+
+    await this.updateAlbumStats(newSong.albumId);
+
+    return newSong;
   }
 
   findAll() {
@@ -70,5 +74,25 @@ export class SongsService {
 
   remove(id: number) {
     return `This action removes a #${id} song`;
+  }
+
+  private async updateAlbumStats(albumId: string) {
+    const stats = await this.prisma.song.aggregate({
+      where: { albumId },
+      _count: {
+        id: true,
+      },
+      _sum: {
+        duration: true,
+      },
+    });
+
+    await this.prisma.album.update({
+      where: { id: albumId },
+      data: {
+        songsCount: stats._count.id,
+        totalDuration: stats._sum.duration || 0,
+      },
+    });
   }
 }
