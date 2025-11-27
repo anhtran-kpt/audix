@@ -13,9 +13,10 @@ export const artistSelect = {
         select: {
           id: true,
           title: true,
+          slug: true,
           audioId: true,
           duration: true,
-          songNumber: true,
+          order: true,
           isExplicit: true,
           playCount: true,
           album: {

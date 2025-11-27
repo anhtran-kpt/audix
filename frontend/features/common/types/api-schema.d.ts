@@ -342,6 +342,38 @@ export interface paths {
         patch: operations["GenresController_update"];
         trace?: never;
     };
+    "/songs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SongsController_findAll"];
+        put?: never;
+        post: operations["SongsController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/songs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SongsController_findOne"];
+        put?: never;
+        post?: never;
+        delete: operations["SongsController_remove"];
+        options?: never;
+        head?: never;
+        patch: operations["SongsController_update"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -371,21 +403,8 @@ export interface components {
             data: unknown[][];
             meta: components["schemas"]["PageMetaDto"];
         };
-        SongEntity: {
-            id: string;
-            title: string;
-            audioId: string;
-            duration: number;
-            songNumber: number;
-            lyrics: string | null;
-            isExplicit: boolean;
-            playCount: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            albumId: string;
-        };
+        /** @enum {string} */
+        AlbumType: "SINGLE" | "EP" | "ALBUM";
         ArtistEntity: {
             id: string;
             name: string;
@@ -403,6 +422,90 @@ export interface components {
             updatedAt: string;
             avatarUrl: string | null;
             bannerUrl: string | null;
+        };
+        GenreEntity: {
+            id: string;
+            name: string;
+            slug: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            songList: components["schemas"]["SongEntity"][];
+            albumList: components["schemas"]["AlbumEntity"][];
+            artistList: components["schemas"]["ArtistEntity"][];
+            songs?: Record<string, never>[];
+            albums?: Record<string, never>[];
+            artists?: Record<string, never>[];
+        };
+        AlbumEntity: {
+            id: string;
+            title: string;
+            slug: string;
+            thumbnailId: string | null;
+            thumbnailColor: string | null;
+            /** @example ALBUM */
+            type: components["schemas"]["AlbumType"];
+            /** Format: date-time */
+            releaseDate: string;
+            totalSongs: number;
+            duration: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            artist?: components["schemas"]["ArtistEntity"];
+            songs?: components["schemas"]["SongEntity"];
+            genreList: components["schemas"]["GenreEntity"][];
+            likesCount?: number;
+            isLiked?: boolean;
+            artistId: string;
+            likedBy: string[];
+            genres?: Record<string, never>[];
+        };
+        SongArtistEntity: {
+            /** @enum {string} */
+            type: "MAIN" | "FEATURED";
+            order: number;
+            artist: components["schemas"]["ArtistEntity"];
+            songId: string;
+            artistId: string;
+            id: string;
+        };
+        SongCreditEntity: {
+            /** @enum {string} */
+            role: "PRODUCER" | "COMPOSER" | "WRITER" | "ARRANGER" | "ENGINEER" | "BACKGROUND_VOCAL";
+            name: string | null;
+            artist: components["schemas"]["ArtistEntity"] | null;
+            songId: string;
+            artistId: string | null;
+        };
+        SongGenreEntity: {
+            genre: components["schemas"]["GenreEntity"];
+            songId: string;
+            genreId: string;
+            id: string;
+        };
+        SongEntity: {
+            id: string;
+            title: string;
+            slug: string;
+            audioUrl: Record<string, never>;
+            duration: number;
+            order: number;
+            lyrics: string | null;
+            isExplicit: boolean;
+            playCount: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            albumId: string;
+            album?: components["schemas"]["AlbumEntity"];
+            artists?: components["schemas"]["SongArtistEntity"][];
+            credits?: components["schemas"]["SongCreditEntity"][];
+            genres?: components["schemas"]["SongGenreEntity"][];
+            audioId: string;
         };
         ArtistSlugResponse: {
             slug: string;
@@ -437,14 +540,13 @@ export interface components {
         PopularSongDto: {
             id: string;
             title: string;
-            audioId: string;
+            slug: string;
             duration: number;
-            songNumber: number;
+            order: number;
             isExplicit: boolean;
             playCount: number;
+            audioId: string;
         };
-        /** @enum {string} */
-        AlbumType: "SINGLE" | "EP" | "ALBUM";
         AlbumArtistDto: {
             id: string;
             name: string;
@@ -473,7 +575,6 @@ export interface components {
             dominantColor: string | null;
         };
         UploadSignatureResponse: {
-            publicId: string;
             timestamp: string;
             signature: string;
             folder: string;
@@ -544,46 +645,6 @@ export interface components {
             artistId: string;
             thumbnailColor?: string | null;
         };
-        AlbumEntity: {
-            id: string;
-            title: string;
-            slug: string;
-            thumbnailId: string | null;
-            thumbnailColor: string | null;
-            /** @example ALBUM */
-            type: components["schemas"]["AlbumType"];
-            /** Format: date-time */
-            releaseDate: string;
-            totalSongs: number;
-            duration: number;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            artist?: components["schemas"]["ArtistEntity"];
-            songs?: components["schemas"]["SongEntity"];
-            genreList: components["schemas"]["GenreEntity"][];
-            likesCount?: number;
-            isLiked?: boolean;
-            artistId: string;
-            likedBy: string[];
-            genres?: Record<string, never>[];
-        };
-        GenreEntity: {
-            id: string;
-            name: string;
-            slug: string;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            songList: components["schemas"]["SongEntity"][];
-            albumList: components["schemas"]["AlbumEntity"][];
-            artistList: components["schemas"]["ArtistEntity"][];
-            songs?: Record<string, never>[];
-            albums?: Record<string, never>[];
-            artists?: Record<string, never>[];
-        };
         AlbumSlug: {
             slug: string;
         };
@@ -636,6 +697,64 @@ export interface components {
         };
         UpdateGenreDto: {
             name?: string;
+        };
+        SongArtistDto: {
+            artistId: string;
+            /** @enum {string} */
+            type: "MAIN" | "FEATURED";
+        };
+        SongCreditDto: {
+            /** @enum {string} */
+            role: "PRODUCER" | "COMPOSER" | "WRITER" | "ARRANGER" | "ENGINEER" | "BACKGROUND_VOCAL";
+            artistId?: string;
+            name?: string;
+        };
+        SongGenreDto: {
+            genreId: string;
+        };
+        CreateSongDto: {
+            /** @description Song title */
+            title: string;
+            /** @description Cloudinary Audio Public ID */
+            audioId: string;
+            /** @description Duration in seconds */
+            duration: number;
+            /** @description Sort order */
+            order: number;
+            /** @description Song lyrics */
+            lyrics?: string | null;
+            /** @default false */
+            isExplicit: boolean;
+            /**
+             * Format: uuid
+             * @description Album ID
+             */
+            albumId: string;
+            artists: components["schemas"]["SongArtistDto"][];
+            credits: components["schemas"]["SongCreditDto"][];
+            genres: components["schemas"]["SongGenreDto"][];
+        };
+        UpdateSongDto: {
+            /** @description Song title */
+            title?: string;
+            /** @description Cloudinary Audio Public ID */
+            audioId?: string;
+            /** @description Duration in seconds */
+            duration?: number;
+            /** @description Sort order */
+            order?: number;
+            /** @description Song lyrics */
+            lyrics?: string | null;
+            /** @default false */
+            isExplicit: boolean;
+            /**
+             * Format: uuid
+             * @description Album ID
+             */
+            albumId?: string;
+            artists?: components["schemas"]["SongArtistDto"][];
+            credits?: components["schemas"]["SongCreditDto"][];
+            genres?: components["schemas"]["SongGenreDto"][];
         };
     };
     responses: never;
@@ -1316,6 +1435,116 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["GenreEntity"][];
+                };
+            };
+        };
+    };
+    SongsController_findAll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+        };
+    };
+    SongsController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateSongDto"];
+            };
+        };
+        responses: {
+            /** @description Created successful */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SongEntity"];
+                };
+            };
+        };
+    };
+    SongsController_findOne: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+        };
+    };
+    SongsController_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+        };
+    };
+    SongsController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSongDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
                 };
             };
         };

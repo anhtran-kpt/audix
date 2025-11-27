@@ -10,6 +10,7 @@ import { CommonModule } from "./common/common.module";
 import { CloudinaryModule } from "./cloudinary/cloudinary.module";
 import { AlbumsModule } from "./albums/albums.module";
 import { GenresModule } from "./genres/genres.module";
+import { SongsModule } from "./songs/songs.module";
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { GenresModule } from "./genres/genres.module";
     CloudinaryModule,
     AlbumsModule,
     GenresModule,
+    SongsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

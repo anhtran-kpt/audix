@@ -20,12 +20,12 @@ import {
 } from "@/components/ui/popover";
 import { Artist } from "@/features/common/types/entity.type";
 import { useDebounceValue } from "usehooks-ts";
-import { getArtists } from "../../api/client";
+import { getArtists } from "@/features/artists/api/client";
 
 interface ArtistSelectProps {
   value?: string;
   onChange: (value: string) => void;
-  modal?: boolean; //Fix lỗi focus nếu dùng trong Dialog
+  modal?: boolean;
   initialArtist?: Artist;
 }
 
@@ -38,7 +38,7 @@ export function ArtistSelect({
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
 
-  const [debounceQuery, _setQuery] = useDebounceValue(search, 500);
+  const [debounceQuery] = useDebounceValue(search, 500);
 
   const { data, isLoading } = useQuery({
     queryKey: ["artists-search", debounceQuery],
@@ -49,19 +49,11 @@ export function ArtistSelect({
         order: "asc",
         page: 1,
       }),
-
     placeholderData: keepPreviousData,
   });
 
-  // 3. Tìm tên Artist đang được chọn để hiển thị lên nút
-  // Lưu ý: Nếu Artist đã chọn không nằm trong list search hiện tại,
-  // bạn có thể cần logic fetch riêng artist đó để lấy tên (hoặc truyền initialData).
-  // Ở đây tôi giả định list artists trả về hoặc cache đã có đủ.
   const selectedArtist = data?.data.find((artist) => artist.id === value);
 
-  // State hiển thị label (tên)
-  // Nếu không tìm thấy trong list (do search từ khác), hiển thị "Unknown" hoặc loading
-  // Cách tốt nhất: Props nên nhận thêm `initialArtist` nếu muốn hiển thị đúng ngay lần đầu load form edit.
   const displayLabel = selectedArtist
     ? selectedArtist.name
     : value
@@ -84,7 +76,6 @@ export function ArtistSelect({
       </PopoverTrigger>
 
       <PopoverContent className="w-[400px] p-0" align="start">
-        {/* shouldFilter={false} QUAN TRỌNG: Tắt filter client-side của Shadcn để dùng server-side */}
         <Command shouldFilter={false}>
           <CommandInput
             placeholder="Search artist name..."
@@ -107,9 +98,8 @@ export function ArtistSelect({
               {data?.data.map((artist) => (
                 <CommandItem
                   key={artist.id}
-                  value={artist.id} // Giá trị dùng để so sánh
-                  onSelect={(currentValue) => {
-                    // currentValue của Shadcn đôi khi là text lowercase, nên dùng ID từ artist.id
+                  value={artist.id}
+                  onSelect={() => {
                     onChange(artist.id);
                     setOpen(false);
                   }}

@@ -2,7 +2,7 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import slugify from "slugify";
 
-type SluggableModelName = "artist" | "album" | "playlist" | "genre";
+type SluggableModelName = "artist" | "album" | "playlist" | "genre" | "song";
 
 interface SluggableDelegate {
   findUnique(args: { where: { slug: string } }): Promise<any>;
@@ -43,6 +43,8 @@ export class SlugService {
         return this.prisma.artist;
       case "album":
         return this.prisma.album;
+      case "song":
+        return this.prisma.song;
       case "playlist":
         return this.prisma.playlist;
       case "genre":

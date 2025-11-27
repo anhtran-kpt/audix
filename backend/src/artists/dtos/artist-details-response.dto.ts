@@ -48,9 +48,10 @@ class DiscographyAlbumDto extends PickType(AlbumEntity, [
 class PopularSongDto extends PickType(SongEntity, [
   "id",
   "title",
+  "slug",
   "audioId",
   "duration",
-  "songNumber",
+  "order",
   "isExplicit",
   "playCount",
 ] as const) {

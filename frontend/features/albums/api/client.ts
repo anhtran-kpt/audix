@@ -26,7 +26,7 @@ export const getAlbumDetails = async (
   return apiClient.get(`/albums/${identifier}/details`);
 };
 
-export const createAlbum = async (data: CreateAlbumDto) => {
+export const createAlbum = async (data: CreateAlbumDto): Promise<Album> => {
   return apiClient.post("/albums", data);
 };
 

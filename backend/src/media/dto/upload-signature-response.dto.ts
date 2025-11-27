@@ -2,9 +2,6 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class UploadSignatureResponse {
   @ApiProperty()
-  publicId: string;
-
-  @ApiProperty()
   timestamp: string;
 
   @ApiProperty()

@@ -120,9 +120,10 @@ enum AlbumType {
 model Song {
   id         String   @id @default(uuid())
   title      String
+  slug       String   @unique
   audioId    String
   duration   Int
-  songNumber Int
+  order      Int      @default(0)
   lyrics     String?  @db.Text
   isExplicit Boolean  @default(false)
   playCount  Int      @default(0)
@@ -141,6 +142,7 @@ model Song {
   playbackQueueItem    PlaybackQueueItem[]
   playbackSessions     PlaybackSession[]
 
+  @@index([slug])
   @@map("songs")
 }
 
@@ -169,85 +171,48 @@ model Genre {
 // ================================
 
 model SongArtist {
-  id       String     @id @default(uuid())
-  songId   String
-  artistId String
-  role     ArtistRole @default(MAIN_ARTIST)
-  order    Int        @default(0) // Artist order (main artist first)
-
+  id     String @id @default(uuid())
+  songId String
   song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
-  artist Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
 
-  @@unique([songId, artistId, role])
-  @@index([songId, order])
+  artistId String
+  artist   Artist @relation(fields: [artistId], references: [id], onDelete: Cascade)
+
+  type  ArtistType @default(MAIN)
+  order Int        @default(0)
+
+  @@unique([songId, artistId])
   @@map("song_artists")
 }
 
-enum ArtistRole {
-  MAIN_ARTIST
-  FEATURED_ARTIST
-  REMIX_ARTIST
+enum ArtistType {
+  MAIN
+  FEATURED
 }
 
 model SongCredit {
-  id       String     @id @default(uuid())
-  songId   String
-  artistId String? // Null if it set for the person who is not artist
-  name     String // Credit name (if artistId null)
-  role     CreditRole
-  details  String?
-  order    Int        @default(0)
+  id String @id @default(uuid())
 
-  song   Song    @relation(fields: [songId], references: [id], onDelete: Cascade)
-  artist Artist? @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  songId String
+  song   Song   @relation(fields: [songId], references: [id], onDelete: Cascade)
 
-  @@index([songId, role])
-  @@index([songId, order])
-  @@index([songId, artistId])
+  artistId String?
+  artist   Artist? @relation(fields: [artistId], references: [id], onDelete: SetNull)
+
+  name String?
+
+  role CreditRole
+
   @@map("song_credits")
 }
 
 enum CreditRole {
-  // Performers
-  LEAD_VOCALS
-  BACKING_VOCALS
-  RAP
-
-  // Songwriters & Composers
-  SONGWRITER
-  COMPOSER
-  LYRICIST
-
-  // Producers & Engineers
   PRODUCER
-  EXECUTIVE_PRODUCER
-  CO_PRODUCER
-  VOCAL_PRODUCER
-  MIXING_ENGINEER
-  MASTERING_ENGINEER
-  RECORDING_ENGINEER
-  ASSISTANT_ENGINEER
-
-  // Musicians
-  GUITAR
-  BASS
-  DRUMS
-  PIANO
-  KEYBOARD
-  VIOLIN
-  SAXOPHONE
-  TRUMPET
-  OTHER_INSTRUMENT
-
-  // Other Roles
+  COMPOSER
+  WRITER
   ARRANGER
-  PROGRAMMER
-  ADDITIONAL_PRODUCTION
-
-  // Legal & Business
-  PUBLISHER
-  RECORD_LABEL
-  MANAGEMENT
+  ENGINEER
+  BACKGROUND_VOCAL
 }
 
 model SongGenre {
