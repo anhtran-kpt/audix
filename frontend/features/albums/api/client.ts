@@ -1,6 +1,6 @@
 import { Album } from "@/features/common/types/entity.type";
 import {
-  PageParams,
+  PageOptions,
   PaginatedResponse,
 } from "@/features/common/types/pagination";
 import apiClient from "@/lib/axios";
@@ -11,7 +11,7 @@ import {
 } from "../albums.type";
 
 export const getAlbums = async (
-  params: PageParams
+  params: PageOptions
 ): Promise<PaginatedResponse<Album>> => {
   return apiClient.get("/albums", { params });
 };

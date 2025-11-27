@@ -24,6 +24,7 @@ import {
 } from "../../schemas/album-form.schema";
 import { uploadAudio, uploadImage } from "@/features/media/api/client";
 import { createAlbum } from "../../api/client";
+import { ArtistSelect } from "@/features/artists/components/admin/artist-select";
 
 export function AlbumForm() {
   const router = useRouter();
@@ -54,17 +55,17 @@ export function AlbumForm() {
       // --- BƯỚC 1: TẠO ALBUM ---
 
       // 1a. Upload thumnail album trước
-      let thumnailRes = null;
-      if (values.thumnail instanceof File) {
-        thumnailRes = await uploadImage(values.thumnail);
+      let thumbnailRes = null;
+      if (values.thumbnail instanceof File) {
+        thumbnailRes = await uploadImage(values.thumbnail);
       }
 
       // 1b. Gọi API tạo Album
       const albumPayload = {
         title: values.title,
         artistId: values.artistId,
-        thumnailId: thumnailRes?.id || null,
-        thumnailColor: thumnailRes?.color || null,
+        thumbnailId: thumbnailRes?.id || null,
+        thumbnailColor: thumbnailRes?.color || null,
       };
 
       // Giả sử API trả về object album vừa tạo (có ID)
@@ -117,7 +118,7 @@ export function AlbumForm() {
 
   const onNext = async () => {
     // Validate Step 1 trước khi sang Step 2
-    const valid = await form.trigger(["title", "artistId", "thumnail"]);
+    const valid = await form.trigger(["title", "artistId", "thumbnail"]);
     if (valid) setStep(2);
   };
 
@@ -139,14 +140,14 @@ export function AlbumForm() {
           {/* === STEP 1: ALBUM INFO === */}
           <div className={step === 1 ? "block space-y-6" : "hidden"}>
             <div className="grid grid-cols-3 gap-8">
-              {/* thumnail Image Col */}
+              {/* thumbnail Image Col */}
               <div className="col-span-1">
                 <FormField
                   control={form.control}
-                  name="thumnail"
+                  name="thumbnail"
                   render={({ field: { value, onChange, ...fieldProps } }) => (
                     <FormItem>
-                      <FormLabel>Album thumnail</FormLabel>
+                      <FormLabel>Album thumbnail</FormLabel>
                       <FormControl>
                         <ImageUpload
                           value={value}
@@ -179,8 +180,22 @@ export function AlbumForm() {
                     </FormItem>
                   )}
                 />
-                {/* Select Artist ở đây (Bạn tự implement component Select) */}
-                {/* ... */}
+                <FormField
+                  control={form.control}
+                  name="artistId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Main Artist</FormLabel>
+                      <FormControl>
+                        <ArtistSelect
+                          value={field.value}
+                          onChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
@@ -235,8 +250,23 @@ export function AlbumForm() {
                         )}
                       />
 
-                      {/* Song Artist (Feat) - Optional */}
-                      {/* Có thể thêm Select Artist ở đây nếu bài hát feat người khác */}
+                      <FormField
+                        control={form.control}
+                        name={`songs.${index}.artistId`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-xs">
+                              Artist (Optional)
+                            </FormLabel>
+                            <FormControl>
+                              <ArtistSelect
+                                value={field.value}
+                                onChange={field.onChange}
+                              />
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
 
                       {/* Audio File Input - Custom Component hoặc Input File thô */}
                       <FormField

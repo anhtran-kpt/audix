@@ -6,13 +6,13 @@ import {
   SortingState,
 } from "@tanstack/react-table";
 import {
-  PageParams,
+  PageOptions,
   PaginatedResponse,
 } from "@/features/common/types/pagination";
 
 interface UseServerTableProps<TData> {
   queryKey: string[];
-  fetcher: (params: PageParams) => Promise<PaginatedResponse<TData>>;
+  fetcher: (params: PageOptions) => Promise<PaginatedResponse<TData>>;
   defaultPageSize?: number;
 }
 
@@ -30,7 +30,7 @@ export function useServerTable<TData>({
 
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const params: PageParams = {
+  const params: PageOptions = {
     page: pagination.pageIndex + 1,
     take: pagination.pageSize,
     order: sorting.length > 0 ? (sorting[0].desc ? "desc" : "asc") : "desc",

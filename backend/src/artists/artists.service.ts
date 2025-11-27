@@ -7,13 +7,14 @@ import { isUUID } from "class-validator";
 import { Artist, Prisma } from "generated/prisma";
 import { SlugService } from "src/common/services/slug.service";
 import { PrismaService } from "src/prisma/prisma.service";
-import { CreateArtistDto } from "./dto/create-artist.dto";
-import { UpdateArtistDto } from "./dto/update-artist.dto";
-import { PageOptionsDto } from "src/common/dtos/pagination/page-options.dto";
 import { PageDto } from "src/common/dtos/pagination/page.dto";
 import { ArtistEntity } from "./entities/artist.entity";
 import { PageMetaDto } from "src/common/dtos/pagination/page-meta.dto";
 import { MediaService } from "src/media/media.service";
+import { ArtistPageOptionsDto } from "./dtos/artist-base-options.dto";
+import { plainToInstance } from "class-transformer";
+import { CreateArtistDto } from "./dtos/create-artist.dto";
+import { UpdateArtistDto } from "./dtos/update-artist.dto";
 
 @Injectable()
 export class ArtistsService {
@@ -32,17 +33,28 @@ export class ArtistsService {
   }
 
   async findAll(
-    pageOptionsDto: PageOptionsDto
+    pageOptionsDto: ArtistPageOptionsDto
   ): Promise<PageDto<ArtistEntity>> {
     const where: Prisma.ArtistWhereInput = {};
+
+    if (pageOptionsDto.searchQuery) {
+      where.OR = [
+        { name: { contains: pageOptionsDto.searchQuery, mode: "insensitive" } },
+        { slug: { contains: pageOptionsDto.searchQuery, mode: "insensitive" } },
+      ];
+    }
+
+    // if (pageOptionsDto.nationality) {
+    //   where.nationality = pageOptionsDto.nationality;
+    // }
 
     const [entities, itemCount] = await this.prisma.$transaction([
       this.prisma.artist.findMany({
         where,
         skip: pageOptionsDto.skip,
-        take: pageOptionsDto.take,
+        take: pageOptionsDto.takeNumber,
         orderBy: {
-          createdAt: pageOptionsDto.order,
+          createdAt: pageOptionsDto.orderValue,
         },
       }),
 
@@ -52,7 +64,7 @@ export class ArtistsService {
     const pageMetaDto = new PageMetaDto({ itemCount, pageOptionsDto });
 
     return new PageDto(
-      entities.map((e) => new ArtistEntity(e)),
+      entities.map((e) => plainToInstance(ArtistEntity, e)),
       pageMetaDto
     );
   }

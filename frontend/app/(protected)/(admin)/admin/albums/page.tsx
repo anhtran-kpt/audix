@@ -65,6 +65,7 @@ export default function AdminAlbumsPage() {
         onPaginationChange={onPaginationChange}
         rowSelection={rowSelection}
         onRowSelectionChange={onRowSelectionChange}
+        searchKey="title"
       />
     </div>
   );

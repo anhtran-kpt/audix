@@ -1,13 +1,13 @@
 import { Genre } from "@/features/common/types/entity.type";
 import {
-  PageParams,
+  PageOptions,
   PaginatedResponse,
 } from "@/features/common/types/pagination";
 import apiClient from "@/lib/axios";
 import { CreateGenreDto, UpdateGenreDto } from "../genres.type";
 
 export const getGenres = async (
-  params: PageParams
+  params: PageOptions
 ): Promise<PaginatedResponse<Genre>> => {
   return apiClient.get("/genres", { params });
 };

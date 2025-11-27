@@ -1,17 +1,17 @@
 import { Artist } from "@/features/common/types/entity.type";
 import {
-  PageParams,
+  PageOptions,
   PaginatedResponse,
 } from "@/features/common/types/pagination";
 import apiClient from "@/lib/axios";
 import {
-  ArtistProfileResponse,
+  ArtistDetailsResponse,
   CreateArtistDto,
   UpdateArtistDto,
 } from "../artists.type";
 
 export const getArtists = async (
-  params: PageParams
+  params: PageOptions
 ): Promise<PaginatedResponse<Artist>> => {
   return apiClient.get("/artists", { params });
 };
@@ -20,9 +20,9 @@ export const getArtist = async (identifier: string): Promise<Artist> => {
   return apiClient.get(`/artists/${identifier}`);
 };
 
-export const getArtistProfile = async (
+export const getArtistDetails = async (
   identifier: string
-): Promise<ArtistProfileResponse> => {
+): Promise<ArtistDetailsResponse> => {
   return apiClient.get(`/artists/${identifier}/details`);
 };
 

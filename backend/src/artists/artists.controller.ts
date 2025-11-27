@@ -16,21 +16,27 @@ import { ArtistsService } from "./artists.service";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { AuthUser } from "src/common/decorators/auth-user.decorator";
 import { User } from "generated/prisma";
-import { CreateArtistDto } from "./dto/create-artist.dto";
-import { UpdateArtistDto } from "./dto/update-artist.dto";
 import { Roles } from "src/auth/roles.decorator";
 import { UserRole } from "src/auth/enums/role.enum";
-import { ApiCreatedResponse, ApiOkResponse } from "@nestjs/swagger";
-import { ArtistSlugResponse } from "./dto/artist-slug-response.dto";
+import {
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiOperation,
+} from "@nestjs/swagger";
 import { RolesGuard } from "src/auth/guards/roles.guard";
-import { ArtistProfileResponse } from "./dto/artist-profile-response.dto";
 import { ArtistEntity } from "./entities/artist.entity";
-import { ApiPaginatedResponse } from "src/common/dtos/pagination/api-paginated-response.decorator";
 import { PageOptionsDto } from "src/common/dtos/pagination/page-options.dto";
 import { PageDto } from "src/common/dtos/pagination/page.dto";
+import { ApiPageOkResponse } from "src/common/decorators/api-page-ok-response.decorator";
+import { ArtistSlugResponse } from "./dtos/artist-slug-response.dto";
+import { CreateArtistDto } from "./dtos/create-artist.dto";
+import { UpdateArtistDto } from "./dtos/update-artist.dto";
+import { ArtistDetailsResponse } from "./dtos/artist-details-response.dto";
 
 @Controller("artists")
 @UseInterceptors(ClassSerializerInterceptor)
+@ApiExtraModels(PageOptionsDto, PageDto, ArtistEntity)
 export class ArtistsController {
   constructor(private readonly artistsService: ArtistsService) {}
 
@@ -45,7 +51,8 @@ export class ArtistsController {
   }
 
   @Get()
-  @ApiPaginatedResponse(ArtistEntity)
+  @ApiOperation({ summary: "Get list of artists with pagination and search" })
+  @ApiPageOkResponse(ArtistEntity)
   async findAll(
     @Query() pageOptionsDto: PageOptionsDto
   ): Promise<PageDto<ArtistEntity>> {
@@ -103,12 +110,12 @@ export class ArtistsController {
 
   @Get(":identifier/details")
   @ApiOkResponse({
-    type: ArtistProfileResponse,
+    type: ArtistDetailsResponse,
     description: "Get artist profile by id or slug",
   })
   async findOneDetails(@Param("identifier") identifier: string) {
     const artist = await this.artistsService.findOneDetails(identifier);
-    return new ArtistProfileResponse(artist);
+    return new ArtistDetailsResponse(artist);
   }
 
   @Post(":id/follow")

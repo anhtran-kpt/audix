@@ -70,7 +70,7 @@ class DiscographyDto {
   singlesAndEps: DiscographyAlbumDto[];
 }
 
-export class ArtistProfileResponse {
+export class ArtistDetailsResponse {
   @ApiProperty({ type: InfoDto })
   @Type(() => InfoDto)
   info: InfoDto;
@@ -83,7 +83,7 @@ export class ArtistProfileResponse {
   @Type(() => DiscographyDto)
   discography: DiscographyDto;
 
-  constructor(partial: Partial<ArtistProfileResponse>) {
+  constructor(partial: Partial<ArtistDetailsResponse>) {
     Object.assign(this, partial);
   }
 }

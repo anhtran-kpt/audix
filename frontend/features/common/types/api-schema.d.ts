@@ -27,6 +27,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Get list of artists with pagination and search */
         get: operations["ArtistsController_findAll"];
         put?: never;
         post: operations["ArtistsController_create"];
@@ -245,6 +246,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/albums/all-static": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AlbumsController_findAllStatic"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/albums/{identifier}": {
         parameters: {
             query?: never;
@@ -329,8 +346,18 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        ArtistSlugResponse: {
-            slug: string;
+        PageOptionsDto: {
+            /**
+             * @description Order by time
+             * @enum {string}
+             */
+            order?: "asc" | "desc";
+            /** @description Page number */
+            page?: number;
+            /** @description Items per page */
+            take?: number;
+            /** @description Search keyword */
+            q?: string;
         };
         PageMetaDto: {
             page: number;
@@ -376,6 +403,9 @@ export interface components {
             updatedAt: string;
             avatarUrl: string | null;
             bannerUrl: string | null;
+        };
+        ArtistSlugResponse: {
+            slug: string;
         };
         CreateArtistDto: {
             name: string;
@@ -433,7 +463,7 @@ export interface components {
             albums: components["schemas"]["DiscographyAlbumDto"][];
             singlesAndEps: components["schemas"]["DiscographyAlbumDto"][];
         };
-        ArtistProfileResponse: {
+        ArtistDetailsResponse: {
             info: components["schemas"]["InfoDto"];
             popularSongs: components["schemas"]["PopularSongDto"][];
             discography: components["schemas"]["DiscographyDto"];
@@ -639,9 +669,14 @@ export interface operations {
     ArtistsController_findAll: {
         parameters: {
             query?: {
+                /** @description Order by time */
                 order?: "asc" | "desc";
+                /** @description Page number */
                 page?: number;
+                /** @description Items per page */
                 take?: number;
+                /** @description Search keyword */
+                q?: string;
             };
             header?: never;
             path?: never;
@@ -773,7 +808,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ArtistProfileResponse"];
+                    "application/json": components["schemas"]["ArtistDetailsResponse"];
                 };
             };
         };
@@ -997,9 +1032,14 @@ export interface operations {
     AlbumsController_findAll: {
         parameters: {
             query?: {
+                /** @description Order by time */
                 order?: "asc" | "desc";
+                /** @description Page number */
                 page?: number;
+                /** @description Items per page */
                 take?: number;
+                /** @description Search keyword */
+                q?: string;
             };
             header?: never;
             path?: never;
@@ -1040,6 +1080,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AlbumEntity"];
+                };
+            };
+        };
+    };
+    AlbumsController_findAllStatic: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Get full static albums */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AlbumSlug"][];
                 };
             };
         };
@@ -1139,9 +1199,14 @@ export interface operations {
     GenresController_findAll: {
         parameters: {
             query?: {
+                /** @description Order by time */
                 order?: "asc" | "desc";
+                /** @description Page number */
                 page?: number;
+                /** @description Items per page */
                 take?: number;
+                /** @description Search keyword */
+                q?: string;
             };
             header?: never;
             path?: never;
