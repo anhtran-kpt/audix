@@ -1,8 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { SongEntity } from "src/songs/entities/song.entity";
 import { Artist as PrismaArtist } from "generated/prisma";
-import { Expose } from "class-transformer";
+import { Expose, Type } from "class-transformer";
 import { CloudinaryUtil } from "src/cloudinary/utils/cloudinary.util";
+import { ArtistGenreEntity } from "./artist-genre.entity";
+import { SongArtistEntity } from "src/songs/entities/song-artist.entity";
+import { AlbumEntity } from "src/albums/entities/album.entity";
 
 export class ArtistEntity implements PrismaArtist {
   @ApiProperty()
@@ -32,9 +34,6 @@ export class ArtistEntity implements PrismaArtist {
   @ApiProperty()
   followersCount: number;
 
-  @ApiProperty({ type: () => [SongEntity], required: false })
-  songs?: SongEntity[];
-
   @ApiProperty()
   createdAt: Date;
 
@@ -52,6 +51,18 @@ export class ArtistEntity implements PrismaArtist {
   get bannerUrl(): string | null {
     return CloudinaryUtil.getBannerUrl(this.bannerId);
   }
+
+  @ApiProperty({ type: () => [ArtistGenreEntity], required: false })
+  @Type(() => ArtistGenreEntity)
+  genres?: ArtistGenreEntity[];
+
+  @ApiProperty({ type: () => [SongArtistEntity], required: false })
+  @Type(() => SongArtistEntity)
+  songs?: SongArtistEntity[];
+
+  @ApiProperty({ type: () => [AlbumEntity], required: false })
+  @Type(() => AlbumEntity)
+  albums?: AlbumEntity[];
 
   constructor(partial: Partial<ArtistEntity>) {
     Object.assign(this, partial);

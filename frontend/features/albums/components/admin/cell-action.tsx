@@ -10,12 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { Album } from "@/features/common/types/entity.type";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useDeleteAlbum } from "../../hooks/admin/use-delete-album";
+import { AlbumEntity } from "@/features/common/types/entity.type";
 
 interface CellActionProps {
-  data: Album;
+  data: AlbumEntity;
 }
 
 export const CellAction = ({ data }: CellActionProps) => {
@@ -46,7 +46,7 @@ export const CellAction = ({ data }: CellActionProps) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem asChild>
           <Link
-            href={`/admin/Albums/${data.id}`}
+            href={`/admin/albums/${data.slug}`}
             className="flex cursor-pointer items-center"
           >
             <Pencil className="mr-2 h-4 w-4" /> Edit

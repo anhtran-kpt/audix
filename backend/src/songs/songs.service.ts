@@ -14,27 +14,38 @@ export class SongsService {
   async create(dto: CreateSongDto) {
     const slug = await this.slugService.generateUniqueSlug(dto.title, "song");
 
+    const lastSong = await this.prisma.song.findFirst({
+      where: { albumId: dto.albumId },
+      orderBy: { order: "desc" },
+      select: { order: true },
+    });
+
+    const newOrder = (lastSong?.order || 0) + 1;
+
+    const { artists, credits, genreIds, ...rest } = dto;
+
     const newSong = await this.prisma.song.create({
       data: {
-        ...dto,
+        ...rest,
+        order: newOrder,
         slug,
         artists: {
-          create: dto.artists.map((item, index) => ({
+          create: artists.map((item, index) => ({
             type: item.type,
             order: index,
             artistId: item.artistId,
           })),
         },
         credits: {
-          create: dto.credits.map((credit) => ({
+          create: credits.map((credit) => ({
             role: credit.role,
             artistId: credit.artistId || null,
             name: credit.artistId ? null : credit.name,
           })),
         },
         genres: {
-          create: dto.genres.map((genre) => ({
-            genreId: genre.genreId,
+          create: genreIds.map((id) => ({
+            genreId: id,
           })),
         },
       },
@@ -58,6 +69,17 @@ export class SongsService {
     await this.updateAlbumStats(newSong.albumId);
 
     return newSong;
+  }
+
+  async reorderSongs(albumId: string, songIds: string[]) {
+    return this.prisma.$transaction(
+      songIds.map((id, index) =>
+        this.prisma.song.update({
+          where: { id, albumId },
+          data: { order: index + 1 },
+        })
+      )
+    );
   }
 
   findAll() {

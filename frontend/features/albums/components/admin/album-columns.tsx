@@ -3,13 +3,13 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
-import { Album } from "@/features/common/types/entity.type";
 import { getSelectColumn } from "@/components/data-table/select-column";
 import { CellAction } from "./cell-action";
 import { formatAlbumDuration } from "@/features/common/utils/format-duration";
+import { AlbumEntity } from "@/features/common/types/entity.type";
 
-export const columns: ColumnDef<Album>[] = [
-  getSelectColumn<Album>(),
+export const columns: ColumnDef<AlbumEntity>[] = [
+  getSelectColumn<AlbumEntity>(),
   {
     accessorKey: "title",
     header: "Title",

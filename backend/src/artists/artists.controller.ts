@@ -33,6 +33,7 @@ import { ArtistSlugResponse } from "./dtos/artist-slug-response.dto";
 import { CreateArtistDto } from "./dtos/create-artist.dto";
 import { UpdateArtistDto } from "./dtos/update-artist.dto";
 import { ArtistDetailsResponse } from "./dtos/artist-details-response.dto";
+import { plainToInstance } from "class-transformer";
 
 @Controller("artists")
 @UseInterceptors(ClassSerializerInterceptor)
@@ -105,7 +106,7 @@ export class ArtistsController {
   })
   async findOne(@Param("identifier") identifier: string) {
     const artist = await this.artistsService.findOne(identifier);
-    return new ArtistEntity(artist);
+    return plainToInstance(ArtistEntity, artist);
   }
 
   @Get(":identifier/details")

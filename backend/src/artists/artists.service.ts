@@ -80,16 +80,18 @@ export class ArtistsService {
 
     const artist = await this.prisma.artist.findUnique({
       where,
-      select: {
-        id: true,
-        slug: true,
-        name: true,
-        avatarId: true,
-        bannerId: true,
-        avatarColor: true,
-        bannerColor: true,
-        bio: true,
-        followersCount: true,
+      include: {
+        genres: {
+          include: {
+            genre: true,
+          },
+        },
+        songs: {
+          include: {
+            song: true,
+          },
+        },
+        albums: true,
       },
     });
 
@@ -202,16 +204,20 @@ export class ArtistsService {
     };
   }
 
-  async create(createArtistDto: CreateArtistDto): Promise<Artist> {
-    const slug = await this.slugService.generateUniqueSlug(
-      createArtistDto.name,
-      "artist"
-    );
+  async create(dto: CreateArtistDto): Promise<Artist> {
+    const slug = await this.slugService.generateUniqueSlug(dto.name, "artist");
+
+    const { genreIds, ...rest } = dto;
 
     return await this.prisma.artist.create({
       data: {
-        ...createArtistDto,
+        ...rest,
         slug: slug,
+        genres: {
+          create: genreIds.map((id) => ({
+            genreId: id,
+          })),
+        },
       },
     });
   }

@@ -1,13 +1,13 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Genre } from "@/features/common/types/entity.type";
+import { GenreEntity } from "@/features/common/types/entity.type";
 import { getSelectColumn } from "@/components/data-table/select-column";
 import { CellAction } from "./cell-action";
 import { format } from "date-fns";
 
-export const columns: ColumnDef<Genre>[] = [
-  getSelectColumn<Genre>(),
+export const columns: ColumnDef<GenreEntity>[] = [
+  getSelectColumn<GenreEntity>(),
   {
     accessorKey: "name",
     header: "Name",

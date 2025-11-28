@@ -20,16 +20,16 @@ import {
   artistFormSchema,
   ArtistFormValues,
 } from "../../schemas/artist-form.schema";
-import { Artist } from "@/features/common/types/entity.type";
 import { useCreateArtist } from "../../hooks/admin/use-create-artist";
 import { useUpdateArtist } from "../../hooks/admin/use-update-artist";
-import { emptyStringToNull } from "@/features/common/utils/form-helper";
 import { compressImage } from "@/features/common/utils/compress-image";
 import { uploadMedia } from "@/features/media/api/client";
 import { CreateArtistDto, UpdateArtistDto } from "../../artists.type";
+import { GenreMultiSelect } from "@/features/genres/components/admin/genre-multi-select";
+import { ArtistEntity } from "@/features/common/types/entity.type";
 
 interface ArtistFormProps {
-  initialData?: Artist;
+  initialData?: ArtistEntity;
 }
 
 export function ArtistForm({ initialData }: ArtistFormProps) {
@@ -50,6 +50,7 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
       bio: initialData?.bio || "",
       avatar: initialData?.avatarUrl || null,
       banner: initialData?.bannerUrl || null,
+      genreIds: initialData?.genres?.map((g) => g.genre?.id) || [],
     },
   });
 
@@ -84,9 +85,9 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
           avatarColor: avatarRes?.dominantColor || null,
           bannerId: bannerRes?.publicId || null,
           bannerColor: bannerRes?.dominantColor || null,
+          genreIds: values.genreIds,
         };
 
-        // 🔥 QUAN TRỌNG: Phải có await
         await createArtist(payload);
         toast.success("Artist created successfully!");
         return;
@@ -169,19 +170,39 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className={step === 1 ? "block" : "hidden"}>
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Artist name" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex gap-4 items-start">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Artist name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="genreIds"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Main Vibes (Genres)</FormLabel>
+                    <FormControl>
+                      <GenreMultiSelect
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
               name="bio"

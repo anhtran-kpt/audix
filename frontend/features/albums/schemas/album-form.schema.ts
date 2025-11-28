@@ -28,16 +28,17 @@ export const songSchema = z.object({
   title: z.string().min(1, "Title is required"),
   audioFile: z.instanceof(File, { message: "Audio file is required" }),
   duration: z.number().optional(),
-  genres: z.object({ genreId: z.string() }).array().optional(),
   isExplicit: z.boolean(),
   artists: z.array(songArtistSchema).min(1, "At least one artist is required"),
   credits: z.array(songCreditSchema).optional(),
+  genreIds: z.array(z.string()).min(1, "At least one genre is required"),
 });
 
 export const albumFormSchema = z.object({
   title: z.string().min(1, "Album title is required"),
   thumbnail: z.union([z.instanceof(File), z.string(), z.null()]).optional(),
   artistId: z.string().min(1, "Main artist is required"),
+  genreIds: z.array(z.string()).min(1, "At least one genre is required"),
   songs: z.array(songSchema).min(1, "At least one song is required"),
   type: AlbumTypeEnum,
   releaseDate: z.date().optional(),

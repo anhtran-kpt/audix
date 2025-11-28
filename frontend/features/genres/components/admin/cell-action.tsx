@@ -10,12 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { Genre } from "@/features/common/types/entity.type";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useDeleteGenre } from "@/features/genres/hooks/admin/use-delete-genre";
+import { GenreEntity } from "@/features/common/types/entity.type";
 
 interface CellActionProps {
-  data: Genre;
+  data: GenreEntity;
 }
 
 export const CellAction = ({ data }: CellActionProps) => {
@@ -46,7 +46,7 @@ export const CellAction = ({ data }: CellActionProps) => {
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuItem asChild>
           <Link
-            href={`/admin/genres/${data.id}`}
+            href={`/admin/genres/${data.slug}`}
             className="flex cursor-pointer items-center"
           >
             <Pencil className="mr-2 h-4 w-4" /> Edit

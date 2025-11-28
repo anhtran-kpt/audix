@@ -23,15 +23,17 @@ export class AlbumsService {
   async create(dto: CreateAlbumDto) {
     const slug = await this.slugService.generateUniqueSlug(dto.title, "album");
 
+    const { genreIds, releaseDate, ...rest } = dto;
+
     return await this.prisma.album.create({
       data: {
-        title: dto.title,
+        ...rest,
+        releaseDate: releaseDate ? new Date(releaseDate) : undefined,
         slug: slug,
-        thumbnailId: dto.thumbnailId,
-        type: dto.type,
-        releaseDate: dto.releaseDate ? new Date(dto.releaseDate) : undefined,
-        artist: {
-          connect: { id: dto.artistId },
+        genres: {
+          create: genreIds.map((id) => ({
+            genreId: id,
+          })),
         },
       },
       include: {

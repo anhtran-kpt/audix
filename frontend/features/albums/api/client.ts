@@ -1,4 +1,3 @@
-import { Album } from "@/features/common/types/entity.type";
 import {
   PageOptions,
   PaginatedResponse,
@@ -9,14 +8,15 @@ import {
   CreateAlbumDto,
   UpdateAlbumDto,
 } from "../albums.type";
+import { AlbumEntity } from "@/features/common/types/entity.type";
 
 export const getAlbums = async (
   params: PageOptions
-): Promise<PaginatedResponse<Album>> => {
+): Promise<PaginatedResponse<AlbumEntity>> => {
   return apiClient.get("/albums", { params });
 };
 
-export const getAlbum = async (identifier: string): Promise<Album> => {
+export const getAlbum = async (identifier: string): Promise<AlbumEntity> => {
   return apiClient.get(`/albums/${identifier}`);
 };
 
@@ -26,7 +26,9 @@ export const getAlbumDetails = async (
   return apiClient.get(`/albums/${identifier}/details`);
 };
 
-export const createAlbum = async (data: CreateAlbumDto): Promise<Album> => {
+export const createAlbum = async (
+  data: CreateAlbumDto
+): Promise<AlbumEntity> => {
   return apiClient.post("/albums", data);
 };
 

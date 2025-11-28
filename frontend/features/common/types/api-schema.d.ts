@@ -405,6 +405,16 @@ export interface components {
         };
         /** @enum {string} */
         AlbumType: "SINGLE" | "EP" | "ALBUM";
+        SongArtistEntity: {
+            /** @enum {string} */
+            type: "MAIN" | "FEATURED";
+            order: number;
+            artist?: components["schemas"]["ArtistEntity"];
+            song?: components["schemas"]["SongEntity"];
+            songId: string;
+            artistId: string;
+            id: string;
+        };
         ArtistEntity: {
             id: string;
             name: string;
@@ -415,28 +425,21 @@ export interface components {
             bannerColor: string | null;
             bio: string | null;
             followersCount: number;
-            songs?: components["schemas"]["SongEntity"][];
             /** Format: date-time */
             createdAt: string;
             /** Format: date-time */
             updatedAt: string;
             avatarUrl: string | null;
             bannerUrl: string | null;
+            genres?: components["schemas"]["ArtistGenreEntity"][];
+            songs?: components["schemas"]["SongArtistEntity"][];
+            albums?: components["schemas"]["AlbumEntity"][];
         };
-        GenreEntity: {
-            id: string;
-            name: string;
-            slug: string;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: date-time */
-            updatedAt: string;
-            songList: components["schemas"]["SongEntity"][];
-            albumList: components["schemas"]["AlbumEntity"][];
-            artistList: components["schemas"]["ArtistEntity"][];
-            songs?: Record<string, never>[];
-            albums?: Record<string, never>[];
-            artists?: Record<string, never>[];
+        AlbumGenreEntity: {
+            genre?: components["schemas"]["GenreEntity"];
+            album?: components["schemas"]["AlbumEntity"];
+            albumId: string;
+            genreId: string;
         };
         AlbumEntity: {
             id: string;
@@ -455,23 +458,11 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
             artist?: components["schemas"]["ArtistEntity"];
-            songs?: components["schemas"]["SongEntity"];
-            genreList: components["schemas"]["GenreEntity"][];
-            likesCount?: number;
-            isLiked?: boolean;
+            songs?: components["schemas"]["SongEntity"][];
+            genres?: components["schemas"]["AlbumGenreEntity"][];
             thumbnailUrl: string | null;
             artistId: string;
             likedBy: string[];
-            genres?: Record<string, never>[];
-        };
-        SongArtistEntity: {
-            /** @enum {string} */
-            type: "MAIN" | "FEATURED";
-            order: number;
-            artist: components["schemas"]["ArtistEntity"];
-            songId: string;
-            artistId: string;
-            id: string;
         };
         SongCreditEntity: {
             /** @enum {string} */
@@ -508,10 +499,38 @@ export interface components {
             genres?: components["schemas"]["SongGenreEntity"][];
             audioId: string;
         };
+        GenreEntity: {
+            id: string;
+            name: string;
+            slug: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            songList: components["schemas"]["SongEntity"][];
+            albumList: components["schemas"]["AlbumEntity"][];
+            artistList: components["schemas"]["ArtistEntity"][];
+            songs?: Record<string, never>[];
+            albums?: Record<string, never>[];
+            artists?: Record<string, never>[];
+        };
+        ArtistGenreEntity: {
+            genre?: components["schemas"]["GenreEntity"];
+            artist?: components["schemas"]["ArtistEntity"];
+            artistId: string;
+            genreId: string;
+        };
         ArtistSlugResponse: {
             slug: string;
         };
         CreateArtistDto: {
+            /**
+             * @description List of Genre IDs
+             * @example [
+             *       "123e4567-e89b-12d3-a456-426614174000"
+             *     ]
+             */
+            genreIds: string[];
             name: string;
             bio?: string | null;
             avatarId?: string | null;
@@ -520,6 +539,13 @@ export interface components {
             bannerColor?: string | null;
         };
         UpdateArtistDto: {
+            /**
+             * @description List of Genre IDs
+             * @example [
+             *       "123e4567-e89b-12d3-a456-426614174000"
+             *     ]
+             */
+            genreIds?: string[];
             name?: string;
             bio?: string | null;
             avatarId?: string | null;
@@ -646,6 +672,13 @@ export interface components {
              * @description Artist ID
              */
             artistId: string;
+            /**
+             * @description List of Genre IDs
+             * @example [
+             *       "123e4567-e89b-12d3-a456-426614174000"
+             *     ]
+             */
+            genreIds: string[];
             thumbnailColor?: string | null;
         };
         AlbumSlug: {
@@ -668,14 +701,11 @@ export interface components {
             /** Format: date-time */
             updatedAt: string;
             artist?: components["schemas"]["ArtistEntity"];
-            songs?: components["schemas"]["SongEntity"];
-            genreList: components["schemas"]["GenreEntity"][];
-            likesCount?: number;
-            isLiked?: boolean;
+            songs?: components["schemas"]["SongEntity"][];
+            genres?: components["schemas"]["AlbumGenreEntity"][];
             thumbnailUrl: string | null;
             artistId: string;
             likedBy: string[];
-            genres?: Record<string, never>[];
         };
         UpdateAlbumDto: {
             /** @example Midnight Memories */
@@ -694,6 +724,13 @@ export interface components {
              * @description Artist ID
              */
             artistId?: string;
+            /**
+             * @description List of Genre IDs
+             * @example [
+             *       "123e4567-e89b-12d3-a456-426614174000"
+             *     ]
+             */
+            genreIds?: string[];
             thumbnailColor?: string | null;
         };
         CreateGenreDto: {
@@ -713,9 +750,6 @@ export interface components {
             artistId?: string;
             name?: string;
         };
-        SongGenreDto: {
-            genreId: string;
-        };
         CreateSongDto: {
             /** @description Song title */
             title: string;
@@ -723,8 +757,6 @@ export interface components {
             audioId: string;
             /** @description Duration in seconds */
             duration: number;
-            /** @description Sort order */
-            order: number;
             /** @description Song lyrics */
             lyrics?: string | null;
             /** @default false */
@@ -736,7 +768,13 @@ export interface components {
             albumId: string;
             artists: components["schemas"]["SongArtistDto"][];
             credits: components["schemas"]["SongCreditDto"][];
-            genres: components["schemas"]["SongGenreDto"][];
+            /**
+             * @description List of Genre IDs
+             * @example [
+             *       "123e4567-e89b-12d3-a456-426614174000"
+             *     ]
+             */
+            genreIds: string[];
         };
         UpdateSongDto: {
             /** @description Song title */
@@ -745,8 +783,6 @@ export interface components {
             audioId?: string;
             /** @description Duration in seconds */
             duration?: number;
-            /** @description Sort order */
-            order?: number;
             /** @description Song lyrics */
             lyrics?: string | null;
             /** @default false */
@@ -758,7 +794,13 @@ export interface components {
             albumId?: string;
             artists?: components["schemas"]["SongArtistDto"][];
             credits?: components["schemas"]["SongCreditDto"][];
-            genres?: components["schemas"]["SongGenreDto"][];
+            /**
+             * @description List of Genre IDs
+             * @example [
+             *       "123e4567-e89b-12d3-a456-426614174000"
+             *     ]
+             */
+            genreIds?: string[];
         };
     };
     responses: never;

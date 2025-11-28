@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Type } from "class-transformer";
 import { ArtistType } from "generated/prisma";
 import { ArtistEntity } from "src/artists/entities/artist.entity";
+import { SongEntity } from "./song.entity";
 
 export class SongArtistEntity {
   @ApiProperty({ enum: ArtistType })
@@ -9,10 +10,6 @@ export class SongArtistEntity {
 
   @ApiProperty()
   order: number;
-
-  @ApiProperty({ type: () => ArtistEntity })
-  @Type(() => ArtistEntity)
-  artist: ArtistEntity;
 
   @Exclude()
   songId: string;
@@ -22,6 +19,14 @@ export class SongArtistEntity {
 
   @Exclude()
   id: string;
+
+  @ApiProperty({ type: () => ArtistEntity })
+  @Type(() => ArtistEntity)
+  artist?: ArtistEntity;
+
+  @ApiProperty({ type: () => SongEntity })
+  @Type(() => SongEntity)
+  song?: SongEntity;
 
   constructor(partial: Partial<SongArtistEntity>) {
     Object.assign(this, partial);

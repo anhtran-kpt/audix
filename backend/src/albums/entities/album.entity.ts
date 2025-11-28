@@ -1,15 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { Exclude, Expose, Type } from "class-transformer";
-import {
-  Album,
-  AlbumGenre,
-  AlbumType,
-  Genre,
-  UserLikedAlbum,
-} from "generated/prisma";
+import { Album, AlbumType, UserLikedAlbum } from "generated/prisma";
 import { ArtistEntity } from "src/artists/entities/artist.entity";
 import { CloudinaryUtil } from "src/cloudinary/utils/cloudinary.util";
-import { GenreEntity } from "src/genres/entities/genre.entity";
+import { AlbumGenreEntity } from "src/genres/entities/album-genre.entity";
 import { SongEntity } from "src/songs/entities/song.entity";
 
 export class AlbumEntity implements Album {
@@ -58,31 +52,16 @@ export class AlbumEntity implements Album {
   @Expose()
   artist?: ArtistEntity;
 
-  @ApiProperty({ type: () => SongEntity, required: false })
+  @ApiProperty({ type: () => [SongEntity], required: false })
   @Type(() => SongEntity)
   songs?: SongEntity[];
 
+  @ApiProperty({ type: () => [AlbumGenreEntity], required: false })
+  @Type(() => AlbumGenreEntity)
+  genres?: AlbumGenreEntity[];
+
   @Exclude()
   likedBy: UserLikedAlbum[];
-
-  @Exclude()
-  genres?: (AlbumGenre & { genre: Genre })[];
-
-  @ApiProperty({ type: () => [GenreEntity] })
-  @Expose()
-  get genreList(): GenreEntity[] {
-    if (!this.genres || this.genres.length === 0) {
-      return [];
-    }
-
-    return this.genres.map((ag) => new GenreEntity(ag.genre));
-  }
-
-  @ApiProperty({ required: false })
-  likesCount?: number;
-
-  @ApiProperty({ required: false })
-  isLiked?: boolean;
 
   @Expose()
   @ApiProperty({ type: String, nullable: true })

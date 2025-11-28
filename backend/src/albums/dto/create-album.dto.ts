@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import {
+  ArrayMinSize,
+  IsArray,
   IsEnum,
   IsISO8601,
   IsNotEmpty,
@@ -38,4 +40,14 @@ export class CreateAlbumDto {
   @IsUUID()
   @IsNotEmpty()
   artistId: string;
+
+  @ApiProperty({
+    description: "List of Genre IDs",
+    example: ["123e4567-e89b-12d3-a456-426614174000"],
+    type: [String],
+  })
+  @IsArray()
+  @ArrayMinSize(1, { message: "At least one genre is required" })
+  @IsUUID("4", { each: true, message: "Invalid Genre ID format" })
+  genreIds: string[];
 }

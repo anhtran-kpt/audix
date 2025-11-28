@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import {
+  ArrayMinSize,
   IsArray,
   IsBoolean,
   IsEnum,
@@ -13,13 +14,6 @@ import {
   ValidateNested,
 } from "class-validator";
 import { ArtistType, CreditRole } from "generated/prisma";
-
-export class SongGenreDto {
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  genreId: string;
-}
 
 export class SongArtistDto {
   @ApiProperty()
@@ -65,10 +59,6 @@ export class CreateSongDto {
   @IsNumber()
   duration: number;
 
-  @ApiProperty({ description: "Sort order" })
-  @IsNumber()
-  order: number;
-
   @ApiPropertyOptional({ description: "Song lyrics", nullable: true })
   @IsString()
   @IsOptional()
@@ -96,9 +86,13 @@ export class CreateSongDto {
   @Type(() => SongCreditDto)
   credits: SongCreditDto[];
 
-  @ApiProperty({ type: () => SongGenreDto, isArray: true })
+  @ApiProperty({
+    description: "List of Genre IDs",
+    example: ["123e4567-e89b-12d3-a456-426614174000"],
+    type: [String],
+  })
   @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => SongGenreDto)
-  genres: SongGenreDto[];
+  @ArrayMinSize(1, { message: "At least one genre is required" })
+  @IsUUID("4", { each: true, message: "Invalid Genre ID format" })
+  genreIds: string[];
 }

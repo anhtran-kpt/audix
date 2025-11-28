@@ -10,12 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { Artist } from "@/features/common/types/entity.type";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useDeleteArtist } from "../../hooks/admin/use-delete-artist";
+import { ArtistEntity } from "@/features/common/types/entity.type";
 
 interface CellActionProps {
-  data: Artist;
+  data: ArtistEntity;
 }
 
 export const CellAction = ({ data }: CellActionProps) => {

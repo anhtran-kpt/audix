@@ -3,12 +3,12 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { format } from "date-fns";
-import { Artist } from "@/features/common/types/entity.type";
+import { ArtistEntity } from "@/features/common/types/entity.type";
 import { getSelectColumn } from "@/components/data-table/select-column";
 import { CellAction } from "./cell-action";
 
-export const columns: ColumnDef<Artist>[] = [
-  getSelectColumn<Artist>(),
+export const columns: ColumnDef<ArtistEntity>[] = [
+  getSelectColumn<ArtistEntity>(),
   {
     accessorKey: "name",
     header: "Name",

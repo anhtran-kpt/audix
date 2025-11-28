@@ -44,10 +44,11 @@ import {
 import { cn } from "@/lib/utils";
 import { CreateSongDto } from "@/features/songs/songs.type";
 import { Calendar } from "@/components/ui/calendar";
-import { getUploadSignature, uploadMedia } from "@/features/media/api/client";
+import { uploadMedia } from "@/features/media/api/client";
 import { compressImage } from "@/features/common/utils/compress-image";
+import { GenreMultiSelect } from "@/features/genres/components/admin/genre-multi-select";
 
-export function AlbumForm() {
+export function AlbumCreateForm() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -61,6 +62,7 @@ export function AlbumForm() {
       artistId: "",
       songs: [],
       type: "SINGLE",
+      genreIds: [],
     },
   });
 
@@ -93,6 +95,7 @@ export function AlbumForm() {
         releaseDate: values.releaseDate
           ? values.releaseDate.toISOString()
           : undefined,
+        genreIds: values.genreIds,
       });
 
       if (!newAlbum?.id) throw new Error("Failed to create album");
@@ -123,7 +126,6 @@ export function AlbumForm() {
           albumId: newAlbum.id,
           audioId: audioRes.publicId,
           duration: audioRes.duration || song.duration || 0,
-          order: songIndex,
           isExplicit: song.isExplicit,
           artists: song.artists.map((a) => ({
             artistId: a.artistId,
@@ -135,7 +137,7 @@ export function AlbumForm() {
               artistId: c.value.id || undefined,
               name: !c.value.id ? c.value.name : undefined,
             })) || [],
-          genres: song.genres || [],
+          genreIds: song.genreIds,
         };
 
         await createSong(songPayload);
@@ -307,6 +309,23 @@ export function AlbumForm() {
                         </FormItem>
                       )}
                     />
+
+                    <FormField
+                      control={form.control}
+                      name="genreIds"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Album Genres (Main Vibe)</FormLabel>
+                          <FormControl>
+                            <GenreMultiSelect
+                              value={field.value}
+                              onChange={field.onChange}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -336,7 +355,7 @@ export function AlbumForm() {
                         },
                       ],
                       credits: [],
-                      genres: [],
+                      genreIds: form.getValues("genreIds") || [],
                       isExplicit: false,
                     })
                   }
@@ -388,6 +407,25 @@ export function AlbumForm() {
                                       if (file) onChange(file);
                                     }}
                                     {...rest}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name={`songs.${index}.genreIds`}
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-xs">
+                                  Genres
+                                </FormLabel>
+                                <FormControl>
+                                  <GenreMultiSelect
+                                    value={field.value}
+                                    onChange={field.onChange}
                                   />
                                 </FormControl>
                                 <FormMessage />

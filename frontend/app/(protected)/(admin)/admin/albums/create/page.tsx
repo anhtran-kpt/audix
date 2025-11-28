@@ -1,6 +1,6 @@
 "use client";
 
-import { AlbumForm } from "@/features/albums/components/admin/album-form";
+import { AlbumCreateForm } from "@/features/albums/components/admin/album-create-form";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
@@ -23,7 +23,7 @@ export default function CreateAlbumPage() {
       </div>
 
       <div className="border rounded-lg p-6 bg-card">
-        <AlbumForm />
+        <AlbumCreateForm />
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 import { emptyStringToNull } from "@/features/common/utils/form-helper";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { songKeys } from "../api/keys";
-import { createSong } from "../api/client";
-import { CreateSongDto } from "../songs.type";
+import { CreateSongDto } from "../../songs.type";
+import { createSong } from "../../api/client";
+import { songKeys } from "../../api/keys";
 
 export const useCreateSong = () => {
   const qc = useQueryClient();
