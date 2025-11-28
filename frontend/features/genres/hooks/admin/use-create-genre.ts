@@ -8,7 +8,7 @@ import { genreKeys } from "../../api/keys";
 export const useCreateGenre = () => {
   const qc = useQueryClient();
   const router = useRouter();
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: (values: CreateGenreDto) => {
       const payload = {
         ...values,
@@ -24,7 +24,7 @@ export const useCreateGenre = () => {
   });
 
   return {
-    createGenre: mutate,
+    createGenre: mutateAsync,
     isCreating: isPending,
   };
 };

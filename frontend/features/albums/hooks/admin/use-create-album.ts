@@ -10,7 +10,7 @@ export const useCreateAlbum = () => {
   const qc = useQueryClient();
   const router = useRouter();
 
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: (values: CreateAlbumDto) => {
       const payload = {
         ...values,
@@ -28,7 +28,7 @@ export const useCreateAlbum = () => {
   });
 
   return {
-    createAlbum: mutate,
+    createAlbum: mutateAsync,
     isCreating: isPending,
   };
 };

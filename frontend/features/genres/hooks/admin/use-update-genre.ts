@@ -8,7 +8,7 @@ import { updateGenre } from "../../api/client";
 export const useUpdateGenre = () => {
   const qc = useQueryClient();
   const router = useRouter();
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: ({
       genreId,
       values,
@@ -25,7 +25,7 @@ export const useUpdateGenre = () => {
   });
 
   return {
-    updateGenre: mutate,
+    updateGenre: mutateAsync,
     isUpdating: isPending,
   };
 };

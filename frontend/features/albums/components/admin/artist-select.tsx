@@ -22,17 +22,24 @@ import { Artist } from "@/features/common/types/entity.type";
 import { useDebounceValue } from "usehooks-ts";
 import { getArtists } from "@/features/artists/api/client";
 
-interface ArtistSelectProps {
+export type ArtistBasicInfo = {
+  id: string;
+  name: string;
+};
+
+type ArtistSelectProps = {
   value?: string;
   onChange: (value: string) => void;
   modal?: boolean;
   initialArtist?: Artist;
-}
+  onSelectArtist?: (artist: ArtistBasicInfo) => void;
+};
 
 export function ArtistSelect({
   value,
   onChange,
   initialArtist,
+  onSelectArtist,
   modal = false,
 }: ArtistSelectProps) {
   const [open, setOpen] = React.useState(false);
@@ -101,6 +108,10 @@ export function ArtistSelect({
                   onSelect={() => {
                     onChange(artist.id);
                     setOpen(false);
+
+                    if (onSelectArtist) {
+                      onSelectArtist({ id: artist.id, name: artist.name });
+                    }
                   }}
                 >
                   <Check

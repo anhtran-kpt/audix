@@ -2,6 +2,9 @@ import { ApiProperty } from "@nestjs/swagger";
 
 export class UploadSignatureResponse {
   @ApiProperty()
+  publicId: string;
+
+  @ApiProperty()
   timestamp: number;
 
   @ApiProperty()
@@ -15,6 +18,9 @@ export class UploadSignatureResponse {
 
   @ApiProperty()
   cloudName: string | undefined;
+
+  @ApiProperty()
+  fetchColors: boolean;
 
   constructor(partial: Partial<UploadSignatureResponse>) {
     Object.assign(this, partial);

@@ -18,7 +18,7 @@ export const columns: ColumnDef<Album>[] = [
       return (
         <div className="flex items-center gap-3">
           <Avatar className="h-9 w-9">
-            <AvatarImage src={album.thumbnailId || ""} />
+            <AvatarImage src={album.thumbnailUrl || ""} />
             <AvatarFallback>{album.title[0]}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
@@ -30,7 +30,7 @@ export const columns: ColumnDef<Album>[] = [
     },
   },
   {
-    accessorKey: "artist",
+    accessorKey: "author",
     header: "Author",
     cell: ({ row }) => <span>{row.original.artist?.name}</span>,
   },

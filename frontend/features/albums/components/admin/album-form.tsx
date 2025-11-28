@@ -21,12 +21,8 @@ import { ImageUpload } from "@/components/ui/image-load";
 import {
   albumFormSchema,
   AlbumFormValues,
+  AlbumTypeEnum,
 } from "../../schemas/album-form.schema";
-import {
-  getUploadAudioSignature,
-  uploadAudio,
-  uploadImage,
-} from "@/features/media/api/client";
 import { createAlbum } from "../../api/client";
 import { createSong } from "@/features/songs/api/client";
 import { SongCreditSelector } from "./song-credit-selector";
@@ -48,12 +44,15 @@ import {
 import { cn } from "@/lib/utils";
 import { CreateSongDto } from "@/features/songs/songs.type";
 import { Calendar } from "@/components/ui/calendar";
+import { getUploadSignature, uploadMedia } from "@/features/media/api/client";
+import { compressImage } from "@/features/common/utils/compress-image";
 
 export function AlbumForm() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState("");
+  const [mainArtistName, setMainArtistName] = useState("");
 
   const form = useForm<AlbumFormValues>({
     resolver: zodResolver(albumFormSchema),
@@ -77,7 +76,12 @@ export function AlbumForm() {
 
       let thumbnailRes = null;
       if (values.thumbnail instanceof File) {
-        thumbnailRes = await uploadImage(values.thumbnail);
+        const compressedFile = await compressImage(values.thumbnail);
+
+        thumbnailRes = await uploadMedia(compressedFile, "image", "albums", {
+          main: values.title,
+          ctx: "",
+        });
       }
 
       const newAlbum = await createAlbum({
@@ -94,7 +98,6 @@ export function AlbumForm() {
       if (!newAlbum?.id) throw new Error("Failed to create album");
 
       setUploadProgress("Fetching secure signature...");
-      const signData = await getUploadAudioSignature();
       const totalSongs = values.songs.length;
 
       for (const [index, song] of values.songs.entries()) {
@@ -106,9 +109,11 @@ export function AlbumForm() {
           );
         };
 
-        const audioRes = await uploadAudio(
+        const audioRes = await uploadMedia(
           song.audioFile,
-          signData,
+          "video",
+          "songs",
+          { main: song.title, ctx: mainArtistName },
           handleProgress
         );
         setUploadProgress(`Saving song ${songIndex}/${totalSongs}...`);
@@ -116,7 +121,7 @@ export function AlbumForm() {
         const songPayload: CreateSongDto = {
           title: song.title,
           albumId: newAlbum.id,
-          audioId: audioRes.id,
+          audioId: audioRes.publicId,
           duration: audioRes.duration || song.duration || 0,
           order: songIndex,
           isExplicit: song.isExplicit,
@@ -218,6 +223,9 @@ export function AlbumForm() {
                           <ArtistSelect
                             value={field.value}
                             onChange={field.onChange}
+                            onSelectArtist={(artist) =>
+                              setMainArtistName(artist.name)
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -242,9 +250,11 @@ export function AlbumForm() {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="SINGLE">Single</SelectItem>
-                              <SelectItem value="EP">EP</SelectItem>
-                              <SelectItem value="ALBUM">Album</SelectItem>
+                              {AlbumTypeEnum.options.map((type) => (
+                                <SelectItem key={type} value={type}>
+                                  {type}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                           <FormMessage />

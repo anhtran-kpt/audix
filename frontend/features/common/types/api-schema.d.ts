@@ -117,7 +117,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/media/signature/audio": {
+    "/media/signature": {
         parameters: {
             query?: never;
             header?: never;
@@ -459,6 +459,7 @@ export interface components {
             genreList: components["schemas"]["GenreEntity"][];
             likesCount?: number;
             isLiked?: boolean;
+            thumbnailUrl: string | null;
             artistId: string;
             likedBy: string[];
             genres?: Record<string, never>[];
@@ -575,11 +576,13 @@ export interface components {
             dominantColor: string | null;
         };
         UploadSignatureResponse: {
+            publicId: string;
             timestamp: number;
             signature: string;
             folder: string;
             apiKey: string;
             cloudName: string;
+            fetchColors: boolean;
         };
         /** @enum {string} */
         UserRole: "USER" | "ADMIN";
@@ -669,6 +672,7 @@ export interface components {
             genreList: components["schemas"]["GenreEntity"][];
             likesCount?: number;
             isLiked?: boolean;
+            thumbnailUrl: string | null;
             artistId: string;
             likedBy: string[];
             genres?: Record<string, never>[];
@@ -993,7 +997,11 @@ export interface operations {
     };
     MediaController_getAudioUploadSignature: {
         parameters: {
-            query?: never;
+            query: {
+                filename: string;
+                folder: string;
+                resourceType: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;

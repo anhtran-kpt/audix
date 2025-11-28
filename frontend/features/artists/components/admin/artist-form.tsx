@@ -21,11 +21,12 @@ import {
   ArtistFormValues,
 } from "../../schemas/artist-form.schema";
 import { Artist } from "@/features/common/types/entity.type";
-import { uploadImage } from "@/features/media/api/client";
 import { useCreateArtist } from "../../hooks/admin/use-create-artist";
 import { useUpdateArtist } from "../../hooks/admin/use-update-artist";
 import { emptyStringToNull } from "@/features/common/utils/form-helper";
 import { compressImage } from "@/features/common/utils/compress-image";
+import { uploadMedia } from "@/features/media/api/client";
+import { CreateArtistDto, UpdateArtistDto } from "../../artists.type";
 
 interface ArtistFormProps {
   initialData?: Artist;
@@ -52,104 +53,97 @@ export function ArtistForm({ initialData }: ArtistFormProps) {
     },
   });
 
-  const handleUpload = async (fileOrUrl: File | string | null) => {
-    if (fileOrUrl instanceof File) {
-      const compressedFile = await compressImage(fileOrUrl);
-
-      const res = await uploadImage(compressedFile);
-      return { id: res.publicId, color: res.dominantColor };
-    }
-    return null;
-  };
-
   const onSubmit = async (values: ArtistFormValues) => {
     try {
       setIsUploading(true);
 
+      const processAndUpload = async (
+        file: File | string | null | undefined,
+        ctx: string
+      ) => {
+        if (!(file instanceof File)) return null;
+
+        const compressedFile = await compressImage(file);
+
+        return uploadMedia(compressedFile, "image", "artists", {
+          main: values.name,
+          ctx: ctx,
+        });
+      };
+
       if (!initialData) {
-        const uploadPromises = [];
-        type ImageRes = {
-          id: string;
-          color: string | null;
-        } | null;
+        const [avatarRes, bannerRes] = await Promise.all([
+          processAndUpload(values.avatar, "avatar"),
+          processAndUpload(values.banner, "banner"),
+        ]);
 
-        let avatarRes = null;
-        let bannerRes = null;
-
-        if (values.avatar instanceof File) {
-          uploadPromises.push(
-            handleUpload(values.avatar).then((res) => (avatarRes = res))
-          );
-        }
-        if (values.banner instanceof File) {
-          uploadPromises.push(
-            handleUpload(values.banner).then((res) => (bannerRes = res))
-          );
-        }
-        await Promise.all(uploadPromises);
-
-        const payload = {
+        const payload: CreateArtistDto = {
           name: values.name,
           bio: values.bio,
-          avatarId: (avatarRes as ImageRes)?.id ?? null,
-          avatarColor: (avatarRes as ImageRes)?.color ?? null,
-          bannerId: (bannerRes as ImageRes)?.id ?? null,
-          bannerColor: (bannerRes as ImageRes)?.color ?? null,
+          avatarId: avatarRes?.publicId || null,
+          avatarColor: avatarRes?.dominantColor || null,
+          bannerId: bannerRes?.publicId || null,
+          bannerColor: bannerRes?.dominantColor || null,
         };
 
-        createArtist(payload);
+        // 🔥 QUAN TRỌNG: Phải có await
+        await createArtist(payload);
+        toast.success("Artist created successfully!");
         return;
       }
 
-      const payload: any = {};
+      const payload: UpdateArtistDto = {};
 
       if (values.name !== initialData.name) {
         payload.name = values.name;
       }
 
-      const currentBio = emptyStringToNull(values.bio);
-
-      if (currentBio !== initialData.bio) {
-        payload.bio = currentBio;
+      const formBio = values.bio?.trim() || null;
+      if (formBio !== initialData.bio) {
+        payload.bio = formBio;
       }
 
-      const tasks = [];
+      const resolveImageChange = async (
+        newFile: File | string | null | undefined,
+        currentUrl: string | null | undefined,
+        ctx: string
+      ) => {
+        if (newFile instanceof File) {
+          return processAndUpload(newFile, ctx);
+        }
 
-      if (values.avatar instanceof File) {
-        tasks.push(
-          handleUpload(values.avatar).then((res) => {
-            payload.avatarId = res?.id;
-            payload.avatarColor = res?.color;
-          })
-        );
-      } else if (values.avatar === null && initialData.avatarUrl) {
-        payload.avatarId = null;
-        payload.avatarColor = null;
+        if (newFile === null && currentUrl) {
+          return null;
+        }
+
+        return undefined;
+      };
+
+      const [avatarResult, bannerResult] = await Promise.all([
+        resolveImageChange(values.avatar, initialData.avatarUrl, "avatar"),
+        resolveImageChange(values.banner, initialData.bannerUrl, "banner"),
+      ]);
+
+      if (avatarResult !== undefined) {
+        payload.avatarId = avatarResult ? avatarResult.publicId : null;
+        payload.avatarColor = avatarResult ? avatarResult.dominantColor : null;
       }
 
-      if (values.banner instanceof File) {
-        tasks.push(
-          handleUpload(values.banner).then((res) => {
-            payload.bannerId = res?.id;
-            payload.bannerColor = res?.color;
-          })
-        );
-      } else if (values.banner === null && initialData.bannerUrl) {
-        payload.bannerId = null;
-        payload.bannerColor = null;
+      if (bannerResult !== undefined) {
+        payload.bannerId = bannerResult ? bannerResult.publicId : null;
+        payload.bannerColor = bannerResult ? bannerResult.dominantColor : null;
       }
-
-      await Promise.all(tasks);
 
       if (Object.keys(payload).length === 0) {
         toast.info("No changes to save");
         return;
       }
 
-      updateArtist({ artistId: initialData.id, values: payload });
+      await updateArtist({ artistId: initialData.id, values: payload });
+      toast.success("Artist updated successfully!");
     } catch (error) {
-      toast.error("Something went wrong");
       console.error(error);
+      toast.error("Something went wrong");
     } finally {
       setIsUploading(false);
     }

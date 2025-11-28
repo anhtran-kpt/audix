@@ -38,12 +38,22 @@ export class MediaController {
     return new UploadImageResponse(res);
   }
 
-  @Get("signature/audio")
+  @Get("signature")
   @Roles(UserRole.ADMIN)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiCreatedResponse({ type: UploadSignatureResponse })
-  getAudioUploadSignature() {
-    const res = this.cloudinaryService.getUploadSignature("songs");
+  getAudioUploadSignature(
+    @Query("filename") filename: string,
+    @Query("folder") folder: string,
+    @Query("resourceType") resourceType: string
+  ) {
+    const needColors = resourceType === "image";
+
+    const res = this.cloudinaryService.getUploadSignature(
+      folder,
+      filename,
+      needColors
+    );
 
     return new UploadSignatureResponse(res);
   }

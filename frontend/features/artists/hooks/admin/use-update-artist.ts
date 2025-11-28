@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 export const useUpdateArtist = () => {
   const qc = useQueryClient();
   const router = useRouter();
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: ({
       artistId,
       values,
@@ -37,7 +37,7 @@ export const useUpdateArtist = () => {
   });
 
   return {
-    updateArtist: mutate,
+    updateArtist: mutateAsync,
     isUpdating: isPending,
   };
 };

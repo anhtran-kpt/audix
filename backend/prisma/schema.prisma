@@ -104,7 +104,7 @@ model Album {
   artistId String
   artist   Artist           @relation(fields: [artistId], references: [id], onDelete: Cascade)
   songs    Song[]
-  genres   AlbumGenre[]
+  genres   AlbumGenre[] // bỏ
   likedBy  UserLikedAlbum[]
 
   @@index([slug])

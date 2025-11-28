@@ -8,6 +8,7 @@ import {
   UserLikedAlbum,
 } from "generated/prisma";
 import { ArtistEntity } from "src/artists/entities/artist.entity";
+import { CloudinaryUtil } from "src/cloudinary/utils/cloudinary.util";
 import { GenreEntity } from "src/genres/entities/genre.entity";
 import { SongEntity } from "src/songs/entities/song.entity";
 
@@ -82,6 +83,12 @@ export class AlbumEntity implements Album {
 
   @ApiProperty({ required: false })
   isLiked?: boolean;
+
+  @Expose()
+  @ApiProperty({ type: String, nullable: true })
+  get thumbnailUrl(): string | null {
+    return CloudinaryUtil.getThumbnailUrl(this.thumbnailId);
+  }
 
   constructor(partial: Partial<AlbumEntity>) {
     Object.assign(this, partial);

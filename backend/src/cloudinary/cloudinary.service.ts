@@ -9,16 +9,27 @@ import {
 @Injectable()
 export class CloudinaryService {
   constructor(private readonly configService: ConfigService) {}
-  getUploadSignature(folder: string) {
+  getUploadSignature(
+    subFolder: string,
+    publicId: string,
+    fetchColors: boolean
+  ) {
     const apiSecret = this.configService.get<string>("CLOUDINARY_API_SECRET")!;
     const apiKey = this.configService.get<string>("CLOUDINARY_API_KEY");
     const cloudName = this.configService.get<string>("CLOUDINARY_CLOUD_NAME");
+    const rootFolder = this.configService.get<string>(
+      "CLOUDINARY_ROOT_FOLDER"
+    )!;
+
+    const finalFolder = rootFolder ? `${rootFolder}/${subFolder}` : subFolder;
 
     const timestamp = Math.round(new Date().getTime() / 1000);
 
     const paramsToSign = {
       timestamp,
-      folder,
+      folder: finalFolder,
+      public_id: publicId,
+      colors: fetchColors,
     };
 
     const signature = cloudinary.utils.api_sign_request(
@@ -29,7 +40,9 @@ export class CloudinaryService {
     return {
       timestamp,
       signature,
-      folder,
+      folder: finalFolder,
+      publicId,
+      fetchColors,
       apiKey,
       cloudName,
     };

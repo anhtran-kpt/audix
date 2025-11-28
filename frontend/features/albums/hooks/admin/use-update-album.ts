@@ -9,7 +9,7 @@ import { UpdateAlbumDto } from "../../albums.type";
 export const useUpdateAlbum = () => {
   const qc = useQueryClient();
   const router = useRouter();
-  const { mutate, isPending } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: ({
       albumId,
       values,
@@ -27,14 +27,14 @@ export const useUpdateAlbum = () => {
     },
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: albumKeys.all });
-      qc.invalidateQueries({ queryKey: albumKeys.detail(vars.albumId) });
+      qc.invalidateQueries({ queryKey: albumKeys.details(vars.albumId) });
       toast.success(`Album updated successfully!`);
       router.replace("/admin/albums");
     },
   });
 
   return {
-    updateAlbum: mutate,
+    updateAlbum: mutateAsync,
     isUpdating: isPending,
   };
 };
