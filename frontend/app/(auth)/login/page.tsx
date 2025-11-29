@@ -154,7 +154,7 @@ export default function LoginPage() {
 
       <CardFooter className="flex items-center gap-1 justify-center">
         Don&apos;t have an account?{" "}
-        <Link href={`/auth/register`} className="underline">
+        <Link href={`/register`} className="underline">
           Sign up now
         </Link>
       </CardFooter>
