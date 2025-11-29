@@ -91,6 +91,10 @@ export class AlbumsService {
 
     const album = await this.prisma.album.findUnique({
       where,
+      include: {
+        songs: true,
+        artist: true,
+      },
     });
 
     if (!album) throw new NotFoundException("Album not found");

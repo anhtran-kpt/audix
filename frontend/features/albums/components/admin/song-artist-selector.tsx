@@ -10,19 +10,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FormField } from "@/components/ui/form";
+import {
+  FormField,
+  FormItem,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { ArtistBasicInfo, ArtistSelect } from "./artist-select";
 import { ArtistTypeEnum } from "../../schemas/album-form.schema";
-import { ArtistSelect } from "./artist-select";
 
 interface SongArtistSelectorProps {
-  songIndex: number;
+  name: string;
+  onArtistSelect?: (index: number, artist: ArtistBasicInfo) => void;
 }
 
-export function SongArtistSelector({ songIndex }: SongArtistSelectorProps) {
+export function SongArtistSelector({
+  name,
+  onArtistSelect,
+}: SongArtistSelectorProps) {
   const { control } = useFormContext();
-  const { fields, append, remove, update } = useFieldArray({
+
+  const { fields, append, remove } = useFieldArray({
     control,
-    name: `songs.${songIndex}.artists`,
+    name: name,
   });
 
   return (
@@ -41,14 +51,27 @@ export function SongArtistSelector({ songIndex }: SongArtistSelectorProps) {
       </div>
 
       <div className="space-y-2">
-        {fields.map((field, artistIndex) => (
+        {fields.map((field, index) => (
           <div key={field.id} className="flex items-center gap-2">
             <div className="flex-1">
               <FormField
                 control={control}
-                name={`songs.${songIndex}.artists.${artistIndex}.artistId`}
+                name={`${name}.${index}.artistId`}
                 render={({ field }) => (
-                  <ArtistSelect value={field.value} onChange={field.onChange} />
+                  <FormItem>
+                    <FormControl>
+                      <ArtistSelect
+                        value={field.value}
+                        onChange={field.onChange}
+                        onSelectArtist={(artist) => {
+                          if (onArtistSelect) {
+                            onArtistSelect(index, artist);
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
                 )}
               />
             </div>
@@ -56,23 +79,24 @@ export function SongArtistSelector({ songIndex }: SongArtistSelectorProps) {
             <div className="w-[110px]">
               <FormField
                 control={control}
-                name={`songs.${songIndex}.artists.${artistIndex}.type`}
+                name={`${name}.${index}.type`}
                 render={({ field }) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger className="h-9">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ArtistTypeEnum.options.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormItem>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="h-9">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {ArtistTypeEnum.options.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
                 )}
               />
             </div>
@@ -83,7 +107,7 @@ export function SongArtistSelector({ songIndex }: SongArtistSelectorProps) {
                 variant="ghost"
                 size="icon"
                 className="h-9 w-9 text-muted-foreground hover:text-red-500"
-                onClick={() => remove(artistIndex)}
+                onClick={() => remove(index)}
               >
                 <X className="h-4 w-4" />
               </Button>

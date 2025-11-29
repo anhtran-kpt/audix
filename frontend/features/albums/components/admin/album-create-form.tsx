@@ -47,6 +47,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { uploadMedia } from "@/features/media/api/client";
 import { compressImage } from "@/features/common/utils/compress-image";
 import { GenreMultiSelect } from "@/features/genres/components/admin/genre-multi-select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function AlbumCreateForm() {
   const router = useRouter();
@@ -125,7 +126,7 @@ export function AlbumCreateForm() {
           title: song.title,
           albumId: newAlbum.id,
           audioId: audioRes.publicId,
-          duration: audioRes.duration || song.duration || 0,
+          duration: audioRes.duration as number,
           isExplicit: song.isExplicit,
           artists: song.artists.map((a) => ({
             artistId: a.artistId,
@@ -416,6 +417,24 @@ export function AlbumCreateForm() {
 
                           <FormField
                             control={form.control}
+                            name={`songs.${index}.isExplicit`}
+                            render={({ field }) => (
+                              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm h-[72px]">
+                                <FormControl>
+                                  <Checkbox
+                                    checked={field.value}
+                                    onCheckedChange={field.onChange}
+                                  />
+                                </FormControl>
+                                <div className="space-y-1 leading-none">
+                                  <FormLabel>Explicit Content</FormLabel>
+                                </div>
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
                             name={`songs.${index}.genreIds`}
                             render={({ field }) => (
                               <FormItem>
@@ -435,8 +454,8 @@ export function AlbumCreateForm() {
                         </div>
 
                         <div className="bg-muted/30 p-3 rounded-md space-y-4">
-                          <SongArtistSelector songIndex={index} />
-                          <SongCreditSelector songIndex={index} />
+                          <SongArtistSelector name={`songs.${index}.artists`} />
+                          <SongCreditSelector name={`songs.${index}.credits`} />
                         </div>
                       </div>
 

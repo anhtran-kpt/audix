@@ -25,22 +25,24 @@ export default function EditAlbumPage() {
     );
   }
 
+  console.log(album);
+
   return (
     <div className="max-w-5xl mx-auto space-y-10 pb-20">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Edit Album: {album.title}</h1>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1">
+      <div className="grid grid-cols-1 gap-8">
+        <div className="">
           <AlbumInfoForm initialData={album} />
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="">
           <SongsList
             songs={album.songs || []}
             albumId={album.id}
-            defaultArtistId={album.artistId}
+            defaultArtist={{ id: album.artistId, name: album.artist?.name! }}
           />
         </div>
       </div>

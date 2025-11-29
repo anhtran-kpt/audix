@@ -15,7 +15,7 @@ export const songMutationSchema = z.object({
   audioFile: z.instanceof(File).optional(),
   duration: z.number().optional(),
   genreIds: z.array(z.string()),
-  isExplicit: z.boolean().default(false),
+  isExplicit: z.boolean(),
   artists: songSchema.shape.artists,
   credits: songSchema.shape.credits,
 });

@@ -10,6 +10,7 @@
     "api:gen": "npx openapi-typescript http://localhost:8000/api-json -o features/common/types/api-schema.d.ts"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-avatar": "^1.1.11",

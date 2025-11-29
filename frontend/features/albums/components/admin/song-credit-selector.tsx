@@ -16,26 +16,26 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { CreditSelect } from "@/features/albums/components/admin/credit-select";
+import { CreditSelect } from "./credit-select";
 import { CreditRoleEnum } from "../../schemas/album-form.schema";
 
 interface SongCreditSelectorProps {
-  songIndex: number;
+  name: string;
 }
 
-export function SongCreditSelector({ songIndex }: SongCreditSelectorProps) {
+export function SongCreditSelector({ name }: SongCreditSelectorProps) {
   const { control } = useFormContext();
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: `songs.${songIndex}.credits`,
+    name: name,
   });
 
   return (
     <div className="space-y-2 mt-4 border-t pt-4">
       <div className="flex items-center justify-between">
         <label className="text-xs font-medium text-muted-foreground">
-          Credits (Producers, Writers...)
+          Credits
         </label>
         <Button
           type="button"
@@ -54,22 +54,19 @@ export function SongCreditSelector({ songIndex }: SongCreditSelectorProps) {
             <div className="w-[120px]">
               <FormField
                 control={control}
-                name={`songs.${songIndex}.credits.${index}.role`}
+                name={`${name}.${index}.role`}
                 render={({ field }) => (
                   <FormItem>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger className="h-9 text-xs">
                           <SelectValue placeholder="Role" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {CreditRoleEnum.options.map((type) => (
-                          <SelectItem key={type} value={type}>
-                            {type}
+                        {CreditRoleEnum.options.map((role) => (
+                          <SelectItem key={role} value={role}>
+                            {role}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -82,7 +79,7 @@ export function SongCreditSelector({ songIndex }: SongCreditSelectorProps) {
             <div className="flex-1">
               <FormField
                 control={control}
-                name={`songs.${songIndex}.credits.${index}.value`}
+                name={`${name}.${index}.value`}
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
