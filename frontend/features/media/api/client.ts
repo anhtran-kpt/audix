@@ -1,5 +1,5 @@
 import apiClient from "@/lib/axios";
-import { UploadImageResponse, UploadSignatureResponse } from "../media.type";
+import { UploadSignatureResponse, UploadYoutubeResponse } from "../media.type";
 import axios from "axios";
 import { toSlug } from "@/features/common/utils/to-slug";
 
@@ -79,4 +79,16 @@ export const uploadMedia = async (
     duration: res.data.duration,
     dominantColor,
   };
+};
+
+export const uploadFromYoutube = async (
+  youtubeUrl: string,
+  songTitle: string,
+  artistName: string
+): Promise<UploadYoutubeResponse> => {
+  return await apiClient.post("/media/upload-youtube", {
+    youtubeUrl,
+    songTitle,
+    artistName,
+  });
 };

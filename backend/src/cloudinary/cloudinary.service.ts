@@ -1,10 +1,16 @@
-import { Injectable } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import {
   v2 as cloudinary,
   UploadApiResponse,
   DeleteApiResponse,
+  UploadApiErrorResponse,
 } from "cloudinary";
+import { youtubeDl } from "youtube-dl-exec";
 
 @Injectable()
 export class CloudinaryService {
@@ -69,6 +75,66 @@ export class CloudinaryService {
       void cloudinary.uploader.destroy(publicId, (error, result) => {
         if (error) return reject(new Error((error as Error).message));
         resolve(result as DeleteApiResponse);
+      });
+    });
+  }
+
+  async uploadFromYoutube(
+    youtubeUrl: string,
+    folder: string,
+    publicId: string
+  ): Promise<UploadApiResponse> {
+    return new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: folder,
+          public_id: publicId,
+          resource_type: "video",
+          format: "mp3",
+        },
+        (
+          error: UploadApiErrorResponse | undefined,
+          result: UploadApiResponse | undefined
+        ) => {
+          if (error)
+            return reject(
+              new BadRequestException("Cloudinary upload failed", error.message)
+            );
+          if (!result)
+            return reject(
+              new InternalServerErrorException(
+                "Cloudinary returned empty result"
+              )
+            );
+
+          console.log(result);
+          resolve(result);
+        }
+      );
+
+      const subprocess = youtubeDl.exec(youtubeUrl, {
+        output: "-",
+        format: "bestaudio[ext=m4a][abr<=128]/bestaudio[ext=m4a]/bestaudio",
+        noCheckCertificates: true,
+        noWarnings: true,
+        preferFreeFormats: true,
+        addHeader: ["referer:youtube.com", "user-agent:googlebot"],
+      });
+
+      if (subprocess.stdout) {
+        subprocess.stdout.pipe(uploadStream);
+      } else {
+        reject(
+          new InternalServerErrorException("Failed to start YouTube stream")
+        );
+      }
+
+      subprocess.stderr?.on("data", (data: Buffer) => {
+        const log = data.toString();
+
+        console.log(log);
+
+        if (log.includes("ERROR")) console.error("YT-DLP Error:", log);
       });
     });
   }

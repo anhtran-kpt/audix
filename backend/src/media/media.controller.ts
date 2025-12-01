@@ -6,6 +6,7 @@ import {
   UseGuards,
   Query,
   Get,
+  Body,
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
@@ -17,6 +18,9 @@ import { ApiCreatedResponse } from "@nestjs/swagger";
 import { UploadImageResponse } from "./dto/upload-image-response.dto";
 import { CloudinaryService } from "src/cloudinary/cloudinary.service";
 import { UploadSignatureResponse } from "./dto/upload-signature-response.dto";
+import { UploadYoutubeDto } from "./dto/upload-youtube.dto";
+import { SlugService } from "src/common/services/slug.service";
+import { UploadYoutubeResponse } from "./dto/upload-youtube-response.dto";
 
 @Controller("media")
 @Roles(UserRole.ADMIN)
@@ -24,7 +28,8 @@ import { UploadSignatureResponse } from "./dto/upload-signature-response.dto";
 export class MediaController {
   constructor(
     private readonly mediaService: MediaService,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly cloudinaryService: CloudinaryService,
+    private readonly slugService: SlugService
   ) {}
 
   @Post("image/upload")
@@ -56,5 +61,24 @@ export class MediaController {
     );
 
     return new UploadSignatureResponse(res);
+  }
+
+  @Post("upload-youtube")
+  @Roles(UserRole.ADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiCreatedResponse({ type: UploadYoutubeResponse })
+  async uploadYoutube(@Body() body: UploadYoutubeDto) {
+    const filename = `${this.slugService.toSlug(body.artistName)}_${this.slugService.toSlug(body.songTitle)}_${Date.now()}`;
+
+    const result = await this.cloudinaryService.uploadFromYoutube(
+      body.youtubeUrl,
+      "songs",
+      filename
+    );
+
+    return new UploadYoutubeResponse({
+      publicId: result.public_id,
+      duration: result.duration as number,
+    });
   }
 }

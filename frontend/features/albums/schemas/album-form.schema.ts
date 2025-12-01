@@ -26,7 +26,7 @@ const songCreditSchema = z.object({
 
 export const songSchema = z.object({
   title: z.string().min(1, "Title is required"),
-  audioFile: z.instanceof(File, { message: "Audio file is required" }),
+  youtubeUrl: z.string().min(1, "Url is required"),
   duration: z.number().optional(),
   isExplicit: z.boolean(),
   artists: z.array(songArtistSchema).min(1, "At least one artist is required"),

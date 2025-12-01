@@ -44,16 +44,16 @@ import {
 import { cn } from "@/lib/utils";
 import { CreateSongDto } from "@/features/songs/songs.type";
 import { Calendar } from "@/components/ui/calendar";
-import { uploadMedia } from "@/features/media/api/client";
+import { uploadFromYoutube, uploadMedia } from "@/features/media/api/client";
 import { compressImage } from "@/features/common/utils/compress-image";
 import { GenreMultiSelect } from "@/features/genres/components/admin/genre-multi-select";
 import { Checkbox } from "@/components/ui/checkbox";
+import pLimit from "p-limit";
 
 export function AlbumCreateForm() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState("");
   const [mainArtistName, setMainArtistName] = useState("");
 
   const form = useForm<AlbumFormValues>({
@@ -75,7 +75,6 @@ export function AlbumCreateForm() {
   const onSubmit = async (values: AlbumFormValues) => {
     try {
       setIsSubmitting(true);
-      setUploadProgress("Preparing album...");
 
       let thumbnailRes = null;
       if (values.thumbnail instanceof File) {
@@ -101,50 +100,41 @@ export function AlbumCreateForm() {
 
       if (!newAlbum?.id) throw new Error("Failed to create album");
 
-      setUploadProgress("Fetching secure signature...");
-      const totalSongs = values.songs.length;
+      const limit = pLimit(5);
 
-      for (const [index, song] of values.songs.entries()) {
-        const songIndex = index + 1;
-
-        const handleProgress = (percent: number) => {
-          setUploadProgress(
-            `Uploading song ${songIndex}/${totalSongs}: ${percent}%`
+      const uploadTasks = values.songs.map(async (song) => {
+        return limit(async () => {
+          const audioRes = await uploadFromYoutube(
+            song.youtubeUrl,
+            song.title,
+            mainArtistName
           );
-        };
 
-        const audioRes = await uploadMedia(
-          song.audioFile,
-          "video",
-          "songs",
-          { main: song.title, ctx: mainArtistName },
-          handleProgress
-        );
-        setUploadProgress(`Saving song ${songIndex}/${totalSongs}...`);
+          const songPayload: CreateSongDto = {
+            title: song.title,
+            albumId: newAlbum.id,
+            audioId: audioRes.publicId,
+            duration: audioRes.duration,
+            isExplicit: song.isExplicit,
+            artists: song.artists.map((a) => ({
+              artistId: a.artistId,
+              type: a.type,
+            })),
+            credits:
+              song.credits?.map((c) => ({
+                role: c.role,
+                artistId: c.value.id || undefined,
+                name: !c.value.id ? c.value.name : undefined,
+              })) || [],
+            genreIds: song.genreIds,
+          };
 
-        const songPayload: CreateSongDto = {
-          title: song.title,
-          albumId: newAlbum.id,
-          audioId: audioRes.publicId,
-          duration: audioRes.duration as number,
-          isExplicit: song.isExplicit,
-          artists: song.artists.map((a) => ({
-            artistId: a.artistId,
-            type: a.type,
-          })),
-          credits:
-            song.credits?.map((c) => ({
-              role: c.role,
-              artistId: c.value.id || undefined,
-              name: !c.value.id ? c.value.name : undefined,
-            })) || [],
-          genreIds: song.genreIds,
-        };
+          await createSong(songPayload);
+        });
+      });
 
-        await createSong(songPayload);
-      }
+      await Promise.all(uploadTasks);
 
-      setUploadProgress("All done!");
       toast.success("Album created successfully!");
       router.push("/admin/albums");
     } catch (error) {
@@ -152,7 +142,6 @@ export function AlbumCreateForm() {
       toast.error("Something went wrong");
     } finally {
       setIsSubmitting(false);
-      setUploadProgress("");
     }
   };
 
@@ -348,7 +337,7 @@ export function AlbumCreateForm() {
                   onClick={() =>
                     append({
                       title: "",
-                      audioFile: undefined as any,
+                      youtubeUrl: "",
                       artists: [
                         {
                           artistId: form.getValues("artistId"),
@@ -391,23 +380,16 @@ export function AlbumCreateForm() {
 
                           <FormField
                             control={form.control}
-                            name={`songs.${index}.audioFile`}
-                            render={({
-                              field: { value, onChange, ...rest },
-                            }) => (
+                            name={`songs.${index}.youtubeUrl`}
+                            render={({ field }) => (
                               <FormItem>
                                 <FormLabel className="text-xs">
-                                  Audio File
+                                  Youtube Url
                                 </FormLabel>
                                 <FormControl>
                                   <Input
-                                    type="file"
-                                    accept="audio/*"
-                                    onChange={(e) => {
-                                      const file = e.target.files?.[0];
-                                      if (file) onChange(file);
-                                    }}
-                                    {...rest}
+                                    {...field}
+                                    placeholder="Link to audio on Youtube"
                                   />
                                 </FormControl>
                                 <FormMessage />
@@ -493,7 +475,7 @@ export function AlbumCreateForm() {
                 </Button>
 
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? uploadProgress : "Create Album"}
+                  {isSubmitting ? "Creating Album..." : "Create Album"}
                 </Button>
               </div>
             </div>

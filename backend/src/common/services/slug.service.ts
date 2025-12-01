@@ -37,6 +37,16 @@ export class SlugService {
     return uniqueSlug;
   }
 
+  toSlug(str: string) {
+    return slugify(str, {
+      lower: true,
+      strict: true,
+      locale: "vi",
+      trim: true,
+      replacement: "-",
+    });
+  }
+
   private getPrismaDelegate(modelName: SluggableModelName): SluggableDelegate {
     switch (modelName) {
       case "artist":
